@@ -1,14 +1,14 @@
 ﻿#include "pch.h"
-#include "GraphicsEngineMain.h"
+#include "ApplicationMain.h"
 #include "Common\DirectXHelper.h"
 
-using namespace GraphicsEngine;
+using namespace Application;
 using namespace Windows::Foundation;
 using namespace Windows::System::Threading;
 using namespace Concurrency;
 
 // Loads and initializes application assets when the application is loaded.
-GraphicsEngineMain::GraphicsEngineMain(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
+ApplicationMain::ApplicationMain(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
 	m_deviceResources(deviceResources)
 {
 	// Register to be notified if the Device is lost or recreated
@@ -27,21 +27,21 @@ GraphicsEngineMain::GraphicsEngineMain(const std::shared_ptr<DX::DeviceResources
 	*/
 }
 
-GraphicsEngineMain::~GraphicsEngineMain()
+ApplicationMain::~ApplicationMain()
 {
 	// Deregister device notification
 	m_deviceResources->RegisterDeviceNotify(nullptr);
 }
 
 // Updates application state when the window size changes (e.g. device orientation change)
-void GraphicsEngineMain::CreateWindowSizeDependentResources() 
+void ApplicationMain::CreateWindowSizeDependentResources() 
 {
 	// TODO: Replace this with the size-dependent initialization of your app's content.
 	m_sceneRenderer->CreateWindowSizeDependentResources();
 }
 
 // Updates the application state once per frame.
-void GraphicsEngineMain::Update() 
+void ApplicationMain::Update() 
 {
 	// Update scene objects.
 	m_timer.Tick([&]()
@@ -54,7 +54,7 @@ void GraphicsEngineMain::Update()
 
 // Renders the current frame according to the current application state.
 // Returns true if the frame was rendered and is ready to be displayed.
-bool GraphicsEngineMain::Render() 
+bool ApplicationMain::Render() 
 {
 	// Don't try to render anything before the first Update.
 	if (m_timer.GetFrameCount() == 0)
@@ -85,14 +85,14 @@ bool GraphicsEngineMain::Render()
 }
 
 // Notifies renderers that device resources need to be released.
-void GraphicsEngineMain::OnDeviceLost()
+void ApplicationMain::OnDeviceLost()
 {
 	m_sceneRenderer->ReleaseDeviceDependentResources();
 	m_fpsTextRenderer->ReleaseDeviceDependentResources();
 }
 
 // Notifies renderers that device resources may now be recreated.
-void GraphicsEngineMain::OnDeviceRestored()
+void ApplicationMain::OnDeviceRestored()
 {
 	m_sceneRenderer->CreateDeviceDependentResources();
 	m_fpsTextRenderer->CreateDeviceDependentResources();

@@ -11,11 +11,28 @@ using namespace Windows::UI::Core;
 using namespace Windows::UI::Xaml::Controls;
 using namespace Platform;
 
+namespace DisplayMetrics
+{
+	// High resolution displays can require a lot of GPU and battery power to render.
+	// High resolution phones, for example, may suffer from poor battery life if
+	// games attempt to render at 60 frames per second at full fidelity.
+	// The decision to render at full fidelity across all platforms and form factors
+	// should be deliberate.
+	static const bool SupportHighResolutions = false;
+
+	// The default thresholds that define a "high resolution" display. If the thresholds
+	// are exceeded and SupportHighResolutions is false, the dimensions will be scaled
+	// by 50%.
+	static const float DpiThreshold = 192.0f;		// 200% of standard desktop display.
+	static const float WidthThreshold = 1920.0f;	// 1080p width.
+	static const float HeightThreshold = 1080.0f;	// 1080p height.
+};
+
 // Constants used to calculate screen rotations
 namespace ScreenRotation
 {
 	// 0-degree Z-rotation
-	static const XMFLOAT4X4 Rotation0( 
+	static const XMFLOAT4X4 Rotation0(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
@@ -39,7 +56,7 @@ namespace ScreenRotation
 		);
 
 	// 270-degree Z-rotation
-	static const XMFLOAT4X4 Rotation270( 
+	static const XMFLOAT4X4 Rotation270(
 		0.0f, -1.0f, 0.0f, 0.0f,
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
@@ -48,7 +65,7 @@ namespace ScreenRotation
 };
 
 // Constructor for DeviceResources.
-DX::DeviceResources::DeviceResources() : 
+DX::DeviceResources::DeviceResources() :
 	m_screenViewport(),
 	m_d3dFeatureLevel(D3D_FEATURE_LEVEL_9_1),
 	m_d3dRenderTargetSize(),
@@ -57,6 +74,7 @@ DX::DeviceResources::DeviceResources() :
 	m_nativeOrientation(DisplayOrientations::None),
 	m_currentOrientation(DisplayOrientations::None),
 	m_dpi(-1.0f),
+	m_effectiveDpi(-1.0f),
 	m_deviceNotify(nullptr)
 {
 	CreateDeviceIndependentResources();
@@ -79,7 +97,7 @@ void DX::DeviceResources::CreateDeviceIndependentResources()
 	DX::ThrowIfFailed(
 		D2D1CreateFactory(
 			D2D1_FACTORY_TYPE_SINGLE_THREADED,
-			__uuidof(ID2D1Factory2),
+			__uuidof(ID2D1Factory3),
 			&options,
 			&m_d2dFactory
 			)
@@ -89,7 +107,7 @@ void DX::DeviceResources::CreateDeviceIndependentResources()
 	DX::ThrowIfFailed(
 		DWriteCreateFactory(
 			DWRITE_FACTORY_TYPE_SHARED,
-			__uuidof(IDWriteFactory2),
+			__uuidof(IDWriteFactory3),
 			&m_dwriteFactory
 			)
 		);
@@ -124,8 +142,10 @@ void DX::DeviceResources::CreateDeviceResources()
 	// Note the ordering should be preserved.
 	// Don't forget to declare your application's minimum required feature level in its
 	// description.  All applications are assumed to support 9.1 unless otherwise stated.
-	D3D_FEATURE_LEVEL featureLevels[] = 
+	D3D_FEATURE_LEVEL featureLevels[] =
 	{
+		D3D_FEATURE_LEVEL_12_1,
+		D3D_FEATURE_LEVEL_12_0,
 		D3D_FEATURE_LEVEL_11_1,
 		D3D_FEATURE_LEVEL_11_0,
 		D3D_FEATURE_LEVEL_10_1,
@@ -173,7 +193,7 @@ void DX::DeviceResources::CreateDeviceResources()
 			);
 	}
 
-	// Store pointers to the Direct3D 11.1 API device and immediate context.
+	// Store pointers to the Direct3D 11.3 API device and immediate context.
 	DX::ThrowIfFailed(
 		device.As(&m_d3dDevice)
 		);
@@ -210,15 +230,9 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 	m_d2dContext->SetTarget(nullptr);
 	m_d2dTargetBitmap = nullptr;
 	m_d3dDepthStencilView = nullptr;
-	m_d3dContext->Flush();
+	m_d3dContext->Flush1(D3D11_CONTEXT_TYPE_ALL, nullptr);
 
-	// Calculate the necessary render target size in pixels.
-	m_outputSize.Width = DX::ConvertDipsToPixels(m_logicalSize.Width, m_dpi);
-	m_outputSize.Height = DX::ConvertDipsToPixels(m_logicalSize.Height, m_dpi);
-	
-	// Prevent zero size DirectX content from being created.
-	m_outputSize.Width = max(m_outputSize.Width, 1);
-	m_outputSize.Height = max(m_outputSize.Height, 1);
+	UpdateRenderTargetSize();
 
 	// The width and height of the swap chain must be based on the window's
 	// natively-oriented width and height. If the window is not in the native
@@ -257,19 +271,20 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 	else
 	{
 		// Otherwise, create a new one using the same adapter as the existing Direct3D device.
+		DXGI_SCALING scaling = DisplayMetrics::SupportHighResolutions ? DXGI_SCALING_NONE : DXGI_SCALING_STRETCH;
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {0};
 
-		swapChainDesc.Width = lround(m_d3dRenderTargetSize.Width); // Match the size of the window.
+		swapChainDesc.Width = lround(m_d3dRenderTargetSize.Width);		// Match the size of the window.
 		swapChainDesc.Height = lround(m_d3dRenderTargetSize.Height);
-		swapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM; // This is the most common swap chain format.
+		swapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;				// This is the most common swap chain format.
 		swapChainDesc.Stereo = false;
-		swapChainDesc.SampleDesc.Count = 1; // Don't use multi-sampling.
+		swapChainDesc.SampleDesc.Count = 1;								// Don't use multi-sampling.
 		swapChainDesc.SampleDesc.Quality = 0;
 		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		swapChainDesc.BufferCount = 2; // Use double-buffering to minimize latency.
-		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL; // All Windows Store apps must use this SwapEffect.
-		swapChainDesc.Flags = 0;	
-		swapChainDesc.Scaling = DXGI_SCALING_NONE;
+		swapChainDesc.BufferCount = 2;									// Use double-buffering to minimize latency.
+		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;	// All Windows Store apps must use this SwapEffect.
+		swapChainDesc.Flags = 0;
+		swapChainDesc.Scaling = scaling;
 		swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
 
 		// This sequence obtains the DXGI factory that was used to create the Direct3D device above.
@@ -283,19 +298,23 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 			dxgiDevice->GetAdapter(&dxgiAdapter)
 			);
 
-		ComPtr<IDXGIFactory2> dxgiFactory;
+		ComPtr<IDXGIFactory4> dxgiFactory;
 		DX::ThrowIfFailed(
 			dxgiAdapter->GetParent(IID_PPV_ARGS(&dxgiFactory))
 			);
 
+		ComPtr<IDXGISwapChain1> swapChain;
 		DX::ThrowIfFailed(
 			dxgiFactory->CreateSwapChainForCoreWindow(
 				m_d3dDevice.Get(),
 				reinterpret_cast<IUnknown*>(m_window.Get()),
 				&swapChainDesc,
 				nullptr,
-				&m_swapChain
+				&swapChain
 				)
+			);
+		DX::ThrowIfFailed(
+			swapChain.As(&m_swapChain)
 			);
 
 		// Ensure that DXGI does not queue more than one frame at a time. This both reduces latency and
@@ -348,13 +367,13 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 		);
 
 	// Create a render target view of the swap chain back buffer.
-	ComPtr<ID3D11Texture2D> backBuffer;
+	ComPtr<ID3D11Texture2D1> backBuffer;
 	DX::ThrowIfFailed(
 		m_swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer))
 		);
 
 	DX::ThrowIfFailed(
-		m_d3dDevice->CreateRenderTargetView(
+		m_d3dDevice->CreateRenderTargetView1(
 			backBuffer.Get(),
 			nullptr,
 			&m_d3dRenderTargetView
@@ -362,7 +381,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 		);
 
 	// Create a depth stencil view for use with 3D rendering if needed.
-	CD3D11_TEXTURE2D_DESC depthStencilDesc(
+	CD3D11_TEXTURE2D_DESC1 depthStencilDesc(
 		DXGI_FORMAT_D24_UNORM_S8_UINT, 
 		lround(m_d3dRenderTargetSize.Width),
 		lround(m_d3dRenderTargetSize.Height),
@@ -371,9 +390,9 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 		D3D11_BIND_DEPTH_STENCIL
 		);
 
-	ComPtr<ID3D11Texture2D> depthStencil;
+	ComPtr<ID3D11Texture2D1> depthStencil;
 	DX::ThrowIfFailed(
-		m_d3dDevice->CreateTexture2D(
+		m_d3dDevice->CreateTexture2D1(
 			&depthStencilDesc,
 			nullptr,
 			&depthStencil
@@ -423,9 +442,38 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 		);
 
 	m_d2dContext->SetTarget(m_d2dTargetBitmap.Get());
+	m_d2dContext->SetDpi(m_effectiveDpi, m_effectiveDpi);
 
 	// Grayscale text anti-aliasing is recommended for all Windows Store apps.
 	m_d2dContext->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
+}
+
+// Determine the dimensions of the render target and whether it will be scaled down.
+void DX::DeviceResources::UpdateRenderTargetSize()
+{
+	m_effectiveDpi = m_dpi;
+
+	// To improve battery life on high resolution devices, render to a smaller render target
+	// and allow the GPU to scale the output when it is presented.
+	if (!DisplayMetrics::SupportHighResolutions && m_dpi > DisplayMetrics::DpiThreshold)
+	{
+		float width = DX::ConvertDipsToPixels(m_logicalSize.Width, m_dpi);
+		float height = DX::ConvertDipsToPixels(m_logicalSize.Height, m_dpi);
+
+		if (width > DisplayMetrics::WidthThreshold && height > DisplayMetrics::HeightThreshold)
+		{
+			// To scale the app we change the effective DPI. Logical size does not change.
+			m_effectiveDpi /= 2.0f;
+		}
+	}
+
+	// Calculate the necessary render target size in pixels.
+	m_outputSize.Width = DX::ConvertDipsToPixels(m_logicalSize.Width, m_effectiveDpi);
+	m_outputSize.Height = DX::ConvertDipsToPixels(m_logicalSize.Height, m_effectiveDpi);
+
+	// Prevent zero size DirectX content from being created.
+	m_outputSize.Width = max(m_outputSize.Width, 1);
+	m_outputSize.Height = max(m_outputSize.Height, 1);
 }
 
 // This method is called when the CoreWindow is created (or re-created).
@@ -492,25 +540,25 @@ void DX::DeviceResources::ValidateDevice()
 	ComPtr<IDXGIAdapter> deviceAdapter;
 	DX::ThrowIfFailed(dxgiDevice->GetAdapter(&deviceAdapter));
 
-	ComPtr<IDXGIFactory2> deviceFactory;
+	ComPtr<IDXGIFactory4> deviceFactory;
 	DX::ThrowIfFailed(deviceAdapter->GetParent(IID_PPV_ARGS(&deviceFactory)));
 
 	ComPtr<IDXGIAdapter1> previousDefaultAdapter;
 	DX::ThrowIfFailed(deviceFactory->EnumAdapters1(0, &previousDefaultAdapter));
 
-	DXGI_ADAPTER_DESC previousDesc;
-	DX::ThrowIfFailed(previousDefaultAdapter->GetDesc(&previousDesc));
+	DXGI_ADAPTER_DESC1 previousDesc;
+	DX::ThrowIfFailed(previousDefaultAdapter->GetDesc1(&previousDesc));
 
 	// Next, get the information for the current default adapter.
 
-	ComPtr<IDXGIFactory2> currentFactory;
+	ComPtr<IDXGIFactory4> currentFactory;
 	DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&currentFactory)));
 
 	ComPtr<IDXGIAdapter1> currentDefaultAdapter;
 	DX::ThrowIfFailed(currentFactory->EnumAdapters1(0, &currentDefaultAdapter));
 
-	DXGI_ADAPTER_DESC currentDesc;
-	DX::ThrowIfFailed(currentDefaultAdapter->GetDesc(&currentDesc));
+	DXGI_ADAPTER_DESC1 currentDesc;
+	DX::ThrowIfFailed(currentDefaultAdapter->GetDesc1(&currentDesc));
 
 	// If the adapter LUIDs don't match, or if the device reports that it has been removed,
 	// a new D3D device must be created.
@@ -572,15 +620,16 @@ void DX::DeviceResources::Present()
 	// The first argument instructs DXGI to block until VSync, putting the application
 	// to sleep until the next VSync. This ensures we don't waste any cycles rendering
 	// frames that will never be displayed to the screen.
-	HRESULT hr = m_swapChain->Present(1, 0);
+	DXGI_PRESENT_PARAMETERS parameters = { 0 };
+	HRESULT hr = m_swapChain->Present1(1, 0, &parameters);
 
 	// Discard the contents of the render target.
 	// This is a valid operation only when the existing contents will be entirely
 	// overwritten. If dirty or scroll rects are used, this call should be removed.
-	m_d3dContext->DiscardView(m_d3dRenderTargetView.Get());
+	m_d3dContext->DiscardView1(m_d3dRenderTargetView.Get(), nullptr, 0);
 
 	// Discard the contents of the depth stencil.
-	m_d3dContext->DiscardView(m_d3dDepthStencilView.Get());
+	m_d3dContext->DiscardView1(m_d3dDepthStencilView.Get(), nullptr, 0);
 
 	// If the device was removed either by a disconnection or a driver upgrade, we 
 	// must recreate all device resources.
@@ -594,7 +643,7 @@ void DX::DeviceResources::Present()
 	}
 }
 
-// This method determines the rotation between the display device's native Orientation and the
+// This method determines the rotation between the display device's native orientation and the
 // current display orientation.
 DXGI_MODE_ROTATION DX::DeviceResources::ComputeDisplayRotation()
 {

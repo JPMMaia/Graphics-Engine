@@ -6,13 +6,13 @@
 #include "Content\SampleFpsTextRenderer.h"
 
 // Renders Direct2D and 3D content on the screen.
-namespace GraphicsEngine
+namespace Application
 {
-	class GraphicsEngineMain : public DX::IDeviceNotify
+	class ApplicationMain : public DX::IDeviceNotify
 	{
 	public:
-		GraphicsEngineMain(const std::shared_ptr<DX::DeviceResources>& deviceResources);
-		~GraphicsEngineMain();
+		ApplicationMain(const std::shared_ptr<DX::DeviceResources>& deviceResources);
+		~ApplicationMain();
 		void CreateWindowSizeDependentResources();
 		void Update();
 		bool Render();

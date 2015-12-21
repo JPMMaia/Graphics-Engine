@@ -3,7 +3,7 @@
 
 #include <ppltasks.h>
 
-using namespace GraphicsEngine;
+using namespace Application;
 
 using namespace concurrency;
 using namespace Windows::ApplicationModel;
@@ -85,7 +85,7 @@ void App::Load(Platform::String^ entryPoint)
 {
 	if (m_main == nullptr)
 	{
-		m_main = std::unique_ptr<GraphicsEngineMain>(new GraphicsEngineMain(m_deviceResources));
+		m_main = std::unique_ptr<ApplicationMain>(new ApplicationMain(m_deviceResources));
 	}
 }
 
@@ -176,6 +176,10 @@ void App::OnWindowClosed(CoreWindow^ sender, CoreWindowEventArgs^ args)
 
 void App::OnDpiChanged(DisplayInformation^ sender, Object^ args)
 {
+	// Note: The value for LogicalDpi retrieved here may not match the effective DPI of the app
+	// if it is being scaled for high resolution devices. Once the DPI is set on DeviceResources,
+	// you should always retrieve it using the GetDpi method.
+	// See DeviceResources.cpp for more details.
 	m_deviceResources->SetDpi(sender->LogicalDpi);
 	m_main->CreateWindowSizeDependentResources();
 }

@@ -3,7 +3,7 @@
 
 #include "..\Common\DirectXHelper.h"
 
-using namespace GraphicsEngine;
+using namespace Application;
 
 using namespace DirectX;
 using namespace Windows::Foundation;
@@ -118,11 +118,12 @@ void Sample3DSceneRenderer::Render()
 	auto context = m_deviceResources->GetD3DDeviceContext();
 
 	// Prepare the constant buffer to send it to the graphics device.
-	context->UpdateSubresource(
+	context->UpdateSubresource1(
 		m_constantBuffer.Get(),
 		0,
 		NULL,
 		&m_constantBufferData,
+		0,
 		0,
 		0
 		);
@@ -156,10 +157,12 @@ void Sample3DSceneRenderer::Render()
 		);
 
 	// Send the constant buffer to the graphics device.
-	context->VSSetConstantBuffers(
+	context->VSSetConstantBuffers1(
 		0,
 		1,
-		m_constantBuffer.GetAddressOf()
+		m_constantBuffer.GetAddressOf(),
+		nullptr,
+		nullptr
 		);
 
 	// Attach our pixel shader.

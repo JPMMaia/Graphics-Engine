@@ -3,7 +3,8 @@
 
 #include "Common/DirectXHelper.h"
 
-using namespace GraphicsEngine;
+using namespace Application;
+using namespace Microsoft::WRL;
 
 // Initializes D2D resources used for text rendering.
 SampleFpsTextRenderer::SampleFpsTextRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources) : 
@@ -13,6 +14,7 @@ SampleFpsTextRenderer::SampleFpsTextRenderer(const std::shared_ptr<DX::DeviceRes
 	ZeroMemory(&m_textMetrics, sizeof(DWRITE_TEXT_METRICS));
 
 	// Create device independent resources
+	ComPtr<IDWriteTextFormat> textFormat;
 	DX::ThrowIfFailed(
 		m_deviceResources->GetDWriteFactory()->CreateTextFormat(
 			L"Segoe UI",
@@ -22,8 +24,12 @@ SampleFpsTextRenderer::SampleFpsTextRenderer(const std::shared_ptr<DX::DeviceRes
 			DWRITE_FONT_STRETCH_NORMAL,
 			32.0f,
 			L"en-US",
-			&m_textFormat
+			&textFormat
 			)
+		);
+
+	DX::ThrowIfFailed(
+		textFormat.As(&m_textFormat)
 		);
 
 	DX::ThrowIfFailed(
@@ -45,6 +51,7 @@ void SampleFpsTextRenderer::Update(DX::StepTimer const& timer)
 
 	m_text = (fps > 0) ? std::to_wstring(fps) + L" FPS" : L" - FPS";
 
+	ComPtr<IDWriteTextLayout> textLayout;
 	DX::ThrowIfFailed(
 		m_deviceResources->GetDWriteFactory()->CreateTextLayout(
 			m_text.c_str(),
@@ -52,8 +59,12 @@ void SampleFpsTextRenderer::Update(DX::StepTimer const& timer)
 			m_textFormat.Get(),
 			240.0f, // Max width of the input text.
 			50.0f, // Max height of the input text.
-			&m_textLayout
+			&textLayout
 			)
+		);
+
+	DX::ThrowIfFailed(
+		textLayout.As(&m_textLayout)
 		);
 
 	DX::ThrowIfFailed(

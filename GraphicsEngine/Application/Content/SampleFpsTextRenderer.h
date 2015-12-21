@@ -4,7 +4,7 @@
 #include "..\Common\DeviceResources.h"
 #include "..\Common\StepTimer.h"
 
-namespace GraphicsEngine
+namespace Application
 {
 	// Renders the current FPS value in the bottom right corner of the screen using Direct2D and DirectWrite.
 	class SampleFpsTextRenderer
@@ -24,8 +24,8 @@ namespace GraphicsEngine
 		std::wstring                                    m_text;
 		DWRITE_TEXT_METRICS	                            m_textMetrics;
 		Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>    m_whiteBrush;
-		Microsoft::WRL::ComPtr<ID2D1DrawingStateBlock>  m_stateBlock;
-		Microsoft::WRL::ComPtr<IDWriteTextLayout>       m_textLayout;
-		Microsoft::WRL::ComPtr<IDWriteTextFormat>		m_textFormat;
+		Microsoft::WRL::ComPtr<ID2D1DrawingStateBlock1> m_stateBlock;
+		Microsoft::WRL::ComPtr<IDWriteTextLayout3>      m_textLayout;
+		Microsoft::WRL::ComPtr<IDWriteTextFormat2>      m_textFormat;
 	};
 }

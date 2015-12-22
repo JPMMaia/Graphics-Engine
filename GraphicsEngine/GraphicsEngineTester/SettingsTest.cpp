@@ -3,9 +3,11 @@
 
 #include <SettingsManager.h>
 #include <Helpers.h>
+#include <rapidxml/rapidxml_utils.hpp>
 
-using namespace std;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+using namespace rapidxml;
+using namespace std;
 
 namespace GraphicsEngineTester
 {
@@ -14,10 +16,10 @@ namespace GraphicsEngineTester
     public:
         TEST_METHOD(TestSettingsFile)
         {
-			wstring filename = L"settings.conf";
-			SettingsManager manager = SettingsManager::Build(filename);
+			wstring filenameW = L"settings.conf";
+			SettingsManager manager = SettingsManager::Build(filenameW);
 
-			Assert::IsTrue(Helpers::FileExists(filename));
+			Assert::IsTrue(Helpers::FileExists(filenameW));
 			Assert::IsFalse(manager.GetAdapterDescription().empty());
 			Assert::IsTrue(manager.GetAdapterDedicatedVideoMemory() > 0);
         }

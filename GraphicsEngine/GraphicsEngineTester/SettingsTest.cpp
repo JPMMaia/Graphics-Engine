@@ -3,7 +3,6 @@
 
 #include <SettingsManager.h>
 #include <Helpers.h>
-#include <rapidxml/rapidxml_utils.hpp>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace rapidxml;

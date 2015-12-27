@@ -2,6 +2,8 @@
 #include "DeviceResources.h"
 #include "DirectXHelper.h"
 
+#include <SettingsManager.h>
+
 using namespace D2D1;
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -154,6 +156,15 @@ void DX::DeviceResources::CreateDeviceResources()
 		D3D_FEATURE_LEVEL_9_2,
 		D3D_FEATURE_LEVEL_9_1
 	};
+
+	auto settingsManager = SettingsManager::Build(L"Settings.conf");
+	auto adapterIndex = settingsManager.GetAdapterIndex();
+
+	ComPtr<IDXGIFactory4> factory;
+	DX::ThrowIfFailed(CreateDXGIFactory1(__uuidof(IDXGIFactory4), reinterpret_cast<void**>(factory.GetAddressOf())));
+	
+	ComPtr<IDXGIAdapter1> defaultAdapter;
+	factory->EnumAdapters1(adapterIndex, defaultAdapter.GetAddressOf());
 
 	// Create the Direct3D 11 API device object and a corresponding context.
 	ComPtr<ID3D11Device> device;

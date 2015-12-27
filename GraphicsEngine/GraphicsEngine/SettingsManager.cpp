@@ -45,7 +45,7 @@ UINT SettingsManager::GetAdapterIndex() const
 	return m_adapterIndex;
 }
 
-const wstring & SettingsManager::GetAdapterDescription() const
+const wstring& SettingsManager::GetAdapterDescription() const
 {
 	return m_adapterDescription;
 }

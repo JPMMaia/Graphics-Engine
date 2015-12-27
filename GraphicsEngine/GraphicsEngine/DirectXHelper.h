@@ -34,8 +34,8 @@ namespace DX
 	}
 
 	template<typename FunctionType, typename... ArgumentsType>
-	std::future<typename std::result_of<FunctionType(ArgumentsType...)>::type> RunAsync(FunctionType&& function, ArgumentsType&&... params)
+	std::future<typename std::result_of<FunctionType(ArgumentsType...)>::type> RunAsync(FunctionType&& function, ArgumentsType&&... arguments)
 	{
-		return std::async(std::launch::async, std::forward<FunctionType>(function), std::forward<ArgumentsType>(params)...);
+		return std::async(std::launch::async, std::forward<FunctionType>(function), std::forward<ArgumentsType>(arguments)...);
 	}
 }

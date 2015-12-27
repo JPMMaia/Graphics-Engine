@@ -161,18 +161,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DirectXException.cpp" />
+    <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="SettingsManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Buffer.h" />
     <ClInclude Include="DirectXException.h" />
     <ClInclude Include="DirectXHelper.h" />
     <ClInclude Include="Helpers.h" />
+    <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="SettingsManager.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

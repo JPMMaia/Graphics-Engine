@@ -8,6 +8,12 @@
     <ClCompile Include="SettingsManager.cpp">
       <Filter>Source\Settings</Filter>
     </ClCompile>
+    <ClCompile Include="VertexBuffer.cpp">
+      <Filter>Source\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexBuffer.cpp">
+      <Filter>Source\Buffers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -23,6 +29,15 @@
     <ClInclude Include="SettingsManager.h">
       <Filter>Source\Settings</Filter>
     </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>Source\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexBuffer.h">
+      <Filter>Source\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Source\Buffers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -34,8 +49,8 @@
     <Filter Include="Source\Settings">
       <UniqueIdentifier>{6e2d9f50-9148-4d3b-bd70-5524a66cd147}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Scenes">
-      <UniqueIdentifier>{75086546-8f7e-4e9c-8dbd-a8b5ed8875f0}</UniqueIdentifier>
+    <Filter Include="Source\Buffers">
+      <UniqueIdentifier>{b0deafd9-6a48-46c8-9794-56dc72e2982c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

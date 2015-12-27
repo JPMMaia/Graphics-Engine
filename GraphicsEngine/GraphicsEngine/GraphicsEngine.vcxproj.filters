@@ -8,8 +8,11 @@
     <ClCompile Include="SettingsManager.cpp">
       <Filter>Source\Settings</Filter>
     </ClCompile>
-    <ClCompile Include="VertexBuffer.cpp">
-      <Filter>Source\Buffers</Filter>
+    <ClCompile Include="VertexShader.cpp">
+      <Filter>Source\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelShader.cpp">
+      <Filter>Source\Shaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -35,6 +38,12 @@
     <ClInclude Include="Buffer.h">
       <Filter>Source\Buffers</Filter>
     </ClInclude>
+    <ClInclude Include="VertexShader.h">
+      <Filter>Source\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelShader.h">
+      <Filter>Source\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -48,6 +57,12 @@
     </Filter>
     <Filter Include="Source\Buffers">
       <UniqueIdentifier>{b0deafd9-6a48-46c8-9794-56dc72e2982c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{0a408e7f-22e5-4122-8676-fa53be408eaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Shaders">
+      <UniqueIdentifier>{d35b6e1d-1e97-4572-8c00-1384832b7941}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

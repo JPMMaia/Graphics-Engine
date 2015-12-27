@@ -8,7 +8,11 @@ namespace GraphicsEngine
 	class VertexBuffer
 	{
 	public:
+		VertexBuffer();
 		VertexBuffer(ID3D11Device* d3dDevice, const std::vector<VertexType>& vertices);
+
+		void Initialize(ID3D11Device* d3dDevice, const std::vector<VertexType>& vertices);
+		void Shutdown();
 
 		void Set(ID3D11DeviceContext* d3dDeviceContext);
 
@@ -17,9 +21,26 @@ namespace GraphicsEngine
 	};
 
 	template <class VertexType>
+	VertexBuffer<VertexType>::VertexBuffer()
+	{
+	}
+
+	template <class VertexType>
 	VertexBuffer<VertexType>::VertexBuffer(ID3D11Device* d3dDevice, const std::vector<VertexType>& vertices) :
 		m_vertexBuffer(d3dDevice, vertices, D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_IMMUTABLE)
 	{
+	}
+
+	template <class VertexType>
+	void VertexBuffer<VertexType>::Initialize(ID3D11Device* d3dDevice, const std::vector<VertexType>& vertices)
+	{
+		m_vertexBuffer.Initialize(d3dDevice, vertices, D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_IMMUTABLE);
+	}
+
+	template <class VertexType>
+	void VertexBuffer<VertexType>::Shutdown()
+	{
+		m_vertexBuffer.Shutdown();
 	}
 
 	template <class VertexType>

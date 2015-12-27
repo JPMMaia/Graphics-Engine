@@ -11,9 +11,6 @@
     <ClCompile Include="VertexBuffer.cpp">
       <Filter>Source\Buffers</Filter>
     </ClCompile>
-    <ClCompile Include="IndexBuffer.cpp">
-      <Filter>Source\Buffers</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

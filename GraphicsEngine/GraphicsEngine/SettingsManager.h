@@ -16,6 +16,8 @@ public:
 private:
 	SettingsManager();
 
+	void ReadFile(const std::wstring& filename);
+
 	void CreateFile(const std::wstring& filename);
 	void AddAdaptersInfo(rapidxml::xml_document<wchar_t>* document, rapidxml::xml_node<wchar_t>* parent);
 	void AddAdapterInfo(rapidxml::xml_document<wchar_t>* document, rapidxml::xml_node<wchar_t>* parent, UINT adapterIndex, const DXGI_ADAPTER_DESC1& adapterDesc) const;

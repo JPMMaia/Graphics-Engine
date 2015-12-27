@@ -8,3 +8,4 @@
 #include <wrl/client.h>
 
 #include "DirectXHelper.h"
+#include <Helpers.h>

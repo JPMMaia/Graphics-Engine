@@ -4,10 +4,19 @@
 
 #include <fstream>
 #include <rapidxml/rapidxml_print.hpp>
+#include <rapidxml/rapidxml_utils.hpp>
 
 using namespace std;
 using namespace rapidxml;
 using namespace Microsoft::WRL;
+
+constexpr auto TAG_SETTINGS = L"Settings";
+constexpr auto TAG_VIDEO_CARDS = L"VideoCards";
+constexpr auto TAG_VIDEO_CARD = L"VideoCard";
+constexpr auto TAG_INDEX = L"Index";
+constexpr auto TAG_DESCRIPTION = L"Description";
+constexpr auto TAG_DEDICATED_VIDEO_MEMORY = L"DedicatedVideoMemory";
+constexpr auto TAG_DEFAULT_VIDEO_CARD_INDEX = L"DefaultVideoCardIndex";
 
 SettingsManager::SettingsManager() :
 	m_adapterIndex(0),
@@ -20,7 +29,13 @@ SettingsManager SettingsManager::Build(const wstring& filename)
 {
 	SettingsManager settings;
 
-	settings.CreateFileW(filename);
+	// If file exists, read configuration from file:
+	if (Helpers::FileExists(filename))
+		settings.ReadFile(filename);
+
+	// If file doesn't exist, then use DirectX API and create a settings file: 
+	else
+		settings.CreateFileW(filename);
 
 	return settings;
 }
@@ -40,13 +55,41 @@ SIZE_T SettingsManager::GetAdapterDedicatedVideoMemory() const
 	return m_adapterDedicatedVideoMemory;
 }
 
+void SettingsManager::ReadFile(const wstring& filename)
+{
+	// Read settings file:
+	file<wchar_t> settingsFile(Helpers::WStringToString(filename).data());
+	xml_document<wchar_t> document;
+	document.parse<0>(settingsFile.data());
+
+	// Get root node:
+	auto settingsNode = document.first_node(TAG_SETTINGS);
+
+	// Get video cards node:
+	auto videoCardsNode = settingsNode->first_node(TAG_VIDEO_CARDS);
+
+	// Get default video card index:
+	auto defaultVideoCardIndexNode = videoCardsNode->first_node(TAG_DEFAULT_VIDEO_CARD_INDEX);
+	auto defaultVideoCardIndex = stoi(defaultVideoCardIndexNode->value());
+
+	// Get default video card:
+	auto defaultVideoCard = videoCardsNode->first_node(TAG_VIDEO_CARD);
+	for (auto i = 0; i < defaultVideoCardIndex; i++)
+		defaultVideoCard = videoCardsNode->next_sibling(TAG_VIDEO_CARD);
+
+	// Get default adapter values:
+	m_adapterIndex = stoi(defaultVideoCard->first_node(TAG_INDEX)->value());
+	m_adapterDescription = defaultVideoCard->first_node(TAG_DESCRIPTION)->value();
+	m_adapterDedicatedVideoMemory = stoi(defaultVideoCard->first_node(TAG_DEDICATED_VIDEO_MEMORY)->value());
+}
+
 void SettingsManager::CreateFile(const wstring& filename)
 {
 	// Create document:
 	xml_document<wchar_t> document;
 
 	// Create root node:
-	xml_node<wchar_t>* settingsNode = document.allocate_node(node_type::node_element, L"Settings");
+	xml_node<wchar_t>* settingsNode = document.allocate_node(node_type::node_element, TAG_SETTINGS);
 	document.append_node(settingsNode);
 
 	// Output adapters info:
@@ -62,7 +105,7 @@ void SettingsManager::CreateFile(const wstring& filename)
 void SettingsManager::AddAdaptersInfo(rapidxml::xml_document<wchar_t>* document, rapidxml::xml_node<wchar_t>* parent)
 {
 	// Create video cards node and append it to the settings node:
-	xml_node<wchar_t>* videoCardsNode = document->allocate_node(node_type::node_element, L"VideoCards");
+	xml_node<wchar_t>* videoCardsNode = document->allocate_node(node_type::node_element, TAG_VIDEO_CARDS);
 	parent->append_node(videoCardsNode);
 
 	// Creates a DXGI 1.1 factory that can be used to generate other DXGI objects:
@@ -91,17 +134,17 @@ void SettingsManager::AddAdaptersInfo(rapidxml::xml_document<wchar_t>* document,
 	}
 
 	// Create default video card index node and add it to the video cards node:
-	xml_node<wchar_t>* defaultVideoCardIndexNode = document->allocate_node(node_type::node_element, L"DefaultVideoCardIndex", AllocateValue(document, m_adapterIndex));
+	xml_node<wchar_t>* defaultVideoCardIndexNode = document->allocate_node(node_type::node_element, TAG_DEFAULT_VIDEO_CARD_INDEX, AllocateValue(document, m_adapterIndex));
 	videoCardsNode->append_node(defaultVideoCardIndexNode);
 }
 
 void SettingsManager::AddAdapterInfo(xml_document<wchar_t>* document, rapidxml::xml_node<wchar_t>* parent, UINT adapterIndex, const DXGI_ADAPTER_DESC1& adapterDesc) const
 {
 	// Create nodes to describe a video card:
-	xml_node<wchar_t>* videoCardNode = document->allocate_node(node_type::node_element, L"VideoCard");
-	xml_node<wchar_t>* indexNode = document->allocate_node(node_type::node_element, L"Index", AllocateValue(document, adapterIndex));
-	xml_node<wchar_t>* descriptionNode = document->allocate_node(node_type::node_element, L"Description", document->allocate_string(adapterDesc.Description));
-	xml_node<wchar_t>* dedicatedVideoMemoryNode = document->allocate_node(node_type::node_element, L"DedicatedVideoMemory", AllocateValue(document, adapterDesc.DedicatedVideoMemory));
+	xml_node<wchar_t>* videoCardNode = document->allocate_node(node_type::node_element, TAG_VIDEO_CARD);
+	xml_node<wchar_t>* indexNode = document->allocate_node(node_type::node_element, TAG_INDEX, AllocateValue(document, adapterIndex));
+	xml_node<wchar_t>* descriptionNode = document->allocate_node(node_type::node_element, TAG_DESCRIPTION, document->allocate_string(adapterDesc.Description));
+	xml_node<wchar_t>* dedicatedVideoMemoryNode = document->allocate_node(node_type::node_element, TAG_DEDICATED_VIDEO_MEMORY, AllocateValue(document, adapterDesc.DedicatedVideoMemory));
 	
 	// Add video card node to parent node:
 	parent->append_node(videoCardNode);

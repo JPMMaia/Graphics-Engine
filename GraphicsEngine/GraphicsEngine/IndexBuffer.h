@@ -2,8 +2,6 @@
 
 #include "Buffer.h"
 
-#include <cstdint>
-
 namespace GraphicsEngine
 {
 	template<class IndexType>

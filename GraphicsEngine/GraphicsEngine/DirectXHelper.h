@@ -1,7 +1,6 @@
 #pragma once
 
-#include <fstream>
-#include <future>
+#include "DirectXException.h"
 
 namespace DX
 {

@@ -8,6 +8,7 @@
 #include <VertexBuffer.h>
 #include <VertexShader.h>
 #include <PixelShader.h>
+#include <ConstantBuffer.h>
 
 namespace Application
 {
@@ -35,11 +36,11 @@ namespace Application
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
 
 		// Direct3D resources for cube geometry.
-		GraphicsEngine::VertexBuffer<VertexPositionColor>	m_vertexBuffer;
-		GraphicsEngine::IndexBuffer<uint16_t>				m_indexBuffer;
-		GraphicsEngine::VertexShader						m_vertexShader;
-		GraphicsEngine::PixelShader							m_pixelShader;
-		Microsoft::WRL::ComPtr<ID3D11Buffer>				m_constantBuffer;
+		GraphicsEngine::VertexBuffer<VertexPositionColor>					m_vertexBuffer;
+		GraphicsEngine::IndexBuffer<uint16_t>								m_indexBuffer;
+		GraphicsEngine::VertexShader										m_vertexShader;
+		GraphicsEngine::PixelShader											m_pixelShader;
+		GraphicsEngine::ConstantBuffer<ModelViewProjectionConstantBuffer>	m_constantBuffer;
 
 		// System resources for cube geometry.
 		ModelViewProjectionConstantBuffer	m_constantBufferData;

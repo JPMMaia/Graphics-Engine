@@ -122,15 +122,7 @@ void Sample3DSceneRenderer::Render()
 	auto context = m_deviceResources->GetD3DDeviceContext();
 
 	// Prepare the constant buffer to send it to the graphics device.
-	context->UpdateSubresource1(
-		m_constantBuffer.Get(),
-		0,
-		NULL,
-		&m_constantBufferData,
-		0,
-		0,
-		0
-		);
+	m_constantBuffer.Update(context, m_constantBufferData);
 
 	// Set vertex and index buffer:
 	m_vertexBuffer.Set(context);
@@ -138,18 +130,11 @@ void Sample3DSceneRenderer::Render()
 
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-
 	// Set vertex shader:
 	m_vertexShader.Set(context);
 
 	// Send the constant buffer to the graphics device.
-	context->VSSetConstantBuffers1(
-		0,
-		1,
-		m_constantBuffer.GetAddressOf(),
-		nullptr,
-		nullptr
-		);
+	m_constantBuffer.VSSet(context);
 
 	// Attach our pixel shader.
 	m_pixelShader.Set(context);
@@ -170,21 +155,12 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	Helpers::RunAsync();
-	
-
 	ID3D11Device* d3dDevice = m_deviceResources->GetD3DDevice();
 	m_vertexShader.Initialize(d3dDevice, L"SampleVertexShader.cso", vertexDesc);
 	m_pixelShader.Initialize(d3dDevice, L"SamplePixelShader.cso");
 
-	CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
-	DX::ThrowIfFailed(
-		m_deviceResources->GetD3DDevice()->CreateBuffer(
-			&constantBufferDesc,
-			nullptr,
-			&m_constantBuffer
-			)
-		);
+	// Initialize constant buffer:
+	m_constantBuffer.Initialize(d3dDevice);
 
 	// Load mesh vertices. Each vertex has a position and a color.
 	vector<VertexPositionColor> cubeVertices =
@@ -237,7 +213,7 @@ void Sample3DSceneRenderer::ReleaseDeviceDependentResources()
 	m_loadingComplete = false;
 	m_vertexShader.Shutdown();
 	m_pixelShader.Shutdown();
-	m_constantBuffer.Reset();
+	m_constantBuffer.Shutdown();
 	m_vertexBuffer.Shutdown();
 	m_indexBuffer.Shutdown();
 }

@@ -171,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buffer.h" />
+    <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="DirectXException.h" />
     <ClInclude Include="DirectXHelper.h" />
     <ClInclude Include="Helpers.h" />

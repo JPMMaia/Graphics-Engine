@@ -44,6 +44,9 @@
     <ClInclude Include="PixelShader.h">
       <Filter>Source\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>Source\Buffers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">

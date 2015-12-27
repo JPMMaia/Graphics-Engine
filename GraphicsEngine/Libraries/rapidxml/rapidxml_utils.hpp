@@ -37,7 +37,7 @@ namespace rapidxml
             
             // Determine stream size
             stream.seekg(0, ios::end);
-            auto size = stream.tellg();
+			unsigned int size = static_cast<unsigned int>(stream.tellg());
             stream.seekg(0);   
             
             // Load data and add terminating 0

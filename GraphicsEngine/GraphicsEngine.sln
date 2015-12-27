@@ -3,10 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Application", "Application\Application.vcxproj", "{E47717CD-AFC4-4AB3-8753-A0C1DC396D71}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FCCCCA2E-2F0D-4CC1-A624-9F528EC3882A} = {FCCCCA2E-2F0D-4CC1-A624-9F528EC3882A}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphicsEngine", "GraphicsEngine\GraphicsEngine.vcxproj", "{FCCCCA2E-2F0D-4CC1-A624-9F528EC3882A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphicsEngineTester", "GraphicsEngineTester\GraphicsEngineTester.vcxproj", "{9BA73B0F-7D37-40C6-8DE5-E6C98BE42DCA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FCCCCA2E-2F0D-4CC1-A624-9F528EC3882A} = {FCCCCA2E-2F0D-4CC1-A624-9F528EC3882A}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

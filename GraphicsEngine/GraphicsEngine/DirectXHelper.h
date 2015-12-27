@@ -6,6 +6,7 @@ namespace DX
 	{
 		if (FAILED(hr))
 		{
+			throw GraphicsEngine::DirectXException(hr);
 		}
 	}
 }

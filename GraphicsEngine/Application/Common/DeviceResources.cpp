@@ -6,6 +6,7 @@
 
 using namespace D2D1;
 using namespace DirectX;
+using namespace GraphicsEngine;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Display;

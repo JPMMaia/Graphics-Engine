@@ -6,6 +6,7 @@
 #include <rapidxml/rapidxml_print.hpp>
 #include <rapidxml/rapidxml_utils.hpp>
 
+using namespace GraphicsEngine;
 using namespace std;
 using namespace rapidxml;
 using namespace Microsoft::WRL;

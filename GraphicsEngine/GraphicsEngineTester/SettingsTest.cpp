@@ -4,6 +4,7 @@
 #include <SettingsManager.h>
 #include <Helpers.h>
 
+using namespace GraphicsEngine;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace rapidxml;
 using namespace std;

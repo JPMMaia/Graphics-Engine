@@ -2,31 +2,40 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="SettingsManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXException.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsManager.cpp">
+      <Filter>Source\Settings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SettingsManager.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXHelper.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Helpers.h">
-      <Filter>Source</Filter>
+      <Filter>Source\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="DirectXException.h">
-      <Filter>Source</Filter>
+      <Filter>Source\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXHelper.h">
+      <Filter>Source\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsManager.h">
+      <Filter>Source\Settings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
       <UniqueIdentifier>{c97a4458-e76c-4b24-a363-ebd1c781a698}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Helpers">
+      <UniqueIdentifier>{2236eb52-cb50-402c-8955-6bb2e392bb50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Settings">
+      <UniqueIdentifier>{6e2d9f50-9148-4d3b-bd70-5524a66cd147}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Scenes">
+      <UniqueIdentifier>{75086546-8f7e-4e9c-8dbd-a8b5ed8875f0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

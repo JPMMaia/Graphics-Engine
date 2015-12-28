@@ -14,6 +14,15 @@
     <ClCompile Include="PixelShader.cpp">
       <Filter>Source\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="LightEffect.cpp">
+      <Filter>Source\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source\Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -56,6 +65,21 @@
     <ClInclude Include="Shaders\SpotLight.h">
       <Filter>Source\Lights</Filter>
     </ClInclude>
+    <ClInclude Include="LightEffect.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\Material.h">
+      <Filter>Source\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Source\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Source\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexTypes.h">
+      <Filter>Source\Models</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -84,6 +108,18 @@
     </Filter>
     <Filter Include="Shaders\Material">
       <UniqueIdentifier>{145404ea-7f1a-4932-95d0-797852bb5bd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Effects">
+      <UniqueIdentifier>{9d6b6638-fcb7-4457-a09f-394948e3ed32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Material">
+      <UniqueIdentifier>{7b47e3f4-1d3f-4e97-8eee-b947062d4eb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Models">
+      <UniqueIdentifier>{7e6a325e-7676-4be5-952d-6d9d3ccb03c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Scenes">
+      <UniqueIdentifier>{e286572e-231d-4891-b817-62ef058c5cf0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

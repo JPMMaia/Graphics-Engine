@@ -161,7 +161,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DirectXException.cpp" />
+    <ClCompile Include="LightEffect.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="PixelShader.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SettingsManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -176,14 +179,19 @@
     <ClInclude Include="DirectXHelper.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="LightEffect.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="PixelShader.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="SettingsManager.h" />
     <ClInclude Include="Shaders\DirectionalLight.h" />
+    <ClInclude Include="Shaders\Material.h" />
     <ClInclude Include="Shaders\PointLight.h" />
     <ClInclude Include="Shaders\SpotLight.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexShader.h" />
+    <ClInclude Include="VertexTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\LightPixelShader.hlsl">

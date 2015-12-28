@@ -3,18 +3,18 @@
 
 using namespace GraphicsEngine;
 
-ConstantBuffer::ConstantBuffer()
+ConstantBuffer::ConstantBuffer() :
+	m_bufferSize(0)
 {
 }
 
-ConstantBuffer::ConstantBuffer(ID3D11Device* d3dDevice, uint32_t bufferSize, D3D11_USAGE usage) :
-	m_constantBuffer(d3dDevice, bufferSize, D3D11_BIND_CONSTANT_BUFFER, usage)
+ConstantBuffer::ConstantBuffer(ID3D11Device* d3dDevice, uint32_t bufferSize, D3D11_USAGE usage, uint32_t cpuAccessFlags) :
+	m_constantBuffer(d3dDevice, bufferSize, D3D11_BIND_CONSTANT_BUFFER, usage, cpuAccessFlags),
+	m_bufferSize(bufferSize)
 {
 }
-
-void ConstantBuffer::Initialize(ID3D11Device* d3dDevice, uint32_t bufferSize, D3D11_USAGE usage)
+ConstantBuffer::~ConstantBuffer()
 {
-	m_constantBuffer.Initialize(d3dDevice, bufferSize, D3D11_BIND_CONSTANT_BUFFER, usage);
 }
 
 void ConstantBuffer::Reset()
@@ -44,4 +44,25 @@ void ConstantBuffer::PSSet(ID3D11DeviceContext1* d3dDeviceContext, uint32_t slot
 		nullptr,
 		nullptr
 		);
+}
+
+ID3D11Buffer* ConstantBuffer::Get() const
+{
+	return m_constantBuffer.Get();
+}
+
+ID3D11Buffer** ConstantBuffer::GetAddressOf()
+{
+	return m_constantBuffer.GetAddressOf();
+}
+
+uint32_t ConstantBuffer::GetBufferSize() const
+{
+	return m_bufferSize;
+}
+
+void ConstantBuffer::Initialize(ID3D11Device* d3dDevice, uint32_t bufferSize, D3D11_USAGE usage, uint32_t cpuAccessFlags)
+{
+	m_constantBuffer.Initialize(d3dDevice, bufferSize, D3D11_BIND_CONSTANT_BUFFER, usage, cpuAccessFlags);
+	m_bufferSize = bufferSize;
 }

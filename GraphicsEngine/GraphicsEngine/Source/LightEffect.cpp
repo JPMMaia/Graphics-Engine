@@ -41,14 +41,14 @@ void LightEffect::Reset()
 	m_vertexShader.Reset();
 }
 
-void LightEffect::UpdatePerObjectConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerObjectConstantBuffer& buffer)
+void LightEffect::UpdatePerObjectConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerObjectConstantBuffer& buffer) const
 {
-	m_perObjectConstantBuffer.Update(d3dDeviceContext, buffer);
+	m_perObjectConstantBuffer.Update(d3dDeviceContext, &buffer);
 }
 
-void LightEffect::UpdatePerFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerFrameConstantBuffer& buffer)
+void LightEffect::UpdatePerFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerFrameConstantBuffer& buffer) const
 {
-	m_perFrameConstantBuffer.Update(d3dDeviceContext, buffer);
+	m_perFrameConstantBuffer.Update(d3dDeviceContext, &buffer);
 }
 
 void LightEffect::Set(ID3D11DeviceContext1* d3dDeviceContext)

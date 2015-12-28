@@ -4,7 +4,7 @@
 #include "PixelShader.h"
 #include "DirectXMath.h"
 #include "Material.h"
-#include "ConstantBuffer.h"
+#include "DynamicConstantBuffer.h"
 #include "DirectionalLight.h"
 
 namespace GraphicsEngine
@@ -33,15 +33,15 @@ namespace GraphicsEngine
 		void Initialize(ID3D11Device* d3dDevice);
 		void Reset();
 
-		void UpdatePerObjectConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerObjectConstantBuffer& buffer);
-		void UpdatePerFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerFrameConstantBuffer& buffer);
+		void UpdatePerObjectConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerObjectConstantBuffer& buffer) const;
+		void UpdatePerFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerFrameConstantBuffer& buffer) const;
 
 		void Set(ID3D11DeviceContext1* d3dDeviceContext);
 
 	private:
 		VertexShader m_vertexShader;
 		PixelShader m_pixelShader;
-		ConstantBuffer m_perObjectConstantBuffer;
-		ConstantBuffer m_perFrameConstantBuffer;
+		DynamicConstantBuffer m_perObjectConstantBuffer;
+		DynamicConstantBuffer m_perFrameConstantBuffer;
 	};
 }

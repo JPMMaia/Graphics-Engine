@@ -8,33 +8,26 @@ namespace GraphicsEngine
 	{
 	public:
 		ConstantBuffer();
-		ConstantBuffer(ID3D11Device* d3dDevice, uint32_t bufferSize, D3D11_USAGE usage = D3D11_USAGE_DEFAULT);
+		ConstantBuffer(ID3D11Device* d3dDevice, uint32_t bufferSize, D3D11_USAGE usage, uint32_t cpuAccessFlags);
+		virtual ~ConstantBuffer();
 
-		void Initialize(ID3D11Device* d3dDevice, uint32_t bufferSize, D3D11_USAGE usage = D3D11_USAGE_DEFAULT);
+		virtual void Initialize(ID3D11Device* d3dDevice, uint32_t bufferSize) = 0;
 		void Reset();
 
-		template<class BufferType>
-		void Update(ID3D11DeviceContext1* d3dDeviceContext, const BufferType& constantBufferData);
+		virtual void Update(ID3D11DeviceContext1* d3dDeviceContext, const void* constantBufferData) const = 0;
 
 		void VSSet(ID3D11DeviceContext1* d3dDeviceContext, uint32_t slot);
 		void PSSet(ID3D11DeviceContext1* d3dDeviceContext, uint32_t slot);
 
+		ID3D11Buffer* Get() const;
+		ID3D11Buffer** GetAddressOf();
+		uint32_t GetBufferSize() const;
+
+	protected:
+		void Initialize(ID3D11Device* d3dDevice, uint32_t bufferSize, D3D11_USAGE usage, uint32_t cpuAccessFlags);
+
 	private:
 		Buffer m_constantBuffer;
+		uint32_t m_bufferSize;
 	};
-
-	template <class BufferType>
-	void ConstantBuffer::Update(ID3D11DeviceContext1* d3dDeviceContext, const BufferType& constantBufferData)
-	{
-		// Prepare the constant buffer to send it to the graphics device:
-		d3dDeviceContext->UpdateSubresource1(
-			m_constantBuffer.Get(),
-			0,
-			nullptr,
-			&constantBufferData,
-			0,
-			0,
-			0
-			);
-	}
 }

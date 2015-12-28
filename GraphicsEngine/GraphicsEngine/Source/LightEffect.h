@@ -3,9 +3,9 @@
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "DirectXMath.h"
-#include "Shaders/Material.h"
+#include "Material.h"
 #include "ConstantBuffer.h"
-#include "Shaders/DirectionalLight.h"
+#include "DirectionalLight.h"
 
 namespace GraphicsEngine
 {

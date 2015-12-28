@@ -76,6 +76,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)Libraries;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <SourcePath>$(VC_SourcePath)Source;</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -160,64 +161,59 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DirectXException.cpp" />
-    <ClCompile Include="LightEffect.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="PixelShader.cpp" />
-    <ClCompile Include="RasterizerState.cpp" />
-    <ClCompile Include="RasterizerStateBuilder.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="SettingsManager.cpp" />
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="Source\DirectXException.cpp" />
+    <ClCompile Include="Source\LightEffect.cpp" />
+    <ClCompile Include="Source\Mesh.cpp" />
+    <ClCompile Include="Source\PixelShader.cpp" />
+    <ClCompile Include="Source\RasterizerState.cpp" />
+    <ClCompile Include="Source\RasterizerStateBuilder.cpp" />
+    <ClCompile Include="Source\Scene.cpp" />
+    <ClCompile Include="Source\SettingsManager.cpp" />
+    <ClCompile Include="Source\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="VertexShader.cpp" />
+    <ClCompile Include="Source\VertexShader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Buffer.h" />
-    <ClInclude Include="ConstantBuffer.h" />
-    <ClInclude Include="DirectXException.h" />
-    <ClInclude Include="DirectXHelper.h" />
-    <ClInclude Include="Helpers.h" />
-    <ClInclude Include="IndexBuffer.h" />
-    <ClInclude Include="LightEffect.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="PixelShader.h" />
-    <ClInclude Include="RasterizerState.h" />
-    <ClInclude Include="RasterizerStateBuilder.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="SettingsManager.h" />
-    <ClInclude Include="Shaders\DirectionalLight.h" />
-    <ClInclude Include="Shaders\Material.h" />
-    <ClInclude Include="Shaders\PointLight.h" />
-    <ClInclude Include="Shaders\SpotLight.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="VertexBuffer.h" />
-    <ClInclude Include="VertexShader.h" />
-    <ClInclude Include="VertexTypes.h" />
+    <ClInclude Include="Source\Buffer.h" />
+    <ClInclude Include="Source\ConstantBuffer.h" />
+    <ClInclude Include="Source\DirectionalLight.h" />
+    <ClInclude Include="Source\DirectXException.h" />
+    <ClInclude Include="Source\DirectXHelper.h" />
+    <ClInclude Include="Source\Helpers.h" />
+    <ClInclude Include="Source\IndexBuffer.h" />
+    <ClInclude Include="Source\LightEffect.h" />
+    <ClInclude Include="Source\Material.h" />
+    <ClInclude Include="Source\Mesh.h" />
+    <ClInclude Include="Source\PixelShader.h" />
+    <ClInclude Include="Source\PointLight.h" />
+    <ClInclude Include="Source\RasterizerState.h" />
+    <ClInclude Include="Source\RasterizerStateBuilder.h" />
+    <ClInclude Include="Source\Scene.h" />
+    <ClInclude Include="Source\SettingsManager.h" />
+    <ClInclude Include="Source\SpotLight.h" />
+    <ClInclude Include="Source\stdafx.h" />
+    <ClInclude Include="Source\VertexBuffer.h" />
+    <ClInclude Include="Source\VertexShader.h" />
+    <ClInclude Include="Source\VertexTypes.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\LightPixelShader.hlsl">
+    <None Include="Source\Shaders\Common\DirectionalLight.hlsli" />
+    <None Include="Source\Shaders\Common\Material.hlsli" />
+    <None Include="Source\Shaders\Common\PointLight.hlsli" />
+    <None Include="Source\Shaders\Common\SpotLight.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Source\Shaders\LightPixelShader.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Debug\Application\AppX\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="Shaders\LightVertexShader.hlsl">
+    <FxCompile Include="Source\Shaders\LightVertexShader.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Debug\Application\AppX\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shaders\Common\DirectionalLight.hlsli" />
-    <None Include="Shaders\Common\Material.hlsli" />
-    <None Include="Shaders\Common\PointLight.hlsli" />
-    <None Include="Shaders\Common\SpotLight.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

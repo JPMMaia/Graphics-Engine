@@ -1,97 +1,97 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="DirectXException.cpp">
-      <Filter>Source\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="SettingsManager.cpp">
-      <Filter>Source\Settings</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexShader.cpp">
-      <Filter>Source\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="PixelShader.cpp">
-      <Filter>Source\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="LightEffect.cpp">
+    <ClCompile Include="Source\LightEffect.cpp">
       <Filter>Source\Effects</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
+    <ClCompile Include="Source\DirectXException.cpp">
+      <Filter>Source\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mesh.cpp">
       <Filter>Source\Models</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
+    <ClCompile Include="Source\RasterizerState.cpp">
+      <Filter>Source\Rasterizer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RasterizerStateBuilder.cpp">
+      <Filter>Source\Rasterizer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene.cpp">
       <Filter>Source\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="RasterizerState.cpp">
-      <Filter>Source\Rasterizer</Filter>
+    <ClCompile Include="Source\SettingsManager.cpp">
+      <Filter>Source\Settings</Filter>
     </ClCompile>
-    <ClCompile Include="RasterizerStateBuilder.cpp">
-      <Filter>Source\Rasterizer</Filter>
+    <ClCompile Include="Source\PixelShader.cpp">
+      <Filter>Source\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="Source\VertexShader.cpp">
+      <Filter>Source\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Helpers.h">
-      <Filter>Source\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXException.h">
-      <Filter>Source\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXHelper.h">
-      <Filter>Source\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="SettingsManager.h">
-      <Filter>Source\Settings</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
+    <ClInclude Include="Source\Buffer.h">
       <Filter>Source\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="IndexBuffer.h">
+    <ClInclude Include="Source\ConstantBuffer.h">
       <Filter>Source\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="Buffer.h">
+    <ClInclude Include="Source\IndexBuffer.h">
       <Filter>Source\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="VertexShader.h">
-      <Filter>Source\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="PixelShader.h">
-      <Filter>Source\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="ConstantBuffer.h">
+    <ClInclude Include="Source\VertexBuffer.h">
       <Filter>Source\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\PointLight.h">
-      <Filter>Source\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="Shaders\DirectionalLight.h">
-      <Filter>Source\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="Shaders\SpotLight.h">
-      <Filter>Source\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="LightEffect.h">
+    <ClInclude Include="Source\LightEffect.h">
       <Filter>Source\Effects</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\Material.h">
+    <ClInclude Include="Source\DirectXException.h">
+      <Filter>Source\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DirectXHelper.h">
+      <Filter>Source\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Helpers.h">
+      <Filter>Source\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DirectionalLight.h">
+      <Filter>Source\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PointLight.h">
+      <Filter>Source\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SpotLight.h">
+      <Filter>Source\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Material.h">
       <Filter>Source\Material</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
+    <ClInclude Include="Source\VertexTypes.h">
       <Filter>Source\Models</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
+    <ClInclude Include="Source\Mesh.h">
+      <Filter>Source\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RasterizerState.h">
+      <Filter>Source\Rasterizer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RasterizerStateBuilder.h">
+      <Filter>Source\Rasterizer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene.h">
       <Filter>Source\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="VertexTypes.h">
-      <Filter>Source\Models</Filter>
+    <ClInclude Include="Source\SettingsManager.h">
+      <Filter>Source\Settings</Filter>
     </ClInclude>
-    <ClInclude Include="RasterizerState.h">
-      <Filter>Source\Rasterizer</Filter>
+    <ClInclude Include="Source\PixelShader.h">
+      <Filter>Source\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="RasterizerStateBuilder.h">
-      <Filter>Source\Rasterizer</Filter>
+    <ClInclude Include="Source\VertexShader.h">
+      <Filter>Source\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="Source\stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -138,25 +138,25 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\LightVertexShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Shaders\LightPixelShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shaders\Common\DirectionalLight.hlsli">
-      <Filter>Shaders\Lights</Filter>
-    </None>
-    <None Include="Shaders\Common\PointLight.hlsli">
-      <Filter>Shaders\Lights</Filter>
-    </None>
-    <None Include="Shaders\Common\SpotLight.hlsli">
-      <Filter>Shaders\Lights</Filter>
-    </None>
-    <None Include="Shaders\Common\Material.hlsli">
+    <None Include="Source\Shaders\Common\Material.hlsli">
       <Filter>Shaders\Material</Filter>
     </None>
+    <None Include="Source\Shaders\Common\DirectionalLight.hlsli">
+      <Filter>Shaders\Lights</Filter>
+    </None>
+    <None Include="Source\Shaders\Common\PointLight.hlsli">
+      <Filter>Shaders\Lights</Filter>
+    </None>
+    <None Include="Source\Shaders\Common\SpotLight.hlsli">
+      <Filter>Shaders\Lights</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Source\Shaders\LightPixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\LightVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

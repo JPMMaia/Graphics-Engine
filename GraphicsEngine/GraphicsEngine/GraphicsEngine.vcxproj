@@ -164,6 +164,8 @@
     <ClCompile Include="LightEffect.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="PixelShader.cpp" />
+    <ClCompile Include="RasterizerState.cpp" />
+    <ClCompile Include="RasterizerStateBuilder.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SettingsManager.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -182,6 +184,8 @@
     <ClInclude Include="LightEffect.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="PixelShader.h" />
+    <ClInclude Include="RasterizerState.h" />
+    <ClInclude Include="RasterizerStateBuilder.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SettingsManager.h" />
     <ClInclude Include="Shaders\DirectionalLight.h" />
@@ -199,12 +203,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Debug\Application\AppX\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shaders\LightVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Debug\Application\AppX\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

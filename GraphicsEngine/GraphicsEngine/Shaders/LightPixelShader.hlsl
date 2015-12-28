@@ -41,5 +41,5 @@ float4 main(VertexOutput input) : SV_TARGET
 	float4 color = ambient + diffuse + float4(specular, 0.0f);
 	color.a = g_material.Diffuse.a;
 
-	return color;
+	return diffuse;
 }

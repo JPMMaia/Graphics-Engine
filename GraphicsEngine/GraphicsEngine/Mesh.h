@@ -13,7 +13,8 @@ namespace GraphicsEngine
 		Mesh(ID3D11Device* d3dDevice, const std::vector<VertexType>& vertices, const std::vector<IndexType>& indices, D3D11_PRIMITIVE_TOPOLOGY primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		
 		void Initialize(ID3D11Device* d3dDevice, const std::vector<VertexType>& vertices, const std::vector<IndexType>& indices, D3D11_PRIMITIVE_TOPOLOGY primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		
+		void Shutdown();
+
 		void Draw(ID3D11DeviceContext* d3dDeviceContext);
 
 	private:
@@ -53,6 +54,14 @@ namespace GraphicsEngine
 
 		// Set primitive topology:
 		m_primitiveTopology = primitiveTopology;
+	}
+
+	template <class VertexType, class IndexType>
+	void Mesh<VertexType, IndexType>::Shutdown()
+	{
+		m_indexCount = 0;
+		m_indexBuffer.Shutdown();
+		m_vertexBuffer.Shutdown();
 	}
 
 	template <class VertexType, class IndexType>

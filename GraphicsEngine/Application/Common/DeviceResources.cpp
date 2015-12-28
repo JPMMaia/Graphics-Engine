@@ -3,6 +3,7 @@
 #include "DirectXHelper.h"
 
 #include <SettingsManager.h>
+#include <RasterizerStateBuilder.h>
 
 using namespace D2D1;
 using namespace DirectX;

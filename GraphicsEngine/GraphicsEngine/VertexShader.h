@@ -8,7 +8,7 @@ namespace GraphicsEngine
 		VertexShader();
 		VertexShader(ID3D11Device* d3dDevice, const std::wstring& filename, const std::vector<D3D11_INPUT_ELEMENT_DESC>& vertexDesc);
 
-		bool Initialize(ID3D11Device* d3dDevice, const std::wstring& filename, const std::vector<D3D11_INPUT_ELEMENT_DESC>& vertexDesc);
+		void Initialize(ID3D11Device* d3dDevice, const std::wstring& filename, const std::vector<D3D11_INPUT_ELEMENT_DESC>& vertexDesc);
 		void Shutdown();
 
 		void Set(ID3D11DeviceContext* d3dDeviceContext) const;

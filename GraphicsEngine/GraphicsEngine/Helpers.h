@@ -31,12 +31,14 @@ namespace GraphicsEngine
 			return converter.to_bytes(wstr);
 		}
 
-		inline bool ReadData(const std::wstring& filename, std::vector<char>& buffer)
+		inline void ReadData(const std::wstring& filename, std::vector<char>& buffer)
 		{
 			using namespace std;
 
 			// Open file for reading in binary mode, and seek to the end of file immediately:
 			ifstream file(filename, ios::in | ios::binary | ios::ate);
+			if (!file.good())
+				throw runtime_error("Couldn't open file " + Helpers::WStringToString(filename));
 
 			// Get size of file and seek to the begin of file:
 			auto size = file.tellg();
@@ -46,9 +48,7 @@ namespace GraphicsEngine
 			buffer.resize(static_cast<uint32_t>(size));
 			file.read(buffer.data(), size);
 			if (!file.good())
-				return false;
-
-			return true;
+				throw runtime_error("Error while reading file " + Helpers::WStringToString(filename));
 		}
 
 		template<typename FunctionType, typename... ArgumentsType>

@@ -19,6 +19,7 @@ namespace GraphicsEngine
 			DirectX::XMFLOAT4X4 WorldViewProjectionMatrix;
 			Material Material;
 			DirectX::XMFLOAT3 EyePositionW;
+			float Pad;
 		};
 		struct PerFrameConstantBuffer
 		{
@@ -29,7 +30,7 @@ namespace GraphicsEngine
 		LightEffect();
 		LightEffect(ID3D11Device* d3dDevice);
 		
-		bool Initialize(ID3D11Device* d3dDevice);
+		void Initialize(ID3D11Device* d3dDevice);
 		void Shutdown();
 
 		void UpdatePerObjectConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerObjectConstantBuffer& buffer);

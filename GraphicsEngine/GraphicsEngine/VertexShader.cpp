@@ -13,12 +13,11 @@ VertexShader::VertexShader(ID3D11Device* d3dDevice, const std::wstring& filename
 	Initialize(d3dDevice, filename, vertexDesc);
 }
 
-bool VertexShader::Initialize(ID3D11Device* d3dDevice, const std::wstring& filename, const vector<D3D11_INPUT_ELEMENT_DESC>& vertexDesc)
+void VertexShader::Initialize(ID3D11Device* d3dDevice, const std::wstring& filename, const vector<D3D11_INPUT_ELEMENT_DESC>& vertexDesc)
 {
 	// Read data from vertex shader file:
 	vector<char> fileData;
-	if (!Helpers::ReadData(filename, fileData))
-		return false;
+	Helpers::ReadData(filename, fileData);
 
 	// Create vertex shader:
 	DX::ThrowIfFailed(
@@ -40,8 +39,6 @@ bool VertexShader::Initialize(ID3D11Device* d3dDevice, const std::wstring& filen
 			m_inputLayout.GetAddressOf()
 			)
 		);
-
-	return true;
 }
 
 void VertexShader::Shutdown()

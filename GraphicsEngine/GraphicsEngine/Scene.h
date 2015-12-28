@@ -3,6 +3,7 @@
 #include "LightEffect.h"
 #include "Mesh.h"
 #include "VertexTypes.h"
+#include "RasterizerState.h"
 
 namespace GraphicsEngine
 {
@@ -10,6 +11,7 @@ namespace GraphicsEngine
 	{
 	public:
 		void Initialize(ID3D11Device* d3dDevice);
+		void Shutdown();
 
 		void Render(ID3D11DeviceContext1* d3dDeviceContext);
 
@@ -27,5 +29,7 @@ namespace GraphicsEngine
 		DirectX::XMFLOAT4X4 m_modelMatrix;
 		DirectX::XMFLOAT4X4 m_viewMatrix;
 		DirectX::XMFLOAT4X4 m_projectionMatrix;
+
+		RasterizerState m_rasterizerState;
 	};
 }

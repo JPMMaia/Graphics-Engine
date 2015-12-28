@@ -23,6 +23,12 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="RasterizerState.cpp">
+      <Filter>Source\Rasterizer</Filter>
+    </ClCompile>
+    <ClCompile Include="RasterizerStateBuilder.cpp">
+      <Filter>Source\Rasterizer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -80,6 +86,12 @@
     <ClInclude Include="VertexTypes.h">
       <Filter>Source\Models</Filter>
     </ClInclude>
+    <ClInclude Include="RasterizerState.h">
+      <Filter>Source\Rasterizer</Filter>
+    </ClInclude>
+    <ClInclude Include="RasterizerStateBuilder.h">
+      <Filter>Source\Rasterizer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -120,6 +132,9 @@
     </Filter>
     <Filter Include="Source\Scenes">
       <UniqueIdentifier>{e286572e-231d-4891-b817-62ef058c5cf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Rasterizer">
+      <UniqueIdentifier>{6ab0daa5-44b0-428b-85ad-ec2c8f08aecd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

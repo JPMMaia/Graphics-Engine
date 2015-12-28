@@ -36,21 +36,15 @@ namespace Application
 		// Cached pointer to device resources.
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
 
-		// Direct3D resources for cube geometry.
-		GraphicsEngine::VertexBuffer<VertexPositionColor>					m_vertexBuffer;
-		GraphicsEngine::IndexBuffer<uint16_t>								m_indexBuffer;
-		GraphicsEngine::VertexShader										m_vertexShader;
-		GraphicsEngine::PixelShader											m_pixelShader;
-		GraphicsEngine::ConstantBuffer<ModelViewProjectionConstantBuffer>	m_constantBuffer;
-
 		// System resources for cube geometry.
 		ModelViewProjectionConstantBuffer	m_constantBufferData;
-		uint32	m_indexCount;
 
 		// Variables used with the rendering loop.
 		bool	m_loadingComplete;
 		float	m_degreesPerSecond;
 		bool	m_tracking;
+
+		GraphicsEngine::Scene m_scene;
 	};
 }
 

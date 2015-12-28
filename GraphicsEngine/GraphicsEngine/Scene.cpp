@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "Scene.h"
 
+#include "RasterizerStateBuilder.h"
+
 using namespace DirectX;
 using namespace GraphicsEngine;
 using namespace std;
@@ -12,7 +14,7 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(-1.0f, -1.0f, -1.0f) },
 		{ XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT3(-1.0f, -1.0f, 1.0f) },
 		{ XMFLOAT3(-0.5f, 0.5f, -0.5f), XMFLOAT3(-1.0f, 1.0f, -1.0f) },
-		{ XMFLOAT3(-0.5f, 0.5f, 0.5f),XMFLOAT3(-1.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f, 0.5f, 0.5f), XMFLOAT3(-1.0f, 1.0f, 1.0f) },
 
 		{ XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT3(1.0f, -1.0f, -1.0f) },
 		{ XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT3(1.0f, -1.0f, 1.0f) },
@@ -21,26 +23,27 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 	};
 	static const vector<uint32_t> indices =
 	{
-		0, 1, 2,
-		1, 3, 2,
+		0, 2, 1,
+		1, 2, 3,
 
-		0, 4, 1,
-		4, 5, 1,
+		0, 1, 4,
+		4, 1, 5,
 
-		0, 2, 4,
-		2, 6, 4,
+		0, 4, 2,
+		2, 4, 6,
 
-		4, 6, 5,
-		6, 7, 5,
+		4, 5, 6,
+		6, 5, 7,
 
-		2, 3, 6,
-		3, 7, 6,
+		2, 6, 3,
+		3, 6, 7,
 
-		1, 5, 3,
-		5, 7, 3,
+		1, 3, 5,
+		5, 3, 7,
 	};
 
 	m_lightEffect.Initialize(d3dDevice);
+
 	m_cubeMesh.Initialize(d3dDevice, cubeVertices, indices);
 	
 	m_frameBuffer.DirectionalLight =
@@ -49,8 +52,10 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
 		XMFLOAT3(0.8f, 0.8f, 0.8f),
 		1.0f,
-		XMFLOAT3(1.0f, -1.0f, 1.0f)
+		XMFLOAT3(1.0f, -1.0f, 0.0f)
 	};
+
+	m_cubeBuffer = {};
 
 	// Set material:
 	m_cubeBuffer.Material =
@@ -62,10 +67,22 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 	};
 
 	m_cubeBuffer.EyePositionW = XMFLOAT3(0.0f, 0.7f, 1.5f);
+
+	RasterizerStateBuilder rasterizerStateBuilder;
+	rasterizerStateBuilder.Create(d3dDevice, m_rasterizerState);
+}
+
+void Scene::Shutdown()
+{
+	m_rasterizerState.Reset();
+	m_cubeMesh.Shutdown();
+	m_lightEffect.Shutdown();
 }
 
 void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 {
+	m_rasterizerState.Set(d3dDeviceContext);
+
 	m_lightEffect.Set(d3dDeviceContext);
 
 	m_lightEffect.UpdatePerFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);
@@ -75,11 +92,11 @@ void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 	auto projectionMatrix = XMLoadFloat4x4(&m_projectionMatrix);
 
 	// Store world matrix:
-	XMStoreFloat4x4(&m_cubeBuffer.WorldMatrix, XMMatrixTranspose(XMLoadFloat4x4(&m_modelMatrix)));
+	XMStoreFloat4x4(&m_cubeBuffer.WorldMatrix, XMMatrixTranspose(modelMatrix));
 
 	// Store world inverse transpose matrix:
 	auto determinant = XMMatrixDeterminant(modelMatrix);
-	XMStoreFloat4x4(&m_cubeBuffer.WorldInverseTransposeMatrix, XMMatrixTranspose(XMMatrixInverse(&determinant, modelMatrix)));
+	XMStoreFloat4x4(&m_cubeBuffer.WorldInverseTransposeMatrix, XMMatrixInverse(&determinant, modelMatrix));
 
 	// Store world view projection matrix:
 	auto modelViewMatrix = XMMatrixMultiply(modelMatrix, viewMatrix);

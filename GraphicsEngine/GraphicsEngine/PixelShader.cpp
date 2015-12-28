@@ -12,12 +12,11 @@ PixelShader::PixelShader(ID3D11Device* d3dDevice, const std::wstring& filename)
 	Initialize(d3dDevice, filename);
 }
 
-bool PixelShader::Initialize(ID3D11Device* d3dDevice, const std::wstring& filename)
+void PixelShader::Initialize(ID3D11Device* d3dDevice, const std::wstring& filename)
 {
 	// Read data from pixel shader file:
 	vector<char> fileData;
-	if (!Helpers::ReadData(filename, fileData))
-		return false;
+	Helpers::ReadData(filename, fileData);
 
 	// Create pixel shader:
 	DX::ThrowIfFailed(
@@ -28,8 +27,6 @@ bool PixelShader::Initialize(ID3D11Device* d3dDevice, const std::wstring& filena
 			m_pixelShader.GetAddressOf()
 			)
 		);
-
-	return true;
 }
 
 void PixelShader::Shutdown()

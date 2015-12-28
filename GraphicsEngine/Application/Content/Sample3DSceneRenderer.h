@@ -9,6 +9,7 @@
 #include <VertexShader.h>
 #include <PixelShader.h>
 #include <ConstantBuffer.h>
+#include <Scene.h>
 
 namespace Application
 {

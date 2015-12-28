@@ -134,7 +134,7 @@ void Sample3DSceneRenderer::Render()
 	m_vertexShader.Set(context);
 
 	// Send the constant buffer to the graphics device.
-	m_constantBuffer.VSSet(context);
+	m_constantBuffer.VSSet(context, 0);
 
 	// Attach our pixel shader.
 	m_pixelShader.Set(context);

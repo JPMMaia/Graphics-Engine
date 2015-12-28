@@ -47,6 +47,15 @@
     <ClInclude Include="ConstantBuffer.h">
       <Filter>Source\Buffers</Filter>
     </ClInclude>
+    <ClInclude Include="Shaders\PointLight.h">
+      <Filter>Source\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\DirectionalLight.h">
+      <Filter>Source\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\SpotLight.h">
+      <Filter>Source\Lights</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -67,5 +76,36 @@
     <Filter Include="Source\Shaders">
       <UniqueIdentifier>{d35b6e1d-1e97-4572-8c00-1384832b7941}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Lights">
+      <UniqueIdentifier>{a4b144c7-f5b9-4720-b8d8-1c0e57582bb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Lights">
+      <UniqueIdentifier>{1cb86f9a-392c-4cb7-ae44-932d68c97b36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Material">
+      <UniqueIdentifier>{145404ea-7f1a-4932-95d0-797852bb5bd3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\LightVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\LightPixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\Common\DirectionalLight.hlsli">
+      <Filter>Shaders\Lights</Filter>
+    </None>
+    <None Include="Shaders\Common\PointLight.hlsli">
+      <Filter>Shaders\Lights</Filter>
+    </None>
+    <None Include="Shaders\Common\SpotLight.hlsli">
+      <Filter>Shaders\Lights</Filter>
+    </None>
+    <None Include="Shaders\Common\Material.hlsli">
+      <Filter>Shaders\Material</Filter>
+    </None>
   </ItemGroup>
 </Project>

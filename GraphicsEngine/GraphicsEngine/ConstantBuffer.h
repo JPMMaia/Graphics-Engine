@@ -21,7 +21,7 @@ namespace GraphicsEngine
 
 		void Update(ID3D11DeviceContext1* d3dDeviceContext, const BufferType& constantBufferData);
 
-		void VSSet(ID3D11DeviceContext1* d3dDeviceContext);
+		void VSSet(ID3D11DeviceContext1* d3dDeviceContext, uint32_t slot);
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> m_constantBuffer;
@@ -76,11 +76,11 @@ namespace GraphicsEngine
 	}
 
 	template <class BufferType>
-	void ConstantBuffer<BufferType>::VSSet(ID3D11DeviceContext1* d3dDeviceContext)
+	void ConstantBuffer<BufferType>::VSSet(ID3D11DeviceContext1* d3dDeviceContext, uint32_t slot)
 	{
 		// Send the constant buffer to the graphics device:
 		d3dDeviceContext->VSSetConstantBuffers1(
-			0,
+			slot,
 			1,
 			m_constantBuffer.GetAddressOf(),
 			nullptr,

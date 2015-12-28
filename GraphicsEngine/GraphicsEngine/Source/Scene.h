@@ -11,7 +11,7 @@ namespace GraphicsEngine
 	{
 	public:
 		void Initialize(ID3D11Device* d3dDevice);
-		void Shutdown();
+		void Reset();
 
 		void Render(ID3D11DeviceContext1* d3dDeviceContext);
 

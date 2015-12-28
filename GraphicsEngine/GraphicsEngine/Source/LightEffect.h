@@ -31,7 +31,7 @@ namespace GraphicsEngine
 		LightEffect(ID3D11Device* d3dDevice);
 		
 		void Initialize(ID3D11Device* d3dDevice);
-		void Shutdown();
+		void Reset();
 
 		void UpdatePerObjectConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerObjectConstantBuffer& buffer);
 		void UpdatePerFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerFrameConstantBuffer& buffer);
@@ -41,7 +41,7 @@ namespace GraphicsEngine
 	private:
 		VertexShader m_vertexShader;
 		PixelShader m_pixelShader;
-		ConstantBuffer<PerObjectConstantBuffer> m_perObjectConstantBuffer;
-		ConstantBuffer<PerFrameConstantBuffer> m_perFrameConstantBuffer;
+		ConstantBuffer m_perObjectConstantBuffer;
+		ConstantBuffer m_perFrameConstantBuffer;
 	};
 }

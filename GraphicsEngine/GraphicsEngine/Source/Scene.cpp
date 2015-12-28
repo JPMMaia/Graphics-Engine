@@ -72,11 +72,11 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 	rasterizerStateBuilder.Create(d3dDevice, m_rasterizerState);
 }
 
-void Scene::Shutdown()
+void Scene::Reset()
 {
 	m_rasterizerState.Reset();
-	m_cubeMesh.Shutdown();
-	m_lightEffect.Shutdown();
+	m_cubeMesh.Reset();
+	m_lightEffect.Reset();
 }
 
 void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)

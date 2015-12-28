@@ -29,6 +29,18 @@
       <Filter>Source\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="Source\stdafx.cpp" />
+    <ClCompile Include="Source\Buffer.cpp">
+      <Filter>Source\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IndexBuffer.cpp">
+      <Filter>Source\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\VertexBuffer.cpp">
+      <Filter>Source\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ConstantBuffer.cpp">
+      <Filter>Source\Buffers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Buffer.h">

@@ -138,5 +138,5 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 void Sample3DSceneRenderer::ReleaseDeviceDependentResources()
 {
 	m_loadingComplete = false;
-	m_scene.Shutdown();
+	m_scene.Reset();
 }

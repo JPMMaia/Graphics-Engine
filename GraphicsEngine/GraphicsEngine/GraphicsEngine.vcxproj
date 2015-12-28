@@ -161,7 +161,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Buffer.cpp" />
+    <ClCompile Include="Source\ConstantBuffer.cpp" />
     <ClCompile Include="Source\DirectXException.cpp" />
+    <ClCompile Include="Source\IndexBuffer.cpp" />
     <ClCompile Include="Source\LightEffect.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\PixelShader.cpp" />
@@ -172,6 +175,7 @@
     <ClCompile Include="Source\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\VertexBuffer.cpp" />
     <ClCompile Include="Source\VertexShader.cpp" />
   </ItemGroup>
   <ItemGroup>

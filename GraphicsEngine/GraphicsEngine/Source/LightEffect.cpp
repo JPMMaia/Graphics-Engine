@@ -29,16 +29,16 @@ void LightEffect::Initialize(ID3D11Device* d3dDevice)
 	m_pixelShader.Initialize(d3dDevice, L"LightPixelShader.cso");
 
 	// Initialize constant buffers:
-	m_perObjectConstantBuffer.Initialize(d3dDevice);
-	m_perFrameConstantBuffer.Initialize(d3dDevice);
+	m_perObjectConstantBuffer.Initialize(d3dDevice, sizeof(PerObjectConstantBuffer));
+	m_perFrameConstantBuffer.Initialize(d3dDevice, sizeof(PerFrameConstantBuffer));
 }
 
-void LightEffect::Shutdown()
+void LightEffect::Reset()
 {
-	m_perFrameConstantBuffer.Shutdown();
-	m_perObjectConstantBuffer.Shutdown();
-	m_pixelShader.Shutdown();
-	m_vertexShader.Shutdown();
+	m_perFrameConstantBuffer.Reset();
+	m_perObjectConstantBuffer.Reset();
+	m_pixelShader.Reset();
+	m_vertexShader.Reset();
 }
 
 void LightEffect::UpdatePerObjectConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerObjectConstantBuffer& buffer)

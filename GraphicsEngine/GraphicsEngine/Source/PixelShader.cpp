@@ -29,7 +29,7 @@ void PixelShader::Initialize(ID3D11Device* d3dDevice, const std::wstring& filena
 		);
 }
 
-void PixelShader::Shutdown()
+void PixelShader::Reset()
 {
 	m_pixelShader.Reset();
 }

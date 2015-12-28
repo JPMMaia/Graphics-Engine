@@ -41,7 +41,7 @@ void VertexShader::Initialize(ID3D11Device* d3dDevice, const std::wstring& filen
 		);
 }
 
-void VertexShader::Shutdown()
+void VertexShader::Reset()
 {
 	m_inputLayout.Reset();
 	m_vertexShader.Reset();

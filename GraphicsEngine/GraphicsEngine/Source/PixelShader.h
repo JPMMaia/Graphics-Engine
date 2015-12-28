@@ -9,7 +9,7 @@ namespace GraphicsEngine
 		PixelShader(ID3D11Device* d3dDevice, const std::wstring& filename);
 
 		void Initialize(ID3D11Device* d3dDevice, const std::wstring& filename);
-		void Shutdown();
+		void Reset();
 
 		void Set(ID3D11DeviceContext* d3dDeviceContext) const;
 		

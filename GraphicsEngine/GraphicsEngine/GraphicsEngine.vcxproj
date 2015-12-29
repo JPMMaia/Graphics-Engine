@@ -166,6 +166,8 @@
     <ClCompile Include="Source\DefaultConstantBuffer.cpp" />
     <ClCompile Include="Source\DirectXException.cpp" />
     <ClCompile Include="Source\DynamicConstantBuffer.cpp" />
+    <ClCompile Include="Source\Technique.cpp" />
+    <ClCompile Include="Source\EffectManager.cpp" />
     <ClCompile Include="Source\IndexBuffer.cpp" />
     <ClCompile Include="Source\LightEffect.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
@@ -188,6 +190,8 @@
     <ClInclude Include="Source\DirectXException.h" />
     <ClInclude Include="Source\DirectXHelper.h" />
     <ClInclude Include="Source\DynamicConstantBuffer.h" />
+    <ClInclude Include="Source\Technique.h" />
+    <ClInclude Include="Source\EffectManager.h" />
     <ClInclude Include="Source\Helpers.h" />
     <ClInclude Include="Source\IndexBuffer.h" />
     <ClInclude Include="Source\LightEffect.h" />

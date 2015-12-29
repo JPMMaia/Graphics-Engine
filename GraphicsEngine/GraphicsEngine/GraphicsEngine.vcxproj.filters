@@ -47,6 +47,12 @@
     <ClCompile Include="Source\DefaultConstantBuffer.cpp">
       <Filter>Source\Buffers\Constant Buffers</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EffectManager.cpp">
+      <Filter>Source\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Technique.cpp">
+      <Filter>Source\Effects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Buffer.h">
@@ -115,6 +121,12 @@
     </ClInclude>
     <ClInclude Include="Source\DefaultConstantBuffer.h">
       <Filter>Source\Buffers\Constant Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EffectManager.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Technique.h">
+      <Filter>Source\Effects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

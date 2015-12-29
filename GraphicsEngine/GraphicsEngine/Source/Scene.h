@@ -2,7 +2,6 @@
 
 #include "LightEffect.h"
 #include "Mesh.h"
-#include "VertexTypes.h"
 #include "RasterizerState.h"
 
 namespace GraphicsEngine
@@ -21,7 +20,7 @@ namespace GraphicsEngine
 
 	private:
 		LightEffect m_lightEffect;
-		Mesh<VertexPositionNormal> m_cubeMesh;
+		Mesh m_cubeMesh;
 
 		LightEffect::PerFrameConstantBuffer m_frameBuffer;
 		LightEffect::PerObjectConstantBuffer m_cubeBuffer;

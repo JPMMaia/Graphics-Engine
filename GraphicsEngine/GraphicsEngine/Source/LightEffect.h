@@ -6,6 +6,7 @@
 #include "Material.h"
 #include "DynamicConstantBuffer.h"
 #include "DirectionalLight.h"
+#include "Technique.h"
 
 namespace GraphicsEngine
 {
@@ -36,12 +37,13 @@ namespace GraphicsEngine
 		void UpdatePerObjectConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerObjectConstantBuffer& buffer) const;
 		void UpdatePerFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerFrameConstantBuffer& buffer) const;
 
-		void Set(ID3D11DeviceContext1* d3dDeviceContext);
+		void Set(ID3D11DeviceContext1* d3dDeviceContext) const;
 
 	private:
 		VertexShader m_vertexShader;
 		PixelShader m_pixelShader;
 		DynamicConstantBuffer m_perObjectConstantBuffer;
 		DynamicConstantBuffer m_perFrameConstantBuffer;
+		Technique m_lightTechnique;
 	};
 }

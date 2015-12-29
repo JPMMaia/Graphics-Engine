@@ -16,7 +16,7 @@ LightEffect::LightEffect(ID3D11Device* d3dDevice)
 void LightEffect::Initialize(ID3D11Device* d3dDevice)
 {
 	// Describe the input layout:
-	vector<D3D11_INPUT_ELEMENT_DESC> inputDesc = 
+	static const vector<D3D11_INPUT_ELEMENT_DESC> inputDesc = 
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -31,6 +31,13 @@ void LightEffect::Initialize(ID3D11Device* d3dDevice)
 	// Initialize constant buffers:
 	m_perObjectConstantBuffer.Initialize(d3dDevice, sizeof(PerObjectConstantBuffer));
 	m_perFrameConstantBuffer.Initialize(d3dDevice, sizeof(PerFrameConstantBuffer));
+
+	// Setup light technique:
+	m_lightTechnique.SetVertexShader(&m_vertexShader);
+	m_lightTechnique.SetPixelShader(&m_pixelShader);
+	m_lightTechnique.SetVSConstantBuffer(&m_perObjectConstantBuffer, 0);
+	m_lightTechnique.SetPSConstantBuffer(&m_perObjectConstantBuffer, 0);
+	m_lightTechnique.SetPSConstantBuffer(&m_perFrameConstantBuffer, 1);
 }
 
 void LightEffect::Reset()
@@ -51,16 +58,8 @@ void LightEffect::UpdatePerFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceCo
 	m_perFrameConstantBuffer.Update(d3dDeviceContext, &buffer);
 }
 
-void LightEffect::Set(ID3D11DeviceContext1* d3dDeviceContext)
+void LightEffect::Set(ID3D11DeviceContext1* d3dDeviceContext) const
 {
-	// Set vertex shader:
-	m_vertexShader.Set(d3dDeviceContext);
-
-	// Set constant buffers:
-	m_perObjectConstantBuffer.VSSet(d3dDeviceContext, 0);
-	m_perObjectConstantBuffer.PSSet(d3dDeviceContext, 0);
-	m_perFrameConstantBuffer.PSSet(d3dDeviceContext, 1);
-
-	// Set pixel shader:
-	m_pixelShader.Set(d3dDeviceContext);
+	// Set technique:
+	m_lightTechnique.Set(d3dDeviceContext);
 }

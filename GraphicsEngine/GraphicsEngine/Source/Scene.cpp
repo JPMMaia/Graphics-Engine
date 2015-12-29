@@ -1,7 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Scene.h"
-
-#include "RasterizerStateBuilder.h"
+#include "VertexTypes.h";
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -67,22 +66,16 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 	};
 
 	m_cubeBuffer.EyePositionW = XMFLOAT3(0.0f, 0.7f, 1.5f);
-
-	RasterizerStateBuilder rasterizerStateBuilder;
-	rasterizerStateBuilder.Create(d3dDevice, m_rasterizerState);
 }
 
 void Scene::Reset()
 {
-	m_rasterizerState.Reset();
 	m_cubeMesh.Reset();
 	m_lightEffect.Reset();
 }
 
 void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 {
-	m_rasterizerState.Set(d3dDeviceContext);
-
 	m_lightEffect.Set(d3dDeviceContext);
 
 	m_lightEffect.UpdatePerFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);

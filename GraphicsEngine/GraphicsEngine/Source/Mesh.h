@@ -17,7 +17,7 @@ namespace GraphicsEngine
 		void Initialize(ID3D11Device* d3dDevice, const std::vector<VertexType>& vertices, const std::vector<IndexType>& indices, D3D11_PRIMITIVE_TOPOLOGY primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		void Reset();
 
-		void Draw(ID3D11DeviceContext* d3dDeviceContext);
+		void Draw(ID3D11DeviceContext* d3dDeviceContext) const;
 
 	private:
 		VertexBuffer m_vertexBuffer;

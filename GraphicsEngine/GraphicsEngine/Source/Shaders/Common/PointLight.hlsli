@@ -1,7 +1,7 @@
 #ifndef _POINT_LIGHT_
 #define _POINT_LIGHT_
 
-#include "Material.hlsli"
+#include "LightHelper.hlsli"
 
 struct PointLight
 {

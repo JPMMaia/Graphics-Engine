@@ -19,7 +19,7 @@ namespace GraphicsEngine
 		void Reset();
 
 		ID3D11Buffer* Get() const;
-		ID3D11Buffer** GetAddressOf();
+		ID3D11Buffer* const* GetAddressOf() const;
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> m_buffer;

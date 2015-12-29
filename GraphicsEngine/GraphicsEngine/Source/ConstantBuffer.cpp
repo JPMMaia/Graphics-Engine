@@ -22,7 +22,7 @@ void ConstantBuffer::Reset()
 	m_constantBuffer.Reset();
 }
 
-void ConstantBuffer::VSSet(ID3D11DeviceContext1* d3dDeviceContext, uint32_t slot)
+void ConstantBuffer::VSSet(ID3D11DeviceContext1* d3dDeviceContext, uint32_t slot) const
 {
 	// Send the constant buffer to the graphics device:
 	d3dDeviceContext->VSSetConstantBuffers1(
@@ -34,7 +34,7 @@ void ConstantBuffer::VSSet(ID3D11DeviceContext1* d3dDeviceContext, uint32_t slot
 		);
 }
 
-void ConstantBuffer::PSSet(ID3D11DeviceContext1* d3dDeviceContext, uint32_t slot)
+void ConstantBuffer::PSSet(ID3D11DeviceContext1* d3dDeviceContext, uint32_t slot) const
 {
 	// Send the constant buffer to the graphics device:
 	d3dDeviceContext->PSSetConstantBuffers1(
@@ -51,7 +51,7 @@ ID3D11Buffer* ConstantBuffer::Get() const
 	return m_constantBuffer.Get();
 }
 
-ID3D11Buffer** ConstantBuffer::GetAddressOf()
+ID3D11Buffer* const* ConstantBuffer::GetAddressOf() const
 {
 	return m_constantBuffer.GetAddressOf();
 }

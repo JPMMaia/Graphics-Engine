@@ -16,7 +16,7 @@ void Mesh::Reset()
 	m_vertexBuffer.Reset();
 }
 
-void Mesh::Draw(ID3D11DeviceContext* d3dDeviceContext)
+void Mesh::Draw(ID3D11DeviceContext* d3dDeviceContext) const
 {
 	// Set vertex and index buffers:
 	m_vertexBuffer.Set(d3dDeviceContext);

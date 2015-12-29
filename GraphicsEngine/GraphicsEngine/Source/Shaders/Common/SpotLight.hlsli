@@ -1,6 +1,8 @@
 #ifndef _SPOT_LIGHT_
 #define _SPOT_LIGHT_
 
+#include "LightHelper.hlsli"
+
 struct SpotLight
 {
 	float4 Ambient;

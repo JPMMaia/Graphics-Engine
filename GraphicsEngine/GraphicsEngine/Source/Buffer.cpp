@@ -38,7 +38,7 @@ ID3D11Buffer* Buffer::Get() const
 	return m_buffer.Get();
 }
 
-ID3D11Buffer** Buffer::GetAddressOf()
+ID3D11Buffer* const* Buffer::GetAddressOf() const
 {
 	return m_buffer.GetAddressOf();
 }

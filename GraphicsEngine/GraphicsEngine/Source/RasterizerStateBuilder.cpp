@@ -33,7 +33,7 @@ void RasterizerStateBuilder::SetFrontCounterClockwise(bool frontCounterClockwise
 
 void RasterizerStateBuilder::Create(ID3D11Device* d3dDevice, RasterizerState& rasterizerState) const
 {
-	Create(d3dDevice, rasterizerState.GetAddressOf());
+	rasterizerState.Initialize(d3dDevice, m_rasterizerDesc);
 }
 
 void RasterizerStateBuilder::Create(ID3D11Device* d3dDevice, ID3D11RasterizerState** rasterizerState) const

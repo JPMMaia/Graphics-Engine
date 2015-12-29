@@ -7,6 +7,18 @@ RasterizerState::RasterizerState()
 {
 }
 
+RasterizerState::RasterizerState(ID3D11Device* d3dDevice, const D3D11_RASTERIZER_DESC& rasterizerDesc)
+{
+	Initialize(d3dDevice, rasterizerDesc);
+}
+
+void RasterizerState::Initialize(ID3D11Device* d3dDevice, const D3D11_RASTERIZER_DESC& rasterizerDesc)
+{
+	DX::ThrowIfFailed(
+		d3dDevice->CreateRasterizerState(&rasterizerDesc, m_rasterizerState.GetAddressOf())
+		);
+}
+
 void RasterizerState::Reset()
 {
 	m_rasterizerState.Reset();
@@ -23,7 +35,7 @@ ID3D11RasterizerState* RasterizerState::Get() const
 	return m_rasterizerState.Get();
 }
 
-ID3D11RasterizerState** RasterizerState::GetAddressOf()
+ID3D11RasterizerState* const* RasterizerState::GetAddressOf() const
 {
 	return m_rasterizerState.GetAddressOf();
 }

@@ -16,7 +16,7 @@ namespace GraphicsEngine
 		void Initialize(ID3D11Device* d3dDevice, const std::vector<VertexType>& vertices);
 		void Reset();
 
-		void Set(ID3D11DeviceContext* d3dDeviceContext);
+		void Set(ID3D11DeviceContext* d3dDeviceContext) const;
 
 	private:
 		Buffer m_vertexBuffer;

@@ -7,6 +7,7 @@
 #include "DynamicConstantBuffer.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 #include "Technique.h"
 
 namespace GraphicsEngine
@@ -27,6 +28,7 @@ namespace GraphicsEngine
 		{
 			DirectionalLight DirectionalLight;
 			PointLight PointLight;
+			SpotLight SpotLight;
 		};
 
 	public:

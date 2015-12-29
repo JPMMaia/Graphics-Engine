@@ -47,18 +47,29 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 
 	m_frameBuffer.DirectionalLight =
 	{
-		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
-		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		XMFLOAT4(0.1f, 0.0f, 0.0f, 1.0f),
+		XMFLOAT4(0.3f, 0.0f, 0.0f, 1.0f),
+		XMFLOAT4(0.3f, 0.0f, 0.0f, 1.0f),
 		XMFLOAT3(1.0f, -1.0f, 0.0f)
 	};
 	m_frameBuffer.PointLight =
 	{
-		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
-		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		XMFLOAT4(0.0f, 0.1f, 0.0f, 1.0f),
+		XMFLOAT4(0.0f, 0.8f, 0.0f, 1.0f),
+		XMFLOAT4(0.0f, 0.8f, 0.0f, 1.0f),
+		XMFLOAT3(0.0f, 1.0f, 0.0f),
+		5.0f,
+		XMFLOAT3(1.0f, 1.0f, 1.0f)
+	};
+	m_frameBuffer.SpotLight =
+	{
+		XMFLOAT4(0.0f, 0.0f, 0.1f, 1.0f),
+		XMFLOAT4(0.0f, 0.0f, 0.8f, 1.0f),
+		XMFLOAT4(0.0f, 0.0f, 0.8f, 1.0f),
 		XMFLOAT3(1.0f, 1.0f, 1.0f),
 		5.0f,
+		XMFLOAT3(0.0f, -1.0f, 0.0f),
+		2.0f,
 		XMFLOAT3(1.0f, 1.0f, 1.0f)
 	};
 

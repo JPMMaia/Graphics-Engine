@@ -1,6 +1,7 @@
 #include <Common/Material.hlsli>
 #include <Common/DirectionalLight.hlsli>
 #include <Common/PointLight.hlsli>
+#include <Common/SpotLight.hlsli>
 
 cbuffer PerObjectConstantBuffer : register(b0)
 {
@@ -15,6 +16,7 @@ cbuffer PerFrameConstantBuffer : register(b1)
 {
 	DirectionalLight g_directionalLight;
 	PointLight g_pointLight;
+	SpotLight g_spotLight;
 };
 
 struct VertexOutput
@@ -48,6 +50,12 @@ float4 main(VertexOutput input) : SV_TARGET
 
 	// Compute point light:
 	ComputePointLight(g_pointLight, g_material, input.PositionW, input.NormalW, toEyeW, lightAmbient, lightDiffuse, lightSpecular);
+	ambient += lightAmbient;
+	diffuse += lightDiffuse;
+	specular += lightSpecular;
+
+	// Comput spot light:
+	ComputeSpotLight(g_spotLight, g_material, input.PositionW, input.NormalW, toEyeW, lightAmbient, lightDiffuse, lightSpecular);
 	ambient += lightAmbient;
 	diffuse += lightDiffuse;
 	specular += lightSpecular;

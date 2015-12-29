@@ -41,7 +41,7 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 		5, 3, 7,
 	};
 
-	m_lightEffect.Initialize(d3dDevice);
+	m_effectManager.Initialize(d3dDevice);
 
 	m_cubeMesh.Initialize(d3dDevice, cubeVertices, indices);
 	
@@ -71,14 +71,16 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 void Scene::Reset()
 {
 	m_cubeMesh.Reset();
-	m_lightEffect.Reset();
+	m_effectManager.Reset();
 }
 
 void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 {
-	m_lightEffect.Set(d3dDeviceContext);
+	auto lightEffect = m_effectManager.GetLightEffect();
 
-	m_lightEffect.UpdatePerFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);
+	lightEffect.Set(d3dDeviceContext);
+
+	lightEffect.UpdatePerFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);
 
 	auto modelMatrix = XMLoadFloat4x4(&m_modelMatrix);
 	auto viewMatrix = XMLoadFloat4x4(&m_viewMatrix);
@@ -96,7 +98,7 @@ void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 	auto modelViewProjectionMatrix = XMMatrixMultiply(modelViewMatrix, projectionMatrix);
 	XMStoreFloat4x4(&m_cubeBuffer.WorldViewProjectionMatrix, XMMatrixTranspose(modelViewProjectionMatrix));
 
-	m_lightEffect.UpdatePerObjectConstantBuffer(d3dDeviceContext, m_cubeBuffer);
+	lightEffect.UpdatePerObjectConstantBuffer(d3dDeviceContext, m_cubeBuffer);
 	m_cubeMesh.Draw(d3dDeviceContext);
 }
 

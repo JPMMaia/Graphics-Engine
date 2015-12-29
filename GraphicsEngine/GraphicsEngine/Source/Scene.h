@@ -1,8 +1,7 @@
 ﻿#pragma once
 
-#include "LightEffect.h"
+#include "EffectManager.h"
 #include "Mesh.h"
-#include "RasterizerState.h"
 
 namespace GraphicsEngine
 {
@@ -19,7 +18,7 @@ namespace GraphicsEngine
 		void SetProjectionMatrix(const DirectX::XMFLOAT4X4& projectionMatrix);
 
 	private:
-		LightEffect m_lightEffect;
+		EffectManager m_effectManager;
 		Mesh m_cubeMesh;
 
 		LightEffect::PerFrameConstantBuffer m_frameBuffer;
@@ -28,7 +27,5 @@ namespace GraphicsEngine
 		DirectX::XMFLOAT4X4 m_modelMatrix;
 		DirectX::XMFLOAT4X4 m_viewMatrix;
 		DirectX::XMFLOAT4X4 m_projectionMatrix;
-
-		RasterizerState m_rasterizerState;
 	};
 }

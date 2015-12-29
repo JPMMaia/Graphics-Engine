@@ -32,29 +32,11 @@ void ComputePointLight(PointLight light, Material material, float3 position, flo
 	// Normalize the light vector:
 	toLightVector /= distance;
 
-	// Calculate ambient term:
-	ambient = material.Ambient * light.Ambient;
+	// Apply the light contribution:
+	ApplyLight(light.Ambient, light.Diffuse, light.Specular, material, normal, toEyeVector, toLightVector, ambient, diffuse, specular);
 
-	// Calculate the diffuse intensity:
-	float diffuseIntensity = dot(toLightVector, normal);
-
-	if (diffuseIntensity > 0.0f)
-	{
-		// Calculate the diffuse term:
-		diffuse = material.Diffuse * diffuseIntensity * light.Diffuse;
-
-		// Calculate the reflection vector:
-		float3 reflectionVector = reflect(-toLightVector, normal);
-
-		// Calculate the specular term:
-		float specularIntensity = pow(max(dot(reflectionVector, toEyeVector), 0.0f), material.Shininess);
-		specular = material.Specular * specularIntensity * light.Specular;
-	}
-
-	// Calculate the attenuation factor:
-	float attenuation = 1.0f / dot(light.Attenuation, float3(1.0f, distance, distance*distance));
-	diffuse *= attenuation;
-	specular *= attenuation;
+	// Apply the attenuation factor:
+	ApplyAttenuation(light.Attenuation, distance, diffuse, specular);
 }
 
 #endif

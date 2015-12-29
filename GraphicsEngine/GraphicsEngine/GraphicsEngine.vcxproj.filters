@@ -189,6 +189,9 @@
     <None Include="Source\Shaders\Common\SpotLight.hlsli">
       <Filter>Shaders\Lights</Filter>
     </None>
+    <None Include="Source\Shaders\Common\LightHelper.hlsli">
+      <Filter>Shaders\Lights</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Shaders\LightPixelShader.hlsl">

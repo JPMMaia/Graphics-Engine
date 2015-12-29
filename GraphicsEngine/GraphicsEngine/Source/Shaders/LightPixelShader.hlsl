@@ -1,5 +1,6 @@
 #include <Common/Material.hlsli>
 #include <Common/DirectionalLight.hlsli>
+#include <Common/PointLight.hlsli>
 
 cbuffer PerObjectConstantBuffer : register(b0)
 {
@@ -13,6 +14,7 @@ cbuffer PerObjectConstantBuffer : register(b0)
 cbuffer PerFrameConstantBuffer : register(b1)
 {
 	DirectionalLight g_directionalLight;
+	PointLight g_pointLight;
 };
 
 struct VertexOutput
@@ -30,16 +32,29 @@ float4 main(VertexOutput input) : SV_TARGET
 	// Calculate the eye vector:
 	float3 toEyeW = normalize(g_EyePositionW - input.PositionW);
 
-	float4 ambient;
-	float4 diffuse;
-	float3 specular;
+	float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float4 specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	float4 lightAmbient;
+	float4 lightDiffuse;
+	float4 lightSpecular;
 
 	// Compute directional light:
-	ComputeDirectionalLight(g_directionalLight, g_material, input.NormalW, toEyeW, ambient, diffuse, specular);
+	ComputeDirectionalLight(g_directionalLight, g_material, input.NormalW, toEyeW, lightAmbient, lightDiffuse, lightSpecular);
+	ambient += lightAmbient;
+	diffuse += lightDiffuse;
+	specular += lightSpecular;
+
+	// Compute point light:
+	ComputePointLight(g_pointLight, g_material, input.PositionW, input.NormalW, toEyeW, lightAmbient, lightDiffuse, lightSpecular);
+	ambient += lightAmbient;
+	diffuse += lightDiffuse;
+	specular += lightSpecular;
 
 	// Add all terms together and take the alpha channel from the material's diffuse term:
-	float4 color = ambient + diffuse + float4(specular, 0.0f);
+	float4 color = ambient + diffuse + specular;
 	color.a = g_material.Diffuse.a;
 
-	return diffuse;
+	return color;
 }

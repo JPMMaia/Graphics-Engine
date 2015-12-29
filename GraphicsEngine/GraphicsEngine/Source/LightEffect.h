@@ -6,6 +6,7 @@
 #include "Material.h"
 #include "DynamicConstantBuffer.h"
 #include "DirectionalLight.h"
+#include "PointLight.h"
 #include "Technique.h"
 
 namespace GraphicsEngine
@@ -25,6 +26,7 @@ namespace GraphicsEngine
 		struct PerFrameConstantBuffer
 		{
 			DirectionalLight DirectionalLight;
+			PointLight PointLight;
 		};
 
 	public:

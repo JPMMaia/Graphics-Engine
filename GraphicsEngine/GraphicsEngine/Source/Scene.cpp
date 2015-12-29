@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Scene.h"
-#include "VertexTypes.h";
+#include "VertexTypes.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -44,14 +44,22 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 	m_effectManager.Initialize(d3dDevice);
 
 	m_cubeMesh.Initialize(d3dDevice, cubeVertices, indices);
-	
+
 	m_frameBuffer.DirectionalLight =
 	{
-		XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f),
+		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
 		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT3(0.8f, 0.8f, 0.8f),
-		1.0f,
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
 		XMFLOAT3(1.0f, -1.0f, 0.0f)
+	};
+	m_frameBuffer.PointLight =
+	{
+		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		XMFLOAT3(1.0f, 1.0f, 1.0f),
+		5.0f,
+		XMFLOAT3(1.0f, 1.0f, 1.0f)
 	};
 
 	m_cubeBuffer = {};
@@ -61,8 +69,8 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 	{
 		XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f),
 		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT3(0.8f, 0.8f, 0.8f),
-		1.0f
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		500.0f
 	};
 
 	m_cubeBuffer.EyePositionW = XMFLOAT3(0.0f, 0.7f, 1.5f);

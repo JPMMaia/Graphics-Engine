@@ -5,8 +5,9 @@ struct Material
 {
 	float4 Ambient;
 	float4 Diffuse;
-	float3 Specular;
+	float4 Specular;
 	float Shininess;
+	float3 Pad;
 };
 
 #endif

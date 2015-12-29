@@ -5,8 +5,7 @@ struct SpotLight
 {
 	float4 Ambient;
 	float4 Diffuse;
-	float3 Specular;
-	float Shininess;
+	float4 Specular;
 	float3 Position;
 	float Range;
 	float3 Direction;

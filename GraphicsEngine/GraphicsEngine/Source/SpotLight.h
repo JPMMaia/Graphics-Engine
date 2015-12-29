@@ -2,16 +2,16 @@
 
 #include <DirectXMath.h>
 
-struct SpotLight 
+struct SpotLight
 {
 	DirectX::XMFLOAT4 Ambient;
-	DirectX::XMFLOAT4 Diffuse; 
+	DirectX::XMFLOAT4 Diffuse;
 	DirectX::XMFLOAT3 Specular;
-	float Shininess;
-	DirectX::XMFLOAT3 Position; 
-	float Range; 
+	float Pad;
+	DirectX::XMFLOAT3 Position;
+	float Range;
 	DirectX::XMFLOAT3 Direction;
 	float Spot;
 	DirectX::XMFLOAT3 Attenuation;
-	float Pad;
+	float Pad2;
 };

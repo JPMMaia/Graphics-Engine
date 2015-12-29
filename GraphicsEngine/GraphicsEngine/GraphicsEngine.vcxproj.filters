@@ -13,9 +13,6 @@
     <ClCompile Include="Source\RasterizerState.cpp">
       <Filter>Source\Rasterizer</Filter>
     </ClCompile>
-    <ClCompile Include="Source\RasterizerStateBuilder.cpp">
-      <Filter>Source\Rasterizer</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Scene.cpp">
       <Filter>Source\Scenes</Filter>
     </ClCompile>
@@ -52,6 +49,12 @@
     </ClCompile>
     <ClCompile Include="Source\Technique.cpp">
       <Filter>Source\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Texture.cpp">
+      <Filter>Source\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SamplerState.cpp">
+      <Filter>Source\Textures</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,9 +100,6 @@
     <ClInclude Include="Source\RasterizerState.h">
       <Filter>Source\Rasterizer</Filter>
     </ClInclude>
-    <ClInclude Include="Source\RasterizerStateBuilder.h">
-      <Filter>Source\Rasterizer</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Scene.h">
       <Filter>Source\Scenes</Filter>
     </ClInclude>
@@ -127,6 +127,18 @@
     </ClInclude>
     <ClInclude Include="Source\Technique.h">
       <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Texture.h">
+      <Filter>Source\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SamplerState.h">
+      <Filter>Source\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SamplerStateDescConstants.h">
+      <Filter>Source\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RasterizerStateDescConstants.h">
+      <Filter>Source\Rasterizer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -174,6 +186,9 @@
     </Filter>
     <Filter Include="Source\Buffers\Constant Buffers">
       <UniqueIdentifier>{e11e265a-208c-4ceb-92ee-b6760ea585e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Textures">
+      <UniqueIdentifier>{53aad11b-83f0-4d5c-913c-3ad3e3735e4c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

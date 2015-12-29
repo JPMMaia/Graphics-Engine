@@ -166,6 +166,7 @@
     <ClCompile Include="Source\DefaultConstantBuffer.cpp" />
     <ClCompile Include="Source\DirectXException.cpp" />
     <ClCompile Include="Source\DynamicConstantBuffer.cpp" />
+    <ClCompile Include="Source\SamplerState.cpp" />
     <ClCompile Include="Source\Technique.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
     <ClCompile Include="Source\IndexBuffer.cpp" />
@@ -173,12 +174,12 @@
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\PixelShader.cpp" />
     <ClCompile Include="Source\RasterizerState.cpp" />
-    <ClCompile Include="Source\RasterizerStateBuilder.cpp" />
     <ClCompile Include="Source\Scene.cpp" />
     <ClCompile Include="Source\SettingsManager.cpp" />
     <ClCompile Include="Source\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Texture.cpp" />
     <ClCompile Include="Source\VertexBuffer.cpp" />
     <ClCompile Include="Source\VertexShader.cpp" />
   </ItemGroup>
@@ -190,6 +191,9 @@
     <ClInclude Include="Source\DirectXException.h" />
     <ClInclude Include="Source\DirectXHelper.h" />
     <ClInclude Include="Source\DynamicConstantBuffer.h" />
+    <ClInclude Include="Source\RasterizerStateDescConstants.h" />
+    <ClInclude Include="Source\SamplerState.h" />
+    <ClInclude Include="Source\SamplerStateDescConstants.h" />
     <ClInclude Include="Source\Technique.h" />
     <ClInclude Include="Source\EffectManager.h" />
     <ClInclude Include="Source\Helpers.h" />
@@ -200,11 +204,11 @@
     <ClInclude Include="Source\PixelShader.h" />
     <ClInclude Include="Source\PointLight.h" />
     <ClInclude Include="Source\RasterizerState.h" />
-    <ClInclude Include="Source\RasterizerStateBuilder.h" />
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\SettingsManager.h" />
     <ClInclude Include="Source\SpotLight.h" />
     <ClInclude Include="Source\stdafx.h" />
+    <ClInclude Include="Source\Texture.h" />
     <ClInclude Include="Source\VertexBuffer.h" />
     <ClInclude Include="Source\VertexShader.h" />
     <ClInclude Include="Source\VertexTypes.h" />

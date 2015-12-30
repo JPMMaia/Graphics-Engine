@@ -13,7 +13,7 @@ namespace GraphicsEngine
 		void Initialize(ID3D11Device* d3dDevice);
 		void Reset();
 
-		const LightEffect& GetLightEffect() const;
+		LightEffect& GetLightEffect();
 
 	private:
 		LightEffect m_lightEffect;

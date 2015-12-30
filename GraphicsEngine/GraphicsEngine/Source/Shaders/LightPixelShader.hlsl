@@ -24,7 +24,13 @@ struct VertexOutput
 	float4 PositionH : SV_POSITION;
 	float3 PositionW : POSITION;
 	float3 NormalW : NORMAL;
+	float2 TextureCoordinate : TEXCOORD0;
 };
+
+#ifdef USE_TEXTURE
+SamplerState g_samplerState : register(s0);
+Texture2D g_texture : register(t0);
+#endif
 
 float4 main(VertexOutput input) : SV_TARGET
 {
@@ -60,9 +66,27 @@ float4 main(VertexOutput input) : SV_TARGET
 	diffuse += lightDiffuse;
 	specular += lightSpecular;
 
-	// Add all terms together and take the alpha channel from the material's diffuse term:
+	
+#ifdef USE_TEXTURE
+
+	// Sample texture:
+	float4 textureColor = g_texture.Sample(g_samplerState, input.TextureCoordinate);
+
+	// Add all terms together:
+	float4 color = textureColor * (ambient + diffuse) + specular;
+
+	// Calculate alpha using the alpha channel from both the texture and the diffuse material:
+	color.a = textureColor.a * g_material.Diffuse.a;
+
+#else
+	
+	// Add all terms together:
 	float4 color = ambient + diffuse + specular;
+
+	// Use the alpha from the diffuse material:
 	color.a = g_material.Diffuse.a;
+
+#endif
 
 	return color;
 }

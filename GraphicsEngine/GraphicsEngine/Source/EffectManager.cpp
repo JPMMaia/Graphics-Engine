@@ -21,7 +21,7 @@ void EffectManager::Reset()
 	m_lightEffect.Reset();
 }
 
-const LightEffect& EffectManager::GetLightEffect() const
+LightEffect& EffectManager::GetLightEffect()
 {
 	return m_lightEffect;
 }

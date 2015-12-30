@@ -38,8 +38,10 @@ namespace GraphicsEngine
 		void Initialize(ID3D11Device* d3dDevice);
 		void Reset();
 
+		void SetTexture(const Texture& texture);
+
 		void UpdatePerObjectConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerObjectConstantBuffer& buffer) const;
-		void UpdatePerFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerFrameConstantBuffer& buffer) const;
+		void UpdatePerFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerFrameConstantBuffer& buffer) const;		
 
 		void Set(ID3D11DeviceContext1* d3dDeviceContext) const;
 
@@ -48,6 +50,7 @@ namespace GraphicsEngine
 		PixelShader m_pixelShader;
 		DynamicConstantBuffer m_perObjectConstantBuffer;
 		DynamicConstantBuffer m_perFrameConstantBuffer;
+		SamplerState m_samplerState;
 		Technique m_lightTechnique;
 	};
 }

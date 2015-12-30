@@ -8,17 +8,17 @@ using namespace std;
 
 void Scene::Initialize(ID3D11Device* d3dDevice)
 {
-	static const vector<VertexPositionNormal> cubeVertices =
+	static const vector<VertexPositionNormalTexture> cubeVertices =
 	{
-		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(-1.0f, -1.0f, -1.0f) },
-		{ XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT3(-1.0f, -1.0f, 1.0f) },
-		{ XMFLOAT3(-0.5f, 0.5f, -0.5f), XMFLOAT3(-1.0f, 1.0f, -1.0f) },
-		{ XMFLOAT3(-0.5f, 0.5f, 0.5f), XMFLOAT3(-1.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f, 0.5f, -0.5f), XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-0.5f, 0.5f, 0.5f), XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
 
-		{ XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT3(1.0f, -1.0f, -1.0f) },
-		{ XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT3(1.0f, -1.0f, 1.0f) },
-		{ XMFLOAT3(0.5f, 0.5f, -0.5f), XMFLOAT3(1.0f, 1.0f, -1.0f) },
-		{ XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(1.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT3(1.0f, -1.0f, -1.0f),  XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f), },
+		{ XMFLOAT3(0.5f, 0.5f, -0.5f), XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
 	};
 	static const vector<uint32_t> indices =
 	{
@@ -43,33 +43,36 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 
 	m_effectManager.Initialize(d3dDevice);
 
+	m_texture.Initialize(d3dDevice, L"Resources/stone01.dds");
+	m_effectManager.GetLightEffect().SetTexture(m_texture);
+
 	m_cubeMesh.Initialize(d3dDevice, cubeVertices, indices);
 
 	m_frameBuffer.DirectionalLight =
 	{
-		XMFLOAT4(0.1f, 0.0f, 0.0f, 1.0f),
-		XMFLOAT4(0.3f, 0.0f, 0.0f, 1.0f),
-		XMFLOAT4(0.3f, 0.0f, 0.0f, 1.0f),
+		XMFLOAT4(0.1f, 0.1f, 0.3f, 1.0f),
+		XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f),
+		XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f),
 		XMFLOAT3(1.0f, -1.0f, 0.0f)
 	};
 	m_frameBuffer.PointLight =
 	{
-		XMFLOAT4(0.0f, 0.1f, 0.0f, 1.0f),
-		XMFLOAT4(0.0f, 0.8f, 0.0f, 1.0f),
-		XMFLOAT4(0.0f, 0.8f, 0.0f, 1.0f),
+		XMFLOAT4(0.1f, 0.1f, 0.8f, 1.0f),
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
 		XMFLOAT3(0.0f, 1.0f, 0.0f),
 		5.0f,
 		XMFLOAT3(1.0f, 1.0f, 1.0f)
 	};
 	m_frameBuffer.SpotLight =
 	{
-		XMFLOAT4(0.0f, 0.0f, 0.1f, 1.0f),
-		XMFLOAT4(0.0f, 0.0f, 0.8f, 1.0f),
-		XMFLOAT4(0.0f, 0.0f, 0.8f, 1.0f),
+		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
 		XMFLOAT3(1.0f, 1.0f, 1.0f),
 		5.0f,
 		XMFLOAT3(0.0f, -1.0f, 0.0f),
-		2.0f,
+		1.0f,
 		XMFLOAT3(1.0f, 1.0f, 1.0f)
 	};
 
@@ -91,6 +94,7 @@ void Scene::Reset()
 {
 	m_cubeMesh.Reset();
 	m_effectManager.Reset();
+	m_texture.Reset();
 }
 
 void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)

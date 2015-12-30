@@ -20,6 +20,7 @@ namespace GraphicsEngine
 	private:
 		EffectManager m_effectManager;
 		Mesh m_cubeMesh;
+		Texture m_texture;
 
 		LightEffect::PerFrameConstantBuffer m_frameBuffer;
 		LightEffect::PerObjectConstantBuffer m_cubeBuffer;

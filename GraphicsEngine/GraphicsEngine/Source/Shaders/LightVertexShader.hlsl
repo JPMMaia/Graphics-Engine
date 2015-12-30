@@ -14,6 +14,7 @@ struct VertexInput
 {
 	float3 PositionL : POSITION;
 	float3 NormalL : NORMAL;
+	float2 TextureCoordinate : TEXCOORD0;
 };
 
 struct VertexOutput
@@ -21,6 +22,7 @@ struct VertexOutput
 	float4 PositionH : SV_POSITION;
 	float3 PositionW : POSITION;
 	float3 NormalW : NORMAL;
+	float2 TextureCoordinate : TEXCOORD0;
 };
 
 VertexOutput main(VertexInput input)
@@ -35,6 +37,9 @@ VertexOutput main(VertexInput input)
 
 	// Transform to homogeneous clip space:
 	output.PositionH = mul(positionL, g_worldViewProjectionMatrix);
+
+	// Output texture coordinate for interpolation:
+	output.TextureCoordinate = input.TextureCoordinate;
 
 	return output;
 }

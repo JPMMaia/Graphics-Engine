@@ -35,9 +35,9 @@ void LightEffect::Initialize(ID3D11Device* d3dDevice)
 	// Setup light technique:
 	m_lightTechnique.SetVertexShader(&m_vertexShader);
 	m_lightTechnique.SetPixelShader(&m_pixelShader);
-	m_lightTechnique.SetVSConstantBuffer(&m_perObjectConstantBuffer, 0);
-	m_lightTechnique.SetPSConstantBuffer(&m_perObjectConstantBuffer, 0);
-	m_lightTechnique.SetPSConstantBuffer(&m_perFrameConstantBuffer, 1);
+	m_lightTechnique.VSSetConstantBuffer(m_perObjectConstantBuffer, 0);
+	m_lightTechnique.PSSetConstantBuffer(m_perObjectConstantBuffer, 0);
+	m_lightTechnique.PSSetConstantBuffer(m_perFrameConstantBuffer, 1);
 }
 
 void LightEffect::Reset()

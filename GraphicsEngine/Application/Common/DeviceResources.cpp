@@ -3,6 +3,7 @@
 #include "DirectXHelper.h"
 
 #include <SettingsManager.h>
+#include <DirectXTex/DDSTextureLoader/DDSTextureLoader.h>
 
 using namespace D2D1;
 using namespace DirectX;

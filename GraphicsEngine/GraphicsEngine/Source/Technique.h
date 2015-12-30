@@ -4,8 +4,9 @@
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "RasterizerState.h"
-
-#include <map>
+#include "SamplerState.h"
+#include "Texture.h"
+#include "TechniqueArrays.h"
 
 namespace GraphicsEngine
 {
@@ -20,18 +21,22 @@ namespace GraphicsEngine
 		void SetPixelShader(const PixelShader* pixelShader);
 		void SetRasterizerState(const RasterizerState* rasterizerState);
 
-		void SetVSConstantBuffer(ConstantBuffer* constantBuffer, uint32_t slot);
-		void SetPSConstantBuffer(ConstantBuffer* constantBuffer, uint32_t slot);
+		void VSSetConstantBuffer(const ConstantBuffer& constantBuffer, uint32_t slot);
+		void PSSetConstantBuffer(const ConstantBuffer& constantBuffer, uint32_t slot);
 
-	private:
-		void SetConstantBuffers(ID3D11DeviceContext1* d3dDeviceContext) const;
+		void VSSetSamplerState(const SamplerState& samplerState, uint32_t slot);
+		void PSSetSamplerState(const SamplerState& samplerState, uint32_t slot);
+
+		void VSSetTexture(const Texture& texture, uint32_t slot);
+		void PSSetTexture(const Texture& texture, uint32_t slot);
 
 	private:
 		const VertexShader* m_vertexShader;
 		const PixelShader* m_pixelShader;
 		const RasterizerState* m_rasterizerState;
 
-		std::map<uint32_t, ConstantBuffer*> m_vertexShaderConstantBuffers;
-		std::map<uint32_t, ConstantBuffer*> m_pixelShaderConstantBuffers;
+		TechniqueArrays<ID3D11Buffer*> m_constantBufferArrays;
+		TechniqueArrays<ID3D11SamplerState*> m_samplerStateArrays;
+		TechniqueArrays<ID3D11ShaderResourceView*> m_textureArrays;
 	};
 }

@@ -30,7 +30,9 @@ void Technique::Set(ID3D11DeviceContext1* d3dDeviceContext) const
 	else
 		d3dDeviceContext->RSSetState(nullptr);
 
-	SetConstantBuffers(d3dDeviceContext);
+	m_samplerStateArrays.Set(d3dDeviceContext);
+	m_constantBufferArrays.Set(d3dDeviceContext);
+	m_textureArrays.Set(d3dDeviceContext);
 }
 
 void Technique::SetVertexShader(const VertexShader* vertexShader)
@@ -47,23 +49,29 @@ void Technique::SetRasterizerState(const RasterizerState* rasterizerState)
 	m_rasterizerState = rasterizerState;
 }
 
-void Technique::SetVSConstantBuffer(ConstantBuffer* constantBuffer, uint32_t slot)
+void Technique::VSSetConstantBuffer(const ConstantBuffer& constantBuffer, uint32_t slot)
 {
-	m_vertexShaderConstantBuffers[slot] = constantBuffer;
+	m_constantBufferArrays.VSSetElement(constantBuffer.Get(), slot);
+}
+void Technique::PSSetConstantBuffer(const ConstantBuffer& constantBuffer, uint32_t slot)
+{
+	m_constantBufferArrays.PSSetElement(constantBuffer.Get(), slot);
 }
 
-void Technique::SetPSConstantBuffer(ConstantBuffer* constantBuffer, uint32_t slot)
+void Technique::VSSetSamplerState(const SamplerState& samplerState, uint32_t slot)
 {
-	m_pixelShaderConstantBuffers[slot] = constantBuffer;
+	m_samplerStateArrays.VSSetElement(samplerState.Get(), slot);
+}
+void Technique::PSSetSamplerState(const SamplerState& samplerState, uint32_t slot)
+{
+	m_samplerStateArrays.PSSetElement(samplerState.Get(), slot);
 }
 
-void Technique::SetConstantBuffers(ID3D11DeviceContext1* d3dDeviceContext) const
+void Technique::VSSetTexture(const Texture& texture, uint32_t slot)
 {
-	// Set vertex shader constant buffers:
-	for(auto element : m_vertexShaderConstantBuffers)
-		element.second->VSSet(d3dDeviceContext, element.first);
-
-	// Set pixel shader constant buffers:
-	for (auto element : m_pixelShaderConstantBuffers)
-		element.second->PSSet(d3dDeviceContext, element.first);
+	m_textureArrays.VSSetElement(texture.Get(), slot);
+}
+void Technique::PSSetTexture(const Texture& texture, uint32_t slot)
+{
+	m_textureArrays.PSSetElement(texture.Get(), slot);
 }

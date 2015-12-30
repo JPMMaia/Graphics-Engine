@@ -161,6 +161,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Source\Buffer.cpp" />
     <ClCompile Include="Source\ConstantBuffer.cpp" />
     <ClCompile Include="Source\DefaultConstantBuffer.cpp" />
@@ -184,6 +187,12 @@
     <ClCompile Include="Source\VertexShader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h" />
+    <ClInclude Include="..\Libraries\rapidxml\rapidxml.hpp" />
+    <ClInclude Include="..\Libraries\rapidxml\rapidxml_iterators.hpp" />
+    <ClInclude Include="..\Libraries\rapidxml\rapidxml_print.hpp" />
+    <ClInclude Include="..\Libraries\rapidxml\rapidxml_utils.hpp" />
+    <ClInclude Include="Source\ResourceArray.h" />
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\ConstantBuffer.h" />
     <ClInclude Include="Source\DefaultConstantBuffer.h" />
@@ -208,12 +217,14 @@
     <ClInclude Include="Source\SettingsManager.h" />
     <ClInclude Include="Source\SpotLight.h" />
     <ClInclude Include="Source\stdafx.h" />
+    <ClInclude Include="Source\TechniqueArrays.h" />
     <ClInclude Include="Source\Texture.h" />
     <ClInclude Include="Source\VertexBuffer.h" />
     <ClInclude Include="Source\VertexShader.h" />
     <ClInclude Include="Source\VertexTypes.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Libraries\rapidxml\manual.html" />
     <None Include="Source\Shaders\Common\DirectionalLight.hlsli" />
     <None Include="Source\Shaders\Common\LightHelper.hlsli" />
     <None Include="Source\Shaders\Common\Material.hlsli" />

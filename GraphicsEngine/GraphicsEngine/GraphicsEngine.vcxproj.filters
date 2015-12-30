@@ -56,6 +56,9 @@
     <ClCompile Include="Source\SamplerState.cpp">
       <Filter>Source\Textures</Filter>
     </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.cpp">
+      <Filter>Libraries\DirectXTex\DDSTextureLoader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Buffer.h">
@@ -140,6 +143,27 @@
     <ClInclude Include="Source\RasterizerStateDescConstants.h">
       <Filter>Source\Rasterizer</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ResourceArray.h">
+      <Filter>Source\Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TechniqueArrays.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
+      <Filter>Libraries\DirectXTex\DDSTextureLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\rapidxml\rapidxml.hpp">
+      <Filter>Libraries\RapidXml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\rapidxml\rapidxml_iterators.hpp">
+      <Filter>Libraries\RapidXml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\rapidxml\rapidxml_print.hpp">
+      <Filter>Libraries\RapidXml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\rapidxml\rapidxml_utils.hpp">
+      <Filter>Libraries\RapidXml</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -190,6 +214,21 @@
     <Filter Include="Source\Textures">
       <UniqueIdentifier>{53aad11b-83f0-4d5c-913c-3ad3e3735e4c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Arrays">
+      <UniqueIdentifier>{b0c19077-ee9b-42aa-9bba-27e9ee91372d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries">
+      <UniqueIdentifier>{5aef05a7-c6cb-4b43-869a-da2aff6daca8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\DirectXTex">
+      <UniqueIdentifier>{936bc6a5-cd6c-49d9-a0dd-0fccb2e3f5de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\DirectXTex\DDSTextureLoader">
+      <UniqueIdentifier>{ff8144a3-ee61-4a84-b83b-191003451ba9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\RapidXml">
+      <UniqueIdentifier>{738acd29-1604-4235-a268-8793ed8b5f54}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shaders\Common\Material.hlsli">
@@ -206,6 +245,9 @@
     </None>
     <None Include="Source\Shaders\Common\LightHelper.hlsli">
       <Filter>Shaders\Lights</Filter>
+    </None>
+    <None Include="..\Libraries\rapidxml\manual.html">
+      <Filter>Libraries\RapidXml</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -59,6 +59,18 @@
     <ClCompile Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.cpp">
       <Filter>Libraries\DirectXTex\DDSTextureLoader</Filter>
     </ClCompile>
+    <ClCompile Include="Source\X3DParser\RapidXMLHelper.cpp">
+      <Filter>Source\X3DParser</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\X3DParser\X3DParser.cpp">
+      <Filter>Source\X3DParser</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\X3DParser\X3DShapeParser.cpp">
+      <Filter>Source\X3DParser</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\X3DParser\ParserException.cpp">
+      <Filter>Source\X3DParser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Buffer.h">
@@ -164,6 +176,18 @@
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_utils.hpp">
       <Filter>Libraries\RapidXml</Filter>
     </ClInclude>
+    <ClInclude Include="Source\X3DParser\RapidXMLHelper.h">
+      <Filter>Source\X3DParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\X3DParser\X3DParser.h">
+      <Filter>Source\X3DParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\X3DParser\X3DShapeParser.h">
+      <Filter>Source\X3DParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\X3DParser\ParserException.h">
+      <Filter>Source\X3DParser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -228,6 +252,9 @@
     </Filter>
     <Filter Include="Libraries\RapidXml">
       <UniqueIdentifier>{738acd29-1604-4235-a268-8793ed8b5f54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\X3DParser">
+      <UniqueIdentifier>{a764deba-5907-4e6f-969b-d6445682689b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

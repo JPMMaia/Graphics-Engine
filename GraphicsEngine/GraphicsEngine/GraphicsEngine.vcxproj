@@ -185,6 +185,10 @@
     <ClCompile Include="Source\Texture.cpp" />
     <ClCompile Include="Source\VertexBuffer.cpp" />
     <ClCompile Include="Source\VertexShader.cpp" />
+    <ClCompile Include="Source\X3DParser\ParserException.cpp" />
+    <ClCompile Include="Source\X3DParser\RapidXMLHelper.cpp" />
+    <ClCompile Include="Source\X3DParser\X3DParser.cpp" />
+    <ClCompile Include="Source\X3DParser\X3DShapeParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h" />
@@ -222,6 +226,10 @@
     <ClInclude Include="Source\VertexBuffer.h" />
     <ClInclude Include="Source\VertexShader.h" />
     <ClInclude Include="Source\VertexTypes.h" />
+    <ClInclude Include="Source\X3DParser\ParserException.h" />
+    <ClInclude Include="Source\X3DParser\RapidXMLHelper.h" />
+    <ClInclude Include="Source\X3DParser\X3DParser.h" />
+    <ClInclude Include="Source\X3DParser\X3DShapeParser.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Libraries\rapidxml\manual.html" />

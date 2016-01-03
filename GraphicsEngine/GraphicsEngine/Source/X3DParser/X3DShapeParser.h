@@ -10,7 +10,7 @@ namespace GraphicsEngine
 	class X3DShapeParserClass
 	{
 	public:
-		struct ImageTextureType
+		struct ImageTexture
 		{
 			std::wstring def;
 			std::wstring url;
@@ -27,13 +27,13 @@ namespace GraphicsEngine
 			float transparency;
 		};
 
-		struct AppearanceType
+		struct Appearance
 		{
-			ImageTextureType imageTexture;
+			ImageTexture imageTexture;
 			MaterialType material;
 		};
 
-		struct IndexedTriangleSetType
+		struct IndexedTriangleSet
 		{
 			bool solid;
 			bool normalPerVertex;
@@ -43,10 +43,10 @@ namespace GraphicsEngine
 			std::list<float> textureCoordinate;
 		};
 
-		struct ShapeType
+		struct Shape
 		{
-			AppearanceType appearance;
-			IndexedTriangleSetType indexedTriangleSet;
+			Appearance appearance;
+			IndexedTriangleSet indexedTriangleSet;
 		};
 
 	public:
@@ -55,18 +55,18 @@ namespace GraphicsEngine
 
 		void Parse(const rapidxml::xml_node<wchar_t>* shapeNode);
 
-		const ShapeType& GetShape() const;
+		const Shape& GetShape() const;
 
 	private:
-		static void ParseAppearance(const rapidxml::xml_node<wchar_t>* appearanceNode, AppearanceType& appearance);
-		static void ParseImageTexture(const rapidxml::xml_node<wchar_t>* imageTextureNode, ImageTextureType& imageTexture);
+		static void ParseAppearance(const rapidxml::xml_node<wchar_t>* appearanceNode, Appearance& appearance);
+		static void ParseImageTexture(const rapidxml::xml_node<wchar_t>* imageTextureNode, ImageTexture& imageTexture);
 		static void ParseMaterial(const rapidxml::xml_node<wchar_t>* materialNode, MaterialType& material);
-		static void ParseIndexedTriangleSet(const rapidxml::xml_node<wchar_t>* indexedTriangleSetNode, IndexedTriangleSetType& indexedTriangleSet);
+		static void ParseIndexedTriangleSet(const rapidxml::xml_node<wchar_t>* indexedTriangleSetNode, IndexedTriangleSet& indexedTriangleSet);
 		static void ParseCoordinate(const rapidxml::xml_node<wchar_t>* coordinateNode, std::list<float>& coordinate);
 		static void ParseNormal(const rapidxml::xml_node<wchar_t>* normalNode, std::list<float>& normal);
 		static void ParseTextureCoordinate(const rapidxml::xml_node<wchar_t>* textureCoordinateNode, std::list<float>& textureCoordinate);
 
 	private:
-		ShapeType m_shape;
+		Shape m_shape;
 	};
 }

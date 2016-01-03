@@ -46,7 +46,8 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 	m_texture.Initialize(d3dDevice, L"Resources/stone01.dds");
 	m_effectManager.GetLightEffect().SetTexture(m_texture);
 
-	m_cubeMesh.Initialize(d3dDevice, cubeVertices, indices);
+	Subset subset = { 0, indices.size(), m_cubeBuffer.Material };
+	m_cubeMesh.Initialize(d3dDevice, cubeVertices, indices, { subset });
 
 	m_frameBuffer.DirectionalLight =
 	{

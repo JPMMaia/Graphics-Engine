@@ -25,7 +25,7 @@ void X3DParserClass::Parse(const std::wstring& filename)
 	m_ShapeParser.Parse(m_Document.first_node(L"Shape"));
 }
 
-const X3DShapeParserClass::ShapeType& X3DParserClass::GetShape() const
+const X3DShapeParserClass::Shape& X3DParserClass::GetShape() const
 {
 	return m_ShapeParser.GetShape();
 }

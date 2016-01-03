@@ -14,7 +14,7 @@ namespace GraphicsEngine
 
 		void Parse(const std::wstring& filename);
 
-		const X3DShapeParserClass::ShapeType& GetShape() const;
+		const X3DShapeParserClass::Shape& GetShape() const;
 
 	private:
 		rapidxml::xml_document<wchar_t> m_Document;

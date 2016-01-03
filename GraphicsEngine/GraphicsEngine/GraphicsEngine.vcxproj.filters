@@ -188,6 +188,9 @@
     <ClInclude Include="Source\X3DParser\ParserException.h">
       <Filter>Source\X3DParser</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Subset.h">
+      <Filter>Source\Models</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">

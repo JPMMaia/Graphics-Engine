@@ -26,12 +26,12 @@ void X3DShapeParserClass::Parse(const xml_node<wchar_t>* shapeNode)
 	ParseIndexedTriangleSet(shapeNode->first_node(L"IndexedTriangleSet"), m_shape.indexedTriangleSet);
 }
 
-const X3DShapeParserClass::ShapeType& X3DShapeParserClass::GetShape() const
+const X3DShapeParserClass::Shape& X3DShapeParserClass::GetShape() const
 {
 	return m_shape;
 }
 
-void X3DShapeParserClass::ParseAppearance(const xml_node<wchar_t>* appearanceNode, X3DShapeParserClass::AppearanceType& appearance)
+void X3DShapeParserClass::ParseAppearance(const xml_node<wchar_t>* appearanceNode, X3DShapeParserClass::Appearance& appearance)
 {
 	assert(appearanceNode != nullptr);
 
@@ -41,7 +41,7 @@ void X3DShapeParserClass::ParseAppearance(const xml_node<wchar_t>* appearanceNod
 	// Initialize Material:
 	ParseMaterial(appearanceNode->first_node(L"Material"), appearance.material);
 }
-void X3DShapeParserClass::ParseImageTexture(const xml_node<wchar_t>* imageTextureNode, ImageTextureType& imageTexture)
+void X3DShapeParserClass::ParseImageTexture(const xml_node<wchar_t>* imageTextureNode, ImageTexture& imageTexture)
 {
 	assert(imageTextureNode != nullptr);
 
@@ -60,7 +60,7 @@ void X3DShapeParserClass::ParseMaterial(const xml_node<wchar_t>* materialNode, X
 	RapidXMLHelperClass::GetFirstAttribute(materialNode, L"shininess", material.shininess);
 	RapidXMLHelperClass::GetFirstAttribute(materialNode, L"transparency", material.transparency);
 }
-void X3DShapeParserClass::ParseIndexedTriangleSet(const xml_node<wchar_t>* indexedTriangleSetNode, X3DShapeParserClass::IndexedTriangleSetType& indexedTriangleSet)
+void X3DShapeParserClass::ParseIndexedTriangleSet(const xml_node<wchar_t>* indexedTriangleSetNode, X3DShapeParserClass::IndexedTriangleSet& indexedTriangleSet)
 {
 	assert(indexedTriangleSetNode != nullptr);
 

@@ -11,6 +11,7 @@ Mesh::Mesh() :
 
 void Mesh::Reset()
 {
+	m_subsets.clear();
 	m_indexCount = 0;
 	m_indexBuffer.Reset();
 	m_vertexBuffer.Reset();

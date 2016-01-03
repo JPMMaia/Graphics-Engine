@@ -207,6 +207,7 @@
     <ClInclude Include="Source\RasterizerStateDescConstants.h" />
     <ClInclude Include="Source\SamplerState.h" />
     <ClInclude Include="Source\SamplerStateDescConstants.h" />
+    <ClInclude Include="Source\Subset.h" />
     <ClInclude Include="Source\Technique.h" />
     <ClInclude Include="Source\EffectManager.h" />
     <ClInclude Include="Source\Helpers.h" />

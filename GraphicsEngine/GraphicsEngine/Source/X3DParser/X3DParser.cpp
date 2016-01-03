@@ -1,8 +1,8 @@
-#include "../stdafx.h"
 #include <rapidxml/rapidxml.hpp>
 
 #include "X3DParser.h"
 #include <rapidxml/rapidxml_utils.hpp>
+#include <Source/Helpers.h>
 
 using namespace GraphicsEngine;
 using namespace std;

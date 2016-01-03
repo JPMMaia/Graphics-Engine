@@ -170,6 +170,7 @@
     <ClCompile Include="Source\DirectXException.cpp" />
     <ClCompile Include="Source\DynamicConstantBuffer.cpp" />
     <ClCompile Include="Source\LightModel.cpp" />
+    <ClCompile Include="Source\LightModelInstance.cpp" />
     <ClCompile Include="Source\SamplerState.cpp" />
     <ClCompile Include="Source\Technique.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
@@ -186,10 +187,18 @@
     <ClCompile Include="Source\Texture.cpp" />
     <ClCompile Include="Source\VertexBuffer.cpp" />
     <ClCompile Include="Source\VertexShader.cpp" />
-    <ClCompile Include="Source\X3DParser\ParserException.cpp" />
-    <ClCompile Include="Source\X3DParser\RapidXMLHelper.cpp" />
-    <ClCompile Include="Source\X3DParser\X3DParser.cpp" />
-    <ClCompile Include="Source\X3DParser\X3DShapeParser.cpp" />
+    <ClCompile Include="Source\X3DParser\ParserException.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Source\X3DParser\RapidXMLHelper.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Source\X3DParser\X3DParser.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Source\X3DParser\X3DShapeParser.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h" />
@@ -197,7 +206,9 @@
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_iterators.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_print.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_utils.hpp" />
+    <ClInclude Include="Source\TextureAppearance.h" />
     <ClInclude Include="Source\LightModel.h" />
+    <ClInclude Include="Source\LightModelInstance.h" />
     <ClInclude Include="Source\Model.h" />
     <ClInclude Include="Source\ResourceArray.h" />
     <ClInclude Include="Source\Buffer.h" />

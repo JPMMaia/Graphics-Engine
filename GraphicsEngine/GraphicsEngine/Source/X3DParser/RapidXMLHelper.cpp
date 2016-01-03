@@ -1,4 +1,3 @@
-#include "../stdafx.h"
 #include "RapidXMLHelper.h"
 
 #include "ParserException.h"
@@ -10,7 +9,7 @@ using namespace std;
 
 void RapidXMLHelperClass::GetFirstAttribute(const xml_node<wchar_t>* node, const wstring& name, wstring& value, size_t nameSize, bool caseSensitive)
 {
-	const xml_attribute<WCHAR>* attribute = node->first_attribute(name.data(), nameSize, caseSensitive);
+	const xml_attribute<wchar_t>* attribute = node->first_attribute(name.data(), nameSize, caseSensitive);
 	if (!attribute)
 		throw ParserException::BuildAttributeNotFoundException(name);
 

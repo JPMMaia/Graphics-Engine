@@ -72,7 +72,10 @@
       <Filter>Source\X3DParser</Filter>
     </ClCompile>
     <ClCompile Include="Source\LightModel.cpp">
-      <Filter>Source\Models</Filter>
+      <Filter>Source\Models\LightModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LightModelInstance.cpp">
+      <Filter>Source\Models\LightModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -198,7 +201,13 @@
       <Filter>Source\Models</Filter>
     </ClInclude>
     <ClInclude Include="Source\LightModel.h">
-      <Filter>Source\Models</Filter>
+      <Filter>Source\Models\LightModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LightModelInstance.h">
+      <Filter>Source\Models\LightModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TextureAppearance.h">
+      <Filter>Source\Material</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -267,6 +276,9 @@
     </Filter>
     <Filter Include="Source\X3DParser">
       <UniqueIdentifier>{a764deba-5907-4e6f-969b-d6445682689b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Models\LightModel">
+      <UniqueIdentifier>{3dab89ab-cc3d-4125-84d3-70aeb6fc2647}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

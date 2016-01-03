@@ -36,7 +36,7 @@ namespace GraphicsEngine
 	template <typename VertexType, typename IndexType>
 	void Model<VertexType, IndexType>::Initialize(ID3D11Device* d3dDevice, const std::vector<VertexType>& vertices, const std::vector<IndexType>& indices, const std::vector<Subset>& subsets)
 	{
-		Mesh(d3dDevice, vertices, indices);
+		Mesh = GraphicsEngine::Mesh(d3dDevice, vertices, indices);
 		Vertices.assign(vertices.cbegin(), vertices.cend());
 		Indices.assign(indices.cbegin(), indices.cend());
 		Subsets.assign(subsets.cbegin(), subsets.cend());

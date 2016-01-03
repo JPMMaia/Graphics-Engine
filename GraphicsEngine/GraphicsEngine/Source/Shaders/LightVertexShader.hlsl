@@ -6,8 +6,6 @@ cbuffer PerObjectConstantBuffer : register(b0)
 	float4x4 g_worldMatrix;
 	float4x4 g_worldInverseTransposeMatrix;
 	float4x4 g_worldViewProjectionMatrix;
-	Material g_material;
-	float3 g_EyePositionW;
 };
 
 struct VertexInput

@@ -32,7 +32,6 @@ void Technique::Set(ID3D11DeviceContext1* d3dDeviceContext) const
 
 	m_samplerStateArrays.Set(d3dDeviceContext);
 	m_constantBufferArrays.Set(d3dDeviceContext);
-	m_textureArrays.Set(d3dDeviceContext);
 }
 
 void Technique::SetVertexShader(const VertexShader* vertexShader)
@@ -65,13 +64,4 @@ void Technique::VSSetSamplerState(const SamplerState& samplerState, uint32_t slo
 void Technique::PSSetSamplerState(const SamplerState& samplerState, uint32_t slot)
 {
 	m_samplerStateArrays.PSSetElement(samplerState.Get(), slot);
-}
-
-void Technique::VSSetTexture(const Texture& texture, uint32_t slot)
-{
-	m_textureArrays.VSSetElement(texture.Get(), slot);
-}
-void Technique::PSSetTexture(const Texture& texture, uint32_t slot)
-{
-	m_textureArrays.PSSetElement(texture.Get(), slot);
 }

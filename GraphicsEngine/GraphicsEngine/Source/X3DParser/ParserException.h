@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <exception>
+#include <string>
+
 namespace GraphicsEngine
 {
 	class ParserException : std::runtime_error

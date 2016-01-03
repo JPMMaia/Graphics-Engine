@@ -33,6 +33,7 @@ void LightEffect::Initialize(ID3D11Device* d3dDevice)
 
 	// Initialize constant buffers:
 	m_perObjectConstantBuffer.Initialize(d3dDevice, sizeof(PerObjectConstantBuffer));
+	m_perSubsetConstantBuffer.Initialize(d3dDevice, sizeof(PerSubsetConstantBuffer));
 	m_perFrameConstantBuffer.Initialize(d3dDevice, sizeof(PerFrameConstantBuffer));
 
 	// Initialize the sampler state:
@@ -42,8 +43,8 @@ void LightEffect::Initialize(ID3D11Device* d3dDevice)
 	m_lightTechnique.SetVertexShader(&m_vertexShader);
 	m_lightTechnique.SetPixelShader(&m_pixelShader);
 	m_lightTechnique.VSSetConstantBuffer(m_perObjectConstantBuffer, 0);
-	m_lightTechnique.PSSetConstantBuffer(m_perObjectConstantBuffer, 0);
-	m_lightTechnique.PSSetConstantBuffer(m_perFrameConstantBuffer, 1);
+	m_lightTechnique.PSSetConstantBuffer(m_perSubsetConstantBuffer, 1);
+	m_lightTechnique.PSSetConstantBuffer(m_perFrameConstantBuffer, 2);
 	m_lightTechnique.PSSetSamplerState(m_samplerState, 0);
 }
 
@@ -51,20 +52,27 @@ void LightEffect::Reset()
 {
 	m_samplerState.Reset();
 	m_perFrameConstantBuffer.Reset();
+	m_perSubsetConstantBuffer.Reset();
 	m_perObjectConstantBuffer.Reset();
 	m_pixelShader.Reset();
 	m_vertexShader.Reset();
 }
 
-void LightEffect::SetTexture(const Texture& texture)
+void LightEffect::SetTexture(ID3D11DeviceContext1* d3dDeviceContext, const Texture& texture)
 {
-	m_lightTechnique.PSSetTexture(texture, 0);
+	d3dDeviceContext->PSSetShaderResources(0, 1, texture.GetAddressOf());
 }
 
 void LightEffect::UpdatePerObjectConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerObjectConstantBuffer& buffer) const
 {
 	m_perObjectConstantBuffer.Update(d3dDeviceContext, &buffer);
 }
+
+void LightEffect::UpdatePerSubsetConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerSubsetConstantBuffer& buffer) const
+{
+	m_perSubsetConstantBuffer.Update(d3dDeviceContext, &buffer);
+}
+
 void LightEffect::UpdatePerFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerFrameConstantBuffer& buffer) const
 {
 	m_perFrameConstantBuffer.Update(d3dDeviceContext, &buffer);

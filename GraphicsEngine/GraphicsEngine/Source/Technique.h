@@ -5,11 +5,12 @@
 #include "PixelShader.h"
 #include "RasterizerState.h"
 #include "SamplerState.h"
-#include "Texture.h"
 #include "TechniqueArrays.h"
 
 namespace GraphicsEngine
 {
+	class Texture;
+
 	class Technique
 	{
 	public:
@@ -27,9 +28,6 @@ namespace GraphicsEngine
 		void VSSetSamplerState(const SamplerState& samplerState, uint32_t slot);
 		void PSSetSamplerState(const SamplerState& samplerState, uint32_t slot);
 
-		void VSSetTexture(const Texture& texture, uint32_t slot);
-		void PSSetTexture(const Texture& texture, uint32_t slot);
-
 	private:
 		const VertexShader* m_vertexShader;
 		const PixelShader* m_pixelShader;
@@ -37,6 +35,5 @@ namespace GraphicsEngine
 
 		TechniqueArrays<ID3D11Buffer*> m_constantBufferArrays;
 		TechniqueArrays<ID3D11SamplerState*> m_samplerStateArrays;
-		TechniqueArrays<ID3D11ShaderResourceView*> m_textureArrays;
 	};
 }

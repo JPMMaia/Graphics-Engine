@@ -1,5 +1,6 @@
-﻿#include "../stdafx.h"
-#include "ParserException.h"
+﻿#include "ParserException.h"
+
+#include <Source/Helpers.h>
 
 using namespace GraphicsEngine;
 using namespace std;

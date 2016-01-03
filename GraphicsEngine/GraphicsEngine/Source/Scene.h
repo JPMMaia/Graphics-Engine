@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "EffectManager.h"
-#include "Mesh.h"
+#include "LightModelInstance.h"
 
 namespace GraphicsEngine
 {
@@ -19,11 +19,11 @@ namespace GraphicsEngine
 
 	private:
 		EffectManager m_effectManager;
-		Mesh m_cubeMesh;
-		Texture m_texture;
+		LightModel m_cubeModel;
+		LightModelInstance m_cubeInstance;
+		Texture m_cubeTexture;
 
 		LightEffect::PerFrameConstantBuffer m_frameBuffer;
-		LightEffect::PerObjectConstantBuffer m_cubeBuffer;
 
 		DirectX::XMFLOAT4X4 m_modelMatrix;
 		DirectX::XMFLOAT4X4 m_viewMatrix;

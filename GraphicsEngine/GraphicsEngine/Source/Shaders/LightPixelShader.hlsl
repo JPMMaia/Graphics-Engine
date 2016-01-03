@@ -3,20 +3,17 @@
 #include <Common/PointLight.hlsli>
 #include <Common/SpotLight.hlsli>
 
-cbuffer PerObjectConstantBuffer : register(b0)
+cbuffer PerSubsetConstantBuffer : register(b1)
 {
-	float4x4 g_worldMatrix;
-	float4x4 g_worldInverseTransposeMatrix;
-	float4x4 g_worldViewProjectionMatrix;
 	Material g_material;
-	float3 g_EyePositionW;
 };
 
-cbuffer PerFrameConstantBuffer : register(b1)
+cbuffer PerFrameConstantBuffer : register(b2)
 {
 	DirectionalLight g_directionalLight;
 	PointLight g_pointLight;
 	SpotLight g_spotLight;
+	float3 g_EyePositionW;
 };
 
 struct VertexOutput

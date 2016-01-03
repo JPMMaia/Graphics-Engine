@@ -20,7 +20,7 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 		{ XMFLOAT3(0.5f, 0.5f, -0.5f), XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
 		{ XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
 	};
-	static const vector<uint32_t> indices =
+	static const vector<uint32_t> cubeIndices =
 	{
 		0, 2, 1,
 		1, 2, 3,
@@ -40,15 +40,23 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 		1, 3, 5,
 		5, 3, 7,
 	};
+	static const vector<Subset> subsets =
+	{
+		{ 0, cubeIndices.size() },
+	};
+
+	m_cubeTexture.Initialize(d3dDevice, L"Resources/stone01.dds");
+	static const vector<TextureAppearance> cubeMaterials =
+	{
+		{
+			Material(XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f), XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f), XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f), 500.0f),
+			m_cubeTexture
+		},
+	};
+	m_cubeModel.Initialize(d3dDevice, cubeVertices, cubeIndices, { subsets }, cubeMaterials);
+	m_cubeInstance.Initialize(&m_cubeModel);
 
 	m_effectManager.Initialize(d3dDevice);
-
-	m_texture.Initialize(d3dDevice, L"Resources/stone01.dds");
-	m_effectManager.GetLightEffect().SetTexture(m_texture);
-
-	Subset subset = { 0, indices.size(), m_cubeBuffer.Material };
-	m_cubeMesh.Initialize(d3dDevice, cubeVertices, indices, { subset });
-
 	m_frameBuffer.DirectionalLight =
 	{
 		XMFLOAT4(0.1f, 0.1f, 0.3f, 1.0f),
@@ -76,26 +84,14 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 		1.0f,
 		XMFLOAT3(1.0f, 1.0f, 1.0f)
 	};
-
-	m_cubeBuffer = {};
-
-	// Set material:
-	m_cubeBuffer.Material =
-	{
-		XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f),
-		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		500.0f
-	};
-
-	m_cubeBuffer.EyePositionW = XMFLOAT3(0.0f, 0.7f, 1.5f);
+	m_frameBuffer.EyePositionW = XMFLOAT3(0.0f, 0.7f, 1.5f);
 }
 
 void Scene::Reset()
 {
-	m_cubeMesh.Reset();
+	m_cubeModel.Reset();
 	m_effectManager.Reset();
-	m_texture.Reset();
+	m_cubeTexture.Reset();
 }
 
 void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
@@ -103,27 +99,10 @@ void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 	auto lightEffect = m_effectManager.GetLightEffect();
 
 	lightEffect.Set(d3dDeviceContext);
-
 	lightEffect.UpdatePerFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);
 
-	auto modelMatrix = XMLoadFloat4x4(&m_modelMatrix);
-	auto viewMatrix = XMLoadFloat4x4(&m_viewMatrix);
-	auto projectionMatrix = XMLoadFloat4x4(&m_projectionMatrix);
-
-	// Store world matrix:
-	XMStoreFloat4x4(&m_cubeBuffer.WorldMatrix, XMMatrixTranspose(modelMatrix));
-
-	// Store world inverse transpose matrix:
-	auto determinant = XMMatrixDeterminant(modelMatrix);
-	XMStoreFloat4x4(&m_cubeBuffer.WorldInverseTransposeMatrix, XMMatrixInverse(&determinant, modelMatrix));
-
-	// Store world view projection matrix:
-	auto modelViewMatrix = XMMatrixMultiply(modelMatrix, viewMatrix);
-	auto modelViewProjectionMatrix = XMMatrixMultiply(modelViewMatrix, projectionMatrix);
-	XMStoreFloat4x4(&m_cubeBuffer.WorldViewProjectionMatrix, XMMatrixTranspose(modelViewProjectionMatrix));
-
-	lightEffect.UpdatePerObjectConstantBuffer(d3dDeviceContext, m_cubeBuffer);
-	m_cubeMesh.Draw(d3dDeviceContext);
+	m_cubeInstance.SetInstanceBuffer(m_modelMatrix, m_viewMatrix, m_projectionMatrix);
+	m_cubeInstance.Draw(d3dDeviceContext, lightEffect);
 }
 
 void Scene::SetModelMatrix(const DirectX::XMFLOAT4X4& modelMatrix)

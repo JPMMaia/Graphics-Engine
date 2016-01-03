@@ -2,6 +2,7 @@
 
 #include "EffectManager.h"
 #include "LightModelInstance.h"
+#include "TextureManager.h"
 
 namespace GraphicsEngine
 {
@@ -21,8 +22,8 @@ namespace GraphicsEngine
 		EffectManager m_effectManager;
 		LightModel m_cubeModel;
 		LightModelInstance m_cubeInstance;
-		Texture m_cubeTexture;
-
+		
+		TextureManager m_textureManager;
 		LightEffect::PerFrameConstantBuffer m_frameBuffer;
 
 		DirectX::XMFLOAT4X4 m_modelMatrix;

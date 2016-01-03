@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "Scene.h"
 #include "VertexTypes.h"
+#include "ModelBuilder.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -45,31 +46,27 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 		{ 0, cubeIndices.size() },
 	};
 
-	m_cubeTexture.Initialize(d3dDevice, L"Resources/stone01.dds");
-	static const vector<TextureAppearance> cubeMaterials =
-	{
-		{
-			Material(XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f), XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f), XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f), 500.0f),
-			m_cubeTexture
-		},
-	};
-	m_cubeModel.Initialize(d3dDevice, cubeVertices, cubeIndices, { subsets }, cubeMaterials);
+
+
+	ModelBuilder builder(m_textureManager);
+	m_cubeModel = builder.CreateFromX3D(d3dDevice, L"Resources/SimpleCube.x3d");
+
 	m_cubeInstance.Initialize(&m_cubeModel);
 
 	m_effectManager.Initialize(d3dDevice);
 	m_frameBuffer.DirectionalLight =
 	{
-		XMFLOAT4(0.1f, 0.1f, 0.3f, 1.0f),
+		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
 		XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f),
 		XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f),
 		XMFLOAT3(1.0f, -1.0f, 0.0f)
 	};
 	m_frameBuffer.PointLight =
 	{
-		XMFLOAT4(0.1f, 0.1f, 0.8f, 1.0f),
+		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
 		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
 		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT3(0.0f, 1.0f, 0.0f),
+		XMFLOAT3(0.0f, 2.0f, 0.0f),
 		5.0f,
 		XMFLOAT3(1.0f, 1.0f, 1.0f)
 	};
@@ -78,20 +75,20 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
 		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
 		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT3(1.0f, 1.0f, 1.0f),
+		XMFLOAT3(1.2f, 1.2f, 1.2f),
 		5.0f,
 		XMFLOAT3(0.0f, -1.0f, 0.0f),
 		1.0f,
 		XMFLOAT3(1.0f, 1.0f, 1.0f)
 	};
-	m_frameBuffer.EyePositionW = XMFLOAT3(0.0f, 0.7f, 1.5f);
+	m_frameBuffer.EyePositionW = XMFLOAT3(0.0f, 1.4f, 3.0f);
 }
 
 void Scene::Reset()
 {
 	m_cubeModel.Reset();
 	m_effectManager.Reset();
-	m_cubeTexture.Reset();
+	m_textureManager.Reset();
 }
 
 void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)

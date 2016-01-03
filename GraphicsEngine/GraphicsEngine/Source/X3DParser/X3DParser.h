@@ -6,18 +6,17 @@
 
 namespace GraphicsEngine
 {
-	class X3DParserClass
+	class X3DParser
 	{
 	public:
-		X3DParserClass();
-		X3DParserClass(const std::wstring& filename);
+		X3DParser();
+		X3DParser(const std::wstring& filename);
 
 		void Parse(const std::wstring& filename);
 
-		const X3DShapeParserClass::Shape& GetShape() const;
+		const X3DShapeParser::Shape& GetShape() const;
 
 	private:
-		rapidxml::xml_document<wchar_t> m_Document;
-		X3DShapeParserClass m_ShapeParser;
+		X3DShapeParser m_shapeParser;
 	};
 }

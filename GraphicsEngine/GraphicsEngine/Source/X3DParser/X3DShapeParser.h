@@ -7,7 +7,7 @@
 
 namespace GraphicsEngine
 {
-	class X3DShapeParserClass
+	class X3DShapeParser
 	{
 	public:
 		struct ImageTexture
@@ -50,8 +50,8 @@ namespace GraphicsEngine
 		};
 
 	public:
-		X3DShapeParserClass();
-		X3DShapeParserClass(const rapidxml::xml_node<wchar_t>* shapeNode);
+		X3DShapeParser();
+		X3DShapeParser(const rapidxml::xml_node<wchar_t>* shapeNode);
 
 		void Parse(const rapidxml::xml_node<wchar_t>* shapeNode);
 

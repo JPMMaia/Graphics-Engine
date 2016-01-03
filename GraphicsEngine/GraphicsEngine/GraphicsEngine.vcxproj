@@ -171,6 +171,7 @@
     <ClCompile Include="Source\DynamicConstantBuffer.cpp" />
     <ClCompile Include="Source\LightModel.cpp" />
     <ClCompile Include="Source\LightModelInstance.cpp" />
+    <ClCompile Include="Source\ModelBuilder.cpp" />
     <ClCompile Include="Source\SamplerState.cpp" />
     <ClCompile Include="Source\Technique.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
@@ -185,6 +186,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Texture.cpp" />
+    <ClCompile Include="Source\TextureManager.cpp" />
     <ClCompile Include="Source\VertexBuffer.cpp" />
     <ClCompile Include="Source\VertexShader.cpp" />
     <ClCompile Include="Source\X3DParser\ParserException.cpp">
@@ -206,6 +208,7 @@
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_iterators.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_print.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_utils.hpp" />
+    <ClInclude Include="Source\ModelBuilder.h" />
     <ClInclude Include="Source\TextureAppearance.h" />
     <ClInclude Include="Source\LightModel.h" />
     <ClInclude Include="Source\LightModelInstance.h" />
@@ -238,6 +241,7 @@
     <ClInclude Include="Source\stdafx.h" />
     <ClInclude Include="Source\TechniqueArrays.h" />
     <ClInclude Include="Source\Texture.h" />
+    <ClInclude Include="Source\TextureManager.h" />
     <ClInclude Include="Source\VertexBuffer.h" />
     <ClInclude Include="Source\VertexShader.h" />
     <ClInclude Include="Source\VertexTypes.h" />

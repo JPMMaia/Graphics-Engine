@@ -71,6 +71,9 @@
     <ClCompile Include="Source\X3DParser\ParserException.cpp">
       <Filter>Source\X3DParser</Filter>
     </ClCompile>
+    <ClCompile Include="Source\LightModel.cpp">
+      <Filter>Source\Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Buffer.h">
@@ -189,6 +192,12 @@
       <Filter>Source\X3DParser</Filter>
     </ClInclude>
     <ClInclude Include="Source\Subset.h">
+      <Filter>Source\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model.h">
+      <Filter>Source\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LightModel.h">
       <Filter>Source\Models</Filter>
     </ClInclude>
   </ItemGroup>

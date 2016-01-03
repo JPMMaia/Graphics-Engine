@@ -169,6 +169,7 @@
     <ClCompile Include="Source\DefaultConstantBuffer.cpp" />
     <ClCompile Include="Source\DirectXException.cpp" />
     <ClCompile Include="Source\DynamicConstantBuffer.cpp" />
+    <ClCompile Include="Source\LightModel.cpp" />
     <ClCompile Include="Source\SamplerState.cpp" />
     <ClCompile Include="Source\Technique.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
@@ -196,6 +197,8 @@
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_iterators.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_print.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_utils.hpp" />
+    <ClInclude Include="Source\LightModel.h" />
+    <ClInclude Include="Source\Model.h" />
     <ClInclude Include="Source\ResourceArray.h" />
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\ConstantBuffer.h" />

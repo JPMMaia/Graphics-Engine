@@ -4,20 +4,17 @@
 using namespace GraphicsEngine;
 
 Mesh::Mesh() :
-	m_indexCount(0),
 	m_primitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
 {
 }
 
 void Mesh::Reset()
 {
-	m_subsets.clear();
-	m_indexCount = 0;
 	m_indexBuffer.Reset();
 	m_vertexBuffer.Reset();
 }
 
-void Mesh::Draw(ID3D11DeviceContext* d3dDeviceContext) const
+void Mesh::Draw(ID3D11DeviceContext* d3dDeviceContext, uint32_t indexCount, uint32_t startIndexLocation) const
 {
 	// Set vertex and index buffers:
 	m_vertexBuffer.Set(d3dDeviceContext);
@@ -27,5 +24,5 @@ void Mesh::Draw(ID3D11DeviceContext* d3dDeviceContext) const
 	d3dDeviceContext->IASetPrimitiveTopology(m_primitiveTopology);
 
 	// Draw indexed:
-	d3dDeviceContext->DrawIndexed(m_indexCount, 0, 0);
+	d3dDeviceContext->DrawIndexed(indexCount, startIndexLocation, 0);
 }

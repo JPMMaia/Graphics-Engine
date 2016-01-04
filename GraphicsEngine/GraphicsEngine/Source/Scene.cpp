@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "VertexTypes.h"
 #include "ModelBuilder.h"
+#include "VirtualKey.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -81,7 +82,11 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 		1.0f,
 		XMFLOAT3(1.0f, 1.0f, 1.0f)
 	};
-	m_frameBuffer.EyePositionW = XMFLOAT3(0.0f, 1.4f, 3.0f);
+
+	m_camera.SetPosition(0.0f, 1.4f, 3.0f);
+	m_viewMatrix = m_camera.GetViewMatrix();
+
+	XMStoreFloat4x4(&m_modelMatrix, XMMatrixIdentity());
 }
 
 void Scene::Reset()
@@ -93,6 +98,10 @@ void Scene::Reset()
 
 void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 {
+	m_camera.Update();
+	m_frameBuffer.EyePositionW = m_camera.GetPosition();
+	m_viewMatrix = m_camera.GetViewMatrix();
+
 	auto lightEffect = m_effectManager.GetLightEffect();
 
 	lightEffect.Set(d3dDeviceContext);
@@ -102,17 +111,36 @@ void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 	m_cubeInstance.Draw(d3dDeviceContext, lightEffect);
 }
 
-void Scene::SetModelMatrix(const DirectX::XMFLOAT4X4& modelMatrix)
-{
-	m_modelMatrix = modelMatrix;
-}
-
-void Scene::SetViewMatrix(const DirectX::XMFLOAT4X4& viewMatrix)
-{
-	m_viewMatrix = viewMatrix;
-}
-
 void Scene::SetProjectionMatrix(const DirectX::XMFLOAT4X4& projectionMatrix)
 {
 	m_projectionMatrix = projectionMatrix;
+}
+
+void Scene::HandleInput(const InputHandler& input)
+{
+	constexpr auto rotationScalar = 0.02f;
+	if (input.IsKeyDown(VirtualKey::Right))
+		m_camera.RotateWorldY(rotationScalar);
+
+	if (input.IsKeyDown(VirtualKey::Up))
+		m_camera.RotateLocalX(-rotationScalar);
+
+	if (input.IsKeyDown(VirtualKey::Left))
+		m_camera.RotateWorldY(-rotationScalar);
+
+	if (input.IsKeyDown(VirtualKey::Down))
+		m_camera.RotateLocalX(rotationScalar);
+
+	constexpr auto translationScalar = 0.1f;
+	if (input.IsKeyDown(VirtualKey::D))
+		m_camera.MoveRight(translationScalar);
+
+	if (input.IsKeyDown(VirtualKey::W))
+		m_camera.MoveForward(translationScalar);
+
+	if (input.IsKeyDown(VirtualKey::A))
+		m_camera.MoveRight(-translationScalar);
+
+	if (input.IsKeyDown(VirtualKey::S))
+		m_camera.MoveForward(-translationScalar);
 }

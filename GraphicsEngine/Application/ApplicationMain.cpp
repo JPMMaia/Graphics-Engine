@@ -49,6 +49,8 @@ void ApplicationMain::Update()
 		// TODO: Replace this with your app's content update functions.
 		m_sceneRenderer->Update(m_timer);
 		m_fpsTextRenderer->Update(m_timer);
+
+		m_sceneRenderer->HandleInput(m_input);
 	});
 }
 
@@ -82,6 +84,15 @@ bool ApplicationMain::Render()
 	m_fpsTextRenderer->Render();
 
 	return true;
+}
+
+void ApplicationMain::OnKeyDown(Windows::System::VirtualKey key)
+{
+	m_input.OnKeyDown(key);
+}
+void ApplicationMain::OnKeyUp(Windows::System::VirtualKey key)
+{
+	m_input.OnKeyUp(key);
 }
 
 // Notifies renderers that device resources need to be released.

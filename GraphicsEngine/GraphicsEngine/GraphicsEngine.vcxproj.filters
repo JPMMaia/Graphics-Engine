@@ -83,6 +83,12 @@
     <ClCompile Include="Source\ModelBuilder.cpp">
       <Filter>Source\Models\Builder</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Camera.cpp">
+      <Filter>Source\Cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\InputHandler.cpp">
+      <Filter>Source\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Buffer.h">
@@ -221,6 +227,15 @@
     <ClInclude Include="Source\ModelBuilder.h">
       <Filter>Source\Models\Builder</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Camera.h">
+      <Filter>Source\Cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\InputHandler.h">
+      <Filter>Source\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\VirtualKey.h">
+      <Filter>Source\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -294,6 +309,12 @@
     </Filter>
     <Filter Include="Source\Models\Builder">
       <UniqueIdentifier>{0bbe9738-d661-4da4-8693-1c5def0c600a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Cameras">
+      <UniqueIdentifier>{8cf407d2-ea9f-4285-bb42-b3aeec481a83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Input">
+      <UniqueIdentifier>{5cd7cad1-929b-48c5-bf8c-8adf7e535c6f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

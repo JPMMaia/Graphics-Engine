@@ -3,6 +3,8 @@
 #include "EffectManager.h"
 #include "LightModelInstance.h"
 #include "TextureManager.h"
+#include "Camera.h"
+#include "InputHandler.h"
 
 namespace GraphicsEngine
 {
@@ -14,9 +16,9 @@ namespace GraphicsEngine
 
 		void Render(ID3D11DeviceContext1* d3dDeviceContext);
 
-		void SetModelMatrix(const DirectX::XMFLOAT4X4& modelMatrix);
-		void SetViewMatrix(const DirectX::XMFLOAT4X4& viewMatrix);
 		void SetProjectionMatrix(const DirectX::XMFLOAT4X4& projectionMatrix);
+
+		void HandleInput(const InputHandler& input);
 
 	private:
 		EffectManager m_effectManager;
@@ -25,6 +27,7 @@ namespace GraphicsEngine
 		
 		TextureManager m_textureManager;
 		LightEffect::PerFrameConstantBuffer m_frameBuffer;
+		Camera m_camera;
 
 		DirectX::XMFLOAT4X4 m_modelMatrix;
 		DirectX::XMFLOAT4X4 m_viewMatrix;

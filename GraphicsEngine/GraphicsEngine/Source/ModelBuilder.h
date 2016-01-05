@@ -1,6 +1,8 @@
 ﻿#pragma once
 
-#include <Source/TextureManager.h>
+#include "LightEffect.h"
+#include "TextureManager.h"
+
 
 namespace GraphicsEngine
 {
@@ -11,7 +13,7 @@ namespace GraphicsEngine
 	public:
 		ModelBuilder(TextureManager& textureManager);
 
-		LightModel CreateFromX3D(ID3D11Device* d3dDevice, const std::wstring& x3dFilename) const;
+		LightModel CreateFromX3D(ID3D11Device* d3dDevice, const std::wstring& x3dFilename, const std::vector<LightEffect::InstanceData>& instancedData) const;
 
 	private:
 		TextureManager& m_textureManager;

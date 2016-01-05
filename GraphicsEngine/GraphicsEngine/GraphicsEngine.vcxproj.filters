@@ -26,24 +26,6 @@
       <Filter>Source\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="Source\stdafx.cpp" />
-    <ClCompile Include="Source\Buffer.cpp">
-      <Filter>Source\Buffers</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\IndexBuffer.cpp">
-      <Filter>Source\Buffers</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\VertexBuffer.cpp">
-      <Filter>Source\Buffers</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ConstantBuffer.cpp">
-      <Filter>Source\Buffers\Constant Buffers</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\DynamicConstantBuffer.cpp">
-      <Filter>Source\Buffers\Constant Buffers</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\DefaultConstantBuffer.cpp">
-      <Filter>Source\Buffers\Constant Buffers</Filter>
-    </ClCompile>
     <ClCompile Include="Source\EffectManager.cpp">
       <Filter>Source\Effects</Filter>
     </ClCompile>
@@ -74,9 +56,6 @@
     <ClCompile Include="Source\LightModel.cpp">
       <Filter>Source\Models\LightModel</Filter>
     </ClCompile>
-    <ClCompile Include="Source\LightModelInstance.cpp">
-      <Filter>Source\Models\LightModel</Filter>
-    </ClCompile>
     <ClCompile Include="Source\TextureManager.cpp">
       <Filter>Source\Textures</Filter>
     </ClCompile>
@@ -91,15 +70,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Buffer.h">
-      <Filter>Source\Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\IndexBuffer.h">
-      <Filter>Source\Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\VertexBuffer.h">
-      <Filter>Source\Buffers</Filter>
-    </ClInclude>
     <ClInclude Include="Source\LightEffect.h">
       <Filter>Source\Effects</Filter>
     </ClInclude>
@@ -146,15 +116,6 @@
       <Filter>Source\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="Source\stdafx.h" />
-    <ClInclude Include="Source\ConstantBuffer.h">
-      <Filter>Source\Buffers\Constant Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\DynamicConstantBuffer.h">
-      <Filter>Source\Buffers\Constant Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\DefaultConstantBuffer.h">
-      <Filter>Source\Buffers\Constant Buffers</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EffectManager.h">
       <Filter>Source\Effects</Filter>
     </ClInclude>
@@ -215,9 +176,6 @@
     <ClInclude Include="Source\LightModel.h">
       <Filter>Source\Models\LightModel</Filter>
     </ClInclude>
-    <ClInclude Include="Source\LightModelInstance.h">
-      <Filter>Source\Models\LightModel</Filter>
-    </ClInclude>
     <ClInclude Include="Source\TextureAppearance.h">
       <Filter>Source\Material</Filter>
     </ClInclude>
@@ -235,6 +193,12 @@
     </ClInclude>
     <ClInclude Include="Source\VirtualKey.h">
       <Filter>Source\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BufferTypes.h">
+      <Filter>Source\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Buffer.h">
+      <Filter>Source\Buffers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -279,9 +243,6 @@
     </Filter>
     <Filter Include="Source\Rasterizer">
       <UniqueIdentifier>{6ab0daa5-44b0-428b-85ad-ec2c8f08aecd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Buffers\Constant Buffers">
-      <UniqueIdentifier>{e11e265a-208c-4ceb-92ee-b6760ea585e3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Textures">
       <UniqueIdentifier>{53aad11b-83f0-4d5c-913c-3ad3e3735e4c}</UniqueIdentifier>

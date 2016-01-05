@@ -2,13 +2,16 @@
 
 #include "DirectXException.h"
 
-namespace DX
+namespace GraphicsEngine
 {
-	inline void ThrowIfFailed(HRESULT hr)
+	namespace DX
 	{
-		if (FAILED(hr))
+		inline void ThrowIfFailed(HRESULT hr)
 		{
-			throw GraphicsEngine::DirectXException(hr);
+			if (FAILED(hr))
+			{
+				throw GraphicsEngine::DirectXException(hr);
+			}
 		}
 	}
 }

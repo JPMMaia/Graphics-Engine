@@ -3,12 +3,12 @@
 #include <Common/PointLight.hlsli>
 #include <Common/SpotLight.hlsli>
 
-cbuffer PerSubsetConstantBuffer : register(b1)
+cbuffer SubsetConstantBuffer : register(b1)
 {
 	Material g_material;
 };
 
-cbuffer PerFrameConstantBuffer : register(b2)
+cbuffer FrameConstantBuffer : register(b2)
 {
 	DirectionalLight g_directionalLight;
 	PointLight g_pointLight;

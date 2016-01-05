@@ -48,13 +48,13 @@ void Technique::SetRasterizerState(const RasterizerState* rasterizerState)
 	m_rasterizerState = rasterizerState;
 }
 
-void Technique::VSSetConstantBuffer(const ConstantBuffer& constantBuffer, uint32_t slot)
+void Technique::VSSetConstantBuffer(ID3D11Buffer* constantBuffer, uint32_t slot)
 {
-	m_constantBufferArrays.VSSetElement(constantBuffer.Get(), slot);
+	m_constantBufferArrays.VSSetElement(std::forward<ID3D11Buffer*>(constantBuffer), slot);
 }
-void Technique::PSSetConstantBuffer(const ConstantBuffer& constantBuffer, uint32_t slot)
+void Technique::PSSetConstantBuffer(ID3D11Buffer* constantBuffer, uint32_t slot)
 {
-	m_constantBufferArrays.PSSetElement(constantBuffer.Get(), slot);
+	m_constantBufferArrays.PSSetElement(std::forward<ID3D11Buffer*>(constantBuffer), slot);
 }
 
 void Technique::VSSetSamplerState(const SamplerState& samplerState, uint32_t slot)

@@ -74,9 +74,6 @@
     <ClCompile Include="Source\LightModel.cpp">
       <Filter>Source\Models\LightModel</Filter>
     </ClCompile>
-    <ClCompile Include="Source\LightModelInstance.cpp">
-      <Filter>Source\Models\LightModel</Filter>
-    </ClCompile>
     <ClCompile Include="Source\TextureManager.cpp">
       <Filter>Source\Textures</Filter>
     </ClCompile>
@@ -213,9 +210,6 @@
       <Filter>Source\Models</Filter>
     </ClInclude>
     <ClInclude Include="Source\LightModel.h">
-      <Filter>Source\Models\LightModel</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\LightModelInstance.h">
       <Filter>Source\Models\LightModel</Filter>
     </ClInclude>
     <ClInclude Include="Source\TextureAppearance.h">

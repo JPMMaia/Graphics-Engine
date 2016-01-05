@@ -23,6 +23,10 @@ void LightEffect::Initialize(ID3D11Device* d3dDevice)
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 	};
 
 	// Initialize the vertex shader:
@@ -32,9 +36,9 @@ void LightEffect::Initialize(ID3D11Device* d3dDevice)
 	m_pixelShader.Initialize(d3dDevice, L"LightPixelShader.cso");
 
 	// Initialize constant buffers:
-	m_perObjectConstantBuffer.Initialize(d3dDevice, sizeof(PerObjectConstantBuffer));
-	m_perSubsetConstantBuffer.Initialize(d3dDevice, sizeof(PerSubsetConstantBuffer));
-	m_perFrameConstantBuffer.Initialize(d3dDevice, sizeof(PerFrameConstantBuffer));
+	m_cameraConstantBuffer.Initialize(d3dDevice, sizeof(CameraConstantBuffer));
+	m_subsetConstantBuffer.Initialize(d3dDevice, sizeof(SubsetConstantBuffer));
+	m_frameConstantBuffer.Initialize(d3dDevice, sizeof(FrameConstantBuffer));
 
 	// Initialize the sampler state:
 	m_samplerState.Initialize(d3dDevice, SamplerStateDescConstants::Anisotropic);
@@ -42,18 +46,18 @@ void LightEffect::Initialize(ID3D11Device* d3dDevice)
 	// Setup light technique:
 	m_lightTechnique.SetVertexShader(&m_vertexShader);
 	m_lightTechnique.SetPixelShader(&m_pixelShader);
-	m_lightTechnique.VSSetConstantBuffer(m_perObjectConstantBuffer, 0);
-	m_lightTechnique.PSSetConstantBuffer(m_perSubsetConstantBuffer, 1);
-	m_lightTechnique.PSSetConstantBuffer(m_perFrameConstantBuffer, 2);
+	m_lightTechnique.VSSetConstantBuffer(m_cameraConstantBuffer, 0);
+	m_lightTechnique.PSSetConstantBuffer(m_subsetConstantBuffer, 1);
+	m_lightTechnique.PSSetConstantBuffer(m_frameConstantBuffer, 2);
 	m_lightTechnique.PSSetSamplerState(m_samplerState, 0);
 }
 
 void LightEffect::Reset()
 {
 	m_samplerState.Reset();
-	m_perFrameConstantBuffer.Reset();
-	m_perSubsetConstantBuffer.Reset();
-	m_perObjectConstantBuffer.Reset();
+	m_frameConstantBuffer.Reset();
+	m_subsetConstantBuffer.Reset();
+	m_cameraConstantBuffer.Reset();
 	m_pixelShader.Reset();
 	m_vertexShader.Reset();
 }
@@ -63,19 +67,19 @@ void LightEffect::SetTexture(ID3D11DeviceContext1* d3dDeviceContext, const Textu
 	d3dDeviceContext->PSSetShaderResources(0, 1, texture.GetAddressOf());
 }
 
-void LightEffect::UpdatePerObjectConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerObjectConstantBuffer& buffer) const
+void LightEffect::UpdateCameraConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const CameraConstantBuffer& buffer) const
 {
-	m_perObjectConstantBuffer.Update(d3dDeviceContext, &buffer);
+	m_cameraConstantBuffer.Update(d3dDeviceContext, &buffer);
 }
 
-void LightEffect::UpdatePerSubsetConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerSubsetConstantBuffer& buffer) const
+void LightEffect::UpdateSubsetConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const SubsetConstantBuffer& buffer) const
 {
-	m_perSubsetConstantBuffer.Update(d3dDeviceContext, &buffer);
+	m_subsetConstantBuffer.Update(d3dDeviceContext, &buffer);
 }
 
-void LightEffect::UpdatePerFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerFrameConstantBuffer& buffer) const
+void LightEffect::UpdateFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const FrameConstantBuffer& buffer) const
 {
-	m_perFrameConstantBuffer.Update(d3dDeviceContext, &buffer);
+	m_frameConstantBuffer.Update(d3dDeviceContext, &buffer);
 }
 
 void LightEffect::Set(ID3D11DeviceContext1* d3dDeviceContext) const

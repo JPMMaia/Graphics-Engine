@@ -3,7 +3,8 @@
 
 using namespace GraphicsEngine;
 
-Buffer::Buffer()
+Buffer::Buffer() :
+	m_elementSize(0)
 {
 }
 
@@ -14,6 +15,8 @@ Buffer::Buffer(ID3D11Device* d3dDevice, uint32_t bufferSize, D3D11_BIND_FLAG bin
 
 void Buffer::Initialize(ID3D11Device* d3dDevice, uint32_t bufferSize, D3D11_BIND_FLAG bindFlags, D3D11_USAGE usage, uint32_t cpuAccessFlags)
 {
+	m_elementSize = bufferSize;
+
 	// Create buffer description:
 	D3D11_BUFFER_DESC bufferDesc = CD3D11_BUFFER_DESC(
 		bufferSize,									// Size of buffer
@@ -37,8 +40,11 @@ ID3D11Buffer* Buffer::Get() const
 {
 	return m_buffer.Get();
 }
-
 ID3D11Buffer* const* Buffer::GetAddressOf() const
 {
 	return m_buffer.GetAddressOf();
+}
+uint32_t Buffer::GetElementSize() const
+{
+	return m_elementSize;
 }

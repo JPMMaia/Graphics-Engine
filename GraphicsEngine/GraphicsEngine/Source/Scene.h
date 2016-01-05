@@ -1,10 +1,10 @@
 ﻿#pragma once
 
 #include "EffectManager.h"
-#include "LightModelInstance.h"
 #include "TextureManager.h"
 #include "Camera.h"
 #include "InputHandler.h"
+#include "LightModel.h"
 
 namespace GraphicsEngine
 {
@@ -21,16 +21,19 @@ namespace GraphicsEngine
 		void HandleInput(const InputHandler& input);
 
 	private:
+		void UpdateCamera();
+		void InitializeCubeInstancedData(ID3D11DeviceContext1* d3dDeviceContext) const;
+
+	private:
 		EffectManager m_effectManager;
 		LightModel m_cubeModel;
-		LightModelInstance m_cubeInstance;
 		
 		TextureManager m_textureManager;
-		LightEffect::PerFrameConstantBuffer m_frameBuffer;
+		LightEffect::FrameConstantBuffer m_frameBuffer;
+		LightEffect::CameraConstantBuffer m_cameraBuffer;
 		Camera m_camera;
 
-		DirectX::XMFLOAT4X4 m_modelMatrix;
-		DirectX::XMFLOAT4X4 m_viewMatrix;
 		DirectX::XMFLOAT4X4 m_projectionMatrix;
+		bool m_firstRun;
 	};
 }

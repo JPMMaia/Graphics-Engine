@@ -172,7 +172,6 @@
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\InputHandler.cpp" />
     <ClCompile Include="Source\LightModel.cpp" />
-    <ClCompile Include="Source\LightModelInstance.cpp" />
     <ClCompile Include="Source\ModelBuilder.cpp" />
     <ClCompile Include="Source\SamplerState.cpp" />
     <ClCompile Include="Source\Technique.cpp" />
@@ -215,7 +214,6 @@
     <ClInclude Include="Source\ModelBuilder.h" />
     <ClInclude Include="Source\TextureAppearance.h" />
     <ClInclude Include="Source\LightModel.h" />
-    <ClInclude Include="Source\LightModelInstance.h" />
     <ClInclude Include="Source\Model.h" />
     <ClInclude Include="Source\ResourceArray.h" />
     <ClInclude Include="Source\Buffer.h" />

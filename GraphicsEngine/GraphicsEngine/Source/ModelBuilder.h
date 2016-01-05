@@ -11,7 +11,7 @@ namespace GraphicsEngine
 	public:
 		ModelBuilder(TextureManager& textureManager);
 
-		LightModel CreateFromX3D(ID3D11Device* d3dDevice, const std::wstring& x3dFilename) const;
+		LightModel CreateFromX3D(ID3D11Device* d3dDevice, const std::wstring& x3dFilename, uint32_t maxInstanceCount) const;
 
 	private:
 		TextureManager& m_textureManager;

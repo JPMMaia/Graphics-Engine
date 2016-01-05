@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "ConstantBuffer.h"
+#include "BufferTypes.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "RasterizerState.h"
@@ -22,8 +22,8 @@ namespace GraphicsEngine
 		void SetPixelShader(const PixelShader* pixelShader);
 		void SetRasterizerState(const RasterizerState* rasterizerState);
 
-		void VSSetConstantBuffer(const ConstantBuffer& constantBuffer, uint32_t slot);
-		void PSSetConstantBuffer(const ConstantBuffer& constantBuffer, uint32_t slot);
+		void VSSetConstantBuffer(ID3D11Buffer* constantBuffer, uint32_t slot);
+		void PSSetConstantBuffer(ID3D11Buffer* constantBuffer, uint32_t slot);
 
 		void VSSetSamplerState(const SamplerState& samplerState, uint32_t slot);
 		void PSSetSamplerState(const SamplerState& samplerState, uint32_t slot);

@@ -13,8 +13,6 @@ namespace GraphicsEngine
 		void VSSetElement(ResourceType&& element, uint32_t slot);
 		void PSSetElement(ResourceType&& element, uint32_t slot);
 
-		void VSSetElements(ResourceType&& element, uint32_t slot);
-
 	private:
 		ResourceArray<ResourceType> m_vertexShaderArray;
 		ResourceArray<ResourceType> m_pixelShaderArray;

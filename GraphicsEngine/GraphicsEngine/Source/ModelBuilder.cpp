@@ -12,7 +12,7 @@ ModelBuilder::ModelBuilder(TextureManager& textureManager) :
 {
 }
 
-LightModel ModelBuilder::CreateFromX3D(ID3D11Device* d3dDevice, const std::wstring& x3dFilename, uint32_t maxInstanceCount) const
+LightModel ModelBuilder::CreateFromX3D(ID3D11Device* d3dDevice, const std::wstring& x3dFilename, const vector<LightEffect::InstanceData>& instancedData) const
 {
 	// Parse x3d filename:
 	X3DParser parser(x3dFilename);
@@ -68,5 +68,5 @@ LightModel ModelBuilder::CreateFromX3D(ID3D11Device* d3dDevice, const std::wstri
 
 	Subset subset = { 0, indices.size() };
 
-	return LightModel(d3dDevice, vertices, indices, {subset}, {textureAppearance}, maxInstanceCount);
+	return LightModel(d3dDevice, vertices, indices, {subset}, {textureAppearance}, instancedData);
 }

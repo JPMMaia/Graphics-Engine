@@ -4,12 +4,12 @@
 #include "PixelShader.h"
 #include "DirectXMath.h"
 #include "Material.h"
-#include "DynamicConstantBuffer.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "Technique.h"
 #include "Texture.h"
+#include "BufferTypes.h"
 
 namespace GraphicsEngine
 {

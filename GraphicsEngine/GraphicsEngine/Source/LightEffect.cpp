@@ -36,9 +36,9 @@ void LightEffect::Initialize(ID3D11Device* d3dDevice)
 	m_pixelShader.Initialize(d3dDevice, L"LightPixelShader.cso");
 
 	// Initialize constant buffers:
-	m_cameraConstantBuffer.Initialize(d3dDevice, sizeof(CameraConstantBuffer));
-	m_subsetConstantBuffer.Initialize(d3dDevice, sizeof(SubsetConstantBuffer));
-	m_frameConstantBuffer.Initialize(d3dDevice, sizeof(FrameConstantBuffer));
+	m_cameraConstantBuffer.Initialize<CameraConstantBuffer>(d3dDevice, sizeof(CameraConstantBuffer));
+	m_subsetConstantBuffer.Initialize<SubsetConstantBuffer>(d3dDevice, sizeof(SubsetConstantBuffer));
+	m_frameConstantBuffer.Initialize<FrameConstantBuffer>(d3dDevice, sizeof(FrameConstantBuffer));
 
 	// Initialize the sampler state:
 	m_samplerState.Initialize(d3dDevice, SamplerStateDescConstants::Anisotropic);
@@ -46,9 +46,9 @@ void LightEffect::Initialize(ID3D11Device* d3dDevice)
 	// Setup light technique:
 	m_lightTechnique.SetVertexShader(&m_vertexShader);
 	m_lightTechnique.SetPixelShader(&m_pixelShader);
-	m_lightTechnique.VSSetConstantBuffer(m_cameraConstantBuffer, 0);
-	m_lightTechnique.PSSetConstantBuffer(m_subsetConstantBuffer, 1);
-	m_lightTechnique.PSSetConstantBuffer(m_frameConstantBuffer, 2);
+	m_lightTechnique.VSSetConstantBuffer(m_cameraConstantBuffer.Get(), 0);
+	m_lightTechnique.PSSetConstantBuffer(m_subsetConstantBuffer.Get(), 1);
+	m_lightTechnique.PSSetConstantBuffer(m_frameConstantBuffer.Get(), 2);
 	m_lightTechnique.PSSetSamplerState(m_samplerState, 0);
 }
 
@@ -69,17 +69,17 @@ void LightEffect::SetTexture(ID3D11DeviceContext1* d3dDeviceContext, const Textu
 
 void LightEffect::UpdateCameraConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const CameraConstantBuffer& buffer) const
 {
-	m_cameraConstantBuffer.Update(d3dDeviceContext, &buffer);
+	m_cameraConstantBuffer.Map(d3dDeviceContext, &buffer, sizeof(CameraConstantBuffer));
 }
 
 void LightEffect::UpdateSubsetConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const SubsetConstantBuffer& buffer) const
 {
-	m_subsetConstantBuffer.Update(d3dDeviceContext, &buffer);
+	m_subsetConstantBuffer.Map(d3dDeviceContext, &buffer, sizeof(SubsetConstantBuffer));
 }
 
 void LightEffect::UpdateFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const FrameConstantBuffer& buffer) const
 {
-	m_frameConstantBuffer.Update(d3dDeviceContext, &buffer);
+	m_frameConstantBuffer.Map(d3dDeviceContext, &buffer, sizeof(FrameConstantBuffer));
 }
 
 void LightEffect::Set(ID3D11DeviceContext1* d3dDeviceContext) const

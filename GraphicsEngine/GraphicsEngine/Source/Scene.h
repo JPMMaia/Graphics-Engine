@@ -21,8 +21,9 @@ namespace GraphicsEngine
 		void HandleInput(const InputHandler& input);
 
 	private:
+		void InitializeCubeModel(ID3D11Device* d3dDevice);
+		void InitializeFrameBuffer();
 		void UpdateCamera();
-		void InitializeCubeInstancedData(ID3D11DeviceContext1* d3dDeviceContext) const;
 
 	private:
 		EffectManager m_effectManager;
@@ -34,6 +35,5 @@ namespace GraphicsEngine
 		Camera m_camera;
 
 		DirectX::XMFLOAT4X4 m_projectionMatrix;
-		bool m_firstRun;
 	};
 }

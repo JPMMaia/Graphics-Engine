@@ -9,40 +9,11 @@ using namespace std;
 
 void Scene::Initialize(ID3D11Device* d3dDevice)
 {
-	ModelBuilder builder(m_textureManager);
-	m_cubeModel = builder.CreateFromX3D(d3dDevice, L"Resources/SimpleCube.x3d", 125);
+	InitializeCubeModel(d3dDevice);
+	InitializeFrameBuffer();
 
 	m_effectManager.Initialize(d3dDevice);
-	m_frameBuffer.DirectionalLight =
-	{
-		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
-		XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f),
-		XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f),
-		XMFLOAT3(1.0f, -1.0f, 0.0f)
-	};
-	m_frameBuffer.PointLight =
-	{
-		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
-		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT3(0.0f, 2.0f, 0.0f),
-		5.0f,
-		XMFLOAT3(1.0f, 1.0f, 1.0f)
-	};
-	m_frameBuffer.SpotLight =
-	{
-		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
-		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT3(1.2f, 1.2f, 1.2f),
-		5.0f,
-		XMFLOAT3(0.0f, -1.0f, 0.0f),
-		1.0f,
-		XMFLOAT3(1.0f, 1.0f, 1.0f)
-	};
-
 	m_camera.SetPosition(0.0f, 1.4f, 3.0f);
-	m_firstRun = true;
 }
 
 void Scene::Reset()
@@ -54,12 +25,6 @@ void Scene::Reset()
 
 void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 {
-	if(m_firstRun)
-	{
-		InitializeCubeInstancedData(d3dDeviceContext);
-		m_firstRun = false;
-	}
-
 	// Update camera:
 	UpdateCamera();
 
@@ -110,36 +75,20 @@ void Scene::HandleInput(const InputHandler& input)
 		m_camera.MoveForward(-translationScalar);
 }
 
-void Scene::UpdateCamera()
+void Scene::InitializeCubeModel(ID3D11Device* d3dDevice)
 {
-	// Update camera:
-	m_camera.Update();
-
-	// Update frame buffer:
-	m_frameBuffer.EyePositionW = m_camera.GetPosition();
-
-	// Build view projection matrix:
-	auto& viewMatrix = m_camera.GetViewMatrix();
-	auto viewProjectionMatrix = XMMatrixMultiply(XMLoadFloat4x4(&viewMatrix), XMLoadFloat4x4(&m_projectionMatrix));
-	XMStoreFloat4x4(&m_cameraBuffer.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
-}
-
-void Scene::InitializeCubeInstancedData(ID3D11DeviceContext1* d3dDeviceContext) const
-{
-	auto instancedData = m_cubeModel.GetInstancedData();
-
 	constexpr uint32_t size = 5;
-	constexpr auto width = 10.0f; 
-	constexpr auto height = 10.0f; 
-	constexpr auto depth = 10.0f; 
-	constexpr auto x = -0.5f * width; 
-	constexpr auto y = -0.5f * height; 
-	constexpr auto z = -0.5f * depth; 
+	constexpr auto width = 10.0f;
+	constexpr auto height = 10.0f;
+	constexpr auto depth = 10.0f;
+	constexpr auto x = -0.5f * width;
+	constexpr auto y = -0.5f * height;
+	constexpr auto z = -0.5f * depth;
 	constexpr auto dx = width / (size - 1);
 	constexpr auto dy = height / (size - 1);
 	constexpr auto dz = depth / (size - 1);
 
-	array<LightEffect::InstanceData, 125> instanceBuffer;
+	vector<LightEffect::InstanceData> instanceBuffer(size*size*size);
 	for (auto i = 0; i < size; i++)
 	{
 		for (auto j = 0; j < size; j++)
@@ -156,5 +105,51 @@ void Scene::InitializeCubeInstancedData(ID3D11DeviceContext1* d3dDeviceContext) 
 		}
 	}
 
-	instancedData.Update(d3dDeviceContext, instanceBuffer);
+	ModelBuilder builder(m_textureManager);
+	m_cubeModel = builder.CreateFromX3D(d3dDevice, L"Resources/SimpleCube.x3d", instanceBuffer);
+}
+
+void Scene::InitializeFrameBuffer()
+{
+	m_frameBuffer.DirectionalLight =
+	{
+		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
+		XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f),
+		XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f),
+		XMFLOAT3(1.0f, -1.0f, 0.0f)
+	};
+	m_frameBuffer.PointLight =
+	{
+		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		XMFLOAT3(0.0f, 2.0f, 0.0f),
+		5.0f,
+		XMFLOAT3(1.0f, 1.0f, 1.0f)
+	};
+	m_frameBuffer.SpotLight =
+	{
+		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		XMFLOAT3(1.2f, 1.2f, 1.2f),
+		5.0f,
+		XMFLOAT3(0.0f, -1.0f, 0.0f),
+		1.0f,
+		XMFLOAT3(1.0f, 1.0f, 1.0f)
+	};
+}
+
+void Scene::UpdateCamera()
+{
+	// Update camera:
+	m_camera.Update();
+
+	// Update frame buffer:
+	m_frameBuffer.EyePositionW = m_camera.GetPosition();
+
+	// Build view projection matrix:
+	auto& viewMatrix = m_camera.GetViewMatrix();
+	auto viewProjectionMatrix = XMMatrixMultiply(XMLoadFloat4x4(&viewMatrix), XMLoadFloat4x4(&m_projectionMatrix));
+	XMStoreFloat4x4(&m_cameraBuffer.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
 }

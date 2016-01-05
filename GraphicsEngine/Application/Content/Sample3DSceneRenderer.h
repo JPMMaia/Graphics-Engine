@@ -4,11 +4,9 @@
 #include "ShaderStructures.h"
 #include "..\Common\StepTimer.h"
 
-#include <IndexBuffer.h>
-#include <VertexBuffer.h>
-#include <VertexShader.h>
-#include <PixelShader.h>
-#include <ConstantBuffer.h>
+#include <vector>
+#include <string>
+
 #include <Scene.h>
 #include <InputHandler.h>
 

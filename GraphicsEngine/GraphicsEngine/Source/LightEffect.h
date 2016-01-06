@@ -51,7 +51,8 @@ namespace GraphicsEngine
 
 		void Set(ID3D11DeviceContext1* d3dDeviceContext) const;
 
-		static void SetTexture(ID3D11DeviceContext1* d3dDeviceContext, const Texture& texture);
+		static void SetTextureMap(ID3D11DeviceContext1* d3dDeviceContext, const Texture& textureMap);
+		static void SetNormalMap(ID3D11DeviceContext1* d3dDeviceContext, const Texture& normalMap);
 
 	private:
 		VertexShader m_vertexShader;

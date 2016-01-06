@@ -22,6 +22,7 @@ void LightEffect::Initialize(ID3D11Device* d3dDevice)
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		{ "WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
@@ -62,21 +63,23 @@ void LightEffect::Reset()
 	m_vertexShader.Reset();
 }
 
-void LightEffect::SetTexture(ID3D11DeviceContext1* d3dDeviceContext, const Texture& texture)
+void LightEffect::SetTextureMap(ID3D11DeviceContext1* d3dDeviceContext, const Texture& textureMap)
 {
-	d3dDeviceContext->PSSetShaderResources(0, 1, texture.GetAddressOf());
+	d3dDeviceContext->PSSetShaderResources(0, 1, textureMap.GetAddressOf());
+}
+void LightEffect::SetNormalMap(ID3D11DeviceContext1* d3dDeviceContext, const Texture& normalMap)
+{
+	d3dDeviceContext->PSSetShaderResources(1, 1, normalMap.GetAddressOf());
 }
 
 void LightEffect::UpdateCameraConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const CameraConstantBuffer& buffer) const
 {
 	m_cameraConstantBuffer.Map(d3dDeviceContext, &buffer, sizeof(CameraConstantBuffer));
 }
-
 void LightEffect::UpdateSubsetConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const SubsetConstantBuffer& buffer) const
 {
 	m_subsetConstantBuffer.Map(d3dDeviceContext, &buffer, sizeof(SubsetConstantBuffer));
 }
-
 void LightEffect::UpdateFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const FrameConstantBuffer& buffer) const
 {
 	m_frameConstantBuffer.Map(d3dDeviceContext, &buffer, sizeof(FrameConstantBuffer));

@@ -1,7 +1,7 @@
 #ifndef _NORMAL_MAP_HELPER_
 #define _NORMAL_MAP_HELPER_
 
-float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW)
+float3 NormalMapSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW)
 {
 	// Orthonormalize tangent:
 	float3 unitTangentW = normalize(tangentW - dot(unitNormalW, tangentW)*unitNormalW);

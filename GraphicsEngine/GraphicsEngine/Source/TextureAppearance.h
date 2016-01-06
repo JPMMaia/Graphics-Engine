@@ -7,13 +7,15 @@ namespace GraphicsEngine
 {
 	struct TextureAppearance
 	{
-		TextureAppearance(const Material& material, const Texture& texture) :
+		TextureAppearance(const Material& material, const Texture& textureMap, const Texture& normalMap) :
 			Material(material),
-			Texture(texture)
+			TextureMap(textureMap),
+			NormalMap(normalMap)
 		{
 		}
 
 		Material Material;
-		const Texture& Texture;
+		const Texture& TextureMap;
+		const Texture& NormalMap;
 	};
 }

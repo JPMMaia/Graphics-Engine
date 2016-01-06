@@ -2,6 +2,7 @@
 #include "ModelBuilder.h"
 #include "X3DParser/X3DParser.h"
 #include "LightModel.h"
+#include "MathHelper.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -30,10 +31,10 @@ LightModel ModelBuilder::CreateFromX3D(ID3D11Device* d3dDevice, const std::wstri
 	auto textureCoordinate = textureCoordinates.begin();
 
 	unsigned int vertexCount = coordinates.size() / 3;
-	vector<VertexPositionNormalTexture> vertices(vertexCount);
+	vector<VertexPositionTextureNormalTangent> vertices(vertexCount);
 	for (unsigned int i = 0; i < vertexCount; i++)
 	{
-		VertexPositionNormalTexture& vertex = vertices[i];
+		auto& vertex = vertices[i];
 		vertex.Position.x = *coordinate++;
 		vertex.Position.y = *coordinate++;
 		vertex.Position.z = *coordinate++;
@@ -49,13 +50,41 @@ LightModel ModelBuilder::CreateFromX3D(ID3D11Device* d3dDevice, const std::wstri
 	// Create indices:
 	vector<uint32_t> indices(indexedTriangleSet.index.cbegin(), indexedTriangleSet.index.cend());
 
+	// Calculate tangent vectors:
+	for (auto index = indices.cbegin(); index != indices.cend(); )
+	{
+		// Get vertices of a triangle:
+		auto& vertex0 = vertices[*index++];
+		auto& vertex1 = vertices[*index++];
+		auto& vertex2 = vertices[*index++];
+
+		// Calculate tangent vector:
+		XMFLOAT3 tangent, binormal;
+		MathHelper::CalculateTangentBinormal(
+			vertex0.Position, vertex1.Position, vertex2.Position,
+			vertex0.TextureCoordinate, vertex1.TextureCoordinate, vertex2.TextureCoordinate,
+			tangent, binormal
+			);
+
+		// Add tangent vector, as all these vertices share the same tangent vector:
+		auto tangentVector = XMLoadFloat3(&tangent);
+		XMStoreFloat3(&vertex0.Tangent, XMVectorAdd(XMLoadFloat3(&vertex0.Tangent), tangentVector));
+		XMStoreFloat3(&vertex1.Tangent, XMVectorAdd(XMLoadFloat3(&vertex1.Tangent), tangentVector));
+		XMStoreFloat3(&vertex2.Tangent, XMVectorAdd(XMLoadFloat3(&vertex2.Tangent), tangentVector));
+	}
+
+	// Normalize tangent vectors:
+	for (auto& vertex : vertices)
+		XMStoreFloat3(&vertex.Tangent, XMVector3Normalize(XMLoadFloat3(&vertex.Tangent)));
+
 	// Create texture appearance:
 	auto& appearance = shape.appearance;
 	auto& material = appearance.material;
 	auto& imageTexture = appearance.imageTexture;
 	m_textureManager.Create(d3dDevice, imageTexture.def, imageTexture.url);
+	m_textureManager.Create(d3dDevice, L"CubeNormalMap", L"Resources/bump01.dds");
 	auto alpha = 1.0f - material.transparency;
-	TextureAppearance textureAppearance = 
+	TextureAppearance textureAppearance =
 	{
 		Material(
 			XMFLOAT4(material.ambientInttensity, material.ambientInttensity, material.ambientInttensity, alpha),
@@ -63,7 +92,8 @@ LightModel ModelBuilder::CreateFromX3D(ID3D11Device* d3dDevice, const std::wstri
 			XMFLOAT4(material.specularColor.x, material.specularColor.y, material.specularColor.z, alpha),
 			material.shininess
 			),
-		m_textureManager[imageTexture.def]
+		m_textureManager[imageTexture.def],
+		m_textureManager[L"CubeNormalMap"]
 	};
 
 	Subset subset = { 0, indices.size() };

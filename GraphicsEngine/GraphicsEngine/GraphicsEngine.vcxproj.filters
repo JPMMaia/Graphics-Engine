@@ -68,6 +68,9 @@
     <ClCompile Include="Source\InputHandler.cpp">
       <Filter>Source\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Source\MathHelper.cpp">
+      <Filter>Source\Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\LightEffect.h">
@@ -199,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="Source\Buffer.h">
       <Filter>Source\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MathHelper.h">
+      <Filter>Source\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -316,6 +316,9 @@
     <Filter Include="Source\Input">
       <UniqueIdentifier>{5cd7cad1-929b-48c5-bf8c-8adf7e535c6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Normals">
+      <UniqueIdentifier>{2663831c-5dac-4113-bc60-95aa42b53a4a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shaders\Common\Material.hlsli">
@@ -335,6 +338,9 @@
     </None>
     <None Include="..\Libraries\rapidxml\manual.html">
       <Filter>Libraries\RapidXml</Filter>
+    </None>
+    <None Include="Source\Shaders\Common\NormalMapHelper.hlsli">
+      <Filter>Shaders\Normals</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 #include <Common/DirectionalLight.hlsli>
 #include <Common/PointLight.hlsli>
 #include <Common/SpotLight.hlsli>
+#include <Common/NormalMapHelper.hlsli>
 
 cbuffer PerSubsetConstantBuffer : register(b1)
 {

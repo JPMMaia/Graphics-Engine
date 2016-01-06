@@ -260,6 +260,7 @@
     <None Include="Source\Shaders\Common\DirectionalLight.hlsli" />
     <None Include="Source\Shaders\Common\LightHelper.hlsli" />
     <None Include="Source\Shaders\Common\Material.hlsli" />
+    <None Include="Source\Shaders\Common\NormalMapHelper.hlsli" />
     <None Include="Source\Shaders\Common\PointLight.hlsli" />
     <None Include="Source\Shaders\Common\SpotLight.hlsli" />
   </ItemGroup>

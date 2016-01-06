@@ -4,35 +4,38 @@
 #include "PixelShader.h"
 #include "DirectXMath.h"
 #include "Material.h"
-#include "DynamicConstantBuffer.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "Technique.h"
 #include "Texture.h"
+#include "BufferTypes.h"
 
 namespace GraphicsEngine
 {
 	class LightEffect
 	{
 	public:
-		struct PerObjectConstantBuffer
+		struct CameraConstantBuffer
 		{
-			DirectX::XMFLOAT4X4 WorldMatrix;
-			DirectX::XMFLOAT4X4 WorldInverseTransposeMatrix;
-			DirectX::XMFLOAT4X4 WorldViewProjectionMatrix;
+			DirectX::XMFLOAT4X4 ViewProjectionMatrix;
 		};
-		struct PerSubsetConstantBuffer
+		struct SubsetConstantBuffer
 		{
 			Material Material;
 		};
-		struct PerFrameConstantBuffer
+		struct FrameConstantBuffer
 		{
 			DirectionalLight DirectionalLight;
 			PointLight PointLight;
 			SpotLight SpotLight;
 			DirectX::XMFLOAT3 EyePositionW;
 			float Pad;
+		};
+
+		struct InstanceData
+		{
+			DirectX::XMFLOAT4X4 WorldMatrix;
 		};
 
 	public:
@@ -42,9 +45,9 @@ namespace GraphicsEngine
 		void Initialize(ID3D11Device* d3dDevice);
 		void Reset();
 
-		void UpdatePerObjectConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerObjectConstantBuffer& buffer) const;
-		void UpdatePerSubsetConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerSubsetConstantBuffer& buffer) const;
-		void UpdatePerFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const PerFrameConstantBuffer& buffer) const;		
+		void UpdateCameraConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const CameraConstantBuffer& buffer) const;
+		void UpdateSubsetConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const SubsetConstantBuffer& buffer) const;
+		void UpdateFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const FrameConstantBuffer& buffer) const;		
 
 		void Set(ID3D11DeviceContext1* d3dDeviceContext) const;
 
@@ -53,9 +56,9 @@ namespace GraphicsEngine
 	private:
 		VertexShader m_vertexShader;
 		PixelShader m_pixelShader;
-		DynamicConstantBuffer m_perObjectConstantBuffer;
-		DynamicConstantBuffer m_perSubsetConstantBuffer;
-		DynamicConstantBuffer m_perFrameConstantBuffer;
+		DynamicConstantBuffer m_cameraConstantBuffer;
+		DynamicConstantBuffer m_subsetConstantBuffer;
+		DynamicConstantBuffer m_frameConstantBuffer;
 		SamplerState m_samplerState;
 		Technique m_lightTechnique;
 	};

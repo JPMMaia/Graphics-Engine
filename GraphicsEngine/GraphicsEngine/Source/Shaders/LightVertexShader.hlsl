@@ -1,11 +1,9 @@
 #include <Common/Material.hlsli>
 #include <Common/DirectionalLight.hlsli>
 
-cbuffer PerObjectConstantBuffer : register(b0)
+cbuffer CameraConstantBuffer : register(b0)
 {
-	float4x4 g_worldMatrix;
-	float4x4 g_worldInverseTransposeMatrix;
-	float4x4 g_worldViewProjectionMatrix;
+	float4x4 g_viewProjectionMatrix;
 };
 
 struct VertexInput
@@ -13,6 +11,7 @@ struct VertexInput
 	float3 PositionL : POSITION;
 	float3 NormalL : NORMAL;
 	float2 TextureCoordinate : TEXCOORD0;
+	row_major float4x4 WorldMatrix : WORLD;
 };
 
 struct VertexOutput
@@ -27,14 +26,12 @@ VertexOutput main(VertexInput input)
 {
 	VertexOutput output;
 
-	float4 positionL = float4(input.PositionL, 1.0f);
-
 	// Transform to world space:
-	output.PositionW = mul(positionL, g_worldMatrix).xyz;
-	output.NormalW = mul(input.NormalL, (float3x3)g_worldInverseTransposeMatrix);
+	output.PositionW = mul(float4(input.PositionL, 1.0f), input.WorldMatrix).xyz;
+	output.NormalW = mul(input.NormalL, (float3x3)input.WorldMatrix); // TODO multiply by world inverse transpose
 
 	// Transform to homogeneous clip space:
-	output.PositionH = mul(positionL, g_worldViewProjectionMatrix);
+	output.PositionH = mul(float4(output.PositionW, 1.0f), g_viewProjectionMatrix);
 
 	// Output texture coordinate for interpolation:
 	output.TextureCoordinate = input.TextureCoordinate;

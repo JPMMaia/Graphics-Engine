@@ -1,6 +1,5 @@
 ﻿#include "stdafx.h"
 #include "Scene.h"
-#include "VertexTypes.h"
 #include "ModelBuilder.h"
 #include "VirtualKey.h"
 
@@ -10,83 +9,11 @@ using namespace std;
 
 void Scene::Initialize(ID3D11Device* d3dDevice)
 {
-	static const vector<VertexPositionNormalTexture> cubeVertices =
-	{
-		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f) },
-		{ XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(-0.5f, 0.5f, -0.5f), XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-0.5f, 0.5f, 0.5f), XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
-
-		{ XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT3(1.0f, -1.0f, -1.0f),  XMFLOAT2(0.0f, 0.0f) },
-		{ XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f), },
-		{ XMFLOAT3(0.5f, 0.5f, -0.5f), XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
-	};
-	static const vector<uint32_t> cubeIndices =
-	{
-		0, 2, 1,
-		1, 2, 3,
-
-		0, 1, 4,
-		4, 1, 5,
-
-		0, 4, 2,
-		2, 4, 6,
-
-		4, 5, 6,
-		6, 5, 7,
-
-		2, 6, 3,
-		3, 6, 7,
-
-		1, 3, 5,
-		5, 3, 7,
-	};
-	static const vector<Subset> subsets =
-	{
-		{ 0, cubeIndices.size() },
-	};
-
-
-
-	ModelBuilder builder(m_textureManager);
-	m_cubeModel = builder.CreateFromX3D(d3dDevice, L"Resources/SimpleCube.x3d");
-
-	m_cubeInstance.Initialize(&m_cubeModel);
+	InitializeCubeModel(d3dDevice);
+	InitializeFrameBuffer();
 
 	m_effectManager.Initialize(d3dDevice);
-	m_frameBuffer.DirectionalLight =
-	{
-		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
-		XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f),
-		XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f),
-		XMFLOAT3(1.0f, -1.0f, 0.0f)
-	};
-	m_frameBuffer.PointLight =
-	{
-		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
-		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT3(0.0f, 2.0f, 0.0f),
-		5.0f,
-		XMFLOAT3(1.0f, 1.0f, 1.0f)
-	};
-	m_frameBuffer.SpotLight =
-	{
-		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
-		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
-		XMFLOAT3(1.2f, 1.2f, 1.2f),
-		5.0f,
-		XMFLOAT3(0.0f, -1.0f, 0.0f),
-		1.0f,
-		XMFLOAT3(1.0f, 1.0f, 1.0f)
-	};
-
 	m_camera.SetPosition(0.0f, 1.4f, 3.0f);
-	m_viewMatrix = m_camera.GetViewMatrix();
-
-	XMStoreFloat4x4(&m_modelMatrix, XMMatrixIdentity());
 }
 
 void Scene::Reset()
@@ -98,17 +25,20 @@ void Scene::Reset()
 
 void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 {
-	m_camera.Update();
-	m_frameBuffer.EyePositionW = m_camera.GetPosition();
-	m_viewMatrix = m_camera.GetViewMatrix();
+	// Update camera:
+	UpdateCamera();
 
 	auto lightEffect = m_effectManager.GetLightEffect();
 
+	// Set light effect:
 	lightEffect.Set(d3dDeviceContext);
-	lightEffect.UpdatePerFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);
 
-	m_cubeInstance.SetInstanceBuffer(m_modelMatrix, m_viewMatrix, m_projectionMatrix);
-	m_cubeInstance.Draw(d3dDeviceContext, lightEffect);
+	// Update constant buffers:
+	lightEffect.UpdateFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);
+	lightEffect.UpdateCameraConstantBuffer(d3dDeviceContext, m_cameraBuffer);
+
+	// Draw cube instances:
+	m_cubeModel.Draw(d3dDeviceContext, lightEffect, 125);
 }
 
 void Scene::SetProjectionMatrix(const DirectX::XMFLOAT4X4& projectionMatrix)
@@ -143,4 +73,83 @@ void Scene::HandleInput(const InputHandler& input)
 
 	if (input.IsKeyDown(VirtualKey::S))
 		m_camera.MoveForward(-translationScalar);
+}
+
+void Scene::InitializeCubeModel(ID3D11Device* d3dDevice)
+{
+	constexpr uint32_t size = 5;
+	constexpr auto width = 10.0f;
+	constexpr auto height = 10.0f;
+	constexpr auto depth = 10.0f;
+	constexpr auto x = -0.5f * width;
+	constexpr auto y = -0.5f * height;
+	constexpr auto z = -0.5f * depth;
+	constexpr auto dx = width / (size - 1);
+	constexpr auto dy = height / (size - 1);
+	constexpr auto dz = depth / (size - 1);
+
+	vector<LightEffect::InstanceData> instanceBuffer(size*size*size);
+	for (auto i = 0; i < size; i++)
+	{
+		for (auto j = 0; j < size; j++)
+		{
+			for (auto k = 0; k < size; k++)
+			{
+				instanceBuffer[i*size*size + j*size + k].WorldMatrix = XMFLOAT4X4(
+					1.0f, 0.0f, 0.0f, 0.0f,
+					0.0f, 1.0f, 0.0f, 0.0f,
+					0.0f, 0.0f, 1.0f, 0.0f,
+					x + dx*i, y + dy*j, z + dz*k, 1.0f
+					);
+			}
+		}
+	}
+
+	ModelBuilder builder(m_textureManager);
+	m_cubeModel = builder.CreateFromX3D(d3dDevice, L"Resources/SimpleCube.x3d", instanceBuffer);
+}
+
+void Scene::InitializeFrameBuffer()
+{
+	m_frameBuffer.DirectionalLight =
+	{
+		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
+		XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f),
+		XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f),
+		XMFLOAT3(1.0f, -1.0f, 0.0f)
+	};
+	m_frameBuffer.PointLight =
+	{
+		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		XMFLOAT3(0.0f, 2.0f, 0.0f),
+		5.0f,
+		XMFLOAT3(1.0f, 1.0f, 1.0f)
+	};
+	m_frameBuffer.SpotLight =
+	{
+		XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f),
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f),
+		XMFLOAT3(1.2f, 1.2f, 1.2f),
+		5.0f,
+		XMFLOAT3(0.0f, -1.0f, 0.0f),
+		1.0f,
+		XMFLOAT3(1.0f, 1.0f, 1.0f)
+	};
+}
+
+void Scene::UpdateCamera()
+{
+	// Update camera:
+	m_camera.Update();
+
+	// Update frame buffer:
+	m_frameBuffer.EyePositionW = m_camera.GetPosition();
+
+	// Build view projection matrix:
+	auto& viewMatrix = m_camera.GetViewMatrix();
+	auto viewProjectionMatrix = XMMatrixMultiply(XMLoadFloat4x4(&viewMatrix), XMLoadFloat4x4(&m_projectionMatrix));
+	XMStoreFloat4x4(&m_cameraBuffer.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
 }

@@ -168,6 +168,7 @@
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\InputHandler.cpp" />
     <ClCompile Include="Source\LightModel.cpp" />
+    <ClCompile Include="Source\MathHelper.cpp" />
     <ClCompile Include="Source\ModelBuilder.cpp" />
     <ClCompile Include="Source\SamplerState.cpp" />
     <ClCompile Include="Source\Technique.cpp" />
@@ -207,6 +208,7 @@
     <ClInclude Include="Source\BufferTypes.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\InputHandler.h" />
+    <ClInclude Include="Source\MathHelper.h" />
     <ClInclude Include="Source\ModelBuilder.h" />
     <ClInclude Include="Source\TextureAppearance.h" />
     <ClInclude Include="Source\LightModel.h" />
@@ -248,6 +250,7 @@
     <None Include="Source\Shaders\Common\DirectionalLight.hlsli" />
     <None Include="Source\Shaders\Common\LightHelper.hlsli" />
     <None Include="Source\Shaders\Common\Material.hlsli" />
+    <None Include="Source\Shaders\Common\NormalMapHelper.hlsli" />
     <None Include="Source\Shaders\Common\PointLight.hlsli" />
     <None Include="Source\Shaders\Common\SpotLight.hlsli" />
   </ItemGroup>

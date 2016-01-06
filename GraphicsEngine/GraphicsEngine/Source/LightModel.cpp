@@ -6,14 +6,14 @@ using namespace GraphicsEngine;
 LightModel::LightModel()
 {
 }
-LightModel::LightModel(ID3D11Device* d3dDevice, const std::vector<VertexPositionNormalTexture>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<TextureAppearance>& materials, const std::vector<LightEffect::InstanceData>& instancedData) :
+LightModel::LightModel(ID3D11Device* d3dDevice, const std::vector<VertexPositionTextureNormalTangent>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<TextureAppearance>& materials, const std::vector<LightEffect::InstanceData>& instancedData) :
 	m_model(d3dDevice, vertices, indices, subsets),
 	m_materials(materials),
 	m_instancedData(d3dDevice, instancedData)
 {
 }
 
-void LightModel::Initialize(ID3D11Device* d3dDevice, const std::vector<VertexPositionNormalTexture>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<TextureAppearance>& materials, const std::vector<LightEffect::InstanceData>& instancedData)
+void LightModel::Initialize(ID3D11Device* d3dDevice, const std::vector<VertexPositionTextureNormalTangent>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<TextureAppearance>& materials, const std::vector<LightEffect::InstanceData>& instancedData)
 {
 	m_model.Initialize(d3dDevice, vertices, indices, subsets);
 	m_materials.assign(materials.begin(), materials.end());
@@ -34,7 +34,8 @@ void LightModel::Draw(ID3D11DeviceContext1* d3dDeviceContext, LightEffect& light
 		// Set subset's material:
 		auto material = m_materials[i];
 		lightEffect.UpdateSubsetConstantBuffer(d3dDeviceContext, { material.Material });
-		lightEffect.SetTexture(d3dDeviceContext, material.Texture);
+		lightEffect.SetTextureMap(d3dDeviceContext, material.TextureMap);
+		lightEffect.SetNormalMap(d3dDeviceContext, material.NormalMap);
 
 		// Draw subset:
 		auto& subset = subsets[i];

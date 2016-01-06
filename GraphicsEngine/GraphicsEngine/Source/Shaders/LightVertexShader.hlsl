@@ -8,8 +8,9 @@ cbuffer CameraConstantBuffer : register(b0)
 
 struct VertexInput
 {
-	float3 PositionL : POSITION;
+	float3 PositionL : POSITION;	
 	float3 NormalL : NORMAL;
+	float3 TangentL : TANGENT;
 	float2 TextureCoordinate : TEXCOORD0;
 	row_major float4x4 WorldMatrix : WORLD;
 };
@@ -19,6 +20,7 @@ struct VertexOutput
 	float4 PositionH : SV_POSITION;
 	float3 PositionW : POSITION;
 	float3 NormalW : NORMAL;
+	float3 TangentW : TANGENT;
 	float2 TextureCoordinate : TEXCOORD0;
 };
 
@@ -29,6 +31,7 @@ VertexOutput main(VertexInput input)
 	// Transform to world space:
 	output.PositionW = mul(float4(input.PositionL, 1.0f), input.WorldMatrix).xyz;
 	output.NormalW = mul(input.NormalL, (float3x3)input.WorldMatrix); // TODO multiply by world inverse transpose
+	output.TangentW = mul(input.TangentL, (float3x3)input.WorldMatrix);
 
 	// Transform to homogeneous clip space:
 	output.PositionH = mul(float4(output.PositionW, 1.0f), g_viewProjectionMatrix);

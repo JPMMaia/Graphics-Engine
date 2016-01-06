@@ -4,16 +4,11 @@
 
 namespace GraphicsEngine
 {
-	struct VertexPositionNormal
+	struct VertexPositionTextureNormalTangent
 	{
 		DirectX::XMFLOAT3 Position;
 		DirectX::XMFLOAT3 Normal;
-	};
-
-	struct VertexPositionNormalTexture
-	{
-		DirectX::XMFLOAT3 Position;
-		DirectX::XMFLOAT3 Normal;
+		DirectX::XMFLOAT3 Tangent;
 		DirectX::XMFLOAT2 TextureCoordinate;
 	};
 }

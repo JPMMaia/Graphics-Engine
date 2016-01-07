@@ -4,6 +4,16 @@
 #include <Common/SpotLight.hlsli>
 #include <Common/NormalMapHelper.hlsli>
 
+cbuffer CameraConstantBuffer : register(b0)
+{
+	float4x4 g_viewProjectionMatrix;
+	float g_maxTesselationDistance;
+	float g_minTesselationDistance;
+	float g_maxTesselationFactor;
+	float g_minTesselationFactor;
+	float3 g_eyePositionW;
+};
+
 cbuffer SubsetConstantBuffer : register(b1)
 {
 	Material g_material;
@@ -14,7 +24,6 @@ cbuffer FrameConstantBuffer : register(b2)
 	DirectionalLight g_directionalLight;
 	PointLight g_pointLight;
 	SpotLight g_spotLight;
-	float3 g_EyePositionW;
 };
 
 struct VertexOutput
@@ -33,7 +42,7 @@ Texture2D g_normalMap : register(t1);
 float4 main(VertexOutput input) : SV_TARGET
 {
 	// Calculate the eye vector:
-	float3 toEyeW = normalize(g_EyePositionW - input.PositionW);
+	float3 toEyeW = normalize(g_eyePositionW - input.PositionW);
 
 	float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);

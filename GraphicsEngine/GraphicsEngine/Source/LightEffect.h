@@ -61,15 +61,19 @@ namespace GraphicsEngine
 
 		static void SetTextureMap(ID3D11DeviceContext1* d3dDeviceContext, const Texture& textureMap);
 		static void SetNormalMap(ID3D11DeviceContext1* d3dDeviceContext, const Texture& normalMap);
+		static void SetHeightMap(ID3D11DeviceContext1* d3dDeviceContext, const Texture& heightMap);
 
 	private:
 		VertexShader m_vertexShader;
+		HullShader m_hullShader;
+		DomainShader m_domainShader;
 		PixelShader m_pixelShader;
 		DynamicConstantBuffer m_cameraConstantBuffer;
 		DynamicConstantBuffer m_tesselationConstantBuffer;
 		DynamicConstantBuffer m_subsetConstantBuffer;
 		DynamicConstantBuffer m_frameConstantBuffer;
 		SamplerState m_samplerState;
+		RasterizerState m_rasterizerState;
 		Technique m_lightTechnique;
 	};
 }

@@ -80,9 +80,9 @@ void Scene::HandleInput(const InputHandler& input)
 void Scene::InitializeCubeModel(ID3D11Device* d3dDevice)
 {
 	constexpr uint32_t size = 5;
-	constexpr auto width = 10.0f;
-	constexpr auto height = 10.0f;
-	constexpr auto depth = 10.0f;
+	constexpr auto width = 20.0f;
+	constexpr auto height = 20.0f;
+	constexpr auto depth = 20.0f;
 	constexpr auto x = -0.5f * width;
 	constexpr auto y = -0.5f * height;
 	constexpr auto z = -0.5f * depth;
@@ -143,10 +143,10 @@ void Scene::InitializeFrameBuffer()
 }
 void Scene::InitializeTesselationBuffer()
 {
-	m_tesselationBuffer.MaxTesselationDistance = 5.0f;
-	m_tesselationBuffer.MinTesselationDistance = 30.0f;
-	m_tesselationBuffer.MaxTesselationFactor = 0;
-	m_tesselationBuffer.MinTesselationFactor = 6;
+	m_tesselationBuffer.MaxTesselationDistance = 2.0f;
+	m_tesselationBuffer.MinTesselationDistance = 10.0f;
+	m_tesselationBuffer.MaxTesselationFactor = 8;
+	m_tesselationBuffer.MinTesselationFactor = 1;
 }
 
 void Scene::UpdateCamera()

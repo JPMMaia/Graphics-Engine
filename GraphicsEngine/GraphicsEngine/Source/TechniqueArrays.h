@@ -11,10 +11,12 @@ namespace GraphicsEngine
 		void Set(ID3D11DeviceContext1* d3dDeviceContext) const;
 
 		void VSSetElement(ResourceType&& element, uint32_t slot);
+		void DSSetElement(ResourceType&& element, uint32_t slot);
 		void PSSetElement(ResourceType&& element, uint32_t slot);
 
 	private:
 		ResourceArray<ResourceType> m_vertexShaderArray;
+		ResourceArray<ResourceType> m_domainShaderArray;
 		ResourceArray<ResourceType> m_pixelShaderArray;
 	};
 
@@ -22,6 +24,7 @@ namespace GraphicsEngine
 	void TechniqueArrays<ResourceType>::Set(ID3D11DeviceContext1* d3dDeviceContext) const
 	{
 		m_vertexShaderArray.VSSet(d3dDeviceContext);
+		m_domainShaderArray.DSSet(d3dDeviceContext);
 		m_pixelShaderArray.PSSet(d3dDeviceContext);
 	}
 
@@ -30,7 +33,11 @@ namespace GraphicsEngine
 	{
 		m_vertexShaderArray.SetElement(std::forward<ResourceType>(element), slot);
 	}
-
+	template <class ResourceType>
+	void TechniqueArrays<ResourceType>::DSSetElement(ResourceType&& element, uint32_t slot)
+	{
+		m_domainShaderArray.SetElement(std::forward<ResourceType>(element), slot);
+	}
 	template <class ResourceType>
 	void TechniqueArrays<ResourceType>::PSSetElement(ResourceType&& element, uint32_t slot)
 	{

@@ -7,7 +7,7 @@ LightModel::LightModel()
 {
 }
 LightModel::LightModel(ID3D11Device* d3dDevice, const std::vector<VertexPositionTextureNormalTangent>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<TextureAppearance>& materials, const std::vector<LightEffect::InstanceData>& instancedData) :
-	m_model(d3dDevice, vertices, indices, subsets),
+	m_model(d3dDevice, vertices, indices, subsets, D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST),
 	m_materials(materials),
 	m_instancedData(d3dDevice, instancedData)
 {
@@ -36,6 +36,7 @@ void LightModel::Draw(ID3D11DeviceContext1* d3dDeviceContext, LightEffect& light
 		lightEffect.UpdateSubsetConstantBuffer(d3dDeviceContext, { material.Material });
 		lightEffect.SetTextureMap(d3dDeviceContext, material.TextureMap);
 		lightEffect.SetNormalMap(d3dDeviceContext, material.NormalMap);
+		lightEffect.SetHeightMap(d3dDeviceContext, material.HeightMap);
 
 		// Draw subset:
 		auto& subset = subsets[i];

@@ -82,7 +82,8 @@ LightModel ModelBuilder::CreateFromX3D(ID3D11Device* d3dDevice, const std::wstri
 	auto& material = appearance.material;
 	auto& imageTexture = appearance.imageTexture;
 	m_textureManager.Create(d3dDevice, imageTexture.def, imageTexture.url);
-	m_textureManager.Create(d3dDevice, L"CubeNormalMap", L"Resources/bump01.dds");
+	m_textureManager.Create(d3dDevice, L"CubeNormalMap", L"Resources/old_bricks_normal_map.dds");
+	m_textureManager.Create(d3dDevice, L"CubeHeightMap", L"Resources/old_bricks_height_map.dds");
 	auto alpha = 1.0f - material.transparency;
 	TextureAppearance textureAppearance =
 	{
@@ -93,7 +94,8 @@ LightModel ModelBuilder::CreateFromX3D(ID3D11Device* d3dDevice, const std::wstri
 			material.shininess
 			),
 		m_textureManager[imageTexture.def],
-		m_textureManager[L"CubeNormalMap"]
+		m_textureManager[L"CubeNormalMap"],
+		m_textureManager[L"CubeHeightMap"]
 	};
 
 	Subset subset = { 0, indices.size() };

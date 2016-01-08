@@ -22,21 +22,20 @@ cbuffer FrameConstantBuffer : register(b3)
 	SpotLight g_spotLight;
 };
 
-struct VertexOutput
+struct DomainOutput
 {
 	float4 PositionH : SV_POSITION;
 	float3 PositionW : POSITION;
 	float3 NormalW : NORMAL;
 	float3 TangentW : TANGENT;
 	float2 TextureCoordinate : TEXCOORD0;
-	float TesselationFactor : TESSFACTOR;
 };
 
 SamplerState g_samplerState : register(s0);
 Texture2D g_texture : register(t0);
 Texture2D g_normalMap : register(t1);
 
-float4 main(VertexOutput input) : SV_TARGET
+float4 main(DomainOutput input) : SV_TARGET
 {
 	// Calculate the eye vector:
 	float3 toEyeW = normalize(g_eyePositionW - input.PositionW);

@@ -26,7 +26,6 @@ struct VertexInput
 
 struct VertexOutput
 {
-	float4 PositionH : SV_POSITION;
 	float3 PositionW : POSITION;
 	float3 NormalW : NORMAL;
 	float3 TangentW : TANGENT;
@@ -42,9 +41,6 @@ VertexOutput main(VertexInput input)
 	output.PositionW = mul(float4(input.PositionL, 1.0f), input.WorldMatrix).xyz;
 	output.NormalW = mul(input.NormalL, (float3x3)input.WorldMatrix); // TODO multiply by world inverse transpose
 	output.TangentW = mul(input.TangentL, (float3x3)input.WorldMatrix);
-
-	// Transform to homogeneous clip space:
-	output.PositionH = mul(float4(output.PositionW, 1.0f), g_viewProjectionMatrix);
 
 	// Output texture coordinate for interpolation:
 	output.TextureCoordinate = input.TextureCoordinate;

@@ -71,6 +71,12 @@
     <ClCompile Include="Source\MathHelper.cpp">
       <Filter>Source\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="Source\DomainShader.cpp">
+      <Filter>Source\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\HullShader.cpp">
+      <Filter>Source\Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\LightEffect.h">
@@ -206,6 +212,12 @@
     <ClInclude Include="Source\MathHelper.h">
       <Filter>Source\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Source\DomainShader.h">
+      <Filter>Source\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\HullShader.h">
+      <Filter>Source\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -315,6 +327,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shaders\LightVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\LightHullShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\LightDomainShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

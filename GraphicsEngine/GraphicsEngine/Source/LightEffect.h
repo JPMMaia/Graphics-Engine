@@ -19,6 +19,15 @@ namespace GraphicsEngine
 		struct CameraConstantBuffer
 		{
 			DirectX::XMFLOAT4X4 ViewProjectionMatrix;
+			DirectX::XMFLOAT3 EyePositionW;
+			float Pad;
+		};
+		struct TesselationConstantBuffer
+		{
+			float MaxTesselationDistance;
+			float MinTesselationDistance;
+			float MaxTesselationFactor;
+			float MinTesselationFactor;
 		};
 		struct SubsetConstantBuffer
 		{
@@ -29,8 +38,6 @@ namespace GraphicsEngine
 			DirectionalLight DirectionalLight;
 			PointLight PointLight;
 			SpotLight SpotLight;
-			DirectX::XMFLOAT3 EyePositionW;
-			float Pad;
 		};
 
 		struct InstanceData
@@ -46,6 +53,7 @@ namespace GraphicsEngine
 		void Reset();
 
 		void UpdateCameraConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const CameraConstantBuffer& buffer) const;
+		void UpdateTesselationConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const TesselationConstantBuffer& buffer) const;
 		void UpdateSubsetConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const SubsetConstantBuffer& buffer) const;
 		void UpdateFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const FrameConstantBuffer& buffer) const;		
 
@@ -58,6 +66,7 @@ namespace GraphicsEngine
 		VertexShader m_vertexShader;
 		PixelShader m_pixelShader;
 		DynamicConstantBuffer m_cameraConstantBuffer;
+		DynamicConstantBuffer m_tesselationConstantBuffer;
 		DynamicConstantBuffer m_subsetConstantBuffer;
 		DynamicConstantBuffer m_frameConstantBuffer;
 		SamplerState m_samplerState;

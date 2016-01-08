@@ -11,6 +11,7 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 {
 	InitializeCubeModel(d3dDevice);
 	InitializeFrameBuffer();
+	InitializeTesselationBuffer();
 
 	m_effectManager.Initialize(d3dDevice);
 	m_camera.SetPosition(0.0f, 1.4f, 3.0f);
@@ -36,6 +37,7 @@ void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 	// Update constant buffers:
 	lightEffect.UpdateFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);
 	lightEffect.UpdateCameraConstantBuffer(d3dDeviceContext, m_cameraBuffer);
+	lightEffect.UpdateTesselationConstantBuffer(d3dDeviceContext, m_tesselationBuffer);
 
 	// Draw cube instances:
 	m_cubeModel.Draw(d3dDeviceContext, lightEffect, 125);
@@ -139,14 +141,21 @@ void Scene::InitializeFrameBuffer()
 		XMFLOAT3(1.0f, 1.0f, 1.0f)
 	};
 }
+void Scene::InitializeTesselationBuffer()
+{
+	m_tesselationBuffer.MaxTesselationDistance = 5.0f;
+	m_tesselationBuffer.MinTesselationDistance = 30.0f;
+	m_tesselationBuffer.MaxTesselationFactor = 0;
+	m_tesselationBuffer.MinTesselationFactor = 6;
+}
 
 void Scene::UpdateCamera()
 {
 	// Update camera:
 	m_camera.Update();
 
-	// Update frame buffer:
-	m_frameBuffer.EyePositionW = m_camera.GetPosition();
+	// Update camera position in the constant buffer:
+	m_cameraBuffer.EyePositionW = m_camera.GetPosition();
 
 	// Build view projection matrix:
 	auto& viewMatrix = m_camera.GetViewMatrix();

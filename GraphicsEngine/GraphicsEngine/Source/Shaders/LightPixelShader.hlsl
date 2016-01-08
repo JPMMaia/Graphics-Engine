@@ -7,19 +7,15 @@
 cbuffer CameraConstantBuffer : register(b0)
 {
 	float4x4 g_viewProjectionMatrix;
-	float g_maxTesselationDistance;
-	float g_minTesselationDistance;
-	float g_maxTesselationFactor;
-	float g_minTesselationFactor;
 	float3 g_eyePositionW;
 };
 
-cbuffer SubsetConstantBuffer : register(b1)
+cbuffer SubsetConstantBuffer : register(b2)
 {
 	Material g_material;
 };
 
-cbuffer FrameConstantBuffer : register(b2)
+cbuffer FrameConstantBuffer : register(b3)
 {
 	DirectionalLight g_directionalLight;
 	PointLight g_pointLight;
@@ -33,6 +29,7 @@ struct VertexOutput
 	float3 NormalW : NORMAL;
 	float3 TangentW : TANGENT;
 	float2 TextureCoordinate : TEXCOORD0;
+	float TesselationFactor : TESSFACTOR;
 };
 
 SamplerState g_samplerState : register(s0);

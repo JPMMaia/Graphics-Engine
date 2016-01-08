@@ -4,12 +4,16 @@
 cbuffer CameraConstantBuffer : register(b0)
 {
 	float4x4 g_viewProjectionMatrix;
+	float3 g_eyePositionW;
+};
+
+cbuffer TesselationConstantBuffer : register(b1)
+{
 	float g_maxTesselationDistance;
 	float g_minTesselationDistance;
 	float g_maxTesselationFactor;
 	float g_minTesselationFactor;
-	float3 g_eyePositionW;
-};
+}
 
 struct VertexInput
 {

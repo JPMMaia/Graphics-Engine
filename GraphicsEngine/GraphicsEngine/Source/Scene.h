@@ -23,6 +23,7 @@ namespace GraphicsEngine
 	private:
 		void InitializeCubeModel(ID3D11Device* d3dDevice);
 		void InitializeFrameBuffer();
+		void InitializeTesselationBuffer();
 		void UpdateCamera();
 
 	private:
@@ -32,6 +33,7 @@ namespace GraphicsEngine
 		TextureManager m_textureManager;
 		LightEffect::FrameConstantBuffer m_frameBuffer;
 		LightEffect::CameraConstantBuffer m_cameraBuffer;
+		LightEffect::TesselationConstantBuffer m_tesselationBuffer;
 		Camera m_camera;
 
 		DirectX::XMFLOAT4X4 m_projectionMatrix;

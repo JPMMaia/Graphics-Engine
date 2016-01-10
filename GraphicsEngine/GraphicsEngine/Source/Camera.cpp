@@ -10,7 +10,7 @@ Camera::Camera() :
 	m_position = {};
 	m_rotation = {};
 
-	m_right = { 1.0f, 0.0f, 0.0f };
+	m_left = { 1.0f, 0.0f, 0.0f };
 	m_up = { 0.0f, 1.0f, 0.0f };
 	m_forward = { 0.0f, 0.0f, 1.0f };
 }
@@ -25,39 +25,19 @@ void Camera::Update()
 		XMStoreFloat3(&m_forward, forward);
 
 		// Orthonormalize the up vector:
-		auto right = XMLoadFloat3(&m_right);
-		auto up = XMVector3Normalize(XMVector3Cross(forward, right));
+		auto left = XMLoadFloat3(&m_left);
+		auto up = XMVector3Normalize(XMVector3Cross(forward, left));
 		XMStoreFloat3(&m_up, up);
 
-		// Orthonormalize the right vector:
-		right = XMVector3Cross(up, forward);
-		XMStoreFloat3(&m_right, right);
+		// Orthonormalize the left vector:
+		left = XMVector3Cross(up, forward);
+		XMStoreFloat3(&m_left, left);
 
+		// Load position:
 		auto position = XMLoadFloat3(&m_position);
 
-		// First column:
-		m_viewMatrix(0, 0) = m_right.x;
-		m_viewMatrix(1, 0) = m_right.y;
-		m_viewMatrix(2, 0) = m_right.z;
-		m_viewMatrix(3, 0) = -XMVectorGetX(XMVector3Dot(right, position));;
-
-		// Second column:
-		m_viewMatrix(0, 1) = m_up.x;
-		m_viewMatrix(1, 1) = m_up.y;
-		m_viewMatrix(2, 1) = m_up.z;
-		m_viewMatrix(3, 1) = -XMVectorGetX(XMVector3Dot(up, position));
-
-		// Third column:
-		m_viewMatrix(0, 2) = m_forward.x;
-		m_viewMatrix(1, 2) = m_forward.y;
-		m_viewMatrix(2, 2) = m_forward.z;
-		m_viewMatrix(3, 2) = -XMVectorGetX(XMVector3Dot(forward, position));
-
-		// Fourth column:
-		m_viewMatrix(0, 3) = 0.0f;
-		m_viewMatrix(1, 3) = 0.0f;
-		m_viewMatrix(2, 3) = 0.0f;
-		m_viewMatrix(3, 3) = 1.0f;
+		// Build view matrix:
+		XMStoreFloat4x4(&m_viewMatrix, XMMatrixLookToRH(position, forward, up));
 
 		m_dirty = false;
 	}
@@ -65,21 +45,21 @@ void Camera::Update()
 
 void Camera::MoveForward(float scalar)
 {
-	m_position.x -= scalar * m_forward.x;
-	m_position.y -= scalar * m_forward.y;
-	m_position.z -= scalar * m_forward.z;
+	m_position.x += scalar * m_forward.x;
+	m_position.y += scalar * m_forward.y;
+	m_position.z += scalar * m_forward.z;
 	m_dirty = true;
 }
-void Camera::MoveRight(float scalar)
+void Camera::MoveLeft(float scalar)
 {
-	m_position.x += scalar * m_right.x;
-	m_position.y += scalar * m_right.y;
-	m_position.z += scalar * m_right.z;
+	m_position.x += scalar * m_left.x;
+	m_position.y += scalar * m_left.y;
+	m_position.z += scalar * m_left.z;
 	m_dirty = true;
 }
 void Camera::RotateLocalX(float radians)
 {
-	auto rotationMatrix = XMMatrixRotationAxis(XMLoadFloat3(&m_right), -radians);
+	auto rotationMatrix = XMMatrixRotationAxis(XMLoadFloat3(&m_left), radians);
 
 	XMStoreFloat3(&m_up, XMVector3TransformNormal(XMLoadFloat3(&m_up), rotationMatrix));
 	XMStoreFloat3(&m_forward, XMVector3TransformNormal(XMLoadFloat3(&m_forward), rotationMatrix));
@@ -88,9 +68,9 @@ void Camera::RotateLocalX(float radians)
 }
 void Camera::RotateWorldY(float radians)
 {
-	auto rotationMatrix = XMMatrixRotationY(-radians);
+	auto rotationMatrix = XMMatrixRotationY(radians);
 
-	XMStoreFloat3(&m_right, XMVector3TransformNormal(XMLoadFloat3(&m_right), rotationMatrix));
+	XMStoreFloat3(&m_left, XMVector3TransformNormal(XMLoadFloat3(&m_left), rotationMatrix));
 	XMStoreFloat3(&m_up, XMVector3TransformNormal(XMLoadFloat3(&m_up), rotationMatrix));
 	XMStoreFloat3(&m_forward, XMVector3TransformNormal(XMLoadFloat3(&m_forward), rotationMatrix));
 

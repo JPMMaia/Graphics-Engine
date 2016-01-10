@@ -67,7 +67,8 @@ DomainOutput main(
 	float heightMapSample = g_heightMap.SampleLevel(g_samplerState, output.TextureCoordinate, mipLevel).x;
 
 	// Ofset vertex along the normal by the sampled height map value:
-	output.PositionW += 0.1f * (1.0f - heightMapSample) * output.NormalW;
+	output.NormalW = normalize(output.NormalW);
+	//output.PositionW += 0.1f * (1.0f - heightMapSample) * output.NormalW;
 
 	// Transform to homogeneous clip space:
 	output.PositionH = mul(float4(output.PositionW, 1.0f), g_viewProjectionMatrix);

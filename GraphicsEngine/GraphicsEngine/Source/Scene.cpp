@@ -52,26 +52,26 @@ void Scene::HandleInput(const InputHandler& input)
 {
 	constexpr auto rotationScalar = 0.02f;
 	if (input.IsKeyDown(VirtualKey::Right))
-		m_camera.RotateWorldY(rotationScalar);
+		m_camera.RotateWorldY(-rotationScalar);
 
 	if (input.IsKeyDown(VirtualKey::Up))
 		m_camera.RotateLocalX(-rotationScalar);
 
 	if (input.IsKeyDown(VirtualKey::Left))
-		m_camera.RotateWorldY(-rotationScalar);
+		m_camera.RotateWorldY(rotationScalar);
 
 	if (input.IsKeyDown(VirtualKey::Down))
 		m_camera.RotateLocalX(rotationScalar);
 
 	constexpr auto translationScalar = 0.1f;
 	if (input.IsKeyDown(VirtualKey::D))
-		m_camera.MoveRight(translationScalar);
+		m_camera.MoveLeft(-translationScalar);
 
 	if (input.IsKeyDown(VirtualKey::W))
 		m_camera.MoveForward(translationScalar);
 
 	if (input.IsKeyDown(VirtualKey::A))
-		m_camera.MoveRight(-translationScalar);
+		m_camera.MoveLeft(translationScalar);
 
 	if (input.IsKeyDown(VirtualKey::S))
 		m_camera.MoveForward(-translationScalar);

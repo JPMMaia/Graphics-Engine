@@ -12,7 +12,7 @@ namespace GraphicsEngine
 		void Update();
 
 		void MoveForward(float scalar);
-		void MoveRight(float scalar);
+		void MoveLeft(float scalar);
 		void RotateLocalX(float angleX);
 		void RotateWorldY(float angleY);
 
@@ -28,7 +28,7 @@ namespace GraphicsEngine
 		DirectX::XMFLOAT3 m_position;
 		DirectX::XMFLOAT3 m_rotation;
 
-		DirectX::XMFLOAT3 m_right;
+		DirectX::XMFLOAT3 m_left;
 		DirectX::XMFLOAT3 m_up;
 		DirectX::XMFLOAT3 m_forward;
 

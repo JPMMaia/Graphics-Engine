@@ -6,16 +6,16 @@ using namespace GraphicsEngine;
 LightModel::LightModel()
 {
 }
-LightModel::LightModel(ID3D11Device* d3dDevice, const std::vector<VertexPositionTextureNormalTangent>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<TextureAppearance>& materials, const std::vector<LightEffect::InstanceData>& instancedData) :
-	m_model(d3dDevice, vertices, indices, subsets, D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST),
+LightModel::LightModel(ID3D11Device* d3dDevice, const std::vector<VertexPositionTextureNormalTangent>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<TextureAppearance>& materials, const std::vector<LightEffect::InstanceData>& instancedData, D3D11_PRIMITIVE_TOPOLOGY primitiveTopology) :
+	m_model(d3dDevice, vertices, indices, subsets, primitiveTopology),
 	m_materials(materials),
 	m_instancedData(d3dDevice, instancedData)
 {
 }
 
-void LightModel::Initialize(ID3D11Device* d3dDevice, const std::vector<VertexPositionTextureNormalTangent>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<TextureAppearance>& materials, const std::vector<LightEffect::InstanceData>& instancedData)
+void LightModel::Initialize(ID3D11Device* d3dDevice, const std::vector<VertexPositionTextureNormalTangent>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<TextureAppearance>& materials, const std::vector<LightEffect::InstanceData>& instancedData, D3D11_PRIMITIVE_TOPOLOGY primitiveTopology)
 {
-	m_model.Initialize(d3dDevice, vertices, indices, subsets);
+	m_model.Initialize(d3dDevice, vertices, indices, subsets, primitiveTopology);
 	m_materials.assign(materials.begin(), materials.end());
 	m_instancedData.Initialize(d3dDevice, instancedData);
 }

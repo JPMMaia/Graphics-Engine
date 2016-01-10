@@ -8,7 +8,7 @@ namespace GraphicsEngine
 	{
 		static constexpr D3D11_RASTERIZER_DESC Default =
 		{
-			D3D11_FILL_WIREFRAME,						// FillMode
+			D3D11_FILL_SOLID,						// FillMode
 			D3D11_CULL_BACK,						// CullMode
 			false,									// FrontCounterClockwise
 			D3D11_DEFAULT_DEPTH_BIAS,				// DepthBias

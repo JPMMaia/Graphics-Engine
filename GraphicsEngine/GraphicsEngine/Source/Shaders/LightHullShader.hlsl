@@ -17,29 +17,32 @@ struct HullOutput
 
 struct TesselationPatch
 {
-	float EdgeTesselationFactor[3]	: SV_TessFactor;
-	float InsideTesselationFactor	: SV_InsideTessFactor;
+	float EdgeTesselationFactor[4]		: SV_TessFactor;
+	float InsideTesselationFactor[2]	: SV_InsideTessFactor;
 };
 
-#define NUM_CONTROL_POINTS 3
+#define NUM_CONTROL_POINTS 4
 
 // Patch Constant Function
 TesselationPatch CalcHSPatchConstants(InputPatch<VertexOutput, NUM_CONTROL_POINTS> inputPatch, uint patchID : SV_PrimitiveID)
 {
 	TesselationPatch output;
 
-	output.EdgeTesselationFactor[0] = 0.5f * (inputPatch[1].TesselationFactor + inputPatch[2].TesselationFactor);
-	output.EdgeTesselationFactor[1] = 0.5f * (inputPatch[2].TesselationFactor + inputPatch[0].TesselationFactor);
-	output.EdgeTesselationFactor[2] = 0.5f * (inputPatch[0].TesselationFactor + inputPatch[1].TesselationFactor);
-	output.InsideTesselationFactor = output.EdgeTesselationFactor[0];
+	float tesselationFactor = 1.0f;
+	output.EdgeTesselationFactor[0] = tesselationFactor;
+	output.EdgeTesselationFactor[1] = tesselationFactor;
+	output.EdgeTesselationFactor[2] = tesselationFactor;
+	output.EdgeTesselationFactor[3] = tesselationFactor;
+	output.InsideTesselationFactor[0] = tesselationFactor;
+	output.InsideTesselationFactor[1] = tesselationFactor;
 
 	return output;
 }
 
-[domain("tri")]
-[partitioning("fractional_odd")]
+[domain("quad")]
+[partitioning("integer")]
 [outputtopology("triangle_cw")]
-[outputcontrolpoints(3)]
+[outputcontrolpoints(4)]
 [patchconstantfunc("CalcHSPatchConstants")]
 HullOutput main(
 	InputPatch<VertexOutput, NUM_CONTROL_POINTS> inputPatch,

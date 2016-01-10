@@ -100,5 +100,42 @@ LightModel ModelBuilder::CreateFromX3D(ID3D11Device* d3dDevice, const std::wstri
 
 	Subset subset = { 0, indices.size() };
 
-	return LightModel(d3dDevice, vertices, indices, {subset}, {textureAppearance}, instancedData);
+	return LightModel(d3dDevice, vertices, indices, { subset }, { textureAppearance }, instancedData, D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+}
+
+LightModel ModelBuilder::CreateLightCube(ID3D11Device* d3dDevice, const vector<LightEffect::InstanceData>& instancedData) const
+{
+	static const std::vector<VertexPositionTextureNormalTangent> vertices =
+	{
+		{ { -0.5f, -0.5f, -0.5f }, { 0.0f, 0.0f, -1.0f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } },
+		{ { -0.5f, 0.5f, -0.5f }, { 0.0f, 0.0f, -1.0f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f } },
+		{ { 0.5f, -0.5f, -0.5f }, { 0.0f, 0.0f, -1.0f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f } },
+		{ { 0.5f, 0.5f, -0.5f },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+	};
+	static const std::vector<uint32_t> indices =
+	{
+		0, 1, 2, 3
+	};
+	static const std::vector<Subset> subsets =
+	{
+		{ 0, indices.size() }
+	};
+
+	m_textureManager.Create(d3dDevice, L"CubeDiffuseMap", L"Resources/old_bricks_diffuse_map.dds");
+	m_textureManager.Create(d3dDevice, L"CubeNormalMap", L"Resources/old_bricks_normal_map.dds");
+	m_textureManager.Create(d3dDevice, L"CubeHeightMap", L"Resources/old_bricks_height_map.dds");
+	TextureAppearance textureAppearance =
+	{
+		{
+			{ 0.8f, 0.8f, 0.8f, 1.0f },
+			{ 0.8f, 0.8f, 0.8f, 1.0f },
+			{ 0.8f, 0.8f, 0.8f, 1.0f },
+			200.0f
+		},
+		m_textureManager[L"CubeDiffuseMap"],
+		m_textureManager[L"CubeNormalMap"],
+		m_textureManager[L"CubeHeightMap"]
+	};
+
+	return LightModel(d3dDevice, vertices, indices, subsets, { textureAppearance }, instancedData, D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 }

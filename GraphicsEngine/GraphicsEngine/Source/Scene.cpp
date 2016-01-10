@@ -108,7 +108,8 @@ void Scene::InitializeCubeModel(ID3D11Device* d3dDevice)
 	}
 
 	ModelBuilder builder(m_textureManager);
-	m_cubeModel = builder.CreateFromX3D(d3dDevice, L"Resources/SimpleCube.x3d", instanceBuffer);
+	//m_cubeModel = builder.CreateFromX3D(d3dDevice, L"Resources/SimpleCube.x3d", instanceBuffer);
+	m_cubeModel = builder.CreateLightCube(d3dDevice, instanceBuffer);
 }
 
 void Scene::InitializeFrameBuffer()

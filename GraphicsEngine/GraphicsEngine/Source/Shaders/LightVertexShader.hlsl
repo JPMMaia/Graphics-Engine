@@ -1,20 +1,6 @@
 #include <Common/Material.hlsli>
 #include <Common/DirectionalLight.hlsli>
 
-cbuffer CameraConstantBuffer : register(b0)
-{
-	float4x4 g_viewProjectionMatrix;
-	float3 g_eyePositionW;
-};
-
-cbuffer TesselationConstantBuffer : register(b1)
-{
-	float g_maxTesselationDistance;
-	float g_minTesselationDistance;
-	float g_maxTesselationFactor;
-	float g_minTesselationFactor;
-}
-
 struct VertexInput
 {
 	float3 PositionL : POSITION;	
@@ -30,7 +16,6 @@ struct VertexOutput
 	float3 NormalW : NORMAL;
 	float3 TangentW : TANGENT;
 	float2 TextureCoordinate : TEXCOORD0;
-	float TesselationFactor : TESSFACTOR;
 };
 
 VertexOutput main(VertexInput input)
@@ -44,18 +29,6 @@ VertexOutput main(VertexInput input)
 
 	// Output texture coordinate for interpolation:
 	output.TextureCoordinate = input.TextureCoordinate;
-
-	// Calculate the distance from the vertex to the camera:
-	float toEyeDistance = distance(g_eyePositionW, output.PositionW);
-
-	//
-	// Calculate tesselation factor
-	//	If toEyeDistance in [0, max_tesselation_distance], then tesselation_factor = min_tesselation_factor
-	//	If toEyeDistance in ]max_tesselation_distance, min_tesselation_distance[, then tesselation_factor varies linearly in [min_tesselation_factor, max_tesselation_factor]
-	//	If toEyeDistance in [min_tesselation_distance, plus_infinity], then tesselation_factor = max_tesselation_factor
-	//
-	float tesselationDistanceScalar = saturate((g_minTesselationDistance - toEyeDistance) / (g_minTesselationDistance - g_maxTesselationDistance));
-	output.TesselationFactor = g_minTesselationFactor + tesselationDistanceScalar*(g_maxTesselationFactor - g_minTesselationFactor);
 
 	return output;
 }

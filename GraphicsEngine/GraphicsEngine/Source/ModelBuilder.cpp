@@ -151,7 +151,7 @@ LightModel ModelBuilder::CreateLightCube(ID3D11Device* d3dDevice, const vector<L
 		{ 0, indices.size() }
 	};
 
-	m_textureManager.Create(d3dDevice, L"CubeDiffuseMap", L"Resources/test_diffuse_map.dds");
+	m_textureManager.Create(d3dDevice, L"CubeDiffuseMap", L"Resources/old_bricks_diffuse_map.dds");
 	m_textureManager.Create(d3dDevice, L"CubeNormalMap", L"Resources/old_bricks_normal_map.dds");
 	m_textureManager.Create(d3dDevice, L"CubeHeightMap", L"Resources/old_bricks_height_map.dds");
 	TextureAppearance textureAppearance =

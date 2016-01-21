@@ -145,7 +145,7 @@ void Scene::InitializeFrameBuffer()
 void Scene::InitializeTesselationBuffer()
 {
 	m_tesselationBuffer.MaxTesselationDistance = 2.0f;
-	m_tesselationBuffer.MinTesselationDistance = 10.0f;
+	m_tesselationBuffer.MinTesselationDistance = 30.0f;
 	m_tesselationBuffer.MaxTesselationFactor = 8;
 	m_tesselationBuffer.MinTesselationFactor = 1;
 }

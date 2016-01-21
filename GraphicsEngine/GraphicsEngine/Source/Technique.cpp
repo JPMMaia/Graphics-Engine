@@ -74,6 +74,10 @@ void Technique::VSSetConstantBuffer(ID3D11Buffer* constantBuffer, uint32_t slot)
 {
 	m_constantBufferArrays.VSSetElement(std::forward<ID3D11Buffer*>(constantBuffer), slot);
 }
+void Technique::HSSetConstantBuffer(ID3D11Buffer* constantBuffer, uint32_t slot)
+{
+	m_constantBufferArrays.HSSetElement(std::forward<ID3D11Buffer*>(constantBuffer), slot);
+}
 void Technique::DSSetConstantBuffer(ID3D11Buffer* constantBuffer, uint32_t slot)
 {
 	m_constantBufferArrays.DSSetElement(std::forward<ID3D11Buffer*>(constantBuffer), slot);
@@ -86,6 +90,10 @@ void Technique::PSSetConstantBuffer(ID3D11Buffer* constantBuffer, uint32_t slot)
 void Technique::VSSetSamplerState(const SamplerState& samplerState, uint32_t slot)
 {
 	m_samplerStateArrays.VSSetElement(samplerState.Get(), slot);
+}
+void Technique::HSSetSamplerState(const SamplerState& samplerState, uint32_t slot)
+{
+	m_samplerStateArrays.HSSetElement(samplerState.Get(), slot);
 }
 void Technique::DSSetSamplerState(const SamplerState& samplerState, uint32_t slot)
 {

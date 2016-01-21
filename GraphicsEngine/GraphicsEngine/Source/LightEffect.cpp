@@ -53,8 +53,8 @@ void LightEffect::Initialize(ID3D11Device* d3dDevice)
 	m_lightTechnique.SetHullShader(&m_hullShader);
 	m_lightTechnique.SetDomainShader(&m_domainShader);
 	m_lightTechnique.SetPixelShader(&m_pixelShader);
-	m_lightTechnique.VSSetConstantBuffer(m_cameraConstantBuffer.Get(), 0);
-	m_lightTechnique.VSSetConstantBuffer(m_tesselationConstantBuffer.Get(), 1);
+	m_lightTechnique.HSSetConstantBuffer(m_cameraConstantBuffer.Get(), 0);
+	m_lightTechnique.HSSetConstantBuffer(m_tesselationConstantBuffer.Get(), 1);
 	m_lightTechnique.DSSetConstantBuffer(m_cameraConstantBuffer.Get(), 0);
 	m_lightTechnique.DSSetSamplerState(m_samplerState, 0);
 	m_lightTechnique.PSSetConstantBuffer(m_cameraConstantBuffer.Get(), 0);

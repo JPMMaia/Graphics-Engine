@@ -26,10 +26,12 @@ namespace GraphicsEngine
 		void SetRasterizerState(const RasterizerState* rasterizerState);
 
 		void VSSetConstantBuffer(ID3D11Buffer* constantBuffer, uint32_t slot);
+		void HSSetConstantBuffer(ID3D11Buffer* constantBuffer, uint32_t slot);
 		void DSSetConstantBuffer(ID3D11Buffer* constantBuffer, uint32_t slot);
 		void PSSetConstantBuffer(ID3D11Buffer* constantBuffer, uint32_t slot);
 
 		void VSSetSamplerState(const SamplerState& samplerState, uint32_t slot);
+		void HSSetSamplerState(const SamplerState& samplerState, uint32_t slot);
 		void DSSetSamplerState(const SamplerState& samplerState, uint32_t slot);
 		void PSSetSamplerState(const SamplerState& samplerState, uint32_t slot);
 

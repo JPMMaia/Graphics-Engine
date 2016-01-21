@@ -20,6 +20,7 @@ namespace GraphicsEngine
 		void SetElement(ElementType&& element, uint32_t slot);
 
 		virtual void VSSet(ID3D11DeviceContext1* d3dDeviceContext) const = 0;
+		virtual void HSSet(ID3D11DeviceContext1* d3dDeviceContext) const = 0;
 		virtual void DSSet(ID3D11DeviceContext1* d3dDeviceContext) const = 0;
 		virtual void PSSet(ID3D11DeviceContext1* d3dDeviceContext) const = 0;
 
@@ -81,6 +82,7 @@ namespace GraphicsEngine
 	{
 	public:
 		void VSSet(ID3D11DeviceContext1* d3dDeviceContext) const override;
+		void HSSet(ID3D11DeviceContext1* d3dDeviceContext) const override;
 		void DSSet(ID3D11DeviceContext1* d3dDeviceContext) const override;
 		void PSSet(ID3D11DeviceContext1* d3dDeviceContext) const override;
 	};
@@ -88,6 +90,11 @@ namespace GraphicsEngine
 	{
 		if (!m_array.empty())
 			d3dDeviceContext->VSSetConstantBuffers(0, m_array.size(), &m_array[0]);
+	}
+	inline void ResourceArray<struct ID3D11Buffer*>::HSSet(ID3D11DeviceContext1* d3dDeviceContext) const
+	{
+		if (!m_array.empty())
+			d3dDeviceContext->HSSetConstantBuffers(0, m_array.size(), &m_array[0]);
 	}
 	inline void ResourceArray<struct ID3D11Buffer*>::DSSet(ID3D11DeviceContext1* d3dDeviceContext) const
 	{
@@ -105,6 +112,7 @@ namespace GraphicsEngine
 	{
 	public:
 		void VSSet(ID3D11DeviceContext1* d3dDeviceContext) const override;
+		void HSSet(ID3D11DeviceContext1* d3dDeviceContext) const override;
 		void DSSet(ID3D11DeviceContext1* d3dDeviceContext) const override;
 		void PSSet(ID3D11DeviceContext1* d3dDeviceContext) const override;
 	};
@@ -112,6 +120,11 @@ namespace GraphicsEngine
 	{
 		if (!m_array.empty())
 			d3dDeviceContext->VSSetSamplers(0, m_array.size(), &m_array[0]);
+	}
+	inline void ResourceArray<struct ID3D11SamplerState*>::HSSet(ID3D11DeviceContext1* d3dDeviceContext) const
+	{
+		if (!m_array.empty())
+			d3dDeviceContext->HSSetSamplers(0, m_array.size(), &m_array[0]);
 	}
 	inline void ResourceArray<struct ID3D11SamplerState*>::DSSet(ID3D11DeviceContext1* d3dDeviceContext) const
 	{
@@ -129,6 +142,7 @@ namespace GraphicsEngine
 	{
 	public:
 		void VSSet(ID3D11DeviceContext1* d3dDeviceContext) const override;
+		void HSSet(ID3D11DeviceContext1* d3dDeviceContext) const override;
 		void DSSet(ID3D11DeviceContext1* d3dDeviceContext) const override;
 		void PSSet(ID3D11DeviceContext1* d3dDeviceContext) const override;
 	};
@@ -136,6 +150,11 @@ namespace GraphicsEngine
 	{
 		if (!m_array.empty())
 			d3dDeviceContext->VSSetShaderResources(0, m_array.size(), &m_array[0]);
+	}
+	inline void ResourceArray<struct ID3D11ShaderResourceView*>::HSSet(ID3D11DeviceContext1* d3dDeviceContext) const
+	{
+		if (!m_array.empty())
+			d3dDeviceContext->HSSetShaderResources(0, m_array.size(), &m_array[0]);
 	}
 	inline void ResourceArray<struct ID3D11ShaderResourceView*>::DSSet(ID3D11DeviceContext1* d3dDeviceContext) const
 	{

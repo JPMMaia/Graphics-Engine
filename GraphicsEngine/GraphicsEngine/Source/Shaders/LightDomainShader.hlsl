@@ -66,7 +66,7 @@ DomainOutput main(
 	// Sample height map:
 	float heightMapSample = g_heightMap.SampleLevel(g_samplerState, output.TextureCoordinate, mipLevel).x;
 
-	// Ofset vertex along the normal by the sampled height map value:
+	// Offset vertex along the normal by the sampled height map value:
 	output.NormalW = normalize(output.NormalW);
 	//output.PositionW += 0.1f * (1.0f - heightMapSample) * output.NormalW;
 

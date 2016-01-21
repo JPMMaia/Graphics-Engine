@@ -41,6 +41,8 @@ void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 
 	// Draw cube instances:
 	m_cubeModel.Draw(d3dDeviceContext, lightEffect, 125);
+
+	m_terrainModel.Draw(d3dDeviceContext, lightEffect, 1);
 }
 
 void Scene::SetProjectionMatrix(const DirectX::XMFLOAT4X4& projectionMatrix)
@@ -110,6 +112,8 @@ void Scene::InitializeCubeModel(ID3D11Device* d3dDevice)
 	ModelBuilder builder(m_textureManager);
 	//m_cubeModel = builder.CreateFromX3D(d3dDevice, L"Resources/SimpleCube.x3d", instanceBuffer);
 	m_cubeModel = builder.CreateLightCube(d3dDevice, instanceBuffer);
+
+	m_terrainModel = builder.CreateTerrain(d3dDevice, 50.0f, 50.0f, 4, 4);
 }
 
 void Scene::InitializeFrameBuffer()

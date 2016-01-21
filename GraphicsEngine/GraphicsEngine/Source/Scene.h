@@ -29,6 +29,7 @@ namespace GraphicsEngine
 	private:
 		EffectManager m_effectManager;
 		LightModel m_cubeModel;
+		LightModel m_terrainModel;
 		
 		TextureManager m_textureManager;
 		LightEffect::FrameConstantBuffer m_frameBuffer;

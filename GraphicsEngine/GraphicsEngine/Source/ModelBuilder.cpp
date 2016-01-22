@@ -172,7 +172,9 @@ LightModel ModelBuilder::CreateLightCube(ID3D11Device* d3dDevice, const vector<L
 
 LightModel ModelBuilder::CreateTerrain(ID3D11Device* d3dDevice, float width, float depth, uint32_t xCellCount, uint32_t zCellCount) const
 {
-	uint32_t vertexCount = (xCellCount + 1) * (zCellCount + 1);
+	auto xVertexCount = xCellCount + 1;
+	auto zVertexCount = zCellCount + 1;
+	auto vertexCount = xVertexCount * zVertexCount;
 	float halfWidth = width / 2.0f;
 	float halfDepth = depth / 2.0f;
 	float dx = width / xCellCount;
@@ -182,15 +184,15 @@ LightModel ModelBuilder::CreateTerrain(ID3D11Device* d3dDevice, float width, flo
 
 	// Calculate vertices:
 	vector<VertexPositionTextureNormalTangent> vertices(vertexCount);
-	for (uint32_t i = 0; i < zCellCount; i++)
+	for (uint32_t i = 0; i < zVertexCount; i++)
 	{
 		float z = halfDepth - i * dz;
 		float v = i * dv;
-		for (uint32_t j = 0; j < xCellCount; j++)
+		for (uint32_t j = 0; j < xVertexCount; j++)
 		{
 			float x = -halfWidth + j * dx;
 			float u = j * du;
-			uint32_t index = i * xCellCount + j;
+			uint32_t index = i * xVertexCount + j;
 
 			auto& vertex = vertices[index];
 			vertex.Position = XMFLOAT3(x, 0.0f, z);
@@ -201,8 +203,6 @@ LightModel ModelBuilder::CreateTerrain(ID3D11Device* d3dDevice, float width, flo
 	}
 
 	// Calculate the indices for quads:
-	auto xVertexCount = xCellCount + 1;
-	auto zVertexCount = zCellCount + 1;
 	uint32_t faceCount = xCellCount * zCellCount;
 	uint32_t faceIndex = 0;
 	vector<uint32_t> indices(faceCount * 4);

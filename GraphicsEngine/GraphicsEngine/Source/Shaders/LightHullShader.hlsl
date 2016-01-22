@@ -40,7 +40,7 @@ struct TesselationPatch
 
 float CalculateTesselationFactor(float3 positionW)
 {
-	/*// Calculate the distance from the vertex to the camera:
+	// Calculate the distance from the vertex to the camera:
 	float distanceToEye = distance(g_eyePositionW, positionW);
 
 	//
@@ -50,8 +50,7 @@ float CalculateTesselationFactor(float3 positionW)
 	//	If distanceToEye in [min_tesselation_distance, plus_infinity], then tesselation_factor = max_tesselation_factor
 	//
 	float tesselationDistanceScalar = saturate((g_minTesselationDistance - distanceToEye) / (g_minTesselationDistance - g_maxTesselationDistance));
-	return g_minTesselationFactor + tesselationDistanceScalar*(g_maxTesselationFactor - g_minTesselationFactor);*/
-	return 1;
+	return g_minTesselationFactor + tesselationDistanceScalar*(g_maxTesselationFactor - g_minTesselationFactor);
 }
 
 // Patch Constant Function

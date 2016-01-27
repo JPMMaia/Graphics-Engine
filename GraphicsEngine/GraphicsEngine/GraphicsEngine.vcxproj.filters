@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Source\LightEffect.cpp">
-      <Filter>Source\Effects</Filter>
-    </ClCompile>
     <ClCompile Include="Source\DirectXException.cpp">
       <Filter>Source\Helpers</Filter>
     </ClCompile>
@@ -77,11 +74,17 @@
     <ClCompile Include="Source\HullShader.cpp">
       <Filter>Source\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="Source\TerrainModel.cpp">
+      <Filter>Source\Models\TerrainModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LightEffect.cpp">
+      <Filter>Source\Effects\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TerrainEffect.cpp">
+      <Filter>Source\Effects\Effects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\LightEffect.h">
-      <Filter>Source\Effects</Filter>
-    </ClInclude>
     <ClInclude Include="Source\DirectXException.h">
       <Filter>Source\Helpers</Filter>
     </ClInclude>
@@ -218,6 +221,15 @@
     <ClInclude Include="Source\HullShader.h">
       <Filter>Source\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="Source\TerrainModel.h">
+      <Filter>Source\Models\TerrainModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LightEffect.h">
+      <Filter>Source\Effects\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TerrainEffect.h">
+      <Filter>Source\Effects\Effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -298,6 +310,18 @@
     <Filter Include="Shaders\Normals">
       <UniqueIdentifier>{2663831c-5dac-4113-bc60-95aa42b53a4a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Terrain">
+      <UniqueIdentifier>{a8953586-bfd3-4bfd-a0a9-dc4163db08d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Math">
+      <UniqueIdentifier>{54ca4375-e095-4888-b1ca-356a9928d467}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Models\TerrainModel">
+      <UniqueIdentifier>{8a1ca3c0-5c92-4d8a-bec6-ff7d2b9efba6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Effects\Effects">
+      <UniqueIdentifier>{bc198bfe-188e-4c13-8482-0c977fa255cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shaders\Common\Material.hlsli">
@@ -321,6 +345,9 @@
     <None Include="Source\Shaders\Common\NormalMapHelper.hlsli">
       <Filter>Shaders\Normals</Filter>
     </None>
+    <None Include="Source\Shaders\Common\MathUtils.hlsli">
+      <Filter>Shaders\Math</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Shaders\LightPixelShader.hlsl">
@@ -334,6 +361,18 @@
     </FxCompile>
     <FxCompile Include="Source\Shaders\LightDomainShader.hlsl">
       <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\TerrainVertexShader.hlsl">
+      <Filter>Shaders\Terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\TerrainHullShader.hlsl">
+      <Filter>Shaders\Terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\TerrainDomainShader.hlsl">
+      <Filter>Shaders\Terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\TerrainPixelShader.hlsl">
+      <Filter>Shaders\Terrain</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@
 #include "RasterizerStateDescConstants.h"
 
 using namespace GraphicsEngine;
+using namespace GraphicsEngine::ConstantBuffers;
 
 TerrainEffect::TerrainEffect()
 {
@@ -45,6 +46,7 @@ void TerrainEffect::Initialize(ID3D11Device* d3dDevice)
 	m_terrainTechnique.SetHullShader(&m_hullShader);
 	m_terrainTechnique.SetDomainShader(&m_domainShader);
 	m_terrainTechnique.SetPixelShader(&m_pixelShader);
+	m_terrainTechnique.VSSetSamplerState(m_samplerState, 0);
 	m_terrainTechnique.HSSetConstantBuffer(m_cameraConstantBuffer.Get(), 0);
 	m_terrainTechnique.HSSetConstantBuffer(m_tesselationConstantBuffer.Get(), 1);
 	m_terrainTechnique.DSSetConstantBuffer(m_cameraConstantBuffer.Get(), 0);
@@ -86,4 +88,10 @@ void TerrainEffect::Set(ID3D11DeviceContext1* d3dDeviceContext) const
 {
 	// Set technique:
 	m_terrainTechnique.Set(d3dDeviceContext);
+}
+
+void TerrainEffect::SetHeightMap(ID3D11DeviceContext1* d3dDeviceContext, const Texture& heightMap)
+{
+	d3dDeviceContext->VSSetShaderResources(0, 1, heightMap.GetAddressOf());
+	d3dDeviceContext->DSSetShaderResources(0, 1, heightMap.GetAddressOf());
 }

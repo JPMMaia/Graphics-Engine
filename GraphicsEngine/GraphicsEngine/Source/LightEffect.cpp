@@ -5,6 +5,7 @@
 #include "RasterizerStateDescConstants.h"
 
 using namespace GraphicsEngine;
+using namespace GraphicsEngine::ConstantBuffers;
 using namespace std;
 
 LightEffect::LightEffect()

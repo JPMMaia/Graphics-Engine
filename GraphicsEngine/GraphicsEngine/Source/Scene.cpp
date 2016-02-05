@@ -29,20 +29,25 @@ void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 	// Update camera:
 	UpdateCamera();
 
-	auto lightEffect = m_effectManager.GetLightEffect();
-
 	// Set light effect:
+	auto lightEffect = m_effectManager.GetLightEffect();
 	lightEffect.Set(d3dDeviceContext);
-
-	// Update constant buffers:
 	lightEffect.UpdateFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);
 	lightEffect.UpdateCameraConstantBuffer(d3dDeviceContext, m_cameraBuffer);
 	lightEffect.UpdateTesselationConstantBuffer(d3dDeviceContext, m_tesselationBuffer);
 
-	// Draw cube instances:
+	// Draw light models:
 	m_cubeModel.Draw(d3dDeviceContext, lightEffect, 125);
 
-	m_terrainModel.Draw(d3dDeviceContext, lightEffect, 1);
+	// Set terrain effect:
+	auto terrainEffect = m_effectManager.GetTerrainEffect();
+	terrainEffect.Set(d3dDeviceContext);
+	terrainEffect.UpdateFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);
+	terrainEffect.UpdateCameraConstantBuffer(d3dDeviceContext, m_cameraBuffer);
+	terrainEffect.UpdateTesselationConstantBuffer(d3dDeviceContext, m_tesselationBuffer);
+
+	// Draw terrain models:
+	m_terrainModel.Draw(d3dDeviceContext, terrainEffect);
 }
 
 void Scene::SetProjectionMatrix(const DirectX::XMFLOAT4X4& projectionMatrix)

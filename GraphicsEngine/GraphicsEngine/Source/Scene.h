@@ -5,6 +5,8 @@
 #include "Camera.h"
 #include "InputHandler.h"
 #include "LightModel.h"
+#include "TerrainModel.h"
+#include "ConstantBuffers.h"
 
 namespace GraphicsEngine
 {
@@ -29,12 +31,12 @@ namespace GraphicsEngine
 	private:
 		EffectManager m_effectManager;
 		LightModel m_cubeModel;
-		LightModel m_terrainModel;
+		TerrainModel m_terrainModel;
 		
 		TextureManager m_textureManager;
-		LightEffect::FrameConstantBuffer m_frameBuffer;
-		LightEffect::CameraConstantBuffer m_cameraBuffer;
-		LightEffect::TesselationConstantBuffer m_tesselationBuffer;
+		ConstantBuffers::FrameConstantBuffer m_frameBuffer;
+		ConstantBuffers::CameraConstantBuffer m_cameraBuffer;
+		ConstantBuffers::TesselationConstantBuffer m_tesselationBuffer;
 		Camera m_camera;
 
 		DirectX::XMFLOAT4X4 m_projectionMatrix;

@@ -230,6 +230,9 @@
     <ClInclude Include="Source\TerrainEffect.h">
       <Filter>Source\Effects\Effects</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ConstantBuffers.h">
+      <Filter>Source\Effects\Effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">

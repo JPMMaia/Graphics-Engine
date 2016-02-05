@@ -42,7 +42,7 @@ DomainOutput main(TesselationPatch input, float2 domain : SV_DomainLocation, con
 	output.TextureCoordinate = BilinearInterpolate(patch[0].TextureCoordinate, patch[1].TextureCoordinate, patch[2].TextureCoordinate, patch[3].TextureCoordinate, domain);
 
 	// Sample height map:
-	output.PositionW.y = g_heightMap.SampleLevel(g_samplerState, output.TextureCoordinate, 0).x;
+	output.PositionW.y = 5.0f * g_heightMap.SampleLevel(g_samplerState, output.TextureCoordinate, 0).r;
 
 	// Transform to homogeneous clip space:
 	output.PositionH = mul(float4(output.PositionW, 1.0f), g_viewProjectionMatrix);

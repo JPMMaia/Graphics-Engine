@@ -170,7 +170,7 @@ LightModel ModelBuilder::CreateLightCube(ID3D11Device* d3dDevice, const vector<L
 	return LightModel(d3dDevice, vertices, indices, subsets, { textureAppearance }, instancedData, D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 }
 
-LightModel ModelBuilder::CreateTerrain(ID3D11Device* d3dDevice, float width, float depth, uint32_t xCellCount, uint32_t zCellCount) const
+TerrainModel ModelBuilder::CreateTerrain(ID3D11Device* d3dDevice, float width, float depth, uint32_t xCellCount, uint32_t zCellCount) const
 {
 	auto xVertexCount = xCellCount + 1;
 	auto zVertexCount = zCellCount + 1;
@@ -183,7 +183,7 @@ LightModel ModelBuilder::CreateTerrain(ID3D11Device* d3dDevice, float width, flo
 	float dv = 1.0f / zCellCount;
 
 	// Calculate vertices:
-	vector<VertexPositionTextureNormalTangent> vertices(vertexCount);
+	vector<VertexPositionTexture> vertices(vertexCount);
 	for (uint32_t i = 0; i < zVertexCount; i++)
 	{
 		float z = halfDepth - i * dz;
@@ -196,8 +196,6 @@ LightModel ModelBuilder::CreateTerrain(ID3D11Device* d3dDevice, float width, flo
 
 			auto& vertex = vertices[index];
 			vertex.Position = XMFLOAT3(x, 0.0f, z);
-			vertex.Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
-			vertex.Tangent = XMFLOAT3(1.0f, 0.0f, 0.0f);
 			vertex.TextureCoordinate = XMFLOAT2(u, v);
 		}
 	}
@@ -231,7 +229,7 @@ LightModel ModelBuilder::CreateTerrain(ID3D11Device* d3dDevice, float width, flo
 
 	m_textureManager.Create(d3dDevice, L"CubeDiffuseMap", L"Resources/old_bricks_diffuse_map.dds");
 	m_textureManager.Create(d3dDevice, L"CubeNormalMap", L"Resources/old_bricks_normal_map.dds");
-	m_textureManager.Create(d3dDevice, L"CubeHeightMap", L"Resources/old_bricks_height_map.dds");
+	m_textureManager.Create(d3dDevice, L"TerrainHeightMap", L"Resources/terrain_height_map.dds");
 	TextureAppearance textureAppearance =
 	{
 		{
@@ -242,7 +240,7 @@ LightModel ModelBuilder::CreateTerrain(ID3D11Device* d3dDevice, float width, flo
 		},
 		m_textureManager[L"CubeDiffuseMap"],
 		m_textureManager[L"CubeNormalMap"],
-		m_textureManager[L"CubeHeightMap"]
+		m_textureManager[L"TerrainHeightMap"]
 	};
 	static const vector<LightEffect::InstanceData> instancedData =
 	{
@@ -256,5 +254,5 @@ LightModel ModelBuilder::CreateTerrain(ID3D11Device* d3dDevice, float width, flo
 		}
 	};
 
-	return LightModel(d3dDevice, vertices, indices, subsets, { textureAppearance }, instancedData, D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+	return TerrainModel(d3dDevice, vertices, indices, subsets, { textureAppearance }, D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 }

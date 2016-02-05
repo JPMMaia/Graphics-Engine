@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "LightEffect.h"
+#include "TerrainEffect.h"
 
 namespace GraphicsEngine
 {
@@ -14,8 +15,10 @@ namespace GraphicsEngine
 		void Reset();
 
 		LightEffect& GetLightEffect();
+		TerrainEffect& GetTerrainEffect();
 
 	private:
 		LightEffect m_lightEffect;
+		TerrainEffect m_terrainEffect;
 	};
 }

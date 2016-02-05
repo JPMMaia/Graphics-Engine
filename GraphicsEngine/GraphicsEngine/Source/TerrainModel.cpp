@@ -22,7 +22,7 @@ void TerrainModel::Reset()
 	m_model.Reset();
 }
 
-void TerrainModel::Draw(ID3D11DeviceContext1* d3dDeviceContext, TerrainEffect& terrainEffect, uint32_t visibleInstanceCount) const
+void TerrainModel::Draw(ID3D11DeviceContext1* d3dDeviceContext, TerrainEffect& terrainEffect) const
 {
 	auto& mesh = m_model.Mesh;
 	auto& subsets = m_model.Subsets;
@@ -32,6 +32,7 @@ void TerrainModel::Draw(ID3D11DeviceContext1* d3dDeviceContext, TerrainEffect& t
 		// Set subset's material:
 		auto material = m_materials[i];
 		terrainEffect.UpdateSubsetConstantBuffer(d3dDeviceContext, { material.Material });
+		terrainEffect.SetHeightMap(d3dDeviceContext, material.HeightMap);
 
 		// Draw subset:
 		auto& subset = subsets[i];

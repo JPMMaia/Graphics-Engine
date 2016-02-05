@@ -41,8 +41,7 @@ float CalculateTesselationFactor(float3 positionW)
 
 	// Calculate tesselation factor
 	float tesselationDistanceScalar = saturate((g_minTesselationDistance - distanceToEye) / (g_minTesselationDistance - g_maxTesselationDistance));
-	return pow(2, lerp(g_maxTesselationFactor, g_minTesselationFactor, tesselationDistanceScalar));
-	//return g_minTesselationFactor + tesselationDistanceScalar*(g_maxTesselationFactor - g_minTesselationFactor);
+	return pow(2, lerp(g_minTesselationFactor, g_maxTesselationFactor, tesselationDistanceScalar));
 }
 
 TesselationPatch CalcHSPatchConstants(InputPatch<VertexOutput, NUM_CONTROL_POINTS> inputPatch, uint patchID : SV_PrimitiveID)

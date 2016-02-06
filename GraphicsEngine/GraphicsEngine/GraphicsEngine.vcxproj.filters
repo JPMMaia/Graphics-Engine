@@ -83,6 +83,9 @@
     <ClCompile Include="Source\TerrainEffect.cpp">
       <Filter>Source\Effects\Effects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Octree.cpp">
+      <Filter>Source\Octree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\DirectXException.h">
@@ -239,6 +242,9 @@
     <ClInclude Include="Source\MemoryPoolElement.h">
       <Filter>Source\Pool</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Octree.h">
+      <Filter>Source\Octree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -333,6 +339,9 @@
     </Filter>
     <Filter Include="Source\Pool">
       <UniqueIdentifier>{721de64c-9378-47a6-a8e2-26dfde074831}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Octree">
+      <UniqueIdentifier>{871d088e-ab2c-4294-8a59-91181c353985}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

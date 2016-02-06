@@ -172,6 +172,7 @@
     <ClCompile Include="Source\LightModel.cpp" />
     <ClCompile Include="Source\MathHelper.cpp" />
     <ClCompile Include="Source\ModelBuilder.cpp" />
+    <ClCompile Include="Source\Octree.cpp" />
     <ClCompile Include="Source\SamplerState.cpp" />
     <ClCompile Include="Source\Technique.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="Source\MemoryPool.h" />
     <ClInclude Include="Source\MemoryPoolElement.h" />
     <ClInclude Include="Source\ModelBuilder.h" />
+    <ClInclude Include="Source\Octree.h" />
     <ClInclude Include="Source\TerrainEffect.h" />
     <ClInclude Include="Source\TerrainModel.h" />
     <ClInclude Include="Source\TextureAppearance.h" />

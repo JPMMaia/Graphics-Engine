@@ -82,7 +82,8 @@ LightModel ModelBuilder::CreateFromX3D(ID3D11Device* d3dDevice, const std::wstri
 	auto& material = appearance.material;
 	auto& imageTexture = appearance.imageTexture;
 	m_textureManager.Create(d3dDevice, imageTexture.def, imageTexture.url);
-	m_textureManager.Create(d3dDevice, L"CubeNormalMap", L"Resources/bump01.dds");
+	m_textureManager.Create(d3dDevice, L"CubeNormalMap", L"Resources/old_bricks_normal_map.dds");
+	m_textureManager.Create(d3dDevice, L"CubeHeightMap", L"Resources/old_bricks_height_map.dds");
 	auto alpha = 1.0f - material.transparency;
 	TextureAppearance textureAppearance =
 	{
@@ -93,10 +94,165 @@ LightModel ModelBuilder::CreateFromX3D(ID3D11Device* d3dDevice, const std::wstri
 			material.shininess
 			),
 		m_textureManager[imageTexture.def],
-		m_textureManager[L"CubeNormalMap"]
+		m_textureManager[L"CubeNormalMap"],
+		m_textureManager[L"CubeHeightMap"]
 	};
 
 	Subset subset = { 0, indices.size() };
 
-	return LightModel(d3dDevice, vertices, indices, {subset}, {textureAppearance}, instancedData);
+	return LightModel(d3dDevice, vertices, indices, { subset }, { textureAppearance }, instancedData, D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+}
+
+LightModel ModelBuilder::CreateLightCube(ID3D11Device* d3dDevice, const vector<LightEffect::InstanceData>& instancedData) const
+{
+	static const std::vector<VertexPositionTextureNormalTangent> vertices =
+	{
+		{ { -0.5f, -0.5f, -0.5f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+		{ { -0.5f, 0.5f, -0.5f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
+		{ { 0.5f, -0.5f, -0.5f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
+		{ { 0.5f, 0.5f, -0.5f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
+
+		{ { -0.5f, -0.5f, 0.5f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } },
+		{ { -0.5f, 0.5f, 0.5f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f } },
+		{ { -0.5f, -0.5f, -0.5f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 1.0f } },
+		{ { -0.5f, 0.5f, -0.5f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
+
+		{ { 0.5f, -0.5f, 0.5f },{ 0.0f, 0.0f, -1.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+		{ { 0.5f, 0.5f, 0.5f },{ 0.0f, 0.0f, -1.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
+		{ { -0.5f, -0.5f, 0.5f },{ 0.0f, 0.0f, -1.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
+		{ { -0.5f, 0.5f, 0.5f },{ 0.0f, 0.0f, -1.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
+
+		{ { 0.5f, -0.5f, -0.5f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 1.0f } },
+		{ { 0.5f, 0.5f, -0.5f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f } },
+		{ { 0.5f, -0.5f, 0.5f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 0.0f, 1.0f } },
+		{ { 0.5f, 0.5f, 0.5f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 0.0f, 0.0f } },
+
+		{ { -0.5f, -0.5f, 0.5f },{ 0.0f, -1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+		{ { -0.5f, -0.5f, -0.5f },{ 0.0f, -1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
+		{ { 0.5f, -0.5f, 0.5f },{ 0.0f, -1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
+		{ { 0.5f, -0.5f, -0.5f },{ 0.0f, -1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
+
+		{ { -0.5f, 0.5f, -0.5f },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+		{ { -0.5f, 0.5f, 0.5f },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
+		{ { 0.5f, 0.5f, -0.5f },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
+		{ { 0.5f, 0.5f, 0.5f },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
+	};
+	static const std::vector<uint32_t> indices =
+	{
+		0, 1, 2, 3,
+		4, 5, 6, 7,
+		8, 9, 10, 11,
+		12, 13, 14, 15,
+		16, 17, 18, 19,
+		20, 21, 22, 23,
+	};
+	static const std::vector<Subset> subsets =
+	{
+		{ 0, indices.size() }
+	};
+
+	m_textureManager.Create(d3dDevice, L"CubeDiffuseMap", L"Resources/old_bricks_diffuse_map.dds");
+	m_textureManager.Create(d3dDevice, L"CubeNormalMap", L"Resources/old_bricks_normal_map.dds");
+	m_textureManager.Create(d3dDevice, L"CubeHeightMap", L"Resources/old_bricks_height_map.dds");
+	TextureAppearance textureAppearance =
+	{
+		{
+			{ 0.8f, 0.8f, 0.8f, 1.0f },
+			{ 0.8f, 0.8f, 0.8f, 1.0f },
+			{ 0.8f, 0.8f, 0.8f, 1.0f },
+			20.0f
+		},
+		m_textureManager[L"CubeDiffuseMap"],
+		m_textureManager[L"CubeNormalMap"],
+		m_textureManager[L"CubeHeightMap"]
+	};
+
+	return LightModel(d3dDevice, vertices, indices, subsets, { textureAppearance }, instancedData, D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+}
+
+TerrainModel ModelBuilder::CreateTerrain(ID3D11Device* d3dDevice, float width, float depth, uint32_t xCellCount, uint32_t zCellCount) const
+{
+	auto xVertexCount = xCellCount + 1;
+	auto zVertexCount = zCellCount + 1;
+	auto vertexCount = xVertexCount * zVertexCount;
+	float halfWidth = width / 2.0f;
+	float halfDepth = depth / 2.0f;
+	float dx = width / xCellCount;
+	float dz = depth / zCellCount;
+	float du = 1.0f / xCellCount;
+	float dv = 1.0f / zCellCount;
+
+	// Calculate vertices:
+	vector<VertexPositionTexture> vertices(vertexCount);
+	for (uint32_t i = 0; i < zVertexCount; i++)
+	{
+		float z = halfDepth - i * dz;
+		float v = i * dv;
+		for (uint32_t j = 0; j < xVertexCount; j++)
+		{
+			float x = -halfWidth + j * dx;
+			float u = j * du;
+			uint32_t index = i * xVertexCount + j;
+
+			auto& vertex = vertices[index];
+			vertex.Position = XMFLOAT3(x, 0.0f, z);
+			vertex.TextureCoordinate = XMFLOAT2(u, v);
+		}
+	}
+
+	// Calculate the indices for quads:
+	uint32_t faceCount = xCellCount * zCellCount;
+	uint32_t faceIndex = 0;
+	vector<uint32_t> indices(faceCount * 4);
+	for (size_t i = 0; i < zCellCount; i++)
+	{
+		auto row0Offset = i * xVertexCount;
+		auto row1Offset = (i + 1) * zVertexCount;
+
+		for (size_t j = 0; j < xCellCount; j++)
+		{
+			auto index0 = row1Offset + j;
+			auto index1 = row0Offset + j;
+			auto index2 = index0 + 1;
+			auto index3 = index1 + 1;
+
+			indices[faceIndex++] = index0;
+			indices[faceIndex++] = index1;
+			indices[faceIndex++] = index2;
+			indices[faceIndex++] = index3;
+		}
+	}
+	static const vector<Subset> subsets =
+	{
+		{ 0, indices.size() }
+	};
+
+	m_textureManager.Create(d3dDevice, L"CubeDiffuseMap", L"Resources/old_bricks_diffuse_map.dds");
+	m_textureManager.Create(d3dDevice, L"CubeNormalMap", L"Resources/old_bricks_normal_map.dds");
+	m_textureManager.Create(d3dDevice, L"TerrainHeightMap", L"Resources/terrain_height_map.dds");
+	TextureAppearance textureAppearance =
+	{
+		{
+			{ 0.8f, 0.8f, 0.8f, 1.0f },
+			{ 0.8f, 0.8f, 0.8f, 1.0f },
+			{ 0.8f, 0.8f, 0.8f, 1.0f },
+		20.0f
+		},
+		m_textureManager[L"CubeDiffuseMap"],
+		m_textureManager[L"CubeNormalMap"],
+		m_textureManager[L"TerrainHeightMap"]
+	};
+	static const vector<LightEffect::InstanceData> instancedData =
+	{
+		{
+			XMFLOAT4X4(
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+			)
+		}
+	};
+
+	return TerrainModel(d3dDevice, vertices, indices, subsets, { textureAppearance }, D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 }

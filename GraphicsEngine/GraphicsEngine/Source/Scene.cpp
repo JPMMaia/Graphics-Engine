@@ -11,6 +11,7 @@ void Scene::Initialize(ID3D11Device* d3dDevice)
 {
 	InitializeCubeModel(d3dDevice);
 	InitializeFrameBuffer();
+	InitializeTesselationBuffer();
 
 	m_effectManager.Initialize(d3dDevice);
 	m_camera.SetPosition(0.0f, 1.4f, 3.0f);
@@ -28,17 +29,25 @@ void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 	// Update camera:
 	UpdateCamera();
 
-	auto lightEffect = m_effectManager.GetLightEffect();
-
 	// Set light effect:
+	auto lightEffect = m_effectManager.GetLightEffect();
 	lightEffect.Set(d3dDeviceContext);
-
-	// Update constant buffers:
 	lightEffect.UpdateFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);
 	lightEffect.UpdateCameraConstantBuffer(d3dDeviceContext, m_cameraBuffer);
+	lightEffect.UpdateTesselationConstantBuffer(d3dDeviceContext, m_tesselationBuffer);
 
-	// Draw cube instances:
+	// Draw light models:
 	m_cubeModel.Draw(d3dDeviceContext, lightEffect, 125);
+
+	// Set terrain effect:
+	auto terrainEffect = m_effectManager.GetTerrainEffect();
+	terrainEffect.Set(d3dDeviceContext);
+	terrainEffect.UpdateFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);
+	terrainEffect.UpdateCameraConstantBuffer(d3dDeviceContext, m_cameraBuffer);
+	terrainEffect.UpdateTesselationConstantBuffer(d3dDeviceContext, m_tesselationBuffer);
+
+	// Draw terrain models:
+	m_terrainModel.Draw(d3dDeviceContext, terrainEffect);
 }
 
 void Scene::SetProjectionMatrix(const DirectX::XMFLOAT4X4& projectionMatrix)
@@ -50,26 +59,26 @@ void Scene::HandleInput(const InputHandler& input)
 {
 	constexpr auto rotationScalar = 0.02f;
 	if (input.IsKeyDown(VirtualKey::Right))
-		m_camera.RotateWorldY(rotationScalar);
+		m_camera.RotateWorldY(-rotationScalar);
 
 	if (input.IsKeyDown(VirtualKey::Up))
 		m_camera.RotateLocalX(-rotationScalar);
 
 	if (input.IsKeyDown(VirtualKey::Left))
-		m_camera.RotateWorldY(-rotationScalar);
+		m_camera.RotateWorldY(rotationScalar);
 
 	if (input.IsKeyDown(VirtualKey::Down))
 		m_camera.RotateLocalX(rotationScalar);
 
 	constexpr auto translationScalar = 0.1f;
 	if (input.IsKeyDown(VirtualKey::D))
-		m_camera.MoveRight(translationScalar);
+		m_camera.MoveLeft(-translationScalar);
 
 	if (input.IsKeyDown(VirtualKey::W))
 		m_camera.MoveForward(translationScalar);
 
 	if (input.IsKeyDown(VirtualKey::A))
-		m_camera.MoveRight(-translationScalar);
+		m_camera.MoveLeft(translationScalar);
 
 	if (input.IsKeyDown(VirtualKey::S))
 		m_camera.MoveForward(-translationScalar);
@@ -78,9 +87,9 @@ void Scene::HandleInput(const InputHandler& input)
 void Scene::InitializeCubeModel(ID3D11Device* d3dDevice)
 {
 	constexpr uint32_t size = 5;
-	constexpr auto width = 10.0f;
-	constexpr auto height = 10.0f;
-	constexpr auto depth = 10.0f;
+	constexpr auto width = 20.0f;
+	constexpr auto height = 20.0f;
+	constexpr auto depth = 20.0f;
 	constexpr auto x = -0.5f * width;
 	constexpr auto y = -0.5f * height;
 	constexpr auto z = -0.5f * depth;
@@ -106,7 +115,10 @@ void Scene::InitializeCubeModel(ID3D11Device* d3dDevice)
 	}
 
 	ModelBuilder builder(m_textureManager);
-	m_cubeModel = builder.CreateFromX3D(d3dDevice, L"Resources/SimpleCube.x3d", instanceBuffer);
+	//m_cubeModel = builder.CreateFromX3D(d3dDevice, L"Resources/SimpleCube.x3d", instanceBuffer);
+	m_cubeModel = builder.CreateLightCube(d3dDevice, instanceBuffer);
+
+	m_terrainModel = builder.CreateTerrain(d3dDevice, 50.0f, 50.0f, 4, 4);
 }
 
 void Scene::InitializeFrameBuffer()
@@ -139,14 +151,21 @@ void Scene::InitializeFrameBuffer()
 		XMFLOAT3(1.0f, 1.0f, 1.0f)
 	};
 }
+void Scene::InitializeTesselationBuffer()
+{
+	m_tesselationBuffer.MaxTesselationDistance = 2.0f;
+	m_tesselationBuffer.MinTesselationDistance = 30.0f;
+	m_tesselationBuffer.MaxTesselationFactor = 8;
+	m_tesselationBuffer.MinTesselationFactor = 1;
+}
 
 void Scene::UpdateCamera()
 {
 	// Update camera:
 	m_camera.Update();
 
-	// Update frame buffer:
-	m_frameBuffer.EyePositionW = m_camera.GetPosition();
+	// Update camera position in the constant buffer:
+	m_cameraBuffer.EyePositionW = m_camera.GetPosition();
 
 	// Build view projection matrix:
 	auto& viewMatrix = m_camera.GetViewMatrix();

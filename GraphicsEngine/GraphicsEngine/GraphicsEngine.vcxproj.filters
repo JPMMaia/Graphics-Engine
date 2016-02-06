@@ -233,6 +233,12 @@
     <ClInclude Include="Source\ConstantBuffers.h">
       <Filter>Source\Effects\Effects</Filter>
     </ClInclude>
+    <ClInclude Include="Source\MemoryPool.h">
+      <Filter>Source\Pool</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MemoryPoolElement.h">
+      <Filter>Source\Pool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -324,6 +330,9 @@
     </Filter>
     <Filter Include="Source\Effects\Effects">
       <UniqueIdentifier>{bc198bfe-188e-4c13-8482-0c977fa255cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Pool">
+      <UniqueIdentifier>{721de64c-9378-47a6-a8e2-26dfde074831}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

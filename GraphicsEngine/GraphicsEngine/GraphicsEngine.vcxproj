@@ -216,6 +216,8 @@
     <ClInclude Include="Source\HullShader.h" />
     <ClInclude Include="Source\InputHandler.h" />
     <ClInclude Include="Source\MathHelper.h" />
+    <ClInclude Include="Source\MemoryPool.h" />
+    <ClInclude Include="Source\MemoryPoolElement.h" />
     <ClInclude Include="Source\ModelBuilder.h" />
     <ClInclude Include="Source\TerrainEffect.h" />
     <ClInclude Include="Source\TerrainModel.h" />

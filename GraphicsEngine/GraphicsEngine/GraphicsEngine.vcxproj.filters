@@ -83,9 +83,6 @@
     <ClCompile Include="Source\TerrainEffect.cpp">
       <Filter>Source\Effects\Effects</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Octree.cpp">
-      <Filter>Source\Octree</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\DirectXException.h">
@@ -243,6 +240,9 @@
       <Filter>Source\Pool</Filter>
     </ClInclude>
     <ClInclude Include="Source\Octree.h">
+      <Filter>Source\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OctreeCollider.h">
       <Filter>Source\Octree</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,7 +2,6 @@
 #include "CppUnitTest.h"
 
 #include <MemoryPool.h>
-#include <iostream>
 
 using namespace GraphicsEngine;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

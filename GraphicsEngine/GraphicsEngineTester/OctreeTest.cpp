@@ -10,32 +10,39 @@ using namespace std;
 
 namespace GraphicsEngineTester
 {
-	class GameObjectTestClass
+	class ColliderTestClass : private OctreeCollider<ColliderTestClass>
 	{
 	public:
-		GameObjectTestClass() :
+		ColliderTestClass() :
+			m_boundingBox(),
 			m_id(s_counter++)
 		{
 		}
-		~GameObjectTestClass()
+		~ColliderTestClass()
 		{
 		}
 
+		const BoundingBox& GetCollider() const
+		{
+			return m_boundingBox;
+		}
+
 	private:
+		BoundingBox m_boundingBox;
 		size_t m_id;
 		static size_t s_counter;
 	};
-	size_t GameObjectTestClass::s_counter = 0;
+	size_t ColliderTestClass::s_counter = 0;
 
 	TEST_CLASS(OctreeTest)
 	{
 	public:
 		TEST_METHOD(TestOctree)
-		{
-			array<GameObjectTestClass, 10> gameObjects;
+		{	
+			array<ColliderTestClass, 10> gameObjects;
 
-			auto octree = Octree<GameObjectTestClass, 4>::Create(
-				BoundingBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(50.0f, 50.0f, 50.0f))
+			auto octree = Octree<ColliderTestClass, 4>::Create(
+				BoundingBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(8.0f, 8.0f, 8.0f))
 				);
 			Assert::IsTrue(octree.m_isLeaf);
 
@@ -51,6 +58,17 @@ namespace GraphicsEngineTester
 
 			octree.AddObject(&gameObjects[4]);
 			Assert::IsFalse(octree.m_isLeaf);
+
+			auto& children = octree.m_state.Children;
+			for (auto child = children.begin(); child != children.end(); ++child)
+				Assert::IsNotNull(*child);
+
+			octree.AddObject(&gameObjects[5]);
+			octree.AddObject(&gameObjects[6]);
+			octree.AddObject(&gameObjects[7]);
+			octree.AddObject(&gameObjects[8]);
+			octree.AddObject(&gameObjects[9]);
+			Assert::AreEqual(10U, octree.m_objectCount);
 		}
 	};
 }

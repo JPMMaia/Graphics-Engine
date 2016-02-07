@@ -3,6 +3,7 @@
 #include <DirectXCollision.h>
 
 #include "MemoryPool.h"
+#include "OctreeCollider.h"
 
 namespace GraphicsEngineTester
 {
@@ -11,12 +12,15 @@ namespace GraphicsEngineTester
 
 namespace GraphicsEngine
 {
-	template<typename Type, size_t MaxObjectsPerLeaf = 4>
+	template<
+		typename Type,
+		size_t MaxObjectsPerLeaf = 4
+	>
 	class Octree
 	{
 		friend class GraphicsEngineTester::OctreeTest;
 
-	private:		
+	private:
 		union State
 		{
 			std::array<Octree<Type>*, 8> Children;
@@ -24,6 +28,7 @@ namespace GraphicsEngine
 		};
 
 	public:
+		template<typename = std::enable_if_t<std::is_base_of<OctreeCollider<Type>, Type>::value>>
 		static Octree<Type, MaxObjectsPerLeaf>& Create(DirectX::BoundingBox&& boundingBox)
 		{
 			return s_memoryPool.NewElement(std::forward<DirectX::BoundingBox>(boundingBox));
@@ -39,13 +44,21 @@ namespace GraphicsEngine
 
 		void AddObject(Type* object)
 		{
-			// If is leaf node:
-			if(m_isLeaf)
+			// Ignore if the object doesn't inteserct with bounding box:
+			if (!m_boundingBox.Intersects(object->GetCollider()))
+				return;
+
+			// If not a leaf node:
+			if (!m_isLeaf)
 			{
-				// Add object to array. If it is full, then convert node to a non-leaf node:
-				if (!AddObjectToArray(object))
-					ConvertToNonLeaf();
+				// Add object to child nodes:
+				AddObjectToChildNodes(object);
+				return;
 			}
+			
+			// Add object to array. If it is full, then convert node to a non-leaf node:
+			if (!AddObjectToArray(object))
+				ConvertToNonLeaf(object);
 		}
 
 	private:
@@ -61,20 +74,67 @@ namespace GraphicsEngine
 				return true;
 
 			// If the array is full:
-			if (m_objectCount == MaxObjectsPerLeaf)
+			if (m_objectCount >= MaxObjectsPerLeaf)
 				return false;
 
 			// Add object to array:
-			objects[m_objectCount++] = object;			
+			objects[m_objectCount++] = object;
 
 			return true;
 		}
 
-		void ConvertToNonLeaf()
+		void AddObjectToChildNodes(Type* object)
 		{
+			m_objectCount++;
+
+			auto& children = m_state.Children;
+			for (auto child = children.cbegin(); child != children.cend(); ++child)
+				(*child)->AddObject(object);
+		}
+
+		void ConvertToNonLeaf(Type* newObject)
+		{
+			using namespace DirectX;
+
+			// Convert only if current bounding box extents are greater than a minimun value:
+			auto extents = m_boundingBox.Extents;
+			if (extents.x <= 1.0f || extents.y <= 1.0f || extents.z <= 1.0f)
+				return;
+
 			m_isLeaf = false;
 
+			// Move objects to a temporary list:
+			auto objects = std::array<Type*, MaxObjectsPerLeaf>(std::move(m_state.Objects));
+			m_objectCount -= MaxObjectsPerLeaf;
 
+			// Create child nodes:
+			CreateChildNodes();
+
+			// Add objects from temporary list to the child nodes:
+			for (auto object = objects.cbegin(); object != objects.cend(); ++object)
+				AddObjectToChildNodes(*object);
+			AddObjectToChildNodes(newObject);
+		}
+
+		void CreateChildNodes()
+		{
+			using namespace DirectX;
+
+			// Get corners of bounding box:
+			std::array<XMFLOAT3, 8> corners;
+			m_boundingBox.GetCorners(corners.data());
+
+			// For each corner:
+			auto& children = m_state.Children;
+			for (size_t i = 0; i < corners.size(); i++)
+			{
+				// Create a bounding box, using two points (a corner and the center of the current bounding box):
+				BoundingBox boundingBox;
+				BoundingBox::CreateFromPoints(boundingBox, XMLoadFloat3(&corners[i]), XMLoadFloat3(&boundingBox.Center));
+
+				// Create child octree node:
+				children[i] = &Octree::Create(std::move(boundingBox));
+			}
 		}
 
 	private:
@@ -84,7 +144,7 @@ namespace GraphicsEngine
 		size_t m_objectCount;
 
 		static MemoryPool<Octree<Type, MaxObjectsPerLeaf>, 100> s_memoryPool;
-	};	
+	};
 
 	template<typename Type, size_t MaxObjectsPerLeaf>
 	MemoryPool<Octree<Type, MaxObjectsPerLeaf>, 100> Octree<Type, MaxObjectsPerLeaf>::s_memoryPool;

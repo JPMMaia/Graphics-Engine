@@ -21,6 +21,11 @@ namespace GraphicsEngineTester
 	class ColliderTestClass : public OctreeCollider<BoundingBox>
 	{
 	public:
+		ColliderTestClass() :
+			OctreeCollider(),
+			m_id(0)
+		{
+		}
 		explicit ColliderTestClass(BoundingBox&& box) :
 			OctreeCollider(forward<BoundingBox>(box)),
 			m_id(s_counter++)
@@ -38,46 +43,53 @@ namespace GraphicsEngineTester
 
 	TEST_CLASS(OctreeTest)
 	{
+	private:
+		array<ColliderTestClass, 11> m_gameObjects;
+
 	public:
+		TEST_METHOD_INITIALIZE(TestInitialize)
+		{
+			m_gameObjects =
+			{
+				ColliderTestClass({ { -6.5f, 0.0f, 6.5f },{ 0.5f, 0.5f, 0.5f } }),
+				ColliderTestClass({ { -3.5f, 0.0f, 4.5f },{ 0.5f, 0.5f, 0.5f } }),
+				ColliderTestClass({ { -4.5f, 0.0f, 7.5f },{ 0.5f, 0.5f, 0.5f } }),
+				ColliderTestClass({ { -4.5f, 0.0f, 10.5f },{ 0.5f, 0.5f, 0.5f } }),
+				ColliderTestClass({ { -2.5f, 0.0f, -1.5f },{ 0.5f, 0.5f, 0.5f } }),
+				ColliderTestClass({ { 3.5f, 0.0f, -2.5f },{ 0.5f, 0.5f, 0.5f } }),
+				ColliderTestClass({ { -6.5f, 0.0f, -6.5f },{ 0.5f, 0.5f, 0.5f } }),
+				ColliderTestClass({ { -2.5f, 0.0f, 2.5f },{ 0.5f, 0.5f, 0.5f } }),
+				ColliderTestClass({ { -7.5f, 0.0f, 4.5f },{ 0.5f, 0.5f, 0.5f } }),
+				ColliderTestClass({ { -5.5f, 0.0f, 2.5f },{ 0.5f, 0.5f, 0.5f } }),
+				ColliderTestClass({ { 0.0f, 6.0f, 0.0f },{ 1.0f, 1.0f, 1.0f } }),
+			};
+		}
+
 		TEST_METHOD(TestOctree)
 		{
-			array<ColliderTestClass, 10> gameObjects =
-			{
-				ColliderTestClass({{-6.5f, 0.0f, 6.5f}, {0.5f, 0.5f, 0.5f}}),
-				ColliderTestClass({{-3.5f, 0.0f, 4.5f}, {0.5f, 0.5f, 0.5f}}),
-				ColliderTestClass({{-4.5f, 0.0f, 7.5f}, {0.5f, 0.5f, 0.5f}}),
-				ColliderTestClass({{-4.5f, 0.0f, 10.5f}, {0.5f, 0.5f, 0.5f}}),
-				ColliderTestClass({{-2.5f, 0.0f, -1.5f}, {0.5f, 0.5f, 0.5f}}),
-				ColliderTestClass({{3.5f, 0.0f, -2.5f}, {0.5f, 0.5f, 0.5f}}),
-				ColliderTestClass({{-6.5f, 0.0f, -6.5f}, {0.5f, 0.5f, 0.5f}}),
-				ColliderTestClass({{-2.5f, 0.0f, 2.5f}, {0.5f, 0.5f, 0.5f}}),
-				ColliderTestClass({{-7.5f, 0.0f, 4.5f}, {0.5f, 0.5f, 0.5f}}),
-				ColliderTestClass({{-5.5f, 0.0f, 2.5f}, {0.5f, 0.5f, 0.5f}}),
-			};
-
 			auto octree = Octree<OctreeBaseCollider, 4>::Create(
 				BoundingBox(XMFLOAT3(0.0f, 6.0f, 0.0f), XMFLOAT3(8.0f, 8.0f, 8.0f))
 				);
 			Assert::IsTrue(octree.m_isLeaf);
 
 			// Add objects to the octree
-			octree.AddObject(&gameObjects[0]);
-			octree.AddObject(&gameObjects[1]);
-			octree.AddObject(&gameObjects[2]);
+			octree.AddObject(&m_gameObjects[0]);
+			octree.AddObject(&m_gameObjects[1]);
+			octree.AddObject(&m_gameObjects[2]);
 			Assert::IsTrue(octree.m_isLeaf);
 			Assert::AreEqual(3U, octree.m_objectCount);
 
 			// Do not allow to add duplicate objects:
-			octree.AddObject(&gameObjects[1]);
+			octree.AddObject(&m_gameObjects[1]);
 			Assert::AreEqual(3U, octree.m_objectCount);
 
 			// Add an object which lies outside of the bounding box (it should be ignored):
-			octree.AddObject(&gameObjects[3]);
+			octree.AddObject(&m_gameObjects[3]);
 			Assert::AreEqual(3U, octree.m_objectCount);
 
 			// Force octree to build new child nodes:
-			octree.AddObject(&gameObjects[4]);
-			octree.AddObject(&gameObjects[5]);
+			octree.AddObject(&m_gameObjects[4]);
+			octree.AddObject(&m_gameObjects[5]);
 			Assert::IsFalse(octree.m_isLeaf);
 			Assert::AreEqual(5U, octree.m_objectCount);
 
@@ -97,10 +109,10 @@ namespace GraphicsEngineTester
 			Assert::AreEqual(1U, children[5]->m_objectCount);
 
 			// Add some more objects:
-			octree.AddObject(&gameObjects[6]);
-			octree.AddObject(&gameObjects[7]);
-			octree.AddObject(&gameObjects[8]);
-			octree.AddObject(&gameObjects[9]);
+			octree.AddObject(&m_gameObjects[6]);
+			octree.AddObject(&m_gameObjects[7]);
+			octree.AddObject(&m_gameObjects[8]);
+			octree.AddObject(&m_gameObjects[9]);
 
 			// Check if objects were correctly inserted:
 			Assert::AreEqual(9U, octree.m_objectCount);
@@ -108,6 +120,18 @@ namespace GraphicsEngineTester
 			Assert::AreEqual(0U, children[1]->m_objectCount);
 			Assert::AreEqual(2U, children[4]->m_objectCount);
 			Assert::AreEqual(1U, children[5]->m_objectCount);
+
+			// Insert an object which will be shared by multiple nodes:
+			octree.AddObject(&m_gameObjects[10]);
+			Assert::AreEqual(10U, octree.m_objectCount);
+			Assert::AreEqual(7U, children[0]->m_objectCount);
+			Assert::AreEqual(1U, children[1]->m_objectCount);
+			Assert::AreEqual(1U, children[2]->m_objectCount);
+			Assert::AreEqual(1U, children[3]->m_objectCount);
+			Assert::AreEqual(3U, children[4]->m_objectCount);
+			Assert::AreEqual(2U, children[5]->m_objectCount);
+			Assert::AreEqual(1U, children[6]->m_objectCount);
+			Assert::AreEqual(1U, children[7]->m_objectCount);
 		}
 	};
 }

@@ -16,7 +16,7 @@ namespace GraphicsEngine
 	{
 		friend class GraphicsEngineTester::OctreeTest;
 
-	private:
+	private:		
 		union State
 		{
 			std::array<Octree<Type>*, 8> Children;
@@ -24,11 +24,16 @@ namespace GraphicsEngine
 		};
 
 	public:
+		static Octree<Type, MaxObjectsPerLeaf>& Create(DirectX::BoundingBox&& boundingBox)
+		{
+			return s_memoryPool.NewElement(std::forward<DirectX::BoundingBox>(boundingBox));
+		}
+
 		explicit Octree(DirectX::BoundingBox&& boundingBox) :
 			m_boundingBox(boundingBox),
 			m_isLeaf(true),
 			m_state(),
-			m_objectCounter(0)
+			m_objectCount(0)
 		{
 		}
 
@@ -37,17 +42,34 @@ namespace GraphicsEngine
 			// If is leaf node:
 			if(m_isLeaf)
 			{
-				// If max number of objects in the leaf not yet reached:
-				if (m_objectCounter != MaxObjectsPerLeaf)
-					m_state.Objects[m_objectCounter++] = object;
-
-				// Else, this node needs to be converted to a non leaf node:
-				else
+				// Add object to array. If it is full, then convert node to a non-leaf node:
+				if (!AddObjectToArray(object))
 					ConvertToNonLeaf();
 			}
 		}
 
 	private:
+		bool AddObjectToArray(Type* object)
+		{
+			auto& objects = m_state.Objects;
+
+			// Try to find object in the array:
+			auto location = std::find(objects.cbegin(), objects.cend(), object);
+
+			// If the array contains the object, we can return successfully:
+			if (location != objects.end())
+				return true;
+
+			// If the array is full:
+			if (m_objectCount == MaxObjectsPerLeaf)
+				return false;
+
+			// Add object to array:
+			objects[m_objectCount++] = object;			
+
+			return true;
+		}
+
 		void ConvertToNonLeaf()
 		{
 			m_isLeaf = false;
@@ -56,11 +78,14 @@ namespace GraphicsEngine
 		}
 
 	private:
-		static MemoryPool<Octree, 100> s_memoryPool;
-
 		DirectX::BoundingBox m_boundingBox;
 		bool m_isLeaf;
 		State m_state;
-		size_t m_objectCounter;
-	};
+		size_t m_objectCount;
+
+		static MemoryPool<Octree<Type, MaxObjectsPerLeaf>, 100> s_memoryPool;
+	};	
+
+	template<typename Type, size_t MaxObjectsPerLeaf>
+	MemoryPool<Octree<Type, MaxObjectsPerLeaf>, 100> Octree<Type, MaxObjectsPerLeaf>::s_memoryPool;
 }

@@ -23,7 +23,6 @@ namespace GraphicsEngineTester
 		}
 		~MemoryPoolTestClass()
 		{
-			std::cout << m_id << "- I'm being deleted" << endl;
 		}
 
 		size_t GetID() const

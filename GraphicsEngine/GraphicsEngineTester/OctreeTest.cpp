@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include <MemoryPool.h>
 #include <Octree.h>
 
 using namespace DirectX;
@@ -35,7 +34,7 @@ namespace GraphicsEngineTester
 		{
 			array<GameObjectTestClass, 10> gameObjects;
 
-			auto octree = Octree<GameObjectTestClass, 4>(
+			auto octree = Octree<GameObjectTestClass, 4>::Create(
 				BoundingBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(50.0f, 50.0f, 50.0f))
 				);
 			Assert::IsTrue(octree.m_isLeaf);
@@ -44,6 +43,10 @@ namespace GraphicsEngineTester
 			octree.AddObject(&gameObjects[1]);
 			octree.AddObject(&gameObjects[2]);
 			octree.AddObject(&gameObjects[3]);
+			Assert::IsTrue(octree.m_isLeaf);
+
+			// Do not allow to add duplicate objects:
+			octree.AddObject(&gameObjects[1]);
 			Assert::IsTrue(octree.m_isLeaf);
 
 			octree.AddObject(&gameObjects[4]);

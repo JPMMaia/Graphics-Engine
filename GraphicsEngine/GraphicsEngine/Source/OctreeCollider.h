@@ -4,22 +4,49 @@
 
 namespace GraphicsEngine
 {
-	template<typename Type>
-	class OctreeCollider
+	class OctreeBaseCollider
+	{
+	protected:
+		~OctreeBaseCollider() {}
+
+	public:
+		virtual bool Intersects(const DirectX::BoundingBox& box) const = 0;
+	};
+
+	template<
+		typename Type,
+		typename = std::enable_if_t<
+		std::is_same<Type, DirectX::BoundingBox>::value ||
+		std::is_same<Type, DirectX::BoundingSphere>::value ||
+		std::is_same<Type, DirectX::BoundingOrientedBox>::value ||
+		std::is_same<Type, DirectX::BoundingFrustum>::value
+		>
+	>
+	class OctreeCollider : public OctreeBaseCollider
 	{
 	public:
-		template<
-			typename ReturnType = std::result_of_t<decltype(&Type::GetCollider)(Type)>,
-			typename = std::enable_if_t<
-			std::is_same<ReturnType, const DirectX::BoundingBox&>::value ||
-			std::is_same<ReturnType, const DirectX::BoundingSphere&>::value ||
-			std::is_same<ReturnType, const DirectX::BoundingOrientedBox&>::value ||
-			std::is_same<ReturnType, const DirectX::BoundingFrustum&>::value
-			>
-		>
-			ReturnType GetColliderBase() const
+		OctreeCollider() :
+			m_collider()
 		{
-			return static_cast<const Type*>(this)->GetCollider();
 		}
+		explicit OctreeCollider(const Type& collider) :
+			m_collider(collider)
+		{
+		}
+		explicit OctreeCollider(Type&& collider) :
+			m_collider(std::move(collider))
+		{
+		}
+		virtual ~OctreeCollider()
+		{
+		}
+
+		bool Intersects(const DirectX::BoundingBox& box) const override
+		{
+			return box.Intersects(m_collider);
+		}
+
+	private:
+		Type m_collider;
 	};
 }

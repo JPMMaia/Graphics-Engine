@@ -28,7 +28,7 @@ namespace GraphicsEngine
 		};
 
 	public:
-		template<typename = std::enable_if_t<std::is_base_of<OctreeCollider<Type>, Type>::value>>
+		template<typename = std::enable_if_t<std::is_base_of<OctreeBaseCollider, Type>::value>>
 		static Octree<Type, MaxObjectsPerLeaf>& Create(DirectX::BoundingBox&& boundingBox)
 		{
 			return s_memoryPool.NewElement(std::forward<DirectX::BoundingBox>(boundingBox));
@@ -44,8 +44,8 @@ namespace GraphicsEngine
 
 		void AddObject(Type* object)
 		{
-			// Ignore if the object doesn't inteserct with bounding box:
-			if (!m_boundingBox.Intersects(object->GetCollider()))
+			// Ignore if the object doesn't intersect with bounding box:
+			if (!object->Intersects(m_boundingBox))
 				return;
 
 			// If not a leaf node:
@@ -130,7 +130,7 @@ namespace GraphicsEngine
 			{
 				// Create a bounding box, using two points (a corner and the center of the current bounding box):
 				BoundingBox boundingBox;
-				BoundingBox::CreateFromPoints(boundingBox, XMLoadFloat3(&corners[i]), XMLoadFloat3(&boundingBox.Center));
+				BoundingBox::CreateFromPoints(boundingBox, XMLoadFloat3(&corners[i]), XMLoadFloat3(&m_boundingBox.Center));
 
 				// Create child octree node:
 				children[i] = &Octree::Create(std::move(boundingBox));

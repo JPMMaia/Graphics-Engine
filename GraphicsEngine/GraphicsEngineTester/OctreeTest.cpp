@@ -65,7 +65,7 @@ namespace GraphicsEngineTester
 			};
 		}
 
-		TEST_METHOD(TestOctree)
+		TEST_METHOD(TestOctreeConstruction)
 		{
 			auto octree = Octree<OctreeBaseCollider, 4>::Create(
 				BoundingBox(XMFLOAT3(0.0f, 6.0f, 0.0f), XMFLOAT3(8.0f, 8.0f, 8.0f))
@@ -132,6 +132,17 @@ namespace GraphicsEngineTester
 			Assert::AreEqual(2U, children[5]->m_objectCount);
 			Assert::AreEqual(1U, children[6]->m_objectCount);
 			Assert::AreEqual(1U, children[7]->m_objectCount);
+		}
+
+		TEST_METHOD(TestOctreeFrustumIntersection)
+		{
+			auto octree = Octree<OctreeBaseCollider, 4>::Create(
+				BoundingBox(XMFLOAT3(0.0f, 6.0f, 0.0f), XMFLOAT3(8.0f, 8.0f, 8.0f))
+				);
+			for (auto& object : m_gameObjects)
+				octree.AddObject(&object);
+
+			
 		}
 	};
 }

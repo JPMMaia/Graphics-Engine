@@ -13,12 +13,11 @@ namespace GraphicsEngine
 	class Scene
 	{
 	public:
-		void Initialize(ID3D11Device* d3dDevice);
-		void Reset();
+		void CreateDeviceDependentResources(ID3D11Device* d3dDevice);
+		void CreateWindowSizeDependentResources(float screenWidth, float screenHeight, const DirectX::XMFLOAT4X4& orientationMatrix);
+		void ReleaseDeviceDependentResources();
 
 		void Render(ID3D11DeviceContext1* d3dDeviceContext);
-
-		void SetProjectionMatrix(const DirectX::XMFLOAT4X4& projectionMatrix);
 
 		void HandleInput(const InputHandler& input);
 
@@ -38,7 +37,5 @@ namespace GraphicsEngine
 		ConstantBuffers::CameraConstantBuffer m_cameraBuffer;
 		ConstantBuffers::TesselationConstantBuffer m_tesselationBuffer;
 		Camera m_camera;
-
-		DirectX::XMFLOAT4X4 m_projectionMatrix;
 	};
 }

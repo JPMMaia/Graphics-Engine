@@ -35,6 +35,8 @@ namespace GraphicsEngine
 
 		void AddObject(Type* object);
 
+
+
 	private:
 		bool AddObjectToArray(Type* object);
 		void AddObjectToChildNodes(Type* object);
@@ -56,7 +58,7 @@ namespace GraphicsEngine
 	template <typename Type, size_t MaxObjectsPerLeaf>
 	template <typename>
 	Octree<Type, MaxObjectsPerLeaf>& Octree<Type, MaxObjectsPerLeaf>::Create(DirectX::BoundingBox&& boundingBox)
-	{
+	{		
 		return s_memoryPool.NewElement(std::forward<DirectX::BoundingBox>(boundingBox));
 	}
 

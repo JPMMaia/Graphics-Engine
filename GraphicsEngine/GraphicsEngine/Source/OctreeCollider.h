@@ -11,6 +11,7 @@ namespace GraphicsEngine
 
 	public:
 		virtual bool Intersects(const DirectX::BoundingBox& box) const = 0;
+		virtual bool Intersects(const DirectX::BoundingFrustum& frustum) const = 0;
 	};
 
 	template<
@@ -44,6 +45,10 @@ namespace GraphicsEngine
 		bool Intersects(const DirectX::BoundingBox& box) const override
 		{
 			return box.Intersects(m_collider);
+		}
+		bool Intersects(const DirectX::BoundingFrustum& frustum) const override
+		{
+			return frustum.Intersects(m_collider);
 		}
 
 	private:

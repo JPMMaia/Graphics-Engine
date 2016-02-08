@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <DirectXCollision.h>
+#include <unordered_set>
 
 #include "MemoryPool.h"
 #include "OctreeCollider.h"
@@ -34,8 +35,7 @@ namespace GraphicsEngine
 		explicit Octree(DirectX::BoundingBox&& boundingBox);
 
 		void AddObject(Type* object);
-
-
+		std::unordered_set<Type*> GetIntersections(const DirectX::BoundingFrustum& boundingFrustum) const;
 
 	private:
 		bool AddObjectToArray(Type* object);
@@ -58,12 +58,12 @@ namespace GraphicsEngine
 	template <typename Type, size_t MaxObjectsPerLeaf>
 	template <typename>
 	Octree<Type, MaxObjectsPerLeaf>& Octree<Type, MaxObjectsPerLeaf>::Create(DirectX::BoundingBox&& boundingBox)
-	{		
+	{
 		return s_memoryPool.NewElement(std::forward<DirectX::BoundingBox>(boundingBox));
 	}
 
 	template <typename Type, size_t MaxObjectsPerLeaf>
-	Octree<Type, MaxObjectsPerLeaf>::Octree(DirectX::BoundingBox&& boundingBox):
+	Octree<Type, MaxObjectsPerLeaf>::Octree(DirectX::BoundingBox&& boundingBox) :
 		m_boundingBox(boundingBox),
 		m_isLeaf(true),
 		m_state(),
@@ -85,10 +85,49 @@ namespace GraphicsEngine
 			AddObjectToChildNodes(object);
 			return;
 		}
-			
+
 		// Add object to array. If it is full, then convert node to a non-leaf node:
 		if (!AddObjectToArray(object))
 			ConvertToNonLeaf(object);
+	}
+
+	template <typename Type, size_t MaxObjectsPerLeaf>
+	std::unordered_set<Type*> Octree<Type, MaxObjectsPerLeaf>::GetIntersections(const DirectX::BoundingFrustum& boundingFrustum) const
+	{
+		std::unordered_set<Type*> intersections;
+
+		// TODO frustum is in view-space...
+
+		// If non-leaf node:
+		if (!m_isLeaf)
+		{
+			// For each child node:
+			for (auto& child : m_state.Children)
+			{
+				// If the frustum doens't intersect the child bounding box, then ignore it:
+				if (!boundingFrustum.Intersects(child->m_boundingBox))
+					continue;
+
+				// Add child intersections to the set:
+				auto childIntersections = child->GetIntersections(boundingFrustum);
+				for (auto& childIntersection : childIntersections)
+					intersections.insert(childIntersection);
+			}
+		}
+
+		// If leaf node:
+		else
+		{
+			// For each object:
+			for (auto& object : m_state.Objects)
+			{
+				// Add to the set if frustum intersects object:
+				if (object->Intersects(boundingFrustum))
+					intersections.insert(object);
+			}
+		}
+
+		return intersections;
 	}
 
 	template <typename Type, size_t MaxObjectsPerLeaf>

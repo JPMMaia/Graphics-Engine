@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
+#include <Camera.h>
 #include <Octree.h>
 
 using namespace DirectX;
@@ -136,13 +137,16 @@ namespace GraphicsEngineTester
 
 		TEST_METHOD(TestOctreeFrustumIntersection)
 		{
+			auto camera = Camera();
+			auto cameraFrustum = camera.BuildBoundingFrustum();
+
 			auto octree = Octree<OctreeBaseCollider, 4>::Create(
 				BoundingBox(XMFLOAT3(0.0f, 6.0f, 0.0f), XMFLOAT3(8.0f, 8.0f, 8.0f))
 				);
 			for (auto& object : m_gameObjects)
 				octree.AddObject(&object);
 
-			
+			auto intersections = octree.GetIntersections(cameraFrustum);
 		}
 	};
 }

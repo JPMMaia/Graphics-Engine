@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <DirectXMath.h>
+#include <DirectXCollision.h>
 
 namespace GraphicsEngine
 {
@@ -17,6 +18,9 @@ namespace GraphicsEngine
 		void RotateLocalX(float angleX);
 		void RotateWorldY(float angleY);
 
+		DirectX::BoundingFrustum BuildViewSpaceBoundingFrustum() const;
+		DirectX::BoundingFrustum BuildWorldSpaceBoundingFrustum() const;
+
 		const DirectX::XMFLOAT3& GetPosition() const;
 		const DirectX::XMFLOAT4X4& GetViewMatrix() const;
 		const DirectX::XMFLOAT4X4& GetProjectionMatrix() const;
@@ -24,6 +28,9 @@ namespace GraphicsEngine
 		void SetPosition(float x, float y, float z);
 
 		bool IsDirty() const;
+
+	private:
+		void InitializeProjectionMatrix(const DirectX::XMFLOAT4X4& orientationMatrix);
 
 	private:
 		DirectX::XMFLOAT4X4 m_viewMatrix;

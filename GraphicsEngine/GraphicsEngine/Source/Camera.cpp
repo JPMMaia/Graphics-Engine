@@ -5,41 +5,41 @@ using namespace DirectX;
 using namespace GraphicsEngine;
 
 Camera::Camera() :
+	m_position(0.0f, 0.0f, 0.0f),
+	m_rotation(0.0f, 0.0f, 0.0f),
+	m_left(1.0f, 0.0f, 0.0f),
+	m_up(0.0f, 1.0f, 0.0f),
+	m_forward(0.0f, 0.0f, 1.0f),
 	m_dirty(true),
 	m_aspectRatio(2.0f),
 	m_fovAngleY(70.0f * XM_PI / 180.0f),
 	m_nearZ(0.01f),
 	m_farZ(100.0f)
 {
+	// Initialize projection matrix, given orientation matrix equals to the identity matrix:
+	InitializeProjectionMatrix(
+		XMFLOAT4X4(
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+			)
+		);
 }
 
 Camera::Camera(float aspectRatio, float fovAngleY, float nearZ, float farZ, const XMFLOAT4X4& orientationMatrix) :
+	m_position(0.0f, 0.0f, 0.0f),
+	m_rotation(0.0f, 0.0f, 0.0f),
+	m_left(1.0f, 0.0f, 0.0f),
+	m_up(0.0f, 1.0f, 0.0f),
+	m_forward(0.0f, 0.0f, 1.0f),
 	m_dirty(true),
 	m_aspectRatio(aspectRatio),
 	m_fovAngleY(fovAngleY),
 	m_nearZ(nearZ),
 	m_farZ(farZ)
 {
-	m_position = {};
-	m_rotation = {};
-
-	m_left = { 1.0f, 0.0f, 0.0f };
-	m_up = { 0.0f, 1.0f, 0.0f };
-	m_forward = { 0.0f, 0.0f, 1.0f };
-
-	// Build a perspective matrix:
-	auto perspectiveMatrix = XMMatrixPerspectiveFovRH(
-		fovAngleY,
-		aspectRatio,
-		nearZ,
-		farZ
-		);
-
-	// Create a projection matrix by multiplying the perspective matrix with the orientation matrix:
-	XMStoreFloat4x4(
-		&m_projectionMatrix,
-		perspectiveMatrix * XMLoadFloat4x4(&orientationMatrix)
-		);
+	InitializeProjectionMatrix(orientationMatrix);
 }
 
 void Camera::Update()
@@ -104,6 +104,27 @@ void Camera::RotateWorldY(float radians)
 	m_dirty = true;
 }
 
+BoundingFrustum Camera::BuildViewSpaceBoundingFrustum() const
+{
+	BoundingFrustum boundingFrustum;
+	BoundingFrustum::CreateFromMatrix(boundingFrustum, XMLoadFloat4x4(&m_projectionMatrix));
+
+	return boundingFrustum;
+}
+BoundingFrustum Camera::BuildWorldSpaceBoundingFrustum() const
+{
+	// TODO
+	XMFLOAT3 origin;
+	XMFLOAT4 orientation;
+	float rightSlope;
+	float leftSlope;
+	float topSlope;
+	float bottomSlope;
+	float nearZ;
+	float farZ;
+	return BoundingFrustum(origin, orientation, rightSlope, leftSlope, topSlope, bottomSlope, nearZ, farZ);
+}
+
 const XMFLOAT3& Camera::GetPosition() const
 {
 	return m_position;
@@ -128,4 +149,21 @@ void Camera::SetPosition(float x, float y, float z)
 bool Camera::IsDirty() const
 {
 	return m_dirty;
+}
+
+void Camera::InitializeProjectionMatrix(const XMFLOAT4X4& orientationMatrix)
+{
+	// Build a perspective matrix:
+	auto perspectiveMatrix = XMMatrixPerspectiveFovRH(
+		m_fovAngleY,
+		m_aspectRatio,
+		m_nearZ,
+		m_farZ
+		);
+
+	// Create a projection matrix by multiplying the perspective matrix with the orientation matrix:
+	XMStoreFloat4x4(
+		&m_projectionMatrix,
+		perspectiveMatrix * XMLoadFloat4x4(&orientationMatrix)
+		);
 }

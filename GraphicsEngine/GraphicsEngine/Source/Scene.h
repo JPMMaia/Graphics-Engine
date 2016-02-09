@@ -14,7 +14,7 @@ namespace GraphicsEngine
 	{
 	public:
 		void CreateDeviceDependentResources(ID3D11Device* d3dDevice);
-		void CreateWindowSizeDependentResources(float screenWidth, float screenHeight, const DirectX::XMFLOAT4X4& orientationMatrix);
+		void CreateWindowSizeDependentResources(float screenWidth, float screenHeight, const DirectX::XMMATRIX& orientationMatrix);
 		void ReleaseDeviceDependentResources();
 
 		void Render(ID3D11DeviceContext1* d3dDeviceContext);

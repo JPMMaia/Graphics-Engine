@@ -9,38 +9,40 @@ namespace GraphicsEngine
 	{
 	public:
 		Camera();
-		Camera(float aspectRatio, float fovAngleY, float nearZ, float farZ, const DirectX::XMFLOAT4X4& orientationMatrix);
+		Camera(float aspectRatio, float fovAngleY, float nearZ, float farZ, const DirectX::XMMATRIX& orientationMatrix);
 
 		void Update();
 
-		void MoveForward(float scalar);
+		void Move(const DirectX::XMVECTOR& axis, float scalar);
 		void MoveLeft(float scalar);
-		void RotateLocalX(float angleX);
-		void RotateWorldY(float angleY);
+		void MoveForward(float scalar);
+
+		void Rotate(const DirectX::XMVECTOR& axis, float radians);
+		void RotateLocalX(float radiansX);
+		void RotateWorldY(float radiansY);
 
 		DirectX::BoundingFrustum BuildViewSpaceBoundingFrustum() const;
 		DirectX::BoundingFrustum BuildWorldSpaceBoundingFrustum() const;
 
-		const DirectX::XMFLOAT3& GetPosition() const;
-		const DirectX::XMFLOAT4X4& GetViewMatrix() const;
-		const DirectX::XMFLOAT4X4& GetProjectionMatrix() const;
+		const DirectX::XMVECTOR& GetPosition() const;
+		const DirectX::XMMATRIX& GetViewMatrix() const;
+		const DirectX::XMMATRIX& GetProjectionMatrix() const;
 
 		void SetPosition(float x, float y, float z);
 
 		bool IsDirty() const;
 
 	private:
-		void InitializeProjectionMatrix(const DirectX::XMFLOAT4X4& orientationMatrix);
+		void InitializeProjectionMatrix(const DirectX::XMMATRIX& orientationMatrix);
 
 	private:
-		DirectX::XMFLOAT4X4 m_viewMatrix;
-		DirectX::XMFLOAT3 m_position;
-		DirectX::XMFLOAT3 m_left;
-		DirectX::XMFLOAT3 m_up;
-		DirectX::XMFLOAT3 m_forward;
+		DirectX::XMMATRIX m_viewMatrix;
+		DirectX::XMVECTOR m_position;
+		DirectX::XMVECTOR m_rotationQuaternion;
+		DirectX::XMMATRIX m_rotationMatrix;
 		bool m_dirty;
 
-		DirectX::XMFLOAT4X4 m_projectionMatrix;
+		DirectX::XMMATRIX m_projectionMatrix;
 		float m_aspectRatio;
 		float m_fovAngleY;
 		float m_nearZ;

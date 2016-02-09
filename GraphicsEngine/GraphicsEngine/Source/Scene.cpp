@@ -16,7 +16,7 @@ void Scene::CreateDeviceDependentResources(ID3D11Device* d3dDevice)
 	m_effectManager.Initialize(d3dDevice);
 }
 
-void Scene::CreateWindowSizeDependentResources(float screenWidth, float screenHeight, const XMFLOAT4X4& orientationMatrix)
+void Scene::CreateWindowSizeDependentResources(float screenWidth, float screenHeight, const XMMATRIX& orientationMatrix)
 {
 	auto aspectRatio = screenWidth / screenHeight;
 	auto fovAngleY = 70.0f * XM_PI / 180.0f;
@@ -170,7 +170,7 @@ void Scene::UpdateCamera()
 	m_camera.Update();
 
 	// Update camera position in the constant buffer:
-	m_cameraBuffer.EyePositionW = m_camera.GetPosition();
+	XMStoreFloat3(&m_cameraBuffer.EyePositionW, m_camera.GetPosition());
 
 	// Build view projection matrix:
 	auto& viewMatrix = m_camera.GetViewMatrix();

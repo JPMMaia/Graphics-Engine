@@ -6,7 +6,6 @@ using namespace GraphicsEngine;
 
 Camera::Camera() :
 	m_position(0.0f, 0.0f, 0.0f),
-	m_rotation(0.0f, 0.0f, 0.0f),
 	m_left(1.0f, 0.0f, 0.0f),
 	m_up(0.0f, 1.0f, 0.0f),
 	m_forward(0.0f, 0.0f, 1.0f),
@@ -29,7 +28,6 @@ Camera::Camera() :
 
 Camera::Camera(float aspectRatio, float fovAngleY, float nearZ, float farZ, const XMFLOAT4X4& orientationMatrix) :
 	m_position(0.0f, 0.0f, 0.0f),
-	m_rotation(0.0f, 0.0f, 0.0f),
 	m_left(1.0f, 0.0f, 0.0f),
 	m_up(0.0f, 1.0f, 0.0f),
 	m_forward(0.0f, 0.0f, 1.0f),
@@ -113,16 +111,13 @@ BoundingFrustum Camera::BuildViewSpaceBoundingFrustum() const
 }
 BoundingFrustum Camera::BuildWorldSpaceBoundingFrustum() const
 {
-	// TODO
-	XMFLOAT3 origin;
-	XMFLOAT4 orientation;
-	float rightSlope;
-	float leftSlope;
-	float topSlope;
-	float bottomSlope;
-	float nearZ;
-	float farZ;
-	return BoundingFrustum(origin, orientation, rightSlope, leftSlope, topSlope, bottomSlope, nearZ, farZ);
+	auto orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	auto rightSlope = 1.0f;
+	auto leftSlope = 1.0f;
+	auto topSlope = 1.0f;
+	auto bottomSlope = 1.0f;
+	
+	return BoundingFrustum(m_position, orientation, rightSlope, leftSlope, topSlope, bottomSlope, m_nearZ, m_farZ);
 }
 
 const XMFLOAT3& Camera::GetPosition() const

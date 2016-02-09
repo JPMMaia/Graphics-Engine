@@ -35,7 +35,6 @@ namespace GraphicsEngine
 	private:
 		DirectX::XMFLOAT4X4 m_viewMatrix;
 		DirectX::XMFLOAT3 m_position;
-		DirectX::XMFLOAT3 m_rotation;
 		DirectX::XMFLOAT3 m_left;
 		DirectX::XMFLOAT3 m_up;
 		DirectX::XMFLOAT3 m_forward;

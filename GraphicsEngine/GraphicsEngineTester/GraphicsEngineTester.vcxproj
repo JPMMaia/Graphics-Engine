@@ -162,6 +162,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CameraTest.cpp" />
     <ClCompile Include="MemoryPoolTest.cpp" />
     <ClCompile Include="OctreeTest.cpp" />
     <ClCompile Include="SettingsTest.cpp" />

@@ -7,6 +7,15 @@ using namespace DirectX;
 using namespace GraphicsEngine;
 using namespace std;
 
+void* Scene::operator new(size_t size)
+{
+	return _aligned_malloc(size, 16);
+}
+void Scene::operator delete(void* pointer)
+{
+	_aligned_free(pointer);
+}
+
 void Scene::CreateDeviceDependentResources(ID3D11Device* d3dDevice)
 {
 	InitializeCubeModel(d3dDevice);
@@ -160,7 +169,7 @@ void Scene::InitializeTesselationBuffer()
 {
 	m_tesselationBuffer.MaxTesselationDistance = 2.0f;
 	m_tesselationBuffer.MinTesselationDistance = 30.0f;
-	m_tesselationBuffer.MaxTesselationFactor = 8;
+	m_tesselationBuffer.MaxTesselationFactor = 6;
 	m_tesselationBuffer.MinTesselationFactor = 1;
 }
 
@@ -174,6 +183,6 @@ void Scene::UpdateCamera()
 
 	// Build view projection matrix:
 	auto& viewMatrix = m_camera.GetViewMatrix();
-	auto viewProjectionMatrix = XMMatrixMultiply(XMLoadFloat4x4(&viewMatrix), XMLoadFloat4x4(&m_camera.GetProjectionMatrix()));
+	auto viewProjectionMatrix = XMMatrixMultiply(viewMatrix, m_camera.GetProjectionMatrix());
 	XMStoreFloat4x4(&m_cameraBuffer.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
 }

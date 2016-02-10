@@ -12,6 +12,15 @@ using namespace std;
 using namespace Windows::Foundation;
 using namespace GraphicsEngine;
 
+void* Sample3DSceneRenderer::operator new(size_t size)
+{
+	return _aligned_malloc(size, 16);
+}
+void Sample3DSceneRenderer::operator delete(void* pointer)
+{
+	_aligned_free(pointer);
+}
+
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
 Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
 	m_loadingComplete(false),
@@ -26,7 +35,7 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources()
 {
 	const auto& outputSize = m_deviceResources->GetOutputSize();
 	const auto& orientationMatrix = m_deviceResources->GetOrientationTransform3D();
-	m_scene.CreateWindowSizeDependentResources(outputSize.Width, outputSize.Height, orientationMatrix);
+	m_scene.CreateWindowSizeDependentResources(outputSize.Width, outputSize.Height, XMLoadFloat4x4(&orientationMatrix));
 }
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.

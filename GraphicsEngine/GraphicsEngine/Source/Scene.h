@@ -10,9 +10,13 @@
 
 namespace GraphicsEngine
 {
+	__declspec(align(16))
 	class Scene
 	{
 	public:
+		void* operator new(size_t size);
+		void operator delete(void* pointer);
+
 		void CreateDeviceDependentResources(ID3D11Device* d3dDevice);
 		void CreateWindowSizeDependentResources(float screenWidth, float screenHeight, const DirectX::XMMATRIX& orientationMatrix);
 		void ReleaseDeviceDependentResources();

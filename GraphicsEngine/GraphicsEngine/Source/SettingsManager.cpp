@@ -76,7 +76,7 @@ void SettingsManager::ReadFile(const wstring& filename)
 	// Get default video card:
 	auto defaultVideoCard = videoCardsNode->first_node(TAG_VIDEO_CARD);
 	for (auto i = 0; i < defaultVideoCardIndex; i++)
-		defaultVideoCard = videoCardsNode->next_sibling(TAG_VIDEO_CARD);
+		defaultVideoCard = defaultVideoCard->next_sibling(TAG_VIDEO_CARD);
 
 	// Get default adapter values:
 	m_adapterIndex = stoi(defaultVideoCard->first_node(TAG_INDEX)->value());

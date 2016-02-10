@@ -7,17 +7,36 @@ using namespace DirectX;
 using namespace GraphicsEngine;
 using namespace std;
 
-void Scene::Initialize(ID3D11Device* d3dDevice)
+void* Scene::operator new(size_t size)
+{
+	return _aligned_malloc(size, 16);
+}
+void Scene::operator delete(void* pointer)
+{
+	_aligned_free(pointer);
+}
+
+void Scene::CreateDeviceDependentResources(ID3D11Device* d3dDevice)
 {
 	InitializeCubeModel(d3dDevice);
 	InitializeFrameBuffer();
 	InitializeTesselationBuffer();
 
 	m_effectManager.Initialize(d3dDevice);
+}
+
+void Scene::CreateWindowSizeDependentResources(float screenWidth, float screenHeight, const XMMATRIX& orientationMatrix)
+{
+	auto aspectRatio = screenWidth / screenHeight;
+	auto fovAngleY = 70.0f * XM_PI / 180.0f;
+	if (aspectRatio < 1.0f)
+		fovAngleY *= 2.0f;
+
+	m_camera = Camera(aspectRatio, fovAngleY, 0.01f, 100.0f, orientationMatrix);
 	m_camera.SetPosition(0.0f, 1.4f, 3.0f);
 }
 
-void Scene::Reset()
+void Scene::ReleaseDeviceDependentResources()
 {
 	m_cubeModel.Reset();
 	m_effectManager.Reset();
@@ -48,11 +67,6 @@ void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 
 	// Draw terrain models:
 	m_terrainModel.Draw(d3dDeviceContext, terrainEffect);
-}
-
-void Scene::SetProjectionMatrix(const DirectX::XMFLOAT4X4& projectionMatrix)
-{
-	m_projectionMatrix = projectionMatrix;
 }
 
 void Scene::HandleInput(const InputHandler& input)
@@ -155,7 +169,7 @@ void Scene::InitializeTesselationBuffer()
 {
 	m_tesselationBuffer.MaxTesselationDistance = 2.0f;
 	m_tesselationBuffer.MinTesselationDistance = 30.0f;
-	m_tesselationBuffer.MaxTesselationFactor = 8;
+	m_tesselationBuffer.MaxTesselationFactor = 6;
 	m_tesselationBuffer.MinTesselationFactor = 1;
 }
 
@@ -165,10 +179,10 @@ void Scene::UpdateCamera()
 	m_camera.Update();
 
 	// Update camera position in the constant buffer:
-	m_cameraBuffer.EyePositionW = m_camera.GetPosition();
+	XMStoreFloat3(&m_cameraBuffer.EyePositionW, m_camera.GetPosition());
 
 	// Build view projection matrix:
 	auto& viewMatrix = m_camera.GetViewMatrix();
-	auto viewProjectionMatrix = XMMatrixMultiply(XMLoadFloat4x4(&viewMatrix), XMLoadFloat4x4(&m_projectionMatrix));
+	auto viewProjectionMatrix = XMMatrixMultiply(viewMatrix, m_camera.GetProjectionMatrix());
 	XMStoreFloat4x4(&m_cameraBuffer.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
 }

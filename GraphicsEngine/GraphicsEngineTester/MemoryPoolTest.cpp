@@ -2,7 +2,6 @@
 #include "CppUnitTest.h"
 
 #include <MemoryPool.h>
-#include <iostream>
 
 using namespace GraphicsEngine;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -23,7 +22,6 @@ namespace GraphicsEngineTester
 		}
 		~MemoryPoolTestClass()
 		{
-			std::cout << m_id << "- I'm being deleted" << endl;
 		}
 
 		size_t GetID() const

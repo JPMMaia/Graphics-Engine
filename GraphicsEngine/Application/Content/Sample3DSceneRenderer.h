@@ -16,6 +16,9 @@ namespace Application
 	class Sample3DSceneRenderer
 	{
 	public:
+		void* operator new(size_t size);
+		void operator delete(void* pointer);
+
 		Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources);
 		void CreateDeviceDependentResources();
 		void CreateWindowSizeDependentResources();

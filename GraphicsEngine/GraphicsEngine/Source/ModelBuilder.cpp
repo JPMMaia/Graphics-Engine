@@ -4,6 +4,8 @@
 #include "LightModel.h"
 #include "MathHelper.h"
 
+#include <array>
+
 using namespace DirectX;
 using namespace GraphicsEngine;
 using namespace std;
@@ -168,6 +170,12 @@ LightModel ModelBuilder::CreateLightCube(ID3D11Device* d3dDevice, const vector<L
 	};
 
 	return LightModel(d3dDevice, vertices, indices, subsets, { textureAppearance }, instancedData, D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+}
+
+LightModel ModelBuilder::CreateBox(ID3D11Device* d3dDevice, const BoundingBox& boundingBox) const
+{
+	// TODO
+	return LightModel();
 }
 
 TerrainModel ModelBuilder::CreateTerrain(ID3D11Device* d3dDevice, float width, float depth, uint32_t xCellCount, uint32_t zCellCount) const

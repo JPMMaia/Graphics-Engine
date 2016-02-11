@@ -3,6 +3,8 @@
 #include "ModelBuilder.h"
 #include "VirtualKey.h"
 
+#include "Effect.h"
+
 using namespace DirectX;
 using namespace GraphicsEngine;
 using namespace std;
@@ -17,7 +19,7 @@ void Scene::operator delete(void* pointer)
 }
 
 void Scene::CreateDeviceDependentResources(ID3D11Device* d3dDevice)
-{
+{	
 	InitializeCubeModel(d3dDevice);
 	InitializeFrameBuffer();
 	InitializeTesselationBuffer();
@@ -167,8 +169,8 @@ void Scene::InitializeFrameBuffer()
 }
 void Scene::InitializeTesselationBuffer()
 {
-	m_tesselationBuffer.MaxTesselationDistance = 2.0f;
-	m_tesselationBuffer.MinTesselationDistance = 30.0f;
+	m_tesselationBuffer.MaxTesselationDistance = 30.0f;
+	m_tesselationBuffer.MinTesselationDistance = 90.0f;
 	m_tesselationBuffer.MaxTesselationFactor = 6;
 	m_tesselationBuffer.MinTesselationFactor = 1;
 }

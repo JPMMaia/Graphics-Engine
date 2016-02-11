@@ -83,6 +83,15 @@
     <ClCompile Include="Source\TerrainEffect.cpp">
       <Filter>Source\Effects\Effects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ColorEffect.cpp">
+      <Filter>Source\Effects\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Effect.cpp">
+      <Filter>Source\Effects\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Technique2.cpp">
+      <Filter>Source\Effects\Effects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\DirectXException.h">
@@ -245,6 +254,15 @@
     <ClInclude Include="Source\OctreeCollider.h">
       <Filter>Source\Octree</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ColorEffect.h">
+      <Filter>Source\Effects\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Effect.h">
+      <Filter>Source\Effects\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Technique2.h">
+      <Filter>Source\Effects\Effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -343,6 +361,12 @@
     <Filter Include="Source\Octree">
       <UniqueIdentifier>{871d088e-ab2c-4294-8a59-91181c353985}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Color">
+      <UniqueIdentifier>{73022df4-0f49-4f2d-8286-f13346cf1d3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Light">
+      <UniqueIdentifier>{652b9c42-3c53-4f52-a050-2efe8c8107fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shaders\Common\Material.hlsli">
@@ -371,18 +395,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Source\Shaders\LightPixelShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shaders\LightVertexShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shaders\LightHullShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shaders\LightDomainShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="Source\Shaders\TerrainVertexShader.hlsl">
       <Filter>Shaders\Terrain</Filter>
     </FxCompile>
@@ -394,6 +406,24 @@
     </FxCompile>
     <FxCompile Include="Source\Shaders\TerrainPixelShader.hlsl">
       <Filter>Shaders\Terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\ColorVertexShader.hlsl">
+      <Filter>Shaders\Color</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\ColorPixelShader.hlsl">
+      <Filter>Shaders\Color</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\LightVertexShader.hlsl">
+      <Filter>Shaders\Light</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\LightDomainShader.hlsl">
+      <Filter>Shaders\Light</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\LightHullShader.hlsl">
+      <Filter>Shaders\Light</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\LightPixelShader.hlsl">
+      <Filter>Shaders\Light</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

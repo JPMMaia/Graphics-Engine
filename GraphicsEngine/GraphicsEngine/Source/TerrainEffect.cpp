@@ -3,6 +3,8 @@
 #include "SamplerStateDescConstants.h"
 #include "RasterizerStateDescConstants.h"
 
+#include <array>
+
 using namespace GraphicsEngine;
 using namespace GraphicsEngine::ConstantBuffers;
 
@@ -17,10 +19,12 @@ TerrainEffect::TerrainEffect(ID3D11Device* d3dDevice)
 void TerrainEffect::Initialize(ID3D11Device* d3dDevice)
 {
 	// Describe the input layout:
-	static const std::vector<D3D11_INPUT_ELEMENT_DESC> inputDesc =
+	static const std::array<D3D11_INPUT_ELEMENT_DESC, 2> inputDesc =
 	{
+		{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		}
 	};
 
 	// Initialize shaders:

@@ -21,10 +21,11 @@ void Scene::operator delete(void* pointer)
 
 void Scene::CreateDeviceDependentResources(ID3D11Device* d3dDevice)
 {	
-	auto tech = Technique2<VSTechnique, PSTechnique>(
-		VSTechnique(nullptr),
-		PSTechnique(nullptr)
-		);
+	auto tech = Technique2
+		<
+		VSTechniqueArray<2, 2>
+		>
+		(nullptr, nullptr, nullptr, nullptr, nullptr);
 	tech.Set(nullptr);
 
 	InitializeCubeModel(d3dDevice);

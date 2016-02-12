@@ -89,9 +89,6 @@
     <ClCompile Include="Source\Effect.cpp">
       <Filter>Source\Effects\Effects</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Technique2.cpp">
-      <Filter>Source\Effects\Effects</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\DirectXException.h">

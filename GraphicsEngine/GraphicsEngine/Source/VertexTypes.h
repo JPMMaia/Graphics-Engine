@@ -4,6 +4,12 @@
 
 namespace GraphicsEngine
 {
+	struct VertexPositionColor
+	{
+		DirectX::XMFLOAT3 Position;
+		DirectX::XMFLOAT4 Color;
+	};
+
 	struct VertexPositionTexture
 	{
 		DirectX::XMFLOAT3 Position;

@@ -3,8 +3,7 @@
 #include "ModelBuilder.h"
 #include "VirtualKey.h"
 
-#include "Effect.h"
-#include "Technique2.h"
+#include "ColorEffect.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -21,12 +20,7 @@ void Scene::operator delete(void* pointer)
 
 void Scene::CreateDeviceDependentResources(ID3D11Device* d3dDevice)
 {	
-	auto tech = Technique2
-		<
-		VSTechniqueArray<2, 2>
-		>
-		(nullptr, nullptr, nullptr, nullptr, nullptr);
-	tech.Set(nullptr);
+	auto colorEffect = ColorEffect(d3dDevice);
 
 	InitializeCubeModel(d3dDevice);
 	InitializeFrameBuffer();

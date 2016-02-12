@@ -22,8 +22,13 @@ void EffectManager::Reset()
 {
 	m_terrainEffect.Reset();
 	m_lightEffect.Reset();
+	m_colorEffect.Reset();
 }
 
+ColorEffect& EffectManager::GetColorEffect()
+{
+	return m_colorEffect;
+}
 LightEffect& EffectManager::GetLightEffect()
 {
 	return m_lightEffect;

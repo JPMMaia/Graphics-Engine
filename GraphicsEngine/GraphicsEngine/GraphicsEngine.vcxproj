@@ -186,7 +186,6 @@
     <ClCompile Include="Source\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\Technique2.cpp" />
     <ClCompile Include="Source\TerrainEffect.cpp" />
     <ClCompile Include="Source\TerrainModel.cpp" />
     <ClCompile Include="Source\Texture.cpp" />

@@ -4,7 +4,7 @@
 #include "HullShader.h"
 #include "DomainShader.h"
 #include "PixelShader.h"
-#include "Technique.h"
+#include "Technique2.h"
 
 #include <array>
 
@@ -16,7 +16,12 @@ namespace GraphicsEngine
 		{
 		public:
 			template<size_t ArraySize>
-			VSEffect(ID3D11Device* d3dDevice, const std::wstring& filename, const std::array<D3D11_INPUT_ELEMENT_DESC, ArraySize>& vertexDesc);
+			explicit VSEffect(ID3D11Device* d3dDevice, const std::wstring& filename, const std::array<D3D11_INPUT_ELEMENT_DESC, ArraySize>& vertexDesc);
+
+			const VertexShader& GetShader() const noexcept
+			{
+				return m_vertexShader;
+			}
 
 		protected:
 			VertexShader m_vertexShader;
@@ -31,7 +36,12 @@ namespace GraphicsEngine
 		class HSEffect
 		{
 		public:
-			HSEffect(ID3D11Device* d3dDevice, const std::wstring& filename);
+			explicit HSEffect(ID3D11Device* d3dDevice, const std::wstring& filename);
+
+			const HullShader& GetShader() const noexcept
+			{
+				return m_hullShader;
+			}
 
 		protected:
 			HullShader m_hullShader;
@@ -41,6 +51,11 @@ namespace GraphicsEngine
 		public:
 			DSEffect(ID3D11Device* d3dDevice, const std::wstring& filename);
 
+			const DomainShader& GetShader() const noexcept
+			{
+				return m_domainShader;
+			}
+
 		protected:
 			DomainShader m_domainShader;
 		};
@@ -48,6 +63,11 @@ namespace GraphicsEngine
 		{
 		public:
 			PSEffect(ID3D11Device* d3dDevice, const std::wstring& filename);
+
+			const PixelShader& GetShader() const noexcept
+			{
+				return m_pixelShader;
+			}
 
 		protected:
 			PixelShader m_pixelShader;
@@ -58,18 +78,22 @@ namespace GraphicsEngine
 	class Effect : public Shaders...
 	{
 	public:
-		explicit Effect(Shaders&&... shaders);
+		explicit Effect(Shaders&&... shaders, Technique2&& technique);
 
 		void Set(ID3D11DeviceContext1* d3dDeviceContext) const;
 
 	protected:
-		Technique m_technique;
+		Technique2 m_technique;
 	};
 
 	template <typename ... Shaders>
-	Effect<Shaders...>::Effect(Shaders&&... shaders) : 
-		Shaders(std::move(shaders))...
+	Effect<Shaders...>::Effect(Shaders&&... shaders, Technique2&& technique) :
+		Shaders(std::forward<Shaders>(shaders))...,
+		m_technique(std::forward<Technique2>(technique))
 	{
+		std::array<int, sizeof...(Shaders)>(
+		{ (m_technique.SetShader(&static_cast<Shaders*>(this)->GetShader()), 0)... }
+		);
 	}
 
 	template <typename ... Shaders>

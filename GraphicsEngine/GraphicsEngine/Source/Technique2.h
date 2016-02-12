@@ -8,95 +8,71 @@
 
 namespace GraphicsEngine
 {
-	template<typename TupleType, typename FunctionType>
-	void for_each(TupleType&&, FunctionType, std::integral_constant<size_t, std::tuple_size<typename std::remove_reference<TupleType>::type >::value>)
-	{
-	}
-
-	template<std::size_t I, typename TupleType, typename FunctionType, typename = typename std::enable_if<I != std::tuple_size<typename std::remove_reference<TupleType>::type>::value>::type>
-	void for_each(TupleType&& t, FunctionType f, std::integral_constant<size_t, I>)
-	{
-		f(std::get<I>(t));
-		for_each(std::forward<TupleType>(t), f, std::integral_constant<size_t, I + 1>());
-	}
-
-	template<typename TupleType, typename FunctionType>
-	void for_each(TupleType&& t, FunctionType f)
-	{
-		for_each(std::forward<TupleType>(t), f, std::integral_constant<size_t, 0>());
-	}
-
-	template<size_t ConstantBufferCount, size_t SamplerStateCount>
-	class TechniqueArrays2
+	template<typename ResourceType>
+	class TechniqueArray
 	{
 	public:
-		explicit TechniqueArrays2(
-			void(__stdcall ID3D11DeviceContext1::* const& setConstantBuffers)(UINT, UINT, ID3D11Buffer* const*),
-			void(__stdcall ID3D11DeviceContext1::* const& setSamplers)(UINT, UINT, ID3D11SamplerState* const*)
+		TechniqueArray(
+			void(__stdcall ID3D11DeviceContext1::* const& setResources)(UINT, UINT, ResourceType* const*),
+			std::vector<ResourceType*>&& resources
 			) :
-			m_setConstantBuffers(setConstantBuffers),
-			m_setSamplers(setSamplers)
+			m_resources(std::forward<std::vector<ResourceType*>>(resources)),
+			m_setResources(setResources)
 		{
-			for (size_t i = 0; i < m_constantBuffers.size(); i++)
-				m_constantBuffers[i] = nullptr;
-
-			for (size_t i = 0; i < m_samplerStates.size(); i++)
-				m_samplerStates[i] = nullptr;
 		}
 
-		void SetConstantBuffers(ID3D11DeviceContext1* d3dDeviceContext) const
+		void SetResources(ID3D11DeviceContext1* d3dDeviceContext) const
 		{
-			(d3dDeviceContext->*m_setConstantBuffers)(0, m_constantBuffers.size(), m_constantBuffers.data());
-		}
-		void SetSamplerStates(ID3D11DeviceContext1* d3dDeviceContext) const
-		{
-			(d3dDeviceContext->*m_setSamplers)(0, m_samplerStates.size(), m_samplerStates.data());
+			(d3dDeviceContext->*m_setResources)(0, m_resources.size(), m_resources.data());
 		}
 
 	private:
-		std::array<ID3D11Buffer*, ConstantBufferCount> m_constantBuffers;
-		void(__stdcall ID3D11DeviceContext1::* const& m_setConstantBuffers)(UINT, UINT, ID3D11Buffer* const*);
-
-		std::array<ID3D11SamplerState*, SamplerStateCount> m_samplerStates;
-		void(__stdcall ID3D11DeviceContext1::* const& m_setSamplers)(UINT, UINT, ID3D11SamplerState* const*);
+		std::vector<ResourceType*> m_resources;
+		void(__stdcall ID3D11DeviceContext1::* const& m_setResources)(UINT, UINT, ResourceType* const*);
 	};
 
-	template<size_t ConstantBufferCount, size_t SamplerStateCount>
-	class VSTechniqueArray : public TechniqueArrays2<ConstantBufferCount, SamplerStateCount>
-	{
-	public:
-		VSTechniqueArray() :
-			TechniqueArrays2(
-				&ID3D11DeviceContext1::VSSetConstantBuffers,
-				&ID3D11DeviceContext1::VSSetSamplers
-				)
-		{
-		}
-	};
-	template<size_t ConstantBufferCount, size_t SamplerStateCount>
-	class PSTechniqueArray : public TechniqueArrays2<ConstantBufferCount, SamplerStateCount>
-	{
-	public:
-		PSTechniqueArray() :
-			TechniqueArrays2(
-				&ID3D11DeviceContext1::PSSetConstantBuffers,
-				&ID3D11DeviceContext1::PSSetSamplers
-				)
-		{
-		}
-	};
+	using SamplerStateArray = TechniqueArray<ID3D11SamplerState>;
+	using ConstantBufferArray = TechniqueArray<ID3D11Buffer>;
 
-	template<typename... Arrays>
 	class Technique2
 	{
 	public:
-		Technique2(const VertexShader* m_vertex_shader, const HullShader* m_hull_shader, const DomainShader* m_domain_shader, const PixelShader* m_pixel_shader, const RasterizerState* m_rasterizer_state) :
-			m_vertexShader(m_vertex_shader),
-			m_hullShader(m_hull_shader),
-			m_domainShader(m_domain_shader),
-			m_pixelShader(m_pixel_shader),
-			m_rasterizerState(m_rasterizer_state)
+		Technique2(const RasterizerState* rasterizerState, std::vector<ConstantBufferArray>&& constantBufferArrays, std::vector<SamplerStateArray>&& samplerStateArrays) :
+			m_vertexShader(nullptr),
+			m_hullShader(nullptr),
+			m_domainShader(nullptr),
+			m_pixelShader(nullptr),
+			m_rasterizerState(rasterizerState),
+			m_constantBufferArrays(std::forward<std::vector<ConstantBufferArray>>(constantBufferArrays)),
+			m_samplerStateArrays(std::forward<std::vector<SamplerStateArray>>(samplerStateArrays))
 		{
+		}
+		Technique2(const VertexShader* vertexShader, const HullShader* hullShader, const DomainShader* domainShader, const PixelShader* pixelShader, const RasterizerState* rasterizerState, std::vector<ConstantBufferArray>&& constantBufferArrays, std::vector<SamplerStateArray>&& samplerStateArrays) :
+			m_vertexShader(vertexShader),
+			m_hullShader(hullShader),
+			m_domainShader(domainShader),
+			m_pixelShader(pixelShader),
+			m_rasterizerState(rasterizerState),
+			m_constantBufferArrays(std::forward<std::vector<ConstantBufferArray>>(constantBufferArrays)),
+			m_samplerStateArrays(std::forward<std::vector<SamplerStateArray>>(samplerStateArrays))
+		{
+		}
+
+		void SetShader(const VertexShader* vertexShader)
+		{
+			m_vertexShader = vertexShader;
+		}
+		void SetShader(const HullShader* hullShader)
+		{
+			m_hullShader = hullShader;
+		}
+		void SetShader(const DomainShader* domainShader)
+		{
+			m_domainShader = domainShader;
+		}
+		void SetShader(const PixelShader* pixelShader)
+		{
+			m_pixelShader = pixelShader;
 		}
 
 		void Set(ID3D11DeviceContext1* d3dDeviceContext) const
@@ -131,8 +107,13 @@ namespace GraphicsEngine
 			else
 				d3dDeviceContext->RSSetState(nullptr);
 
-			for_each(m_arrays, [&](const auto& array) { array.SetConstantBuffers(d3dDeviceContext); });
-			for_each(m_arrays, [&](const auto& array) { array.SetSamplerStates(d3dDeviceContext); });
+			// Set constant buffers:
+			for (auto& constantBufferArray : m_constantBufferArrays)
+				constantBufferArray.SetResources(d3dDeviceContext);
+
+			// Set sampler states:
+			for (auto& samplerStateArray : m_samplerStateArrays)
+				samplerStateArray.SetResources(d3dDeviceContext);
 		}
 
 	protected:
@@ -141,6 +122,7 @@ namespace GraphicsEngine
 		const DomainShader* m_domainShader;
 		const PixelShader* m_pixelShader;
 		const RasterizerState* m_rasterizerState;
-		std::tuple<Arrays...> m_arrays;
+		std::vector<ConstantBufferArray> m_constantBufferArrays;
+		std::vector<SamplerStateArray> m_samplerStateArrays;
 	};
 }

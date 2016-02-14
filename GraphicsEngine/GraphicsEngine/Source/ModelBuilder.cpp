@@ -172,10 +172,14 @@ LightModel ModelBuilder::CreateLightCube(ID3D11Device* d3dDevice, const vector<L
 	return LightModel(d3dDevice, vertices, indices, subsets, { textureAppearance }, instancedData, D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 }
 
-LightModel ModelBuilder::CreateBox(ID3D11Device* d3dDevice, const BoundingBox& boundingBox) const
+ColorModel ModelBuilder::CreateBox(ID3D11Device* d3dDevice, const BoundingBox& boundingBox) const
 {
 	// TODO
-	return LightModel();
+	vector<VertexPositionColor> vertices;
+	vector<uint32_t> indices;
+	vector<Subset> subsets;
+	vector<ColorEffect::InstanceData> instancedData;
+	return ColorModel(d3dDevice, vertices, indices, subsets, instancedData, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 TerrainModel ModelBuilder::CreateTerrain(ID3D11Device* d3dDevice, float width, float depth, uint32_t xCellCount, uint32_t zCellCount) const

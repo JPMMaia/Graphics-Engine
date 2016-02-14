@@ -15,7 +15,10 @@ namespace GraphicsEngine
 		};
 
 	public:
+		ColorEffect();
 		explicit ColorEffect(ID3D11Device* d3dDevice);
+
+		void Reset();
 
 		void UpdateCameraBuffer(ID3D11DeviceContext1* d3dDeviceContext, const ConstantBuffers::CameraConstantBuffer& buffer) const;
 

@@ -37,6 +37,14 @@ namespace GraphicsEngine
 	class Technique2
 	{
 	public:
+		Technique2() : 
+			m_vertexShader(nullptr),
+			m_hullShader(nullptr),
+			m_domainShader(nullptr),
+			m_pixelShader(nullptr),
+			m_rasterizerState(nullptr)
+		{
+		};
 		Technique2(const RasterizerState* rasterizerState, std::vector<ConstantBufferArray>&& constantBufferArrays, std::vector<SamplerStateArray>&& samplerStateArrays) :
 			m_vertexShader(nullptr),
 			m_hullShader(nullptr),

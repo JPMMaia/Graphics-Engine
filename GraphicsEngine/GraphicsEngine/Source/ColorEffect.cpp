@@ -15,6 +15,9 @@ const std::array<D3D11_INPUT_ELEMENT_DESC, 6> ColorEffect::s_INPUT_ELEMENT_DESCR
 	}
 };
 
+ColorEffect::ColorEffect()
+{
+}
 ColorEffect::ColorEffect(ID3D11Device* d3dDevice) :
 	Effect(
 		EffectTypes::VSEffect(d3dDevice, L"ColorVertexShader.cso", s_INPUT_ELEMENT_DESCRIPTION),
@@ -28,6 +31,11 @@ ColorEffect::ColorEffect(ID3D11Device* d3dDevice) :
 			)
 		)
 {
+}
+
+void ColorEffect::Reset()
+{
+	m_cameraBuffer.Reset();
 }
 
 void ColorEffect::UpdateCameraBuffer(ID3D11DeviceContext1* d3dDeviceContext, const ConstantBuffers::CameraConstantBuffer& buffer) const

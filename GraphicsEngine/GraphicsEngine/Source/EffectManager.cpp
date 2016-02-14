@@ -7,15 +7,10 @@ EffectManager::EffectManager()
 {
 }
 EffectManager::EffectManager(ID3D11Device* d3dDevice) :
+	m_colorEffect(d3dDevice),
 	m_lightEffect(d3dDevice),
 	m_terrainEffect(d3dDevice)
 {
-}
-
-void EffectManager::Initialize(ID3D11Device* d3dDevice)
-{
-	m_lightEffect.Initialize(d3dDevice);
-	m_terrainEffect.Initialize(d3dDevice);
 }
 
 void EffectManager::Reset()

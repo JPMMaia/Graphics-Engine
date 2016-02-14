@@ -89,6 +89,9 @@
     <ClCompile Include="Source\Effect.cpp">
       <Filter>Source\Effects\Effects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ColorModel.cpp">
+      <Filter>Source\Models\ColorModel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\DirectXException.h">
@@ -260,6 +263,9 @@
     <ClInclude Include="Source\Technique2.h">
       <Filter>Source\Effects\Effects</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ColorModel.h">
+      <Filter>Source\Models\ColorModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -363,6 +369,9 @@
     </Filter>
     <Filter Include="Shaders\Light">
       <UniqueIdentifier>{652b9c42-3c53-4f52-a050-2efe8c8107fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Models\ColorModel">
+      <UniqueIdentifier>{c9d62ee5-39d7-4c06-901a-72ead1065941}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

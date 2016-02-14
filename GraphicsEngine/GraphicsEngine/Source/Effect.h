@@ -15,13 +15,12 @@ namespace GraphicsEngine
 		class VSEffect
 		{
 		public:
+			VSEffect() noexcept;
+
 			template<size_t ArraySize>
 			explicit VSEffect(ID3D11Device* d3dDevice, const std::wstring& filename, const std::array<D3D11_INPUT_ELEMENT_DESC, ArraySize>& vertexDesc);
 
-			const VertexShader& GetShader() const noexcept
-			{
-				return m_vertexShader;
-			}
+			const VertexShader& GetShader() const noexcept;
 
 		protected:
 			VertexShader m_vertexShader;
@@ -36,12 +35,10 @@ namespace GraphicsEngine
 		class HSEffect
 		{
 		public:
+			HSEffect() noexcept;
 			explicit HSEffect(ID3D11Device* d3dDevice, const std::wstring& filename);
 
-			const HullShader& GetShader() const noexcept
-			{
-				return m_hullShader;
-			}
+			const HullShader& GetShader() const noexcept;
 
 		protected:
 			HullShader m_hullShader;
@@ -49,12 +46,10 @@ namespace GraphicsEngine
 		class DSEffect
 		{
 		public:
+			DSEffect() noexcept;
 			DSEffect(ID3D11Device* d3dDevice, const std::wstring& filename);
 
-			const DomainShader& GetShader() const noexcept
-			{
-				return m_domainShader;
-			}
+			const DomainShader& GetShader() const noexcept;
 
 		protected:
 			DomainShader m_domainShader;
@@ -62,12 +57,10 @@ namespace GraphicsEngine
 		class PSEffect
 		{
 		public:
+			PSEffect() noexcept;
 			PSEffect(ID3D11Device* d3dDevice, const std::wstring& filename);
 
-			const PixelShader& GetShader() const noexcept
-			{
-				return m_pixelShader;
-			}
+			const PixelShader& GetShader() const noexcept;
 
 		protected:
 			PixelShader m_pixelShader;
@@ -78,6 +71,7 @@ namespace GraphicsEngine
 	class Effect : public Shaders...
 	{
 	public:
+		Effect();
 		explicit Effect(Shaders&&... shaders, Technique2&& technique);
 
 		void Set(ID3D11DeviceContext1* d3dDeviceContext) const;
@@ -85,6 +79,11 @@ namespace GraphicsEngine
 	protected:
 		Technique2 m_technique;
 	};
+
+	template <typename ... Shaders>
+	Effect<Shaders...>::Effect()
+	{
+	}
 
 	template <typename ... Shaders>
 	Effect<Shaders...>::Effect(Shaders&&... shaders, Technique2&& technique) :

@@ -20,13 +20,11 @@ void Scene::operator delete(void* pointer)
 
 void Scene::CreateDeviceDependentResources(ID3D11Device* d3dDevice)
 {	
-	auto colorEffect = ColorEffect(d3dDevice);
-
 	InitializeCubeModel(d3dDevice);
 	InitializeFrameBuffer();
 	InitializeTesselationBuffer();
 
-	m_effectManager.Initialize(d3dDevice);
+	m_effectManager = EffectManager(d3dDevice);
 }
 
 void Scene::CreateWindowSizeDependentResources(float screenWidth, float screenHeight, const XMMATRIX& orientationMatrix)

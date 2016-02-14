@@ -10,9 +10,8 @@ namespace GraphicsEngine
 	{
 	public:
 		EffectManager();
-		EffectManager(ID3D11Device* d3dDevice);
+		explicit EffectManager(ID3D11Device* d3dDevice);
 
-		void Initialize(ID3D11Device* d3dDevice);
 		void Reset();
 
 		ColorEffect& GetColorEffect();

@@ -3,16 +3,14 @@
 #include "BufferTypes.h"
 #include "ConstantBuffers.h"
 #include "Effect.h"
+#include "InstancedDataTypes.h"
 
 namespace GraphicsEngine
 {
 	class ColorEffect : public Effect<EffectTypes::VSEffect, EffectTypes::PSEffect>
 	{
 	public:
-		struct InstanceData
-		{
-			DirectX::XMFLOAT4X4 WorldMatrix;
-		};
+		using InstanceData = InstancedDataTypes::World;
 
 	public:
 		ColorEffect();

@@ -221,6 +221,7 @@
     <ClInclude Include="Source\Effect.h" />
     <ClInclude Include="Source\HullShader.h" />
     <ClInclude Include="Source\InputHandler.h" />
+    <ClInclude Include="Source\InstancedDataTypes.h" />
     <ClInclude Include="Source\MathHelper.h" />
     <ClInclude Include="Source\MemoryPool.h" />
     <ClInclude Include="Source\MemoryPoolElement.h" />

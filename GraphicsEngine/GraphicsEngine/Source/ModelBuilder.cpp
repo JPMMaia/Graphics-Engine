@@ -172,13 +172,23 @@ LightModel ModelBuilder::CreateLightCube(ID3D11Device* d3dDevice, const vector<L
 	return LightModel(d3dDevice, vertices, indices, subsets, { textureAppearance }, instancedData, D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 }
 
-ColorModel ModelBuilder::CreateBox(ID3D11Device* d3dDevice, const BoundingBox& boundingBox) const
+ColorModel ModelBuilder::CreateBox(ID3D11Device* d3dDevice, const BoundingBox& boundingBox, const vector<ColorEffect::InstanceData>& instancedData) const
 {
-	// TODO
-	vector<VertexPositionColor> vertices;
-	vector<uint32_t> indices;
-	vector<Subset> subsets;
-	vector<ColorEffect::InstanceData> instancedData;
+	// Create vertices:
+	auto color = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+	array<XMFLOAT3, 8> corners;
+	boundingBox.GetCorners(corners.data());
+	auto vertices = vector<VertexPositionColor>(8);
+	for (size_t i = 0; i < vertices.size(); ++i)
+		vertices[i] = { corners[i], color };
+
+	// Create indices:
+	vector<uint32_t> indices = 
+	{
+		0, 1, 2
+	};
+	vector<Subset> subsets = { { 0, indices.size() } };
+	
 	return ColorModel(d3dDevice, vertices, indices, subsets, instancedData, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 

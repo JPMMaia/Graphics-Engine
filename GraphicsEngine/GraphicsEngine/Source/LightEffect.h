@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <DirectXMath.h>
+#include "InstancedDataTypes.h"
 
 #include "VertexShader.h"
 #include "PixelShader.h"
@@ -14,14 +14,11 @@ namespace GraphicsEngine
 	class LightEffect
 	{
 	public:
-		struct InstanceData
-		{
-			DirectX::XMFLOAT4X4 WorldMatrix;
-		};
+		using InstanceData = InstancedDataTypes::World;
 
 	public:
 		LightEffect();
-		LightEffect(ID3D11Device* d3dDevice);
+		explicit LightEffect(ID3D11Device* d3dDevice);
 		
 		void Initialize(ID3D11Device* d3dDevice);
 		void Reset();

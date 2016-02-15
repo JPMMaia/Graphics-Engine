@@ -3,14 +3,15 @@
 #include "Model.h"
 #include "VertexTypes.h"
 #include "ColorEffect.h"
-#include "TextureAppearance.h"
+#include "InstancedDataTypes.h"
 
 namespace GraphicsEngine
 {
 	class ColorModel
 	{
 	public:
-		ColorModel(ID3D11Device* d3dDevice, const std::vector<VertexPositionColor>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<ColorEffect::InstanceData>& instancedData, D3D11_PRIMITIVE_TOPOLOGY primitiveTopology);
+		ColorModel();
+		ColorModel(ID3D11Device* d3dDevice, const std::vector<VertexPositionColor>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<InstancedDataTypes::World>& instancedData, D3D11_PRIMITIVE_TOPOLOGY primitiveTopology);
 
 		void Reset();
 

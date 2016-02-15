@@ -4,6 +4,7 @@
 #include "TextureManager.h"
 #include "Camera.h"
 #include "InputHandler.h"
+#include "ColorModel.h"
 #include "LightModel.h"
 #include "TerrainModel.h"
 #include "ConstantBuffers.h"
@@ -14,9 +15,6 @@ namespace GraphicsEngine
 	class Scene
 	{
 	public:
-		void* operator new(size_t size);
-		void operator delete(void* pointer);
-
 		void CreateDeviceDependentResources(ID3D11Device* d3dDevice);
 		void CreateWindowSizeDependentResources(float screenWidth, float screenHeight, const DirectX::XMMATRIX& orientationMatrix);
 		void ReleaseDeviceDependentResources();
@@ -33,6 +31,7 @@ namespace GraphicsEngine
 
 	private:
 		EffectManager m_effectManager;
+		ColorModel m_colorModel;
 		LightModel m_cubeModel;
 		TerrainModel m_terrainModel;
 		

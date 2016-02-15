@@ -17,7 +17,7 @@ namespace GraphicsEngine
 	{
 	public:
 		TerrainEffect();
-		TerrainEffect(ID3D11Device* d3dDevice);
+		explicit TerrainEffect(ID3D11Device* d3dDevice);
 
 		void Initialize(ID3D11Device* d3dDevice);
 		void Reset();

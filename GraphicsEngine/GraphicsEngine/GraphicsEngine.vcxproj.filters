@@ -266,6 +266,9 @@
     <ClInclude Include="Source\ColorModel.h">
       <Filter>Source\Models\ColorModel</Filter>
     </ClInclude>
+    <ClInclude Include="Source\InstancedDataTypes.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">

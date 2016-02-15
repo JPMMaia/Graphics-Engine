@@ -3,7 +3,10 @@
 
 using namespace GraphicsEngine;
 
-ColorModel::ColorModel(ID3D11Device* d3dDevice, const std::vector<VertexPositionColor>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<ColorEffect::InstanceData>& instancedData, D3D11_PRIMITIVE_TOPOLOGY primitiveTopology) :
+ColorModel::ColorModel()
+{
+}
+ColorModel::ColorModel(ID3D11Device* d3dDevice, const std::vector<VertexPositionColor>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<InstancedDataTypes::World>& instancedData, D3D11_PRIMITIVE_TOPOLOGY primitiveTopology) :
 	m_model(d3dDevice, vertices, indices, subsets, primitiveTopology),
 	m_instancedData(d3dDevice, instancedData)
 {

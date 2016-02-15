@@ -9,15 +9,6 @@ using namespace DirectX;
 using namespace GraphicsEngine;
 using namespace std;
 
-void* Scene::operator new(size_t size)
-{
-	return _aligned_malloc(size, 16);
-}
-void Scene::operator delete(void* pointer)
-{
-	_aligned_free(pointer);
-}
-
 void Scene::CreateDeviceDependentResources(ID3D11Device* d3dDevice)
 {	
 	InitializeCubeModel(d3dDevice);
@@ -51,24 +42,31 @@ void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 	UpdateCamera();
 
 	// Set light effect:
-	auto lightEffect = m_effectManager.GetLightEffect();
+	/*auto lightEffect = m_effectManager.GetLightEffect();
 	lightEffect.Set(d3dDeviceContext);
 	lightEffect.UpdateFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);
 	lightEffect.UpdateCameraConstantBuffer(d3dDeviceContext, m_cameraBuffer);
 	lightEffect.UpdateTesselationConstantBuffer(d3dDeviceContext, m_tesselationBuffer);
 
 	// Draw light models:
-	m_cubeModel.Draw(d3dDeviceContext, lightEffect, 125);
+	m_cubeModel.Draw(d3dDeviceContext, lightEffect, 125);*/
 
 	// Set terrain effect:
-	auto terrainEffect = m_effectManager.GetTerrainEffect();
+	/*auto terrainEffect = m_effectManager.GetTerrainEffect();
 	terrainEffect.Set(d3dDeviceContext);
 	terrainEffect.UpdateFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);
 	terrainEffect.UpdateCameraConstantBuffer(d3dDeviceContext, m_cameraBuffer);
 	terrainEffect.UpdateTesselationConstantBuffer(d3dDeviceContext, m_tesselationBuffer);
 
 	// Draw terrain models:
-	m_terrainModel.Draw(d3dDeviceContext, terrainEffect);
+	m_terrainModel.Draw(d3dDeviceContext, terrainEffect);*/
+
+	// Set color effect:
+	auto colorEffect = m_effectManager.GetColorEffect();
+	colorEffect.UpdateCameraBuffer(d3dDeviceContext, m_cameraBuffer);
+
+	// Draw boxes:
+	m_colorModel.Draw(d3dDeviceContext, colorEffect, 125);
 }
 
 void Scene::HandleInput(const InputHandler& input)
@@ -113,7 +111,7 @@ void Scene::InitializeCubeModel(ID3D11Device* d3dDevice)
 	constexpr auto dy = height / (size - 1);
 	constexpr auto dz = depth / (size - 1);
 
-	vector<LightEffect::InstanceData> instanceBuffer(size*size*size);
+	vector<InstancedDataTypes::World> instanceBuffer(size*size*size);
 	for (auto i = 0; i < size; i++)
 	{
 		for (auto j = 0; j < size; j++)
@@ -133,6 +131,9 @@ void Scene::InitializeCubeModel(ID3D11Device* d3dDevice)
 	ModelBuilder builder(m_textureManager);
 	//m_cubeModel = builder.CreateFromX3D(d3dDevice, L"Resources/SimpleCube.x3d", instanceBuffer);
 	m_cubeModel = builder.CreateLightCube(d3dDevice, instanceBuffer);
+
+	auto boundingBox = BoundingBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+	m_colorModel = builder.CreateBox(d3dDevice, boundingBox, instanceBuffer);
 
 	m_terrainModel = builder.CreateTerrain(d3dDevice, 50.0f, 50.0f, 4, 4);
 }

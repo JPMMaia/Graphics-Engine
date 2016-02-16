@@ -14,7 +14,7 @@ m_materials(materials)
 
 void TerrainModel::Initialize(ID3D11Device* d3dDevice, const std::vector<VertexPositionTexture>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<TextureAppearance>& materials, D3D11_PRIMITIVE_TOPOLOGY primitiveTopology)
 {
-	m_model.Initialize(d3dDevice, vertices, indices, subsets, primitiveTopology);
+	m_model = Model<VertexPositionTexture, uint32_t>(d3dDevice, vertices, indices, subsets, primitiveTopology);
 	m_materials.assign(materials.begin(), materials.end());
 }
 void TerrainModel::Reset()

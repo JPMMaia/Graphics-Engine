@@ -42,14 +42,14 @@ void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 	UpdateCamera();
 
 	// Set light effect:
-	/*auto lightEffect = m_effectManager.GetLightEffect();
+	auto lightEffect = m_effectManager.GetLightEffect();
 	lightEffect.Set(d3dDeviceContext);
 	lightEffect.UpdateFrameConstantBuffer(d3dDeviceContext, m_frameBuffer);
 	lightEffect.UpdateCameraConstantBuffer(d3dDeviceContext, m_cameraBuffer);
 	lightEffect.UpdateTesselationConstantBuffer(d3dDeviceContext, m_tesselationBuffer);
 
 	// Draw light models:
-	m_cubeModel.Draw(d3dDeviceContext, lightEffect, 125);*/
+	m_cubeModel.Draw(d3dDeviceContext, lightEffect, 125);
 
 	// Set terrain effect:
 	/*auto terrainEffect = m_effectManager.GetTerrainEffect();
@@ -62,11 +62,12 @@ void Scene::Render(ID3D11DeviceContext1* d3dDeviceContext)
 	m_terrainModel.Draw(d3dDeviceContext, terrainEffect);*/
 
 	// Set color effect:
-	auto colorEffect = m_effectManager.GetColorEffect();
+	/*auto colorEffect = m_effectManager.GetColorEffect();
+	colorEffect.Set(d3dDeviceContext);
 	colorEffect.UpdateCameraBuffer(d3dDeviceContext, m_cameraBuffer);
 
 	// Draw boxes:
-	m_colorModel.Draw(d3dDeviceContext, colorEffect, 125);
+	m_colorModel.Draw(d3dDeviceContext, colorEffect, 125);*/
 }
 
 void Scene::HandleInput(const InputHandler& input)

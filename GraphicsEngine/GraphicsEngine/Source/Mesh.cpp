@@ -19,7 +19,7 @@ void Mesh::Reset()
 
 void Mesh::Draw(ID3D11DeviceContext* d3dDeviceContext, uint32_t indexCount, uint32_t startIndexLocation) const
 {
-	uint32_t stride = m_vertexBuffer.GetBufferTypeSize();
+	auto stride = m_vertexBuffer.GetStride();
 	constexpr uint32_t offset = 0;
 	d3dDeviceContext->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
 
@@ -36,7 +36,7 @@ void Mesh::Draw(ID3D11DeviceContext* d3dDeviceContext, const InstanceBuffer& ins
 {
 	// Set vertex buffers:
 	array<ID3D11Buffer*, 2> vertexBuffers = { m_vertexBuffer.Get(), instancedData.Get() };
-	array<uint32_t, 2> strides = { m_vertexBuffer.GetBufferTypeSize(), instancedData.GetBufferTypeSize() };
+	array<uint32_t, 2> strides = { m_vertexBuffer.GetStride(), instancedData.GetStride() };
 	array<uint32_t, 2> offsets = { 0, 0 };
 	d3dDeviceContext->IASetVertexBuffers(0, 2, vertexBuffers.data(), strides.data(), offsets.data());
 	

@@ -24,12 +24,13 @@ ColorEffect::ColorEffect(ID3D11Device* d3dDevice) :
 		EffectTypes::PSEffect(d3dDevice, L"ColorPixelShader.cso"),
 		Technique2(
 			nullptr,
-			{ 
+			{
 				{ &ID3D11DeviceContext1::VSSetConstantBuffers, { m_cameraBuffer.Get() } }
 			},
 			{}
-			)
 		)
+	),
+	m_cameraBuffer(d3dDevice, sizeof(ConstantBuffers::CameraConstantBuffer))
 {
 }
 

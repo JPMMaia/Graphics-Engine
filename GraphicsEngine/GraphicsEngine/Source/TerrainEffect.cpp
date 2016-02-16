@@ -28,16 +28,16 @@ void TerrainEffect::Initialize(ID3D11Device* d3dDevice)
 	};
 
 	// Initialize shaders:
-	m_vertexShader.Initialize(d3dDevice, L"TerrainVertexShader.cso", inputDesc);
-	m_hullShader.Initialize(d3dDevice, L"TerrainHullShader.cso");
-	m_domainShader.Initialize(d3dDevice, L"TerrainDomainShader.cso");
-	m_pixelShader.Initialize(d3dDevice, L"TerrainPixelShader.cso");
+	m_vertexShader = VertexShader(d3dDevice, L"TerrainVertexShader.cso", inputDesc);
+	m_hullShader = HullShader(d3dDevice, L"TerrainHullShader.cso");
+	m_domainShader = DomainShader(d3dDevice, L"TerrainDomainShader.cso");
+	m_pixelShader = PixelShader(d3dDevice, L"TerrainPixelShader.cso");
 
 	// Initialize constant buffers:
-	m_cameraConstantBuffer.Initialize<CameraConstantBuffer>(d3dDevice, sizeof(CameraConstantBuffer));
-	m_tesselationConstantBuffer.Initialize<TesselationConstantBuffer>(d3dDevice, sizeof(TesselationConstantBuffer));
-	m_subsetConstantBuffer.Initialize<SubsetConstantBuffer>(d3dDevice, sizeof(SubsetConstantBuffer));
-	m_frameConstantBuffer.Initialize<FrameConstantBuffer>(d3dDevice, sizeof(FrameConstantBuffer));
+	m_cameraConstantBuffer = DynamicConstantBuffer(d3dDevice, sizeof(CameraConstantBuffer));
+	m_tesselationConstantBuffer = DynamicConstantBuffer(d3dDevice, sizeof(TesselationConstantBuffer));
+	m_subsetConstantBuffer = DynamicConstantBuffer(d3dDevice, sizeof(SubsetConstantBuffer));
+	m_frameConstantBuffer = DynamicConstantBuffer(d3dDevice, sizeof(FrameConstantBuffer));
 
 	// Initialize the sampler state:
 	m_samplerState.Initialize(d3dDevice, SamplerStateDescConstants::Anisotropic);

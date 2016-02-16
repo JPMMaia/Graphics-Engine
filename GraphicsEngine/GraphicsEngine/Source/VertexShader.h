@@ -10,8 +10,6 @@ namespace GraphicsEngine
 		template<size_t ArraySize>
 		VertexShader(ID3D11Device* d3dDevice, const std::wstring& filename, const std::array<D3D11_INPUT_ELEMENT_DESC, ArraySize>& vertexDesc);
 
-		template<size_t ArraySize>
-		void Initialize(ID3D11Device* d3dDevice, const std::wstring& filename, const std::array<D3D11_INPUT_ELEMENT_DESC, ArraySize>& vertexDesc);
 		void Reset();
 
 		void Set(ID3D11DeviceContext* d3dDeviceContext) const;
@@ -23,12 +21,6 @@ namespace GraphicsEngine
 
 	template <size_t ArraySize>
 	VertexShader::VertexShader(ID3D11Device* d3dDevice, const std::wstring& filename, const std::array<D3D11_INPUT_ELEMENT_DESC, ArraySize>& vertexDesc)
-	{
-		Initialize(d3dDevice, filename, vertexDesc);
-	}
-
-	template <size_t ArraySize>
-	void VertexShader::Initialize(ID3D11Device* d3dDevice, const std::wstring& filename, const std::array<D3D11_INPUT_ELEMENT_DESC, ArraySize>& vertexDesc)
 	{
 		// Read data from vertex shader file:
 		std::vector<char> fileData;

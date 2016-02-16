@@ -15,9 +15,9 @@ LightModel::LightModel(ID3D11Device* d3dDevice, const std::vector<VertexPosition
 
 void LightModel::Initialize(ID3D11Device* d3dDevice, const std::vector<VertexPositionTextureNormalTangent>& vertices, const std::vector<uint32_t>& indices, const std::vector<Subset>& subsets, const std::vector<TextureAppearance>& materials, const std::vector<InstancedDataTypes::World>& instancedData, D3D11_PRIMITIVE_TOPOLOGY primitiveTopology)
 {
-	m_model.Initialize(d3dDevice, vertices, indices, subsets, primitiveTopology);
+	m_model = Model<VertexPositionTextureNormalTangent, uint32_t>(d3dDevice, vertices, indices, subsets, primitiveTopology);
 	m_materials.assign(materials.begin(), materials.end());
-	m_instancedData.Initialize(d3dDevice, instancedData);
+	m_instancedData = InstanceBuffer(d3dDevice, instancedData);
 }
 void LightModel::Reset()
 {

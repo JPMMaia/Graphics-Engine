@@ -9,11 +9,6 @@ DomainShader::DomainShader()
 }
 DomainShader::DomainShader(ID3D11Device* d3dDevice, const std::wstring& filename)
 {
-	Initialize(d3dDevice, filename);
-}
-
-void DomainShader::Initialize(ID3D11Device* d3dDevice, const std::wstring& filename)
-{
 	// Read data from domain shader file:
 	vector<char> fileData;
 	Helpers::ReadData(filename, fileData);
@@ -28,6 +23,7 @@ void DomainShader::Initialize(ID3D11Device* d3dDevice, const std::wstring& filen
 			)
 		);
 }
+
 void DomainShader::Reset()
 {
 	m_domainShader.Reset();

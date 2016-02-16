@@ -9,11 +9,6 @@ HullShader::HullShader()
 }
 HullShader::HullShader(ID3D11Device* d3dDevice, const std::wstring& filename)
 {
-	Initialize(d3dDevice, filename);
-}
-
-void HullShader::Initialize(ID3D11Device* d3dDevice, const std::wstring& filename)
-{
 	// Read data from domain shader file:
 	vector<char> fileData;
 	Helpers::ReadData(filename, fileData);
@@ -28,6 +23,7 @@ void HullShader::Initialize(ID3D11Device* d3dDevice, const std::wstring& filenam
 			)
 		);
 }
+
 void HullShader::Reset()
 {
 	m_hullShader.Reset();

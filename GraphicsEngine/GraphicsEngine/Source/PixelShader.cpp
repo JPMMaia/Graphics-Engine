@@ -9,11 +9,6 @@ PixelShader::PixelShader()
 }
 PixelShader::PixelShader(ID3D11Device* d3dDevice, const std::wstring& filename)
 {
-	Initialize(d3dDevice, filename);
-}
-
-void PixelShader::Initialize(ID3D11Device* d3dDevice, const std::wstring& filename)
-{
 	// Read data from pixel shader file:
 	vector<char> fileData;
 	Helpers::ReadData(filename, fileData);

@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include "BaseShader.h"
+
 namespace GraphicsEngine
 {
-	class HullShader
+	class HullShader : public BaseShader<HullShader>
 	{
 	public:
 		HullShader();

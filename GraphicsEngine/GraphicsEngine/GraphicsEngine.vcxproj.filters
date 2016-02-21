@@ -26,9 +26,6 @@
     <ClCompile Include="Source\EffectManager.cpp">
       <Filter>Source\Effects</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Technique.cpp">
-      <Filter>Source\Effects</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Texture.cpp">
       <Filter>Source\Textures</Filter>
     </ClCompile>
@@ -86,9 +83,6 @@
     <ClCompile Include="Source\ColorEffect.cpp">
       <Filter>Source\Effects\Effects</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Effect.cpp">
-      <Filter>Source\Effects\Effects</Filter>
-    </ClCompile>
     <ClCompile Include="Source\ColorModel.cpp">
       <Filter>Source\Models\ColorModel</Filter>
     </ClCompile>
@@ -115,9 +109,6 @@
     <ClInclude Include="Source\Material.h">
       <Filter>Source\Material</Filter>
     </ClInclude>
-    <ClInclude Include="Source\VertexTypes.h">
-      <Filter>Source\Models</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Mesh.h">
       <Filter>Source\Models</Filter>
     </ClInclude>
@@ -140,9 +131,6 @@
     <ClInclude Include="Source\EffectManager.h">
       <Filter>Source\Effects</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Technique.h">
-      <Filter>Source\Effects</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Texture.h">
       <Filter>Source\Textures</Filter>
     </ClInclude>
@@ -154,12 +142,6 @@
     </ClInclude>
     <ClInclude Include="Source\RasterizerStateDescConstants.h">
       <Filter>Source\Rasterizer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ResourceArray.h">
-      <Filter>Source\Arrays</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\TechniqueArrays.h">
-      <Filter>Source\Effects</Filter>
     </ClInclude>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
       <Filter>Libraries\DirectXTex\DDSTextureLoader</Filter>
@@ -239,9 +221,6 @@
     <ClInclude Include="Source\TerrainEffect.h">
       <Filter>Source\Effects\Effects</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ConstantBuffers.h">
-      <Filter>Source\Effects\Effects</Filter>
-    </ClInclude>
     <ClInclude Include="Source\MemoryPool.h">
       <Filter>Source\Pool</Filter>
     </ClInclude>
@@ -257,17 +236,23 @@
     <ClInclude Include="Source\ColorEffect.h">
       <Filter>Source\Effects\Effects</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Effect.h">
-      <Filter>Source\Effects\Effects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Technique2.h">
-      <Filter>Source\Effects\Effects</Filter>
-    </ClInclude>
     <ClInclude Include="Source\ColorModel.h">
       <Filter>Source\Models\ColorModel</Filter>
     </ClInclude>
     <ClInclude Include="Source\InstancedDataTypes.h">
       <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BaseShader.h">
+      <Filter>Source\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ConstantBuffers.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\VertexTypes.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BaseEffect.h">
+      <Filter>Source\Effects\Effects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -315,9 +300,6 @@
     </Filter>
     <Filter Include="Source\Textures">
       <UniqueIdentifier>{53aad11b-83f0-4d5c-913c-3ad3e3735e4c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Arrays">
-      <UniqueIdentifier>{b0c19077-ee9b-42aa-9bba-27e9ee91372d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Libraries">
       <UniqueIdentifier>{5aef05a7-c6cb-4b43-869a-da2aff6daca8}</UniqueIdentifier>

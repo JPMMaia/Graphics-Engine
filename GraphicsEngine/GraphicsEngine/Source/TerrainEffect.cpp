@@ -6,92 +6,93 @@
 #include <array>
 
 using namespace GraphicsEngine;
-using namespace GraphicsEngine::ConstantBuffers;
+using namespace std;
+
+const array<D3D11_INPUT_ELEMENT_DESC, 2> TerrainEffect::s_INPUT_ELEMENT_DESCRIPTION =
+{
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	}
+};
 
 TerrainEffect::TerrainEffect()
 {
 }
-TerrainEffect::TerrainEffect(ID3D11Device* d3dDevice)
+TerrainEffect::TerrainEffect(ID3D11Device* d3dDevice) :
+	m_vertexShader(d3dDevice, L"TerrainVertexShader.cso", s_INPUT_ELEMENT_DESCRIPTION),
+	m_hullShader(d3dDevice, L"TerrainHullShader.cso"),
+	m_domainShader(d3dDevice, L"TerrainDomainShader.cso"),
+	m_pixelShader(d3dDevice, L"TerrainPixelShader.cso"),
+	m_cameraBuffer(d3dDevice, sizeof(CameraBuffer)),
+	m_frameBuffer(d3dDevice, sizeof(FrameBuffer)),
+	m_subsetBuffer(d3dDevice, sizeof(SubsetBuffer)),
+	m_tesselationBuffer(d3dDevice, sizeof(TesselationBuffer)),
+	m_samplerState(d3dDevice, SamplerStateDescConstants::Anisotropic),
+	m_rasterizerState(d3dDevice, RasterizerStateDescConstants::Default)
 {
-	Initialize(d3dDevice);
 }
 
-void TerrainEffect::Initialize(ID3D11Device* d3dDevice)
-{
-	// Describe the input layout:
-	static const std::array<D3D11_INPUT_ELEMENT_DESC, 2> inputDesc =
-	{
-		{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-		}
-	};
-
-	// Initialize shaders:
-	m_vertexShader = VertexShader(d3dDevice, L"TerrainVertexShader.cso", inputDesc);
-	m_hullShader = HullShader(d3dDevice, L"TerrainHullShader.cso");
-	m_domainShader = DomainShader(d3dDevice, L"TerrainDomainShader.cso");
-	m_pixelShader = PixelShader(d3dDevice, L"TerrainPixelShader.cso");
-
-	// Initialize constant buffers:
-	m_cameraConstantBuffer = DynamicConstantBuffer(d3dDevice, sizeof(CameraConstantBuffer));
-	m_tesselationConstantBuffer = DynamicConstantBuffer(d3dDevice, sizeof(TesselationConstantBuffer));
-	m_subsetConstantBuffer = DynamicConstantBuffer(d3dDevice, sizeof(SubsetConstantBuffer));
-	m_frameConstantBuffer = DynamicConstantBuffer(d3dDevice, sizeof(FrameConstantBuffer));
-
-	// Initialize the sampler state:
-	m_samplerState.Initialize(d3dDevice, SamplerStateDescConstants::Anisotropic);
-
-	// Initialize the rasterizer state:
-	m_rasterizerState.Initialize(d3dDevice, RasterizerStateDescConstants::Default);
-
-	// Setup light technique:
-	m_terrainTechnique.SetVertexShader(&m_vertexShader);
-	m_terrainTechnique.SetHullShader(&m_hullShader);
-	m_terrainTechnique.SetDomainShader(&m_domainShader);
-	m_terrainTechnique.SetPixelShader(&m_pixelShader);
-	m_terrainTechnique.VSSetSamplerState(m_samplerState, 0);
-	m_terrainTechnique.HSSetConstantBuffer(m_cameraConstantBuffer.Get(), 0);
-	m_terrainTechnique.HSSetConstantBuffer(m_tesselationConstantBuffer.Get(), 1);
-	m_terrainTechnique.DSSetConstantBuffer(m_cameraConstantBuffer.Get(), 0);
-	m_terrainTechnique.DSSetSamplerState(m_samplerState, 0);
-
-	m_terrainTechnique.SetRasterizerState(&m_rasterizerState);
-}
 void TerrainEffect::Reset()
 {
+	m_rasterizerState.Reset();
 	m_samplerState.Reset();
-	m_frameConstantBuffer.Reset();
-	m_subsetConstantBuffer.Reset();
-	m_tesselationConstantBuffer.Reset();
-	m_cameraConstantBuffer.Reset();
+	m_tesselationBuffer.Reset();
+	m_subsetBuffer.Reset();
+	m_frameBuffer.Reset();
+	m_cameraBuffer.Reset();
 	m_pixelShader.Reset();
 	m_domainShader.Reset();
 	m_hullShader.Reset();
 	m_vertexShader.Reset();
 }
 
-void TerrainEffect::UpdateCameraConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const CameraConstantBuffer& buffer) const
-{
-	m_cameraConstantBuffer.Map(d3dDeviceContext, &buffer, sizeof(CameraConstantBuffer));
-}
-void TerrainEffect::UpdateTesselationConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const TesselationConstantBuffer& buffer) const
-{
-	m_tesselationConstantBuffer.Map(d3dDeviceContext, &buffer, sizeof(TesselationConstantBuffer));
-}
-void TerrainEffect::UpdateSubsetConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const SubsetConstantBuffer& buffer) const
-{
-	m_subsetConstantBuffer.Map(d3dDeviceContext, &buffer, sizeof(SubsetConstantBuffer));
-}
-void TerrainEffect::UpdateFrameConstantBuffer(ID3D11DeviceContext1* d3dDeviceContext, const FrameConstantBuffer& buffer) const
-{
-	m_frameConstantBuffer.Map(d3dDeviceContext, &buffer, sizeof(FrameConstantBuffer));
-}
-
 void TerrainEffect::Set(ID3D11DeviceContext1* d3dDeviceContext) const
 {
-	// Set technique:
-	m_terrainTechnique.Set(d3dDeviceContext);
+	// Set vertex shader:
+	{
+		m_vertexShader.Set(d3dDeviceContext);
+		d3dDeviceContext->VSSetSamplers(0, 1, m_samplerState.GetAddressOf());
+	}
+
+	// Set hull shader:
+	{
+		m_hullShader.Set(d3dDeviceContext);
+		static const array<ID3D11Buffer*, 2> constantBuffers = { m_cameraBuffer.Get(), m_tesselationBuffer.Get() };
+		d3dDeviceContext->HSSetConstantBuffers(0, constantBuffers.size(), constantBuffers.data());
+	}
+
+	// Set domain shader:
+	{
+		m_domainShader.Set(d3dDeviceContext);
+		d3dDeviceContext->DSSetConstantBuffers(0, 1, m_cameraBuffer.GetAddressOf());
+		d3dDeviceContext->DSSetSamplers(0, 1, m_samplerState.GetAddressOf());
+	}
+
+	// Set pixel shader:
+	{
+		m_pixelShader.Set(d3dDeviceContext);
+	}
+
+	// Set rasterizer state:
+	d3dDeviceContext->RSSetState(m_rasterizerState.Get());
+}
+
+void TerrainEffect::UpdateCameraBuffer(ID3D11DeviceContext1* d3dDeviceContext, const CameraBuffer& buffer) const
+{
+	m_cameraBuffer.Map(d3dDeviceContext, &buffer, sizeof(CameraBuffer));
+}
+void TerrainEffect::UpdateFrameBuffer(ID3D11DeviceContext1* d3dDeviceContext, const FrameBuffer& buffer) const
+{
+	m_frameBuffer.Map(d3dDeviceContext, &buffer, sizeof(FrameBuffer));
+}
+void TerrainEffect::UpdateSubsetBuffer(ID3D11DeviceContext1* d3dDeviceContext, const SubsetBuffer& buffer) const
+{
+	m_subsetBuffer.Map(d3dDeviceContext, &buffer, sizeof(SubsetBuffer));
+}
+void TerrainEffect::UpdateTesselationBuffer(ID3D11DeviceContext1* d3dDeviceContext, const TesselationBuffer& buffer) const
+{
+	m_tesselationBuffer.Map(d3dDeviceContext, &buffer, sizeof(TesselationBuffer));
 }
 
 void TerrainEffect::SetHeightMap(ID3D11DeviceContext1* d3dDeviceContext, const Texture& heightMap)

@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include "BaseShader.h"
+
 namespace GraphicsEngine
 {
-	class PixelShader
+	class PixelShader : public BaseShader<PixelShader>
 	{
 	public:
 		PixelShader();

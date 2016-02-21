@@ -10,12 +10,12 @@ cbuffer CameraConstantBuffer : register(b0)
 	float3 g_eyePositionW;
 };
 
-cbuffer SubsetConstantBuffer : register(b2)
+cbuffer SubsetConstantBuffer : register(b1)
 {
 	Material g_material;
 };
 
-cbuffer FrameConstantBuffer : register(b3)
+cbuffer FrameConstantBuffer : register(b2)
 {
 	DirectionalLight g_directionalLight;
 	PointLight g_pointLight;

@@ -33,7 +33,7 @@ void LightModel::Draw(ID3D11DeviceContext1* d3dDeviceContext, LightEffect& light
 	{
 		// Set subset's material:
 		auto material = m_materials[i];
-		lightEffect.UpdateSubsetConstantBuffer(d3dDeviceContext, { material.Material });
+		lightEffect.UpdateSubsetBuffer(d3dDeviceContext, { material.Material });
 		lightEffect.SetTextureMap(d3dDeviceContext, material.TextureMap);
 		lightEffect.SetNormalMap(d3dDeviceContext, material.NormalMap);
 		lightEffect.SetHeightMap(d3dDeviceContext, material.HeightMap);

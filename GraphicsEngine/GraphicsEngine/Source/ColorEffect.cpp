@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "ColorEffect.h"
 
+#include <array>
+
 using namespace GraphicsEngine;
 
 const std::array<D3D11_INPUT_ELEMENT_DESC, 6> ColorEffect::s_INPUT_ELEMENT_DESCRIPTION =
@@ -19,18 +21,9 @@ ColorEffect::ColorEffect()
 {
 }
 ColorEffect::ColorEffect(ID3D11Device* d3dDevice) :
-	Effect(
-		EffectTypes::VSEffect(d3dDevice, L"ColorVertexShader.cso", s_INPUT_ELEMENT_DESCRIPTION),
-		EffectTypes::PSEffect(d3dDevice, L"ColorPixelShader.cso"),
-		Technique2(
-			nullptr,
-			{
-				{ &ID3D11DeviceContext1::VSSetConstantBuffers, { m_cameraBuffer.Get() } }
-			},
-			{}
-		)
-	),
-	m_cameraBuffer(d3dDevice, sizeof(ConstantBuffers::CameraConstantBuffer))
+	m_vertexShader(d3dDevice, L"ColorVertexShader.cso", s_INPUT_ELEMENT_DESCRIPTION),
+	m_pixelShader(d3dDevice, L"ColorPixelShader.cso"),
+	m_cameraBuffer(d3dDevice, sizeof(CameraBuffer))
 {
 }
 
@@ -39,7 +32,19 @@ void ColorEffect::Reset()
 	m_cameraBuffer.Reset();
 }
 
-void ColorEffect::UpdateCameraBuffer(ID3D11DeviceContext1* d3dDeviceContext, const ConstantBuffers::CameraConstantBuffer& buffer) const
+void ColorEffect::Set(ID3D11DeviceContext1* d3dDeviceContext) const
 {
-	m_cameraBuffer.Map(d3dDeviceContext, &buffer, sizeof(ConstantBuffers::CameraConstantBuffer));
+	// Set vertex and pixel shaders:
+	m_vertexShader.Set(d3dDeviceContext);
+	d3dDeviceContext->HSSetShader(nullptr, nullptr, 0);
+	d3dDeviceContext->DSSetShader(nullptr, nullptr, 0);
+	m_pixelShader.Set(d3dDeviceContext);
+
+	// Set constant buffers:
+	d3dDeviceContext->VSSetConstantBuffers(0, 1, m_cameraBuffer.GetAddressOf());
+}
+
+void ColorEffect::UpdateCameraBuffer(ID3D11DeviceContext1* d3dDeviceContext, const CameraBuffer& buffer) const
+{
+	m_cameraBuffer.Map(d3dDeviceContext, &buffer, sizeof(CameraBuffer));
 }

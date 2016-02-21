@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include "BaseShader.h"
+
 namespace GraphicsEngine
 {
-	class DomainShader
+	class DomainShader : public BaseShader<DomainShader>
 	{
 	public:
 		DomainShader();

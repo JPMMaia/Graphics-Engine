@@ -30,7 +30,7 @@ struct DomainOutput
 };
 
 SamplerState g_samplerState : register(s0);
-Texture2D g_heightMap : register(t2);
+Texture2D g_heightMap : register(t0);
 
 #define NUM_CONTROL_POINTS 4
 

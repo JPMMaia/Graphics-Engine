@@ -169,14 +169,12 @@
     <ClCompile Include="Source\DirectXException.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\DomainShader.cpp" />
-    <ClCompile Include="Source\Effect.cpp" />
     <ClCompile Include="Source\HullShader.cpp" />
     <ClCompile Include="Source\InputHandler.cpp" />
     <ClCompile Include="Source\LightModel.cpp" />
     <ClCompile Include="Source\MathHelper.cpp" />
     <ClCompile Include="Source\ModelBuilder.cpp" />
     <ClCompile Include="Source\SamplerState.cpp" />
-    <ClCompile Include="Source\Technique.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
     <ClCompile Include="Source\LightEffect.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
@@ -211,6 +209,8 @@
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_iterators.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_print.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_utils.hpp" />
+    <ClInclude Include="Source\BaseEffect.h" />
+    <ClInclude Include="Source\BaseShader.h" />
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\BufferTypes.h" />
     <ClInclude Include="Source\Camera.h" />
@@ -218,7 +218,6 @@
     <ClInclude Include="Source\ColorModel.h" />
     <ClInclude Include="Source\ConstantBuffers.h" />
     <ClInclude Include="Source\DomainShader.h" />
-    <ClInclude Include="Source\Effect.h" />
     <ClInclude Include="Source\HullShader.h" />
     <ClInclude Include="Source\InputHandler.h" />
     <ClInclude Include="Source\InstancedDataTypes.h" />
@@ -228,13 +227,11 @@
     <ClInclude Include="Source\ModelBuilder.h" />
     <ClInclude Include="Source\Octree.h" />
     <ClInclude Include="Source\OctreeCollider.h" />
-    <ClInclude Include="Source\Technique2.h" />
     <ClInclude Include="Source\TerrainEffect.h" />
     <ClInclude Include="Source\TerrainModel.h" />
     <ClInclude Include="Source\TextureAppearance.h" />
     <ClInclude Include="Source\LightModel.h" />
     <ClInclude Include="Source\Model.h" />
-    <ClInclude Include="Source\ResourceArray.h" />
     <ClInclude Include="Source\DirectionalLight.h" />
     <ClInclude Include="Source\DirectXException.h" />
     <ClInclude Include="Source\DirectXHelper.h" />
@@ -242,7 +239,6 @@
     <ClInclude Include="Source\SamplerState.h" />
     <ClInclude Include="Source\SamplerStateDescConstants.h" />
     <ClInclude Include="Source\Subset.h" />
-    <ClInclude Include="Source\Technique.h" />
     <ClInclude Include="Source\EffectManager.h" />
     <ClInclude Include="Source\Helpers.h" />
     <ClInclude Include="Source\LightEffect.h" />
@@ -255,7 +251,6 @@
     <ClInclude Include="Source\SettingsManager.h" />
     <ClInclude Include="Source\SpotLight.h" />
     <ClInclude Include="Source\stdafx.h" />
-    <ClInclude Include="Source\TechniqueArrays.h" />
     <ClInclude Include="Source\Texture.h" />
     <ClInclude Include="Source\TextureManager.h" />
     <ClInclude Include="Source\VertexShader.h" />

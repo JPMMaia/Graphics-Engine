@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include "BaseShader.h"
+
 namespace GraphicsEngine
 {
-	class VertexShader
+	class VertexShader : public BaseShader<VertexShader>
 	{
 	public:
 		VertexShader();

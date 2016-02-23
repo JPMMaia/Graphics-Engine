@@ -12,7 +12,7 @@ namespace GraphicsEngine
 	class ColorEffect : public BaseEffect<ColorEffect>
 	{
 	public:
-		using InstanceData = InstancedDataTypes::World;
+		using InstancedDataType = InstancedDataTypes::World;
 		using CameraBuffer = ConstantBuffers::CameraConstantBuffer;
 
 	public:

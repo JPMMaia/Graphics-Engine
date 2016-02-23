@@ -95,26 +95,19 @@ void Camera::RotateWorldY(float radians)
 
 BoundingFrustum Camera::BuildViewSpaceBoundingFrustum() const
 {
-	BoundingFrustum boundingFrustum;
-	BoundingFrustum::CreateFromMatrix(boundingFrustum, m_projectionMatrix);
+	BoundingFrustum output;
+	// TODO
 
-	return boundingFrustum;
+	return output;
 }
 BoundingFrustum Camera::BuildWorldSpaceBoundingFrustum() const
 {
-	XMFLOAT3 position;
-	XMStoreFloat3(&position, m_position);
+	auto boundingBox = BuildViewSpaceBoundingFrustum();
 
-	XMFLOAT4 orientation;
-	XMStoreFloat4(&orientation, m_rotationQuaternion);
+	XMStoreFloat3(&boundingBox.Origin, m_position);
+	XMStoreFloat4(&boundingBox.Orientation, m_rotationQuaternion);
 
-	// TODO
-	auto rightSlope = 1.0f;
-	auto leftSlope = 1.0f;
-	auto topSlope = 1.0f;
-	auto bottomSlope = 1.0f;
-	
-	return BoundingFrustum(position, orientation, rightSlope, leftSlope, topSlope, bottomSlope, m_nearZ, m_farZ);
+	return boundingBox;
 }
 
 const XMVECTOR& Camera::GetPosition() const

@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include <DirectXCollision.h>
-#include <unordered_set>
 
 #include "MemoryPool.h"
 #include "OctreeCollider.h"
@@ -35,7 +34,7 @@ namespace GraphicsEngine
 		explicit Octree(DirectX::BoundingBox&& boundingBox);
 
 		void AddObject(Type* object);
-		std::unordered_set<Type*> GetIntersections(const DirectX::BoundingFrustum& boundingFrustum) const;
+		void FrustumCullObjects(const DirectX::BoundingFrustum& boundingFrustum);
 
 	private:
 		bool AddObjectToArray(Type* object);
@@ -92,42 +91,30 @@ namespace GraphicsEngine
 	}
 
 	template <typename Type, size_t MaxObjectsPerLeaf>
-	std::unordered_set<Type*> Octree<Type, MaxObjectsPerLeaf>::GetIntersections(const DirectX::BoundingFrustum& boundingFrustum) const
+	void Octree<Type, MaxObjectsPerLeaf>::FrustumCullObjects(const DirectX::BoundingFrustum& boundingFrustum)
 	{
-		std::unordered_set<Type*> intersections;
+		// Ignore if bounding frustum does not interesect this octree node:
+		if (!boundingFrustum.Intersects(m_boundingBox))
+			return;
 
-		// TODO frustum is in view-space...
-
-		// If non-leaf node:
-		if (!m_isLeaf)
+		if(!m_isLeaf)
 		{
-			// For each child node:
-			for (auto& child : m_state.Children)
-			{
-				// If the frustum doens't intersect the child bounding box, then ignore it:
-				if (!boundingFrustum.Intersects(child->m_boundingBox))
-					continue;
+			// Perform frustum culling on the child nodes:
+			for (auto child : m_state.Children)
+				child->FrustumCullObjects(boundingFrustum);
 
-				// Add child intersections to the set:
-				auto childIntersections = child->GetIntersections(boundingFrustum);
-				for (auto& childIntersection : childIntersections)
-					intersections.insert(childIntersection);
-			}
+			return;
 		}
 
-		// If leaf node:
-		else
+		// For each object inside this octree node:
+		for (size_t i = 0; i < m_objectCount; ++i)
 		{
-			// For each object:
-			for (auto& object : m_state.Objects)
-			{
-				// Add to the set if frustum intersects object:
-				if (object->Intersects(boundingFrustum))
-					intersections.insert(object);
-			}
-		}
+			auto object = m_state.Objects[i];
 
-		return intersections;
+			// If the bounding frustum intersects the object, then we don't cull the object:
+			if (object->Intersects(boundingFrustum))
+				object->FrustumCull(false);
+		}
 	}
 
 	template <typename Type, size_t MaxObjectsPerLeaf>

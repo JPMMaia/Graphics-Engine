@@ -4,13 +4,14 @@
 #include "VirtualKey.h"
 
 #include "ColorEffect.h"
+#include "OctreeCollider.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
 using namespace std;
 
 void Scene::CreateDeviceDependentResources(ID3D11Device* d3dDevice)
-{	
+{
 	InitializeCubeModel(d3dDevice);
 	InitializeFrameBuffer();
 	InitializeTesselationBuffer();
@@ -25,8 +26,9 @@ void Scene::CreateWindowSizeDependentResources(float screenWidth, float screenHe
 	if (aspectRatio < 1.0f)
 		fovAngleY *= 2.0f;
 
-	m_camera = Camera(aspectRatio, fovAngleY, 0.01f, 100.0f, orientationMatrix);
-	m_camera.SetPosition(0.0f, 1.4f, 3.0f);
+	m_camera = Camera();
+	//m_camera = Camera(aspectRatio, fovAngleY, 0.01f, 100.0f, orientationMatrix);
+	//m_camera.SetPosition(0.0f, 1.4f, 3.0f);
 }
 
 void Scene::ReleaseDeviceDependentResources()
@@ -101,7 +103,7 @@ void Scene::HandleInput(const InputHandler& input)
 
 void Scene::InitializeCubeModel(ID3D11Device* d3dDevice)
 {
-	constexpr uint32_t size = 5;
+	/*constexpr uint32_t size = 5;
 	constexpr auto width = 20.0f;
 	constexpr auto height = 20.0f;
 	constexpr auto depth = 20.0f;
@@ -131,6 +133,48 @@ void Scene::InitializeCubeModel(ID3D11Device* d3dDevice)
 
 	ModelBuilder builder(m_textureManager);
 	//m_cubeModel = builder.CreateFromX3D(d3dDevice, L"Resources/SimpleCube.x3d", instanceBuffer);
+	m_cubeModel = builder.CreateLightCube(d3dDevice, instanceBuffer);
+
+	auto boundingBox = BoundingBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+	m_colorModel = builder.CreateBox(d3dDevice, boundingBox, instanceBuffer);
+
+	m_terrainModel = builder.CreateTerrain(d3dDevice, 50.0f, 50.0f, 4, 4);*/
+
+	struct PositionScale
+	{
+		XMFLOAT3 Position;
+		XMFLOAT3 Scale;
+	};
+
+	std::array<PositionScale, 11> data =
+	{
+			{
+				{ {-6.5f, 0.0f, 6.5f},{ 0.5f, 0.5f, 0.5f } }, // this
+				{ { -3.5f, 0.0f, 4.5f },{ 0.5f, 0.5f, 0.5f } }, // this
+				{ { -4.5f, 0.0f, 7.5f },{ 0.5f, 0.5f, 0.5f } }, // this
+				{ { -4.5f, 0.0f, 10.5f },{ 0.5f, 0.5f, 0.5f } }, // this
+				{ { -2.5f, 0.0f, -1.5f },{ 0.5f, 0.5f, 0.5f } },
+				{ { 3.5f, 0.0f, -2.5f },{ 0.5f, 0.5f, 0.5f } },
+				{ { -6.5f, 0.0f, -6.5f },{ 0.5f, 0.5f, 0.5f } },
+				{ { -2.5f, 0.0f, 2.5f },{ 0.5f, 0.5f, 0.5f } }, // this
+				{ { -7.5f, 0.0f, 4.5f },{ 0.5f, 0.5f, 0.5f } },
+				{ { -5.5f, 0.0f, 2.5f },{ 0.5f, 0.5f, 0.5f } },
+				{ { 0.0f, 6.0f, 0.0f },{ 1.0f, 1.0f, 1.0f } },
+			}
+	};
+
+	vector<InstancedDataTypes::World> instanceBuffer(data.size());
+	for (size_t i = 0; i < data.size(); i++)
+	{	
+		auto& position = data[i].Position;
+		auto& scale = data[i].Scale;
+		auto worldMatrix = XMMatrixTranslation(position.x, position.y, position.z);
+		worldMatrix = XMMatrixMultiply(XMMatrixScaling(scale.x, scale.y, scale.z), worldMatrix);
+
+		XMStoreFloat4x4(&instanceBuffer[i].WorldMatrix, worldMatrix);
+	}
+
+	ModelBuilder builder(m_textureManager);
 	m_cubeModel = builder.CreateLightCube(d3dDevice, instanceBuffer);
 
 	auto boundingBox = BoundingBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));

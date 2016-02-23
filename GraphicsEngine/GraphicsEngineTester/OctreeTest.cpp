@@ -138,7 +138,7 @@ namespace GraphicsEngineTester
 		TEST_METHOD(TestOctreeFrustumIntersection)
 		{
 			auto camera = Camera();
-			auto cameraFrustum = camera.BuildViewSpaceBoundingFrustum();
+			auto cameraFrustum = camera.BuildWorldSpaceBoundingFrustum();
 
 			auto octree = Octree<OctreeBaseCollider, 4>::Create(
 				BoundingBox(XMFLOAT3(0.0f, 6.0f, 0.0f), XMFLOAT3(8.0f, 8.0f, 8.0f))
@@ -146,7 +146,23 @@ namespace GraphicsEngineTester
 			for (auto& object : m_gameObjects)
 				octree.AddObject(&object);
 
-			auto intersections = octree.GetIntersections(cameraFrustum);
+			// Set all objects to be culled:
+			for (auto& object : m_gameObjects)
+				object.FrustumCull(true);
+
+			octree.FrustumCullObjects(cameraFrustum);
+
+			Assert::IsFalse(m_gameObjects[0].IsFrustumCulled());
+			Assert::IsFalse(m_gameObjects[1].IsFrustumCulled());
+			Assert::IsFalse(m_gameObjects[2].IsFrustumCulled());
+			Assert::IsFalse(m_gameObjects[3].IsFrustumCulled());
+			Assert::IsTrue(m_gameObjects[4].IsFrustumCulled());
+			Assert::IsTrue(m_gameObjects[5].IsFrustumCulled());
+			Assert::IsTrue(m_gameObjects[6].IsFrustumCulled());
+			Assert::IsFalse(m_gameObjects[7].IsFrustumCulled());
+			Assert::IsTrue(m_gameObjects[8].IsFrustumCulled());
+			Assert::IsTrue(m_gameObjects[9].IsFrustumCulled());
+			Assert::IsTrue(m_gameObjects[10].IsFrustumCulled());
 		}
 	};
 }

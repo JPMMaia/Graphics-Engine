@@ -172,7 +172,7 @@ LightModel ModelBuilder::CreateLightCube(ID3D11Device* d3dDevice, const vector<L
 	return LightModel(d3dDevice, vertices, indices, subsets, { textureAppearance }, instancedData, D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 }
 
-ColorModel ModelBuilder::CreateBox(ID3D11Device* d3dDevice, const BoundingBox& boundingBox, const vector<ColorEffect::InstanceData>& instancedData) const
+ColorModel ModelBuilder::CreateBox(ID3D11Device* d3dDevice, const BoundingBox& boundingBox, const vector<ColorEffect::InstancedDataType>& instancedData) const
 {
 	// Create vertices:
 	auto color = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);

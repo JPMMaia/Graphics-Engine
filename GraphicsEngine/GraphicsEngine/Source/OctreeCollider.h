@@ -6,12 +6,14 @@ namespace GraphicsEngine
 {
 	class OctreeBaseCollider
 	{
-	protected:
-		~OctreeBaseCollider() {}
-
 	public:
+		virtual ~OctreeBaseCollider()
+		{
+		}
+
 		virtual bool Intersects(const DirectX::BoundingBox& box) const = 0;
 		virtual bool Intersects(const DirectX::BoundingFrustum& frustum) const = 0;
+		virtual void FrustumCull(bool frustumCulled) = 0;
 	};
 
 	template<
@@ -27,18 +29,18 @@ namespace GraphicsEngine
 	{
 	public:
 		OctreeCollider() :
-			m_collider()
+			m_collider(),
+			m_frustumCulled(false)
 		{
 		}
 		explicit OctreeCollider(const Type& collider) :
-			m_collider(collider)
+			m_collider(collider),
+			m_frustumCulled(false)
 		{
 		}
 		explicit OctreeCollider(Type&& collider) :
-			m_collider(std::move(collider))
-		{
-		}
-		virtual ~OctreeCollider()
+			m_collider(std::move(collider)),
+			m_frustumCulled(false)
 		{
 		}
 
@@ -51,7 +53,17 @@ namespace GraphicsEngine
 			return frustum.Intersects(m_collider);
 		}
 
+		bool IsFrustumCulled() const
+		{
+			return m_frustumCulled;
+		}
+		void FrustumCull(bool frustumCulled) override
+		{
+			m_frustumCulled = frustumCulled;
+		}
+
 	private:
 		Type m_collider;
+		bool m_frustumCulled;
 	};
 }

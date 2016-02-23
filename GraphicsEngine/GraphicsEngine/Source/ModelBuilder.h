@@ -18,7 +18,7 @@ namespace GraphicsEngine
 
 		LightModel CreateFromX3D(ID3D11Device* d3dDevice, const std::wstring& x3dFilename, const std::vector<LightEffect::InstanceData>& instancedData) const;
 		LightModel CreateLightCube(ID3D11Device* d3dDevice, const std::vector<LightEffect::InstanceData>& instancedData) const;
-		ColorModel CreateBox(ID3D11Device* d3dDevice, const DirectX::BoundingBox& boundingBox, const std::vector<ColorEffect::InstanceData>& instancedData) const;
+		ColorModel CreateBox(ID3D11Device* d3dDevice, const DirectX::BoundingBox& boundingBox, const std::vector<ColorEffect::InstancedDataType>& instancedData) const;
 		TerrainModel CreateTerrain(ID3D11Device* d3dDevice, float width, float depth, uint32_t xCellCount, uint32_t zCellCount) const;
 
 	private:

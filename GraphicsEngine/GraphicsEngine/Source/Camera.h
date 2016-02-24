@@ -14,7 +14,7 @@ namespace GraphicsEngine
 		void Update();
 
 		void Move(const DirectX::XMVECTOR& axis, float scalar);
-		void MoveLeft(float scalar);
+		void MoveRight(float scalar);
 		void MoveForward(float scalar);
 
 		void Rotate(const DirectX::XMVECTOR& axis, float radians);

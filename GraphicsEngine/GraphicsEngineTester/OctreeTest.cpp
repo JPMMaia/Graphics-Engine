@@ -60,7 +60,7 @@ namespace GraphicsEngineTester
 				ColliderTestClass({ { 3.5f, 0.0f, -2.5f },{ 0.5f, 0.5f, 0.5f } }),
 				ColliderTestClass({ { -6.5f, 0.0f, -6.5f },{ 0.5f, 0.5f, 0.5f } }),
 				ColliderTestClass({ { -2.5f, 0.0f, 2.5f },{ 0.5f, 0.5f, 0.5f } }),
-				ColliderTestClass({ { -7.5f, 0.0f, 4.5f },{ 0.5f, 0.5f, 0.5f } }),
+				ColliderTestClass({ { -8.5f, 0.0f, 4.5f },{ 0.5f, 0.5f, 0.5f } }),
 				ColliderTestClass({ { -5.5f, 0.0f, 2.5f },{ 0.5f, 0.5f, 0.5f } }),
 				ColliderTestClass({ { 0.0f, 6.0f, 0.0f },{ 1.0f, 1.0f, 1.0f } }),
 			};
@@ -141,7 +141,7 @@ namespace GraphicsEngineTester
 			auto cameraFrustum = camera.BuildWorldSpaceBoundingFrustum();
 
 			auto octree = Octree<OctreeBaseCollider, 4>::Create(
-				BoundingBox(XMFLOAT3(0.0f, 6.0f, 0.0f), XMFLOAT3(8.0f, 8.0f, 8.0f))
+				BoundingBox(XMFLOAT3(0.0f, 6.0f, 0.0f), XMFLOAT3(15.0f, 15.0f, 15.0f))
 				);
 			for (auto& object : m_gameObjects)
 				octree.AddObject(&object);

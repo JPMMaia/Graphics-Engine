@@ -41,7 +41,7 @@ void Camera::Update()
 		// Build view matrix:
 		auto up = m_rotationMatrix.r[1];
 		auto forward = m_rotationMatrix.r[2];
-		m_viewMatrix = XMMatrixLookToRH(m_position, forward, up);
+		m_viewMatrix = XMMatrixLookToLH(m_position, forward, up);
 
 		m_dirty = false;
 	}
@@ -57,7 +57,7 @@ void Camera::Move(const XMVECTOR& axis, float scalar)
 
 	m_dirty = true;
 }
-void Camera::MoveLeft(float scalar)
+void Camera::MoveRight(float scalar)
 {
 	// Translate along the X-axis:
 	const auto& left = m_rotationMatrix.r[0];
@@ -96,7 +96,7 @@ void Camera::RotateWorldY(float radians)
 BoundingFrustum Camera::BuildViewSpaceBoundingFrustum() const
 {
 	BoundingFrustum output;
-	// TODO
+	BoundingFrustum::CreateFromMatrix(output, m_projectionMatrix);
 
 	return output;
 }
@@ -137,7 +137,7 @@ bool Camera::IsDirty() const
 void Camera::InitializeProjectionMatrix(const XMMATRIX& orientationMatrix)
 {
 	// Build a perspective matrix:
-	auto perspectiveMatrix = XMMatrixPerspectiveFovRH(
+	auto perspectiveMatrix = XMMatrixPerspectiveFovLH(
 		m_fovAngleY,
 		m_aspectRatio,
 		m_nearZ,

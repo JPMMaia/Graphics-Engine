@@ -76,26 +76,26 @@ void Scene::HandleInput(const InputHandler& input)
 {
 	constexpr auto rotationScalar = 0.02f;
 	if (input.IsKeyDown(VirtualKey::Right))
-		m_camera.RotateWorldY(-rotationScalar);
+		m_camera.RotateWorldY(rotationScalar);
 
 	if (input.IsKeyDown(VirtualKey::Up))
 		m_camera.RotateLocalX(-rotationScalar);
 
 	if (input.IsKeyDown(VirtualKey::Left))
-		m_camera.RotateWorldY(rotationScalar);
+		m_camera.RotateWorldY(-rotationScalar);
 
 	if (input.IsKeyDown(VirtualKey::Down))
 		m_camera.RotateLocalX(rotationScalar);
 
 	constexpr auto translationScalar = 0.1f;
 	if (input.IsKeyDown(VirtualKey::D))
-		m_camera.MoveLeft(-translationScalar);
+		m_camera.MoveRight(translationScalar);
 
 	if (input.IsKeyDown(VirtualKey::W))
 		m_camera.MoveForward(translationScalar);
 
 	if (input.IsKeyDown(VirtualKey::A))
-		m_camera.MoveLeft(translationScalar);
+		m_camera.MoveRight(-translationScalar);
 
 	if (input.IsKeyDown(VirtualKey::S))
 		m_camera.MoveForward(-translationScalar);
@@ -146,20 +146,20 @@ void Scene::InitializeCubeModel(ID3D11Device* d3dDevice)
 		XMFLOAT3 Scale;
 	};
 
-	std::array<PositionScale, 11> data =
+	std::array<PositionScale, 1> data =
 	{
 			{
-				{ {-6.5f, 0.0f, 6.5f},{ 0.5f, 0.5f, 0.5f } }, // this
-				{ { -3.5f, 0.0f, 4.5f },{ 0.5f, 0.5f, 0.5f } }, // this
-				{ { -4.5f, 0.0f, 7.5f },{ 0.5f, 0.5f, 0.5f } }, // this
+				//{ {-6.5f, 0.0f, 6.5f},{ 0.5f, 0.5f, 0.5f } }, // this
+				//{ { -3.5f, 0.0f, 4.5f },{ 0.5f, 0.5f, 0.5f } }, // this
+				//{ { -4.5f, 0.0f, 7.5f },{ 0.5f, 0.5f, 0.5f } }, // this
 				{ { -4.5f, 0.0f, 10.5f },{ 0.5f, 0.5f, 0.5f } }, // this
-				{ { -2.5f, 0.0f, -1.5f },{ 0.5f, 0.5f, 0.5f } },
-				{ { 3.5f, 0.0f, -2.5f },{ 0.5f, 0.5f, 0.5f } },
-				{ { -6.5f, 0.0f, -6.5f },{ 0.5f, 0.5f, 0.5f } },
-				{ { -2.5f, 0.0f, 2.5f },{ 0.5f, 0.5f, 0.5f } }, // this
-				{ { -7.5f, 0.0f, 4.5f },{ 0.5f, 0.5f, 0.5f } },
-				{ { -5.5f, 0.0f, 2.5f },{ 0.5f, 0.5f, 0.5f } },
-				{ { 0.0f, 6.0f, 0.0f },{ 1.0f, 1.0f, 1.0f } },
+				//{ { -2.5f, 0.0f, -1.5f },{ 0.5f, 0.5f, 0.5f } },
+				//{ { 3.5f, 0.0f, -2.5f },{ 0.5f, 0.5f, 0.5f } },
+				//{ { -6.5f, 0.0f, -6.5f },{ 0.5f, 0.5f, 0.5f } },
+				//{ { -2.5f, 0.0f, 2.5f },{ 0.5f, 0.5f, 0.5f } }, // this
+				//{ { -8.5f, 0.0f, 4.5f },{ 0.5f, 0.5f, 0.5f } },
+				//{ { -5.5f, 0.0f, 2.5f },{ 0.5f, 0.5f, 0.5f } },
+				//{ { 0.0f, 6.0f, 0.0f },{ 1.0f, 1.0f, 1.0f } },
 			}
 	};
 

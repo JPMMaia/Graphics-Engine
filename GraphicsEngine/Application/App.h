@@ -12,7 +12,7 @@ namespace Application
 	public:
 		App();
 
-		// IFrameworkView Methods.
+		// IFrameworkView methods.
 		virtual void Initialize(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView);
 		virtual void SetWindow(Windows::UI::Core::CoreWindow^ window);
 		virtual void Load(Platform::String^ entryPoint);
@@ -29,8 +29,6 @@ namespace Application
 		void OnWindowSizeChanged(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ args);
 		void OnVisibilityChanged(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::VisibilityChangedEventArgs^ args);
 		void OnWindowClosed(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::CoreWindowEventArgs^ args);
-		void OnKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
-		void OnKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
 
 		// DisplayInformation event handlers.
 		void OnDpiChanged(Windows::Graphics::Display::DisplayInformation^ sender, Platform::Object^ args);
@@ -38,6 +36,9 @@ namespace Application
 		void OnDisplayContentsInvalidated(Windows::Graphics::Display::DisplayInformation^ sender, Platform::Object^ args);
 
 	private:
+		// Private accessor for m_deviceResources, protects against device removed errors.
+		std::shared_ptr<DX::DeviceResources> GetDeviceResources();
+
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
 		std::unique_ptr<ApplicationMain> m_main;
 		bool m_windowClosed;

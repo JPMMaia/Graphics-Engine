@@ -2,15 +2,18 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Common">
-      <UniqueIdentifier>e47717cd-afc4-4ab3-8753-a0c1dc396d71</UniqueIdentifier>
+      <UniqueIdentifier>62e3fa55-2c91-4b85-be27-90989495d9a8</UniqueIdentifier>
     </Filter>
     <Filter Include="Assets">
-      <UniqueIdentifier>51bcebd1-2c96-4292-bc86-fadfb0168a95</UniqueIdentifier>
+      <UniqueIdentifier>9ad3d6d4-7e85-4fce-8f8c-a6ab46463bab</UniqueIdentifier>
       <Extensions>bmp;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
     </Filter>
     <Filter Include="Content">
-      <UniqueIdentifier>2032820c-4cd5-45e3-8466-a4b440e647ed</UniqueIdentifier>
+      <UniqueIdentifier>6c35f911-0537-49c4-9499-9c4327ab9be3</UniqueIdentifier>
     </Filter>
+    <ClInclude Include="Common\d3dx12.h">
+      <Filter>Common</Filter>
+    </ClInclude>
     <ClInclude Include="Common\DirectXHelper.h">
       <Filter>Common</Filter>
     </ClInclude>
@@ -26,16 +29,10 @@
     <ClInclude Include="Content\Sample3DSceneRenderer.h">
       <Filter>Content</Filter>
     </ClInclude>
-    <ClInclude Include="Content\SampleFpsTextRenderer.h">
-      <Filter>Content</Filter>
-    </ClInclude>
     <ClInclude Include="Content\ShaderStructures.h">
       <Filter>Content</Filter>
     </ClInclude>
     <ClCompile Include="Content\Sample3DSceneRenderer.cpp">
-      <Filter>Content</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\SampleFpsTextRenderer.cpp">
       <Filter>Content</Filter>
     </ClCompile>
     <FxCompile Include="Content\SamplePixelShader.hlsl">
@@ -59,6 +56,9 @@
     <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
@@ -72,11 +72,6 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="ApplicationMain.h" />
     <ClInclude Include="pch.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Assets\StoreLogo.png">
-      <Filter>Assets</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />

@@ -15,6 +15,8 @@ using namespace Windows::System;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Display;
 
+// The DirectX 12 Application template is documented at http://go.microsoft.com/fwlink/?LinkID=613670&clcid=0x409
+
 // The main function is only used to initialize our IFrameworkView class.
 [Platform::MTAThread]
 int main(Platform::Array<Platform::String^>^)
@@ -48,10 +50,6 @@ void App::Initialize(CoreApplicationView^ applicationView)
 
 	CoreApplication::Resuming +=
 		ref new EventHandler<Platform::Object^>(this, &App::OnResuming);
-
-	// At this point we have access to the device. 
-	// We can create the device-dependent resources.
-	m_deviceResources = std::make_shared<DX::DeviceResources>();
 }
 
 // Called when the CoreWindow object is created (or re-created).
@@ -66,12 +64,6 @@ void App::SetWindow(CoreWindow^ window)
 	window->Closed += 
 		ref new TypedEventHandler<CoreWindow^, CoreWindowEventArgs^>(this, &App::OnWindowClosed);
 
-	window->KeyDown += 
-		ref new Windows::Foundation::TypedEventHandler<CoreWindow^, KeyEventArgs^>(this, &App::OnKeyDown);
-
-	window->KeyUp +=
-		ref new Windows::Foundation::TypedEventHandler<CoreWindow^, KeyEventArgs^>(this, &App::OnKeyUp);
-
 	DisplayInformation^ currentDisplayInformation = DisplayInformation::GetForCurrentView();
 
 	currentDisplayInformation->DpiChanged +=
@@ -82,8 +74,6 @@ void App::SetWindow(CoreWindow^ window)
 
 	DisplayInformation::DisplayContentsInvalidated +=
 		ref new TypedEventHandler<DisplayInformation^, Object^>(this, &App::OnDisplayContentsInvalidated);
-
-	m_deviceResources->SetWindow(window);
 }
 
 // Initializes scene resources, or loads a previously saved app state.
@@ -91,7 +81,7 @@ void App::Load(Platform::String^ entryPoint)
 {
 	if (m_main == nullptr)
 	{
-		m_main = std::unique_ptr<ApplicationMain>(new ApplicationMain(m_deviceResources));
+		m_main = std::unique_ptr<ApplicationMain>(new ApplicationMain());
 	}
 }
 
@@ -104,12 +94,21 @@ void App::Run()
 		{
 			CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
-			m_main->Update();
-
-			if (m_main->Render())
+			auto commandQueue = GetDeviceResources()->GetCommandQueue();
+			PIXBeginEvent(commandQueue, 0, L"Update");
 			{
-				m_deviceResources->Present();
+				m_main->Update();
 			}
+			PIXEndEvent(commandQueue);
+
+			PIXBeginEvent(commandQueue, 0, L"Render");
+			{
+				if (m_main->Render())
+				{
+					GetDeviceResources()->Present();
+				}
+			}
+			PIXEndEvent(commandQueue);
 		}
 		else
 		{
@@ -143,9 +142,8 @@ void App::OnSuspending(Platform::Object^ sender, SuspendingEventArgs^ args)
 
 	create_task([this, deferral]()
 	{
-        m_deviceResources->Trim();
-
-		// Insert your code here.
+		// TODO: Insert your code here.
+		m_main->OnSuspending();
 
 		deferral->Complete();
 	});
@@ -157,15 +155,16 @@ void App::OnResuming(Platform::Object^ sender, Platform::Object^ args)
 	// and state are persisted when resuming from suspend. Note that this event
 	// does not occur if the app was previously terminated.
 
-	// Insert your code here.
+	// TODO: Insert your code here.
+	m_main->OnResuming();
 }
 
 // Window event handlers.
 
 void App::OnWindowSizeChanged(CoreWindow^ sender, WindowSizeChangedEventArgs^ args)
 {
-	m_deviceResources->SetLogicalSize(Size(sender->Bounds.Width, sender->Bounds.Height));
-	m_main->CreateWindowSizeDependentResources();
+	GetDeviceResources()->SetLogicalSize(Size(sender->Bounds.Width, sender->Bounds.Height));
+	m_main->OnWindowSizeChanged();
 }
 
 void App::OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
@@ -178,16 +177,6 @@ void App::OnWindowClosed(CoreWindow^ sender, CoreWindowEventArgs^ args)
 	m_windowClosed = true;
 }
 
-void Application::App::OnKeyDown(CoreWindow^ sender, KeyEventArgs^ args)
-{
-	m_main->OnKeyDown(args->VirtualKey);
-}
-
-void Application::App::OnKeyUp(CoreWindow^ sender, KeyEventArgs^ args)
-{
-	m_main->OnKeyUp(args->VirtualKey);
-}
-
 // DisplayInformation event handlers.
 
 void App::OnDpiChanged(DisplayInformation^ sender, Object^ args)
@@ -196,17 +185,37 @@ void App::OnDpiChanged(DisplayInformation^ sender, Object^ args)
 	// if it is being scaled for high resolution devices. Once the DPI is set on DeviceResources,
 	// you should always retrieve it using the GetDpi method.
 	// See DeviceResources.cpp for more details.
-	m_deviceResources->SetDpi(sender->LogicalDpi);
-	m_main->CreateWindowSizeDependentResources();
+	GetDeviceResources()->SetDpi(sender->LogicalDpi);
+	m_main->OnWindowSizeChanged();
 }
 
 void App::OnOrientationChanged(DisplayInformation^ sender, Object^ args)
 {
-	m_deviceResources->SetCurrentOrientation(sender->CurrentOrientation);
-	m_main->CreateWindowSizeDependentResources();
+	GetDeviceResources()->SetCurrentOrientation(sender->CurrentOrientation);
+	m_main->OnWindowSizeChanged();
 }
 
 void App::OnDisplayContentsInvalidated(DisplayInformation^ sender, Object^ args)
 {
-	m_deviceResources->ValidateDevice();
+	GetDeviceResources()->ValidateDevice();
+}
+
+std::shared_ptr<DX::DeviceResources> App::GetDeviceResources()
+{
+	if (m_deviceResources != nullptr && m_deviceResources->IsDeviceRemoved())
+	{
+		// All references to the existing D3D device must be released before a new device
+		// can be created.
+
+		m_deviceResources = nullptr;
+		m_main->OnDeviceRemoved();
+	}
+
+	if (m_deviceResources == nullptr)
+	{
+		m_deviceResources = std::make_shared<DX::DeviceResources>();
+		m_deviceResources->SetWindow(CoreWindow::GetForCurrentThread());
+		m_main->CreateRenderers(m_deviceResources);
+	}
+	return m_deviceResources;
 }

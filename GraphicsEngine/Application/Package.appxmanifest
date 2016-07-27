@@ -7,15 +7,15 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="709a9c59-9d7d-42e1-9536-d39570d6e6c9"
-    Publisher="CN=JPMMa"
+    Name="6e501fce-30e3-4b0d-886f-78138237e808"
+    Publisher="CN=JPMMaia"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="709a9c59-9d7d-42e1-9536-d39570d6e6c9" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="6e501fce-30e3-4b0d-886f-78138237e808" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>Application</DisplayName>
-    <PublisherDisplayName>JPMMa</PublisherDisplayName>
+    <PublisherDisplayName>JPMMaia</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

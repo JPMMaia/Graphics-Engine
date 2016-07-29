@@ -13,8 +13,6 @@ using namespace GraphicsEngine;
 // Loads and initializes application assets when the application is loaded.
 ApplicationMain::ApplicationMain()
 {
-	m_timer.SetFixedTimeStep(true);
-	m_timer.SetTargetElapsedSeconds(1.0 / 60);
 }
 
 // Creates and initializes the renderers.
@@ -25,27 +23,15 @@ void ApplicationMain::CreateRenderers(const std::shared_ptr<DX::DeviceResources>
 	OnWindowSizeChanged();
 }
 
-// Updates the application state once per frame.
-void ApplicationMain::Update()
+void ApplicationMain::Update(const Timer& timer)
 {
-	m_timer.Tick([&]()
-	{
-		m_sceneRenderer->Update(static_cast<float>(m_timer.GetElapsedSeconds()));
-	});
+	m_sceneRenderer->Update(timer);
 }
-
-// Renders the current frame according to the current application state.
-// Returns true if the frame was rendered and is ready to be displayed.
-bool ApplicationMain::Render()
+bool ApplicationMain::Render(const Timer& timer)
 {
-	// Don't try to render anything before the first Update.
-	if (m_timer.GetFrameCount() == 0)
-	{
-		return false;
-	}
+	m_sceneRenderer->Render(timer);
 
-	// Render the scene objects.
-	return m_sceneRenderer->Render();
+	return true;
 }
 
 // Updates application state when the window's size changes (e.g. device orientation change)

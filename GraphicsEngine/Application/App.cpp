@@ -14,6 +14,7 @@ using namespace Windows::UI::Input;
 using namespace Windows::System;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Display;
+using namespace GraphicsEngine;
 
 // The DirectX 12 Application template is documented at http://go.microsoft.com/fwlink/?LinkID=613670&clcid=0x409
 
@@ -33,7 +34,8 @@ IFrameworkView^ Direct3DApplicationSource::CreateView()
 
 App::App() :
 	m_windowClosed(false),
-	m_windowVisible(true)
+	m_windowVisible(true),
+	m_timer(12.0)
 {
 }
 
@@ -55,13 +57,13 @@ void App::Initialize(CoreApplicationView^ applicationView)
 // Called when the CoreWindow object is created (or re-created).
 void App::SetWindow(CoreWindow^ window)
 {
-	window->SizeChanged += 
+	window->SizeChanged +=
 		ref new TypedEventHandler<CoreWindow^, WindowSizeChangedEventArgs^>(this, &App::OnWindowSizeChanged);
 
 	window->VisibilityChanged +=
 		ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &App::OnVisibilityChanged);
 
-	window->Closed += 
+	window->Closed +=
 		ref new TypedEventHandler<CoreWindow^, CoreWindowEventArgs^>(this, &App::OnWindowClosed);
 
 	DisplayInformation^ currentDisplayInformation = DisplayInformation::GetForCurrentView();
@@ -88,27 +90,40 @@ void App::Load(Platform::String^ entryPoint)
 // This method is called after the window becomes active.
 void App::Run()
 {
+	m_timer.Reset();
 	while (!m_windowClosed)
 	{
 		if (m_windowVisible)
 		{
 			CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
-			auto commandQueue = GetDeviceResources()->GetCommandQueue();
-			PIXBeginEvent(commandQueue, 0, L"Update");
-			{
-				m_main->Update();
-			}
-			PIXEndEvent(commandQueue);
-
-			PIXBeginEvent(commandQueue, 0, L"Render");
-			{
-				if (m_main->Render())
+			m_timer.UpdateAndRender(
+				
+				// Update
+				[this](const Timer& timer)
 				{
-					GetDeviceResources()->Present();
+					auto commandQueue = GetDeviceResources()->GetCommandQueue();
+					PIXBeginEvent(commandQueue, 0, L"Update");
+					{
+						m_main->Update(timer);
+					}
+					PIXEndEvent(commandQueue);
+				},
+				
+				// Render
+				[this](const Timer& timer)
+				{
+					auto commandQueue = GetDeviceResources()->GetCommandQueue();
+					PIXBeginEvent(commandQueue, 0, L"Render");
+					{
+						if (m_main->Render(timer))
+						{
+							GetDeviceResources()->Present();
+						}
+					}
+					PIXEndEvent(commandQueue);
 				}
-			}
-			PIXEndEvent(commandQueue);
+			);
 		}
 		else
 		{

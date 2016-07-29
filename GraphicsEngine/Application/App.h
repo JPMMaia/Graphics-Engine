@@ -3,6 +3,7 @@
 #include "pch.h"
 #include "Common\DeviceResources.h"
 #include "ApplicationMain.h"
+#include <Content\Timer.h>
 
 namespace Application
 {
@@ -36,11 +37,13 @@ namespace Application
 		void OnDisplayContentsInvalidated(Windows::Graphics::Display::DisplayInformation^ sender, Platform::Object^ args);
 
 	private:
+
 		// Private accessor for m_deviceResources, protects against device removed errors.
 		std::shared_ptr<DX::DeviceResources> GetDeviceResources();
 
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
 		std::unique_ptr<ApplicationMain> m_main;
+		GraphicsEngine::Timer m_timer;
 		bool m_windowClosed;
 		bool m_windowVisible;
 	};

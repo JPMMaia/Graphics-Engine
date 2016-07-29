@@ -10,6 +10,9 @@
     <Filter Include="Content\Shaders">
       <UniqueIdentifier>{5ca19ed7-13f2-4b69-8e57-f930434741a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\Timer">
+      <UniqueIdentifier>{ebdcfab2-a651-4961-be44-e01b9e0f0170}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -23,6 +26,9 @@
     </ClInclude>
     <ClInclude Include="Content\ISceneRenderer.h">
       <Filter>Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Timer.h">
+      <Filter>Content\Timer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

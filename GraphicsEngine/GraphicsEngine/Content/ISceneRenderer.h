@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Timer.h"
+
 namespace GraphicsEngine
 {
 	class ISceneRenderer
@@ -11,8 +13,8 @@ namespace GraphicsEngine
 
 		virtual void CreateDeviceDependentResources() = 0;
 		virtual void CreateWindowSizeDependentResources() = 0;
-		virtual void Update(float deltaSeconds) = 0;
-		virtual bool Render() = 0;
+		virtual void Update(const Timer& timer) = 0;
+		virtual void Render(const Timer& timer) = 0;
 		virtual void SaveState() = 0;
 	};
 }

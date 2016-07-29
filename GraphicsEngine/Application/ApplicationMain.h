@@ -1,11 +1,10 @@
 ﻿#pragma once
 
-#include "Common\StepTimer.h"
 #include "Common\DeviceResources.h"
 #include "Content\Sample3DSceneRenderer.h"
 #include <Content\SceneRenderer.h>
+#include <Content\Timer.h>
 
-// Renders Direct3D content on the screen.
 namespace Application
 {
 	class ApplicationMain
@@ -13,8 +12,8 @@ namespace Application
 	public:
 		ApplicationMain();
 		void CreateRenderers(const std::shared_ptr<DX::DeviceResources>& deviceResources);
-		void Update();
-		bool Render();
+		void Update(const GraphicsEngine::Timer& timer);
+		bool Render(const GraphicsEngine::Timer& timer);
 
 		void OnWindowSizeChanged();
 		void OnSuspending();
@@ -23,8 +22,5 @@ namespace Application
 
 	private:
 		std::unique_ptr<GraphicsEngine::SceneRenderer> m_sceneRenderer;
-
-		// Rendering loop timer.
-		DX::StepTimer m_timer;
 	};
 }

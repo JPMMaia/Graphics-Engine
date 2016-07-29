@@ -11,8 +11,8 @@ namespace GraphicsEngine
 
 		void CreateDeviceDependentResources() override;
 		void CreateWindowSizeDependentResources() override;
-		void Update(float deltaSeconds) override;
-		bool Render() override;
+		void Update(const Timer& timer) override;
+		void Render(const Timer& timer) override;
 		void SaveState() override;
 	};
 }

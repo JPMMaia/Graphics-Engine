@@ -13,6 +13,9 @@
     <Filter Include="Content\Timer">
       <UniqueIdentifier>{ebdcfab2-a651-4961-be44-e01b9e0f0170}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\DirectX12">
+      <UniqueIdentifier>{522e7f41-a386-424a-b51f-166acefe90aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -30,6 +33,15 @@
     <ClInclude Include="Content\Timer.h">
       <Filter>Content\Timer</Filter>
     </ClInclude>
+    <ClInclude Include="Content\DirectX12.h">
+      <Filter>Content\DirectX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\DirectXHelper.h">
+      <Filter>Content\DirectX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\d3dx12.h">
+      <Filter>Content\DirectX12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -37,6 +49,9 @@
     </ClCompile>
     <ClCompile Include="Content\SceneRenderer.cpp">
       <Filter>Content</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\DirectX12.cpp">
+      <Filter>Content\DirectX12</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

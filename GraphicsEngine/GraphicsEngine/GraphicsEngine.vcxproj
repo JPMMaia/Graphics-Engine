@@ -100,6 +100,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -138,6 +139,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Content\d3dx12.h" />
+    <ClInclude Include="Content\DirectX12.h" />
+    <ClInclude Include="Content\DirectXHelper.h" />
     <ClInclude Include="Content\ISceneRenderer.h" />
     <ClInclude Include="Content\SceneRenderer.h" />
     <ClInclude Include="Content\Timer.h" />
@@ -145,6 +149,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Content\DirectX12.cpp" />
     <ClCompile Include="Content\SceneRenderer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

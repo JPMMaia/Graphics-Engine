@@ -4,6 +4,8 @@
 #include <dxgi1_5.h>
 #include <wrl.h>
 #include <cstdint>
+#include <memory>
+#include <vector>
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
@@ -62,6 +64,11 @@ namespace GraphicsEngine
 		void CreateDescriptorHeaps();
 
 		/// <sumary>
+		/// Called when the window is resized.
+		/// </sumary>
+		void OnResize();
+
+		/// <sumary>
 		/// Resize the back buffer and create a render target view to the back buffer.
 		/// </sumary>
 		void CreateRenderTargetView();
@@ -76,11 +83,18 @@ namespace GraphicsEngine
 		/// </sumary>
 		void SetViewportAndScissorRectangles();
 
+		void FlushCommandQueue();
+
 		/// <sumary>
 		/// This method acquires the first available hardware adapter that supports Direct3D 12.
 		/// If no such adapter can be found, *ppAdapter will be set to nullptr.
 		/// </sumary>
 		static void GetHardwareAdapter(IDXGIFactory4* pFactory, IDXGIAdapter1** ppAdapter);
+
+		void LogAdapters() const;
+		void LogAdapterOutputs(IDXGIAdapter* adapter) const;
+		void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format) const;
+
 
 	protected:
 		bool m_4xMsaaState = false;

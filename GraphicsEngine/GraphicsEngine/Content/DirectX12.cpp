@@ -1,6 +1,9 @@
 ﻿#include "stdafx.h"
 #include "DirectX12.h"
+
 #include <cassert>
+#include <string>
+#include <vector>
 
 using namespace GraphicsEngine;
 using namespace Microsoft::WRL;
@@ -18,6 +21,7 @@ DirectX12::DirectX12()
 	Check4xMsaaQualityLevelSupport();
 
 	// TODO if debug log adapters
+	LogAdapters();
 
 	// Create the command queue, command list allocator and main command list:
 	CreateCommandObjects();
@@ -28,19 +32,12 @@ DirectX12::DirectX12()
 	// Create the descriptor heaps the application requires:
 	CreateDescriptorHeaps();
 
-	// TODO onresize
-
-	// Resize the back buffer and create a render target view to the back buffer:
-	CreateRenderTargetView();
-
-	// Create the depth/stencil buffer and its associated depth/stencil view:
-	CreateDepthStencilBufferAndView();
-
-	// Set the viewport and scissor rectangles:
-	SetViewportAndScissorRectangles();
+	OnResize();
 }
 DirectX12::~DirectX12()
 {
+	if (m_d3dDevice != nullptr)
+		FlushCommandQueue();
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetCurrentBackBufferView() const
@@ -133,7 +130,7 @@ void DirectX12::CreateCommandObjects()
 		D3D12_COMMAND_QUEUE_DESC queueDescription = {};
 		queueDescription.Type = D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT;
 		queueDescription.Flags = D3D12_COMMAND_QUEUE_FLAGS::D3D12_COMMAND_QUEUE_FLAG_NONE;
-		
+
 		DX::ThrowIfFailed(
 			m_d3dDevice->CreateCommandQueue(
 				&queueDescription,
@@ -202,6 +199,49 @@ void DirectX12::CreateDescriptorHeaps()
 				)
 			);
 	}
+}
+
+void DirectX12::OnResize()
+{
+	assert(m_d3dDevice);
+	assert(m_dxgiSwapChain);
+	assert(m_commandAllocator);
+
+	// Flush before changing any resources:
+	FlushCommandQueue();
+
+	DX::ThrowIfFailed(
+		m_commandList->Reset(m_commandAllocator.Get(), nullptr)
+		);
+
+	// Release the previous resources we will be recreating:
+	for (auto i = 0; i < s_swapChainBufferCount; ++i)
+		m_swapChainBuffer[i].Reset();
+	m_depthStencilBuffer.Reset();
+
+	// Resize the swap chain:
+	m_dxgiSwapChain->ResizeBuffers(
+		s_swapChainBufferCount,
+		m_clientWidth,
+		m_clientHeight,
+		m_backBufferFormat,
+		DXGI_SWAP_CHAIN_FLAG::DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH // TODO not sure if this flag should be used in a UW app
+		);
+
+	m_currentBackBuffer = 0;
+
+	CreateRenderTargetView();
+	CreateDepthStencilBufferAndView();
+
+	// Execute the resize commands:
+	DX::ThrowIfFailed(m_commandList->Close());
+	ID3D12CommandList* cmdsLists[] = { m_commandList.Get() };
+	m_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+	// Wait until resize is complete:
+	FlushCommandQueue();
+
+	SetViewportAndScissorRectangles();
 }
 void DirectX12::CreateRenderTargetView()
 {
@@ -291,8 +331,32 @@ void DirectX12::SetViewportAndScissorRectangles()
 	}
 
 	// Set the scissor rectangles:
+	m_scissorRect = { 0, 0, m_clientWidth, m_clientHeight };
+}
+
+void DirectX12::FlushCommandQueue()
+{
+	// Advance the fence value to mark commands up to this fence point:
+	m_currentFence++;
+
+	// Add an instruction to the command queue to set a new fence point.  Because we 
+	// are on the GPU timeline, the new fence point won't be set until the GPU finishes
+	// processing all the commands prior to this Signal().
+	DX::ThrowIfFailed(
+		m_commandQueue->Signal(m_fence.Get(), m_currentFence)
+		);
+
+	// Wait until the GPU has completed commands up to this fence point.
+	if (m_fence->GetCompletedValue() < m_currentFence)
 	{
-		// TODO
+		auto eventHandle = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
+
+		// Fire event when GPU hits current fence.  
+		DX::ThrowIfFailed(m_fence->SetEventOnCompletion(m_currentFence, eventHandle));
+
+		// Wait until the GPU hits current fence event is fired.
+		WaitForSingleObject(eventHandle, INFINITE);
+		CloseHandle(eventHandle);
 	}
 }
 
@@ -321,4 +385,77 @@ void DirectX12::GetHardwareAdapter(IDXGIFactory4* pFactory, IDXGIAdapter1** ppAd
 	}
 
 	*ppAdapter = adapter.Detach();
+}
+
+void DirectX12::LogAdapters() const
+{
+	UINT i = 0;
+	IDXGIAdapter* adapter = nullptr;
+	std::vector<IDXGIAdapter*> adapterList;
+	while (m_dxgiFactory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
+	{
+		DXGI_ADAPTER_DESC desc;
+		adapter->GetDesc(&desc);
+
+		std::wstring text = L"***Adapter: ";
+		text += desc.Description;
+		text += L"\n";
+
+		OutputDebugString(text.c_str());
+
+		adapterList.push_back(adapter);
+
+		++i;
+	}
+
+	for (size_t j = 0; j < adapterList.size(); ++j)
+	{
+		LogAdapterOutputs(adapterList[j]);
+		adapterList[j]->Release();
+	}
+}
+void DirectX12::LogAdapterOutputs(IDXGIAdapter* adapter) const
+{
+	UINT i = 0;
+	IDXGIOutput* output = nullptr;
+	while (adapter->EnumOutputs(i, &output) != DXGI_ERROR_NOT_FOUND)
+	{
+		DXGI_OUTPUT_DESC desc;
+		output->GetDesc(&desc);
+
+		std::wstring text = L"***Output: ";
+		text += desc.DeviceName;
+		text += L"\n";
+		OutputDebugString(text.c_str());
+
+		LogOutputDisplayModes(output, m_backBufferFormat);
+
+		output->Release();
+
+		++i;
+	}
+}
+void DirectX12::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format) const
+{
+	UINT count = 0;
+	UINT flags = 0;
+
+	// Call with nullptr to get list count.
+	output->GetDisplayModeList(format, flags, &count, nullptr);
+
+	std::vector<DXGI_MODE_DESC> modeList(count);
+	output->GetDisplayModeList(format, flags, &count, &modeList[0]);
+
+	for (auto& x : modeList)
+	{
+		UINT n = x.RefreshRate.Numerator;
+		UINT d = x.RefreshRate.Denominator;
+		std::wstring text =
+			L"Width = " + std::to_wstring(x.Width) + L" " +
+			L"Height = " + std::to_wstring(x.Height) + L" " +
+			L"Refresh = " + std::to_wstring(n) + L"/" + std::to_wstring(d) +
+			L"\n";
+
+		::OutputDebugString(text.c_str());
+	}
 }

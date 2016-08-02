@@ -49,7 +49,7 @@ namespace GraphicsEngine
 		/// <sumary>
 		/// Create the command queue, command list allocator and main command list.
 		/// </sumary>
-		void CreateCommandQueueAndCommandList();
+		void CreateCommandObjects();
 
 		/// <sumary>
 		/// Describe and create the swap chain.
@@ -76,11 +76,15 @@ namespace GraphicsEngine
 		/// </sumary>
 		void SetViewportAndScissorRectangles();
 
+		/// <sumary>
+		/// This method acquires the first available hardware adapter that supports Direct3D 12.
+		/// If no such adapter can be found, *ppAdapter will be set to nullptr.
+		/// </sumary>
+		static void GetHardwareAdapter(IDXGIFactory4* pFactory, IDXGIAdapter1** ppAdapter);
+
 	protected:
 		bool m_4xMsaaState = false;
 		uint32_t m_4xMsaaQuality = 0;
-
-		uint64_t m_multisampleNumQualityLevel;
 
 		Microsoft::WRL::ComPtr<IDXGIFactory4> m_dxgiFactory;
 		Microsoft::WRL::ComPtr<IDXGISwapChain3> m_dxgiSwapChain;

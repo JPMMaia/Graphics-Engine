@@ -17,14 +17,18 @@ DirectX12::DirectX12()
 	// Check 4X MSAA quality level support:
 	Check4xMsaaQualityLevelSupport();
 
+	// TODO if debug log adapters
+
 	// Create the command queue, command list allocator and main command list:
-	CreateCommandQueueAndCommandList();
+	CreateCommandObjects();
 
 	// Describe and create the swap chain:
 	CreateSwapChain();
 
 	// Create the descriptor heaps the application requires:
 	CreateDescriptorHeaps();
+
+	// TODO onresize
 
 	// Resize the back buffer and create a render target view to the back buffer:
 	CreateRenderTargetView();
@@ -119,16 +123,17 @@ void DirectX12::Check4xMsaaQualityLevelSupport()
 			)
 		);
 
-	m_multisampleNumQualityLevel = multisampleQualityLevels.NumQualityLevels;
-	assert(m_multisampleNumQualityLevel > 0 && "Unexpected MSAA quality level.");
+	m_4xMsaaQuality = multisampleQualityLevels.NumQualityLevels;
+	assert(m_4xMsaaQuality > 0 && "Unexpected MSAA quality level.");
 }
-void DirectX12::CreateCommandQueueAndCommandList()
+void DirectX12::CreateCommandObjects()
 {
 	// Create command queue:
 	{
 		D3D12_COMMAND_QUEUE_DESC queueDescription = {};
 		queueDescription.Type = D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT;
-		queueDescription.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+		queueDescription.Flags = D3D12_COMMAND_QUEUE_FLAGS::D3D12_COMMAND_QUEUE_FLAG_NONE;
+		
 		DX::ThrowIfFailed(
 			m_d3dDevice->CreateCommandQueue(
 				&queueDescription,
@@ -289,4 +294,31 @@ void DirectX12::SetViewportAndScissorRectangles()
 	{
 		// TODO
 	}
+}
+
+void DirectX12::GetHardwareAdapter(IDXGIFactory4* pFactory, IDXGIAdapter1** ppAdapter)
+{
+	ComPtr<IDXGIAdapter1> adapter;
+	*ppAdapter = nullptr;
+
+	for (UINT adapterIndex = 0; DXGI_ERROR_NOT_FOUND != pFactory->EnumAdapters1(adapterIndex, &adapter); ++adapterIndex)
+	{
+		DXGI_ADAPTER_DESC1 desc;
+		adapter->GetDesc1(&desc);
+
+		if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+		{
+			// Don't select the Basic Render Driver adapter.
+			continue;
+		}
+
+		// Check to see if the adapter supports Direct3D 12, but don't create the
+		// actual device yet.
+		if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr)))
+		{
+			break;
+		}
+	}
+
+	*ppAdapter = adapter.Detach();
 }

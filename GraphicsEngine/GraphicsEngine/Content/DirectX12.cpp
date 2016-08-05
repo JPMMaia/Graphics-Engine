@@ -20,8 +20,10 @@ DirectX12::DirectX12()
 	// Check 4X MSAA quality level support:
 	Check4xMsaaQualityLevelSupport();
 
-	// TODO if debug log adapters
+#if defined(_DEBUG)
+	// Log adapters:
 	LogAdapters();
+#endif
 
 	// Create the command queue, command list allocator and main command list:
 	CreateCommandObjects();

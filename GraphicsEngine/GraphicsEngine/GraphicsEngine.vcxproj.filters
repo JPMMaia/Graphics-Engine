@@ -16,6 +16,9 @@
     <Filter Include="Content\DirectX12">
       <UniqueIdentifier>{522e7f41-a386-424a-b51f-166acefe90aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\Input">
+      <UniqueIdentifier>{4f187a28-3a26-441e-a6e9-4ddbc0806324}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -42,6 +45,12 @@
     <ClInclude Include="Content\d3dx12.h">
       <Filter>Content\DirectX12</Filter>
     </ClInclude>
+    <ClInclude Include="Content\InputHandler.h">
+      <Filter>Content\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\VirtualKey.h">
+      <Filter>Content\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -52,6 +61,9 @@
     </ClCompile>
     <ClCompile Include="Content\DirectX12.cpp">
       <Filter>Content\DirectX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\InputHandler.cpp">
+      <Filter>Content\Input</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

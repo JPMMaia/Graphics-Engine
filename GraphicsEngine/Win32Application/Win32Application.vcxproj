@@ -74,6 +74,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)GraphicsEngine;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -153,6 +154,11 @@
     <ClCompile Include="Content\Application.cpp" />
     <ClCompile Include="Content\main.cpp" />
     <ClCompile Include="Content\Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GraphicsEngine\GraphicsEngine.vcxproj">
+      <Project>{93121aa0-bf28-4c55-8d26-b9bc5f389aa2}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

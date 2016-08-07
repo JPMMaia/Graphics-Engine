@@ -13,8 +13,8 @@ namespace GraphicsEngine
 
 		void Reset();
 
-		template<typename UpdateFunctionType, typename RenderFunctionType>
-		void UpdateAndRender(UpdateFunctionType& update, RenderFunctionType render);
+		template<typename UpdateFunctionType, typename RenderFunctionType, typename ProcessInputFunctionType>
+		bool UpdateAndRender(UpdateFunctionType& update, RenderFunctionType render, ProcessInputFunctionType processInput);
 
 		double GetMillisecondsPerUpdate() const;
 		double GetTotalMilliseconds() const;
@@ -54,8 +54,8 @@ namespace GraphicsEngine
 		m_lag = 0.0;
 	}
 
-	template <typename UpdateFunctionType, typename RenderFunctionType>
-	void Timer::UpdateAndRender(UpdateFunctionType& update, RenderFunctionType render)
+	template <typename UpdateFunctionType, typename RenderFunctionType, typename ProcessInputFunctionType>
+	bool Timer::UpdateAndRender(UpdateFunctionType& update, RenderFunctionType render, ProcessInputFunctionType processInput)
 	{
 		m_qpcCurrentTick = GetCurrentTick();
 		auto deltaTicks = m_qpcCurrentTick.QuadPart - m_qpcPreviousTick.QuadPart;
@@ -65,7 +65,9 @@ namespace GraphicsEngine
 		auto deltaMilliseconds = TicksToMilliseconds(deltaTicks);
 		m_lag += deltaMilliseconds;
 
-		// TODO process input?
+		// Process input:
+		if(!processInput())
+			return false;
 
 		while (m_lag >= m_millisecondsPerUpdate)
 		{
@@ -74,6 +76,8 @@ namespace GraphicsEngine
 		}
 
 		render(*this);
+
+		return true;
 	}
 
 	inline double Timer::GetMillisecondsPerUpdate() const

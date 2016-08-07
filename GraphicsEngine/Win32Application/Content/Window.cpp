@@ -17,19 +17,22 @@ bool Window::Initialize(WNDPROC mainWindowProc)
 	// Get the instance of this application:
 	m_hInstance = GetModuleHandle(nullptr);
 
+	// Setup the windows class with default settings:
 	WNDCLASSEX wc;
-	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 	wc.lpfnWndProc = mainWindowProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = m_hInstance;
-	wc.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+	wc.hIcon = LoadIcon(nullptr, IDI_WINLOGO);
+	wc.hIconSm = wc.hIcon;
 	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(NULL_BRUSH));
+	wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
 	wc.lpszMenuName = nullptr;
 	wc.lpszClassName = m_applicationName.c_str();
 	wc.cbSize = sizeof(WNDCLASSEX);
 
+	// Register the window class:
 	if (!RegisterClassEx(&wc))
 	{
 		MessageBox(nullptr, L"RegisterClass Failed.", nullptr, 0);
@@ -78,8 +81,7 @@ bool Window::Initialize(WNDPROC mainWindowProc)
 		positionX, positionY, screenWidth, screenHeight,
 		nullptr, 
 		nullptr, 
-		m_hInstance, 
-		nullptr
+		m_hInstance, nullptr
 		);
 
 	if (!m_hWindow)
@@ -92,7 +94,6 @@ bool Window::Initialize(WNDPROC mainWindowProc)
 	ShowWindow(m_hWindow, SW_SHOW);
 	SetForegroundWindow(m_hWindow);
 	SetFocus(m_hWindow);
-	UpdateWindow(m_hWindow);
 
 	// Hide the mouse cursor:
 	ShowCursor(false);

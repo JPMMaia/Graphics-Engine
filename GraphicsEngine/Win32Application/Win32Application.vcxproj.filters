@@ -13,6 +13,9 @@
     <ClInclude Include="Content\Application.h">
       <Filter>Content</Filter>
     </ClInclude>
+    <ClInclude Include="Content\Win32Helper.h">
+      <Filter>Content</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Content\Window.cpp">
@@ -22,6 +25,9 @@
       <Filter>Content</Filter>
     </ClCompile>
     <ClCompile Include="Content\Application.cpp">
+      <Filter>Content</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Win32Helper.cpp">
       <Filter>Content</Filter>
     </ClCompile>
   </ItemGroup>

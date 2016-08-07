@@ -21,6 +21,7 @@ namespace Win32Application
 		Application();
 
 	private:
+		static Application s_instance;
 		Window m_window;
 
 		const double c_millisecondsPerUpdate = 10.0;

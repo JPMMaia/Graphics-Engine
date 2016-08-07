@@ -149,11 +149,13 @@
   <ItemGroup>
     <ClInclude Include="Content\Application.h" />
     <ClInclude Include="Content\Window.h" />
+    <ClInclude Include="Content\Win32Helper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Content\Application.cpp" />
     <ClCompile Include="Content\main.cpp" />
     <ClCompile Include="Content\Window.cpp" />
+    <ClCompile Include="Content\Win32Helper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GraphicsEngine\GraphicsEngine.vcxproj">

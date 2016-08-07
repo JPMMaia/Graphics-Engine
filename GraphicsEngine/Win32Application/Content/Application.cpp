@@ -25,13 +25,29 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 
 Application& Application::GetInstance()
 {
-	static Application instance;
-	return instance;
+	return s_instance;
 }
 
 int Application::Run()
 {
 	MSG message = {};
+
+	auto update = [this](const Timer& timer)
+	{
+	};
+
+	auto render = [this](const Timer& timer)
+	{
+	};
+
+	auto processInput = [this]()
+	{
+		// Exit application if exit function is pressed:
+		if (m_input.IsKeyDown(VK_ESCAPE))
+			return false;
+
+		return true;
+	};
 
 	m_timer.Reset();
 
@@ -45,12 +61,9 @@ int Application::Run()
 		}
 
 		// Otherwise, do animation/game stuff:
-		else
+		else if (!m_timer.UpdateAndRender(update, render, processInput))
 		{
-			m_timer.UpdateAndRender(
-				[this] (const Timer& timer) {},
-				[this] (const Timer& timer) {}
-			);
+			break;
 		}
 	}
 
@@ -78,10 +91,10 @@ LRESULT Application::MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 		// Any other messages send to the default message handler as our application won't make use of them:
 	default:
 		return DefWindowProc(hwnd, msg, wParam, lParam);
-
 	}
 }
 
+Application Application::s_instance = Application();
 Application::Application() :
 	m_window(MainWindowProc),
 	m_timer(c_millisecondsPerUpdate)

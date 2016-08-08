@@ -97,6 +97,7 @@ LRESULT Application::MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 Application Application::s_instance = Application();
 Application::Application() :
 	m_window(MainWindowProc),
-	m_timer(c_millisecondsPerUpdate)
+	m_timer(c_millisecondsPerUpdate),
+	m_directX12()
 {
 }

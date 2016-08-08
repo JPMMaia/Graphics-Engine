@@ -4,8 +4,6 @@
 #include <dxgi1_5.h>
 #include <wrl.h>
 #include <cstdint>
-#include <memory>
-#include <vector>
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
@@ -15,11 +13,12 @@ namespace GraphicsEngine
 {
 	class DirectX12
 	{
-	protected:
+	public:
 		explicit DirectX12();
-		DirectX12(const DirectX12& rhs) = delete;
-		DirectX12& operator=(const DirectX12& rhs) = delete;
 		virtual ~DirectX12();
+		//DirectX12(const DirectX12& rhs); = delete;
+		//DirectX12& operator=(const DirectX12& rhs); = delete;
+		
 
 	public:
 	

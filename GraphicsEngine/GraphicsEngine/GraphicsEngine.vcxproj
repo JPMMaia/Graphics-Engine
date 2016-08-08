@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(SolutionDir)Libraries;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
@@ -142,9 +142,11 @@
     <ClInclude Include="Content\d3dx12.h" />
     <ClInclude Include="Content\DirectX12.h" />
     <ClInclude Include="Content\DirectXHelper.h" />
+    <ClInclude Include="Content\Helpers.h" />
     <ClInclude Include="Content\InputHandler.h" />
     <ClInclude Include="Content\ISceneRenderer.h" />
     <ClInclude Include="Content\SceneRenderer.h" />
+    <ClInclude Include="Content\SettingsManager.h" />
     <ClInclude Include="Content\Timer.h" />
     <ClInclude Include="Content\VirtualKey.h" />
     <ClInclude Include="stdafx.h" />
@@ -154,6 +156,7 @@
     <ClCompile Include="Content\DirectX12.cpp" />
     <ClCompile Include="Content\InputHandler.cpp" />
     <ClCompile Include="Content\SceneRenderer.cpp" />
+    <ClCompile Include="Content\SettingsManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -19,6 +19,9 @@
     <Filter Include="Content\Input">
       <UniqueIdentifier>{4f187a28-3a26-441e-a6e9-4ddbc0806324}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\Helpers">
+      <UniqueIdentifier>{69a75813-f49e-4ff1-8d3f-9ff3ff9d103b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -51,6 +54,12 @@
     <ClInclude Include="Content\VirtualKey.h">
       <Filter>Content\Input</Filter>
     </ClInclude>
+    <ClInclude Include="Content\SettingsManager.h">
+      <Filter>Content\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Helpers.h">
+      <Filter>Content\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -64,6 +73,9 @@
     </ClCompile>
     <ClCompile Include="Content\InputHandler.cpp">
       <Filter>Content\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\SettingsManager.cpp">
+      <Filter>Content\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

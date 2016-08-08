@@ -1,10 +1,9 @@
 ﻿#pragma once
 
+#include "Content/DirectX12.h"
 #include "Content/InputHandler.h"
 #include "Content/Timer.h"
 #include "Window.h"
-
-#include <memory>
 
 namespace Win32Application
 {
@@ -28,5 +27,6 @@ namespace Win32Application
 		GraphicsEngine::Timer m_timer;
 
 		GraphicsEngine::InputHandler m_input;
+		GraphicsEngine::DirectX12 m_directX12;
 	};
 }

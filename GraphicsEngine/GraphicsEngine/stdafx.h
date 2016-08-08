@@ -13,5 +13,6 @@
 
 // TODO: reference additional headers your program requires here
 #include "Content/d3dx12.h"
+#include "Content/Helpers.h"
 #include "Content/DirectXHelper.h"
 

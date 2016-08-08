@@ -1,10 +1,12 @@
 ﻿#include "stdafx.h"
 #include "DirectX12.h"
+#include "SettingsManager.h"
 
 #include <cassert>
 #include <string>
 #include <vector>
 
+using namespace std;
 using namespace GraphicsEngine;
 using namespace Microsoft::WRL;
 
@@ -29,12 +31,12 @@ DirectX12::DirectX12()
 	CreateCommandObjects();
 
 	// Describe and create the swap chain:
-	CreateSwapChain();
+	//CreateSwapChain();
 
 	// Create the descriptor heaps the application requires:
-	CreateDescriptorHeaps();
+	//CreateDescriptorHeaps();
 
-	OnResize();
+	//OnResize();
 }
 DirectX12::~DirectX12()
 {
@@ -59,36 +61,52 @@ void DirectX12::CreateDevice()
 {
 #if defined(_DEBUG)
 	// Enable the D3D12 debug layer:
-{
-	ComPtr<ID3D12Debug> debugController;
-	DX::ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(debugController.GetAddressOf())));
-	debugController->EnableDebugLayer();
-}
+	{
+		ComPtr<ID3D12Debug> debugController;
+		DX::ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(debugController.GetAddressOf())));
+		debugController->EnableDebugLayer();
+	}
 #endif
 
-// Create DXGI factory:
-DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory)));
+	// Create DXGI factory:
+	DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory)));
 
-// Try to create hardware device:
-auto hardwareResult = D3D12CreateDevice(
-	nullptr, // default device
-	D3D_FEATURE_LEVEL_11_0,
-	IID_PPV_ARGS(m_d3dDevice.GetAddressOf())
-	);
+	// Get the adapter:
+	ComPtr<IDXGIAdapter1> defaultAdapter;
+	{
+		auto settingsManager = SettingsManager::Build(L"Settings.conf");
+		auto adapterIndex = settingsManager.GetAdapterIndex();
+		m_dxgiFactory->EnumAdapters1(adapterIndex, defaultAdapter.GetAddressOf());
 
-// Fallback to WARP device if failed:
-if (FAILED(hardwareResult))
-{
-	ComPtr<IDXGIAdapter> pWarpAdapter;
-	DX::ThrowIfFailed(m_dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(pWarpAdapter.GetAddressOf())));
-	DX::ThrowIfFailed(
-		D3D12CreateDevice(
-			pWarpAdapter.Get(),
-			D3D_FEATURE_LEVEL_11_0,
-			IID_PPV_ARGS(m_d3dDevice.GetAddressOf())
-			)
+#if defined(_DEBUG)
+		auto adapterDescription = 
+			wstring(L"[Debug] Adapter used:\n") +
+			L"\tDescription: " + settingsManager.GetAdapterDescription() + L"\n" + 
+			L"\tVideo Memory: " + to_wstring(settingsManager.GetAdapterDedicatedVideoMemory()) + L" B\n";
+		OutputDebugStringW(adapterDescription.c_str());
+#endif
+	}
+
+	// Try to create hardware device:
+	auto hardwareResult = D3D12CreateDevice(
+		defaultAdapter.Get(),
+		D3D_FEATURE_LEVEL_11_0,
+		IID_PPV_ARGS(m_d3dDevice.GetAddressOf())
 		);
-}
+
+	// Fallback to WARP device if failed:
+	if (FAILED(hardwareResult))
+	{
+		ComPtr<IDXGIAdapter> pWarpAdapter;
+		DX::ThrowIfFailed(m_dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(pWarpAdapter.GetAddressOf())));
+		DX::ThrowIfFailed(
+			D3D12CreateDevice(
+				pWarpAdapter.Get(),
+				D3D_FEATURE_LEVEL_11_0,
+				IID_PPV_ARGS(m_d3dDevice.GetAddressOf())
+				)
+			);
+	}
 }
 void DirectX12::CreateFence()
 {

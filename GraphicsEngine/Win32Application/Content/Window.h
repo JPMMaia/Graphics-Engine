@@ -12,13 +12,15 @@ namespace Win32Application
 		explicit Window(WNDPROC mainWindowProc);
 		~Window();
 
+		HWND GetWindowHandle() const;
+
 	protected:
 		bool Initialize(WNDPROC mainWindowProc);
 		void Shutdown();
 
 	protected:
 		HINSTANCE m_hInstance = nullptr;
-		HWND m_hWindow = nullptr;
+		HWND m_windowHandle = nullptr;
 
 		std::wstring m_applicationName = L"DirectX12Application";
 		std::wstring m_windowCaption = L"DirectX 12 Application";

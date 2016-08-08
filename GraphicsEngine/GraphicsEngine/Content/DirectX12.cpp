@@ -10,7 +10,8 @@ using namespace std;
 using namespace GraphicsEngine;
 using namespace Microsoft::WRL;
 
-DirectX12::DirectX12()
+DirectX12::DirectX12(HWND outputWindow) : 
+	m_outputWindow(outputWindow)
 {
 	// Create the ID3D12Device using the D3D12CreateDevice function:
 	CreateDevice();
@@ -31,12 +32,12 @@ DirectX12::DirectX12()
 	CreateCommandObjects();
 
 	// Describe and create the swap chain:
-	//CreateSwapChain();
+	CreateSwapChain();
 
 	// Create the descriptor heaps the application requires:
-	//CreateDescriptorHeaps();
+	CreateDescriptorHeaps();
 
-	//OnResize();
+	OnResize();
 }
 DirectX12::~DirectX12()
 {
@@ -61,52 +62,52 @@ void DirectX12::CreateDevice()
 {
 #if defined(_DEBUG)
 	// Enable the D3D12 debug layer:
-	{
-		ComPtr<ID3D12Debug> debugController;
-		DX::ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(debugController.GetAddressOf())));
-		debugController->EnableDebugLayer();
-	}
+{
+	ComPtr<ID3D12Debug> debugController;
+	DX::ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(debugController.GetAddressOf())));
+	debugController->EnableDebugLayer();
+}
 #endif
 
-	// Create DXGI factory:
-	DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory)));
+// Create DXGI factory:
+DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory)));
 
-	// Get the adapter:
-	ComPtr<IDXGIAdapter1> defaultAdapter;
-	{
-		auto settingsManager = SettingsManager::Build(L"Settings.conf");
-		auto adapterIndex = settingsManager.GetAdapterIndex();
-		m_dxgiFactory->EnumAdapters1(adapterIndex, defaultAdapter.GetAddressOf());
+// Get the adapter:
+ComPtr<IDXGIAdapter1> defaultAdapter;
+{
+	auto settingsManager = SettingsManager::Build(L"Settings.conf");
+	auto adapterIndex = settingsManager.GetAdapterIndex();
+	m_dxgiFactory->EnumAdapters1(adapterIndex, defaultAdapter.GetAddressOf());
 
 #if defined(_DEBUG)
-		auto adapterDescription = 
-			wstring(L"[Debug] Adapter used:\n") +
-			L"\tDescription: " + settingsManager.GetAdapterDescription() + L"\n" + 
-			L"\tVideo Memory: " + to_wstring(settingsManager.GetAdapterDedicatedVideoMemory()) + L" B\n";
-		OutputDebugStringW(adapterDescription.c_str());
+	auto adapterDescription =
+		wstring(L"[Debug] Adapter used:\n") +
+		L"\tDescription: " + settingsManager.GetAdapterDescription() + L"\n" +
+		L"\tVideo Memory: " + to_wstring(settingsManager.GetAdapterDedicatedVideoMemory()) + L" B\n";
+	OutputDebugStringW(adapterDescription.c_str());
 #endif
-	}
+}
 
-	// Try to create hardware device:
-	auto hardwareResult = D3D12CreateDevice(
-		defaultAdapter.Get(),
-		D3D_FEATURE_LEVEL_11_0,
-		IID_PPV_ARGS(m_d3dDevice.GetAddressOf())
+// Try to create hardware device:
+auto hardwareResult = D3D12CreateDevice(
+	defaultAdapter.Get(),
+	D3D_FEATURE_LEVEL_11_0,
+	IID_PPV_ARGS(m_d3dDevice.GetAddressOf())
+	);
+
+// Fallback to WARP device if failed:
+if (FAILED(hardwareResult))
+{
+	ComPtr<IDXGIAdapter> pWarpAdapter;
+	DX::ThrowIfFailed(m_dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(pWarpAdapter.GetAddressOf())));
+	DX::ThrowIfFailed(
+		D3D12CreateDevice(
+			pWarpAdapter.Get(),
+			D3D_FEATURE_LEVEL_11_0,
+			IID_PPV_ARGS(m_d3dDevice.GetAddressOf())
+			)
 		);
-
-	// Fallback to WARP device if failed:
-	if (FAILED(hardwareResult))
-	{
-		ComPtr<IDXGIAdapter> pWarpAdapter;
-		DX::ThrowIfFailed(m_dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(pWarpAdapter.GetAddressOf())));
-		DX::ThrowIfFailed(
-			D3D12CreateDevice(
-				pWarpAdapter.Get(),
-				D3D_FEATURE_LEVEL_11_0,
-				IID_PPV_ARGS(m_d3dDevice.GetAddressOf())
-				)
-			);
-	}
+}
 }
 void DirectX12::CreateFence()
 {
@@ -186,7 +187,31 @@ void DirectX12::CreateSwapChain()
 	// Release the previous swap chain we will be recreating:
 	m_dxgiSwapChain.Reset();
 
-	// TODO
+	DXGI_SWAP_CHAIN_DESC sd;
+	sd.BufferDesc.Width = m_clientWidth;
+	sd.BufferDesc.Height = m_clientHeight;
+	sd.BufferDesc.RefreshRate.Numerator = 60;
+	sd.BufferDesc.RefreshRate.Denominator = 1;
+	sd.BufferDesc.Format = m_backBufferFormat;
+	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+	sd.SampleDesc.Count = m_4xMsaaState ? 4 : 1;
+	sd.SampleDesc.Quality = m_4xMsaaState ? (m_4xMsaaQuality - 1) : 0;
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	sd.BufferCount = s_swapChainBufferCount;
+	sd.OutputWindow = m_outputWindow;
+	sd.Windowed = true;
+	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+
+	// Note: Swap chain uses queue to perform flush:
+	DX::ThrowIfFailed(
+		m_dxgiFactory->CreateSwapChain(
+			m_commandQueue.Get(),
+			&sd,
+			m_dxgiSwapChain.GetAddressOf()
+			)
+		);
 }
 void DirectX12::CreateDescriptorHeaps()
 {
@@ -346,8 +371,6 @@ void DirectX12::SetViewportAndScissorRectangles()
 		m_screenViewport.Height = static_cast<float>(m_clientHeight);
 		m_screenViewport.MinDepth = 0.0f;
 		m_screenViewport.MaxDepth = 1.0f;
-
-		m_commandList->RSSetViewports(1, &m_screenViewport);
 	}
 
 	// Set the scissor rectangles:

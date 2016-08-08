@@ -14,12 +14,11 @@ namespace GraphicsEngine
 	class DirectX12
 	{
 	public:
-		explicit DirectX12();
+		explicit DirectX12(HWND outputWindow);
 		virtual ~DirectX12();
 		//DirectX12(const DirectX12& rhs); = delete;
 		//DirectX12& operator=(const DirectX12& rhs); = delete;
 		
-
 	public:
 	
 		D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferView() const;
@@ -99,8 +98,9 @@ namespace GraphicsEngine
 		bool m_4xMsaaState = false;
 		uint32_t m_4xMsaaQuality = 0;
 
+		HWND m_outputWindow;
 		Microsoft::WRL::ComPtr<IDXGIFactory4> m_dxgiFactory;
-		Microsoft::WRL::ComPtr<IDXGISwapChain3> m_dxgiSwapChain;
+		Microsoft::WRL::ComPtr<IDXGISwapChain> m_dxgiSwapChain;
 		Microsoft::WRL::ComPtr<ID3D12Device> m_d3dDevice;
 	
 		Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;

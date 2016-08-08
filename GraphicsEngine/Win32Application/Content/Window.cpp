@@ -12,6 +12,11 @@ Window::~Window()
 	Shutdown();
 }
 
+HWND Window::GetWindowHandle() const
+{
+	return m_windowHandle;
+}
+
 bool Window::Initialize(WNDPROC mainWindowProc)
 {
 	// Get the instance of this application:
@@ -73,7 +78,7 @@ bool Window::Initialize(WNDPROC mainWindowProc)
 	}
 
 	// Create the window with the screen settings and get the handle to it:
-	m_hWindow = CreateWindowEx(
+	m_windowHandle = CreateWindowEx(
 		WS_EX_APPWINDOW, 
 		m_applicationName.c_str(), 
 		m_applicationName.c_str(),
@@ -84,16 +89,16 @@ bool Window::Initialize(WNDPROC mainWindowProc)
 		m_hInstance, nullptr
 		);
 
-	if (!m_hWindow)
+	if (!m_windowHandle)
 	{
 		MessageBox(nullptr, L"CreateWindow Failed.", nullptr, 0);
 		return false;
 	}
 
 	// Bring the window up on the screen and set it as main focus:
-	ShowWindow(m_hWindow, SW_SHOW);
-	SetForegroundWindow(m_hWindow);
-	SetFocus(m_hWindow);
+	ShowWindow(m_windowHandle, SW_SHOW);
+	SetForegroundWindow(m_windowHandle);
+	SetFocus(m_windowHandle);
 
 	// Hide the mouse cursor:
 	ShowCursor(false);
@@ -111,8 +116,8 @@ void Window::Shutdown()
 		ChangeDisplaySettings(nullptr, 0);
 
 	// Remove the window:
-	DestroyWindow(m_hWindow);
-	m_hWindow = nullptr;
+	DestroyWindow(m_windowHandle);
+	m_windowHandle = nullptr;
 
 	// Remove the application instance:
 	UnregisterClass(m_applicationName.c_str(), m_hInstance);

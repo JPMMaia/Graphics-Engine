@@ -98,6 +98,6 @@ Application Application::s_instance = Application();
 Application::Application() :
 	m_window(MainWindowProc),
 	m_timer(c_millisecondsPerUpdate),
-	m_directX12()
+	m_directX12(m_window.GetWindowHandle())
 {
 }

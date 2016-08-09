@@ -60,6 +60,9 @@
     <ClInclude Include="Content\Helpers.h">
       <Filter>Content\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Content\UploadBuffer.h">
+      <Filter>Content\DirectX12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -76,6 +79,12 @@
     </ClCompile>
     <ClCompile Include="Content\SettingsManager.cpp">
       <Filter>Content\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\DirectXHelper.cpp">
+      <Filter>Content\DirectX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\UploadBuffer.cpp">
+      <Filter>Content\DirectX12</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

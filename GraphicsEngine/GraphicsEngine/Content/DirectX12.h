@@ -1,13 +1,6 @@
 ﻿#pragma once
 
-#include <d3d12.h>
 #include <dxgi1_5.h>
-#include <wrl.h>
-#include <cstdint>
-
-#pragma comment(lib, "d3dcompiler.lib")
-#pragma comment(lib, "D3D12.lib")
-#pragma comment(lib, "dxgi.lib")
 
 namespace GraphicsEngine
 {

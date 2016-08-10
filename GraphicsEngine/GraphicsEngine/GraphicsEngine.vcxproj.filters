@@ -25,6 +25,18 @@
     <Filter Include="Content\DirectX12\Geometry">
       <UniqueIdentifier>{c5d00b11-b2f7-4164-bf6d-dc45cf87e6a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\DirectX12\Buffers">
+      <UniqueIdentifier>{41607c1e-0191-4ff5-8507-9169456a3fc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\DirectX12\Shaders">
+      <UniqueIdentifier>{dbb2e2d9-03d3-40aa-9b3f-5577174a02a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\DirectX12\Helpers">
+      <UniqueIdentifier>{2fd1a73f-940c-4f28-a403-7720b997640e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\DirectX12\Techniques">
+      <UniqueIdentifier>{c593a79c-36de-49d9-8cf8-d5b220550f8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -42,15 +54,6 @@
     <ClInclude Include="Content\Timer.h">
       <Filter>Content\Timer</Filter>
     </ClInclude>
-    <ClInclude Include="Content\DirectX12.h">
-      <Filter>Content\DirectX12</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\DirectXHelper.h">
-      <Filter>Content\DirectX12</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\d3dx12.h">
-      <Filter>Content\DirectX12</Filter>
-    </ClInclude>
     <ClInclude Include="Content\InputHandler.h">
       <Filter>Content\Input</Filter>
     </ClInclude>
@@ -63,14 +66,29 @@
     <ClInclude Include="Content\Helpers.h">
       <Filter>Content\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="Content\UploadBuffer.h">
-      <Filter>Content\DirectX12</Filter>
-    </ClInclude>
     <ClInclude Include="Content\GeometryHelper.h">
       <Filter>Content\DirectX12\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="Content\Graphics.h">
       <Filter>Content\DirectX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\UploadBuffer.h">
+      <Filter>Content\DirectX12\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Shader.h">
+      <Filter>Content\DirectX12\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\DirectXHelper.h">
+      <Filter>Content\DirectX12\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\d3dx12.h">
+      <Filter>Content\DirectX12\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\D3DBase.h">
+      <Filter>Content\DirectX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Technique.h">
+      <Filter>Content\DirectX12\Techniques</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -80,23 +98,29 @@
     <ClCompile Include="Content\SceneRenderer.cpp">
       <Filter>Content</Filter>
     </ClCompile>
-    <ClCompile Include="Content\DirectX12.cpp">
-      <Filter>Content\DirectX12</Filter>
-    </ClCompile>
     <ClCompile Include="Content\InputHandler.cpp">
       <Filter>Content\Input</Filter>
     </ClCompile>
     <ClCompile Include="Content\SettingsManager.cpp">
       <Filter>Content\Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="Content\DirectXHelper.cpp">
-      <Filter>Content\DirectX12</Filter>
-    </ClCompile>
     <ClCompile Include="Content\GeometryHelper.cpp">
       <Filter>Content\DirectX12\Geometry</Filter>
     </ClCompile>
     <ClCompile Include="Content\Graphics.cpp">
       <Filter>Content\DirectX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Shader.cpp">
+      <Filter>Content\DirectX12\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\DirectXHelper.cpp">
+      <Filter>Content\DirectX12\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\D3DBase.cpp">
+      <Filter>Content\DirectX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Technique.cpp">
+      <Filter>Content\DirectX12\Techniques</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

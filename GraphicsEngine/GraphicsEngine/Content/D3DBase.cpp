@@ -1,5 +1,5 @@
 ﻿#include "stdafx.h"
-#include "DirectX12.h"
+#include "D3DBase.h"
 #include "SettingsManager.h"
 
 #include <cassert>
@@ -10,7 +10,7 @@ using namespace std;
 using namespace GraphicsEngine;
 using namespace Microsoft::WRL;
 
-DirectX12::DirectX12(HWND outputWindow) : 
+D3DBase::D3DBase(HWND outputWindow) : 
 	m_outputWindow(outputWindow)
 {
 	// Create the ID3D12Device using the D3D12CreateDevice function:
@@ -39,13 +39,13 @@ DirectX12::DirectX12(HWND outputWindow) :
 
 	OnResize();
 }
-DirectX12::~DirectX12()
+D3DBase::~D3DBase()
 {
 	if (m_d3dDevice != nullptr)
 		FlushCommandQueue();
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetCurrentBackBufferView() const
+D3D12_CPU_DESCRIPTOR_HANDLE D3DBase::GetCurrentBackBufferView() const
 {
 	return CD3DX12_CPU_DESCRIPTOR_HANDLE(
 		m_rtvHeap->GetCPUDescriptorHandleForHeapStart(),
@@ -53,12 +53,12 @@ D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetCurrentBackBufferView() const
 		m_rtvDescriptorSize
 		);
 }
-D3D12_CPU_DESCRIPTOR_HANDLE DirectX12::GetDepthStencilView() const
+D3D12_CPU_DESCRIPTOR_HANDLE D3DBase::GetDepthStencilView() const
 {
 	return m_dsvHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
-void DirectX12::CreateDevice()
+void D3DBase::CreateDevice()
 {
 #if defined(_DEBUG)
 	// Enable the D3D12 debug layer:
@@ -109,7 +109,7 @@ if (FAILED(hardwareResult))
 		);
 }
 }
-void DirectX12::CreateFence()
+void D3DBase::CreateFence()
 {
 	DX::ThrowIfFailed(
 		m_d3dDevice->CreateFence(
@@ -119,13 +119,13 @@ void DirectX12::CreateFence()
 			)
 		);
 }
-void DirectX12::QueryDescriptorSizes()
+void D3DBase::QueryDescriptorSizes()
 {
 	m_rtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	m_dsvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	m_cbvSrvUavDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
-void DirectX12::Check4xMsaaQualityLevelSupport()
+void D3DBase::Check4xMsaaQualityLevelSupport()
 {
 	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS multisampleQualityLevels = {};
 	multisampleQualityLevels.Format = m_backBufferFormat;
@@ -144,7 +144,7 @@ void DirectX12::Check4xMsaaQualityLevelSupport()
 	m_4xMsaaQuality = multisampleQualityLevels.NumQualityLevels;
 	assert(m_4xMsaaQuality > 0 && "Unexpected MSAA quality level.");
 }
-void DirectX12::CreateCommandObjects()
+void D3DBase::CreateCommandObjects()
 {
 	// Create command queue:
 	{
@@ -182,7 +182,7 @@ void DirectX12::CreateCommandObjects()
 	// Start in a closed state:
 	m_commandList->Close();
 }
-void DirectX12::CreateSwapChain()
+void D3DBase::CreateSwapChain()
 {
 	// Release the previous swap chain we will be recreating:
 	m_dxgiSwapChain.Reset();
@@ -213,7 +213,7 @@ void DirectX12::CreateSwapChain()
 			)
 		);
 }
-void DirectX12::CreateDescriptorHeaps()
+void D3DBase::CreateDescriptorHeaps()
 {
 	// Create RTV heap:
 	{
@@ -246,7 +246,7 @@ void DirectX12::CreateDescriptorHeaps()
 	}
 }
 
-void DirectX12::OnResize()
+void D3DBase::OnResize()
 {
 	assert(m_d3dDevice);
 	assert(m_dxgiSwapChain);
@@ -288,7 +288,7 @@ void DirectX12::OnResize()
 
 	SetViewportAndScissorRectangles();
 }
-void DirectX12::CreateRenderTargetView()
+void D3DBase::CreateRenderTargetView()
 {
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
 
@@ -309,7 +309,7 @@ void DirectX12::CreateRenderTargetView()
 		rtvHeapHandle.Offset(1, m_rtvDescriptorSize);
 	}
 }
-void DirectX12::CreateDepthStencilBufferAndView()
+void D3DBase::CreateDepthStencilBufferAndView()
 {
 	// Create the depth/stencil buffer:
 	{
@@ -360,7 +360,7 @@ void DirectX12::CreateDepthStencilBufferAndView()
 		);
 	m_commandList->ResourceBarrier(1, &transition);
 }
-void DirectX12::SetViewportAndScissorRectangles()
+void D3DBase::SetViewportAndScissorRectangles()
 {
 	// Set the viewport:
 	{
@@ -377,7 +377,7 @@ void DirectX12::SetViewportAndScissorRectangles()
 	m_scissorRect = { 0, 0, m_clientWidth, m_clientHeight };
 }
 
-void DirectX12::FlushCommandQueue()
+void D3DBase::FlushCommandQueue()
 {
 	// Advance the fence value to mark commands up to this fence point:
 	m_currentFence++;
@@ -403,7 +403,7 @@ void DirectX12::FlushCommandQueue()
 	}
 }
 
-void DirectX12::GetHardwareAdapter(IDXGIFactory4* pFactory, IDXGIAdapter1** ppAdapter)
+void D3DBase::GetHardwareAdapter(IDXGIFactory4* pFactory, IDXGIAdapter1** ppAdapter)
 {
 	ComPtr<IDXGIAdapter1> adapter;
 	*ppAdapter = nullptr;
@@ -430,7 +430,7 @@ void DirectX12::GetHardwareAdapter(IDXGIFactory4* pFactory, IDXGIAdapter1** ppAd
 	*ppAdapter = adapter.Detach();
 }
 
-void DirectX12::LogAdapters() const
+void D3DBase::LogAdapters() const
 {
 	UINT i = 0;
 	IDXGIAdapter* adapter = nullptr;
@@ -457,7 +457,7 @@ void DirectX12::LogAdapters() const
 		adapterList[j]->Release();
 	}
 }
-void DirectX12::LogAdapterOutputs(IDXGIAdapter* adapter) const
+void D3DBase::LogAdapterOutputs(IDXGIAdapter* adapter) const
 {
 	UINT i = 0;
 	IDXGIOutput* output = nullptr;
@@ -478,7 +478,7 @@ void DirectX12::LogAdapterOutputs(IDXGIAdapter* adapter) const
 		++i;
 	}
 }
-void DirectX12::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format) const
+void D3DBase::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format) const
 {
 	UINT count = 0;
 	UINT flags = 0;

@@ -4,13 +4,13 @@
 
 namespace GraphicsEngine
 {
-	class DirectX12
+	class D3DBase
 	{
 	public:
-		explicit DirectX12(HWND outputWindow);
-		virtual ~DirectX12();
-		//DirectX12(const DirectX12& rhs); = delete;
-		//DirectX12& operator=(const DirectX12& rhs); = delete;
+		explicit D3DBase(HWND outputWindow);
+		virtual ~D3DBase();
+		//D3DBase(const D3DBase& rhs); = delete;
+		//D3DBase& operator=(const D3DBase& rhs); = delete;
 		
 	public:
 	

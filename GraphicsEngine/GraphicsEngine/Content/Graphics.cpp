@@ -3,3 +3,7 @@
 
 using namespace GraphicsEngine;
 
+Graphics::Graphics(HWND outputWindow) : 
+	m_d3d(outputWindow)
+{
+}

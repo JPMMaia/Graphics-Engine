@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include "d3dx12.h"
+#include "DirectXHelper.h"
+
 namespace GraphicsEngine
 {
 	template<typename Type>

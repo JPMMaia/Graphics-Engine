@@ -22,6 +22,9 @@
     <Filter Include="Content\Helpers">
       <UniqueIdentifier>{69a75813-f49e-4ff1-8d3f-9ff3ff9d103b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\DirectX12\Geometry">
+      <UniqueIdentifier>{c5d00b11-b2f7-4164-bf6d-dc45cf87e6a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -63,6 +66,12 @@
     <ClInclude Include="Content\UploadBuffer.h">
       <Filter>Content\DirectX12</Filter>
     </ClInclude>
+    <ClInclude Include="Content\GeometryHelper.h">
+      <Filter>Content\DirectX12\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Graphics.h">
+      <Filter>Content\DirectX12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -83,8 +92,19 @@
     <ClCompile Include="Content\DirectXHelper.cpp">
       <Filter>Content\DirectX12</Filter>
     </ClCompile>
-    <ClCompile Include="Content\UploadBuffer.cpp">
+    <ClCompile Include="Content\GeometryHelper.cpp">
+      <Filter>Content\DirectX12\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Graphics.cpp">
       <Filter>Content\DirectX12</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Content\Shaders\ColorVertexShader.hlsl">
+      <Filter>Content\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Content\Shaders\ColorPixelShader.hlsl">
+      <Filter>Content\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

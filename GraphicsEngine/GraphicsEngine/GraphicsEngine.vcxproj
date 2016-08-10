@@ -142,6 +142,8 @@
     <ClInclude Include="Content\d3dx12.h" />
     <ClInclude Include="Content\DirectX12.h" />
     <ClInclude Include="Content\DirectXHelper.h" />
+    <ClInclude Include="Content\GeometryHelper.h" />
+    <ClInclude Include="Content\Graphics.h" />
     <ClInclude Include="Content\Helpers.h" />
     <ClInclude Include="Content\InputHandler.h" />
     <ClInclude Include="Content\ISceneRenderer.h" />
@@ -156,16 +158,35 @@
   <ItemGroup>
     <ClCompile Include="Content\DirectX12.cpp" />
     <ClCompile Include="Content\DirectXHelper.cpp" />
+    <ClCompile Include="Content\GeometryHelper.cpp" />
+    <ClCompile Include="Content\Graphics.cpp" />
     <ClCompile Include="Content\InputHandler.cpp" />
     <ClCompile Include="Content\SceneRenderer.cpp" />
     <ClCompile Include="Content\SettingsManager.cpp" />
-    <ClCompile Include="Content\UploadBuffer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Content\Shaders\ColorPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Content\Shaders\ColorVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

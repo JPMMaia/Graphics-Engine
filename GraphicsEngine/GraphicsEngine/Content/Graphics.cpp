@@ -41,11 +41,58 @@ void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
 }
 void Graphics::Update(const Timer& timer)
 {
-	// TODO
+	// Convert Spherical to Cartesian coordinates:
+	auto x = m_radius * sinf(m_phi) * cosf(m_theta);
+	auto y = m_radius * sinf(m_phi) * sinf(m_theta);
+	auto z = m_radius * cosf(m_phi);
+
+	// Build the view matrix:
+	auto position = XMVectorSet(x, y, z, 1.0f);
+	auto target = XMVectorZero();
+	auto up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	auto view = XMMatrixLookAtLH(position, target, up);
+	XMStoreFloat4x4(&m_viewMatrix, view);
+
+	auto model = XMLoadFloat4x4(&m_modelMatrix);
+	auto projection = XMLoadFloat4x4(&m_projectionMatrix);
+	auto modelViewProjection = model * view * projection;
+
+	// Update the constant buffer with the latest modelViewProjection matrix:
+	PerObjectCBType perObjectCB;
+	XMStoreFloat4x4(&perObjectCB.WorldViewProjectionMatrix, XMMatrixTranspose(modelViewProjection));
+	m_technique.UpdatePerObjectCB(perObjectCB);
 }
 void Graphics::Render(const Timer& timer)
 {
-	// TODO
+	auto commandAllocator = m_d3d.GetCommandAllocator();
+	auto commandList = m_d3d.GetCommandList();
+
+	// Reuse the memory associated with command recording.
+	// We can only reset when the associated command lists have finished execution on the GPU.
+	DX::ThrowIfFailed(commandAllocator->Reset());
+
+	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
+	// Reusing the command list reuses memory.
+	commandList->Reset(commandAllocator, m_technique.GetPipelineState());
+
+	commandList->RSSetViewports(1, &m_d3d.GetScreenViewport());
+	commandList->RSSetScissorRects(1, &m_d3d.GetScissorRect());
+
+	// Indicate a state transition on the resource usage:
+	auto transition1 = CD3DX12_RESOURCE_BARRIER::Transition(
+		m_d3d.GetCurrentBackBuffer(), 
+		D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT, 
+		D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET
+		);
+	commandList->ResourceBarrier(1, &transition1);
+
+	// Clear the back buffer and depth buffer:
+	commandList->ClearRenderTargetView(m_d3d.GetCurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+	commandList->ClearDepthStencilView(m_d3d.GetDepthStencilView(), D3D12_CLEAR_FLAGS::D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAGS::D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+
+	// Specify the buffers we are going to render to:
+
 }
 
 void Graphics::InitializeGeometry(const D3DBase& d3dBase)

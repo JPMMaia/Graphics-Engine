@@ -22,6 +22,10 @@ namespace GraphicsEngine
 		Technique() = default;
 		explicit Technique(const D3DBase& d3dBase);
 
+		void UpdatePerObjectCB(const PerObjectCBType& perObjectCB) const;
+
+		ID3D12PipelineState* GetPipelineState() const;
+
 	protected:
 		void InitializeInputLayout();
 		void InitializeRootSignature(const D3DBase& d3dBase);

@@ -16,6 +16,16 @@ Technique::Technique(const D3DBase& d3dBase) :
 	InitializePipelineState(d3dBase);
 }
 
+void Technique::UpdatePerObjectCB(const PerObjectCBType& perObjectCB) const
+{
+	m_perObjectCB->CopyData(0, perObjectCB);
+}
+
+ID3D12PipelineState* Technique::GetPipelineState() const
+{
+	return m_pipelineState.Get();
+}
+
 void Technique::InitializeInputLayout()
 {
 	m_inputLayout =

@@ -11,23 +11,7 @@ namespace GraphicsEngine
 	{
 	public:
 		explicit D3DBase(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight);
-		virtual ~D3DBase();
-		//D3DBase(const D3DBase& rhs); = delete;
-		//D3DBase& operator=(const D3DBase& rhs); = delete;
-		
-	public:
-	
-		ID3D12Device* GetDevice() const;
-		ID3D12GraphicsCommandList* GetCommandList() const;
-		ID3D12CommandAllocator* GetCommandAllocator() const;
-		ID3D12CommandQueue* GetCommandQueue() const;
-		D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferView() const;
-		D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const;
-		DXGI_FORMAT GetBackBufferFormat() const;
-		DXGI_FORMAT GetDepthStencilFormat() const;
-		uint32_t GetSampleCount() const;
-		uint32_t GetSampleQuality() const;
-		float GetAspectRatio() const;
+		~D3DBase();
 
 		/// <sumary>
 		/// Called when the window is resized.
@@ -35,6 +19,21 @@ namespace GraphicsEngine
 		void OnResize(uint32_t clientWidth, uint32_t clientHeight);
 
 		void FlushCommandQueue();
+
+		ID3D12Device* GetDevice() const;
+		ID3D12GraphicsCommandList* GetCommandList() const;
+		ID3D12CommandAllocator* GetCommandAllocator() const;
+		ID3D12CommandQueue* GetCommandQueue() const;
+		ID3D12Resource* GetCurrentBackBuffer() const;
+		D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferView() const;
+		D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const;
+		DXGI_FORMAT GetBackBufferFormat() const;
+		DXGI_FORMAT GetDepthStencilFormat() const;
+		uint32_t GetSampleCount() const;
+		uint32_t GetSampleQuality() const;
+		float GetAspectRatio() const;
+		const D3D12_VIEWPORT& GetScreenViewport() const;
+		const D3D12_RECT& GetScissorRect() const;
 
 	protected:
 

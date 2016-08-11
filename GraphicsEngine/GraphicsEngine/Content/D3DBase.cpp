@@ -63,6 +63,10 @@ ID3D12CommandQueue* D3DBase::GetCommandQueue() const
 {
 	return m_commandQueue.Get();
 }
+ID3D12Resource* D3DBase::GetCurrentBackBuffer() const
+{
+	return m_swapChainBuffer[m_currentBackBuffer].Get();
+}
 D3D12_CPU_DESCRIPTOR_HANDLE D3DBase::GetCurrentBackBufferView() const
 {
 	return CD3DX12_CPU_DESCRIPTOR_HANDLE(
@@ -94,6 +98,14 @@ uint32_t D3DBase::GetSampleQuality() const
 float D3DBase::GetAspectRatio() const
 {
 	return static_cast<float>(m_clientWidth) / m_clientHeight;
+}
+const D3D12_VIEWPORT& D3DBase::GetScreenViewport() const
+{
+	return m_screenViewport;
+}
+const D3D12_RECT& D3DBase::GetScissorRect() const
+{
+	return m_scissorRect;
 }
 
 void D3DBase::CreateDevice()

@@ -13,6 +13,8 @@ namespace Win32Application
 		~Window();
 
 		HWND GetWindowHandle() const;
+		uint32_t GetClientWidth() const;
+		uint32_t GetClientHeight() const;
 
 	protected:
 		bool Initialize(WNDPROC mainWindowProc);

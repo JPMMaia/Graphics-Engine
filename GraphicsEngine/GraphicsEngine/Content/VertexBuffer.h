@@ -1,0 +1,22 @@
+﻿#pragma once
+
+#include "BaseGeometryBuffer.h"
+
+namespace GraphicsEngine
+{
+	class D3DBase;
+
+	class VertexBuffer : public BaseGeometryBuffer
+	{
+	public:
+		VertexBuffer() = default;
+		explicit VertexBuffer(const D3DBase& d3dBase, const void* vertices, uint32_t vertexCount, uint32_t vertexByteSize);
+		VertexBuffer(const VertexBuffer& rhs) = default;
+		VertexBuffer& operator=(const VertexBuffer& rhs) = default;
+
+		uint32_t GetVertexByteStride() const;
+
+	private:
+		uint32_t m_vertexByteStride = 0;
+	};
+}

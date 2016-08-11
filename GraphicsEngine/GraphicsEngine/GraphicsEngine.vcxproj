@@ -139,10 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Content\BaseGeometryBuffer.h" />
     <ClInclude Include="Content\d3dx12.h" />
     <ClInclude Include="Content\D3DBase.h" />
     <ClInclude Include="Content\DirectXHelper.h" />
-    <ClInclude Include="Content\GeometryHelper.h" />
+    <ClInclude Include="Content\IndexBuffer.h" />
+    <ClInclude Include="Content\MeshGeometry.h" />
     <ClInclude Include="Content\Graphics.h" />
     <ClInclude Include="Content\Helpers.h" />
     <ClInclude Include="Content\InputHandler.h" />
@@ -150,23 +152,29 @@
     <ClInclude Include="Content\SceneRenderer.h" />
     <ClInclude Include="Content\SettingsManager.h" />
     <ClInclude Include="Content\Shader.h" />
+    <ClInclude Include="Content\SubmeshGeometry.h" />
     <ClInclude Include="Content\Technique.h" />
     <ClInclude Include="Content\Timer.h" />
     <ClInclude Include="Content\UploadBuffer.h" />
+    <ClInclude Include="Content\VertexBuffer.h" />
+    <ClInclude Include="Content\VertexTypes.h" />
     <ClInclude Include="Content\VirtualKey.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Content\BaseGeometryBuffer.cpp" />
     <ClCompile Include="Content\D3DBase.cpp" />
     <ClCompile Include="Content\DirectXHelper.cpp" />
-    <ClCompile Include="Content\GeometryHelper.cpp" />
+    <ClCompile Include="Content\IndexBuffer.cpp" />
+    <ClCompile Include="Content\MeshGeometry.cpp" />
     <ClCompile Include="Content\Graphics.cpp" />
     <ClCompile Include="Content\InputHandler.cpp" />
     <ClCompile Include="Content\SceneRenderer.cpp" />
     <ClCompile Include="Content\SettingsManager.cpp" />
     <ClCompile Include="Content\Shader.cpp" />
     <ClCompile Include="Content\Technique.cpp" />
+    <ClCompile Include="Content\VertexBuffer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

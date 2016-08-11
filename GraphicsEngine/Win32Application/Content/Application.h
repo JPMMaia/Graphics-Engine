@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Content/D3DBase.h"
+#include "Content/Graphics.h"
 #include "Content/InputHandler.h"
 #include "Content/Timer.h"
 #include "Window.h"
@@ -27,6 +27,6 @@ namespace Win32Application
 		GraphicsEngine::Timer m_timer;
 
 		GraphicsEngine::InputHandler m_input;
-		GraphicsEngine::D3DBase m_directX12;
+		GraphicsEngine::Graphics m_graphics;
 	};
 }

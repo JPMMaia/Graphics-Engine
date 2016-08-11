@@ -5,9 +5,10 @@ namespace GraphicsEngine
 	class Shader
 	{
 	public:
+		Shader() = default;
 		explicit Shader(const std::wstring& filename);
-		Shader(const Shader& rhs) = delete;
-		void operator=(const Shader& rhs) = delete;
+
+		D3D12_SHADER_BYTECODE GetShaderBytecode() const;
 		
 	private:
 		void LoadBinary(const std::wstring& filename);

@@ -1,21 +1,40 @@
 ﻿#pragma once
 
+#include <d3d12.h>
 #include <dxgi1_5.h>
+#include <cstdint>
+#include <wrl/client.h>
 
 namespace GraphicsEngine
 {
 	class D3DBase
 	{
 	public:
-		explicit D3DBase(HWND outputWindow);
+		explicit D3DBase(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight);
 		virtual ~D3DBase();
 		//D3DBase(const D3DBase& rhs); = delete;
 		//D3DBase& operator=(const D3DBase& rhs); = delete;
 		
 	public:
 	
+		ID3D12Device* GetDevice() const;
+		ID3D12GraphicsCommandList* GetCommandList() const;
+		ID3D12CommandAllocator* GetCommandAllocator() const;
+		ID3D12CommandQueue* GetCommandQueue() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const;
+		DXGI_FORMAT GetBackBufferFormat() const;
+		DXGI_FORMAT GetDepthStencilFormat() const;
+		uint32_t GetSampleCount() const;
+		uint32_t GetSampleQuality() const;
+		float GetAspectRatio() const;
+
+		/// <sumary>
+		/// Called when the window is resized.
+		/// </sumary>
+		void OnResize(uint32_t clientWidth, uint32_t clientHeight);
+
+		void FlushCommandQueue();
 
 	protected:
 
@@ -55,11 +74,6 @@ namespace GraphicsEngine
 		void CreateDescriptorHeaps();
 
 		/// <sumary>
-		/// Called when the window is resized.
-		/// </sumary>
-		void OnResize();
-
-		/// <sumary>
 		/// Resize the back buffer and create a render target view to the back buffer.
 		/// </sumary>
 		void CreateRenderTargetView();
@@ -73,8 +87,6 @@ namespace GraphicsEngine
 		/// Set the viewport and scissor rectangles.
 		/// </sumary>
 		void SetViewportAndScissorRectangles();
-
-		void FlushCommandQueue();
 
 		/// <sumary>
 		/// This method acquires the first available hardware adapter that supports Direct3D 12.
@@ -121,7 +133,7 @@ namespace GraphicsEngine
 		// Derived class should set these in derived constructor to customize starting values:
 		DXGI_FORMAT m_backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 		DXGI_FORMAT m_depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		int32_t m_clientWidth = 800;
-		int32_t m_clientHeight = 600;
+		int32_t m_clientWidth;
+		int32_t m_clientHeight;
 	};
 }

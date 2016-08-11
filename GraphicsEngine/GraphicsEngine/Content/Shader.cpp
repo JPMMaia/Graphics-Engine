@@ -15,6 +15,8 @@ Shader::Shader(const wstring& filename)
 void Shader::LoadBinary(const wstring& filename)
 {
 	ifstream filestream(filename, ios::binary);
+	if (!filestream.good())
+		throw exception("Filename not found!");
 
 	filestream.seekg(0, ios_base::end);
 	auto size = filestream.tellg();
@@ -26,4 +28,9 @@ void Shader::LoadBinary(const wstring& filename)
 
 	filestream.read(static_cast<char*>(m_byteCode->GetBufferPointer()), size);
 	filestream.close();
+}
+
+D3D12_SHADER_BYTECODE Shader::GetShaderBytecode() const
+{
+	return{ m_byteCode->GetBufferPointer(), m_byteCode->GetBufferSize() };
 }

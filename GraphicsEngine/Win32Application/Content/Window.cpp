@@ -16,6 +16,14 @@ HWND Window::GetWindowHandle() const
 {
 	return m_windowHandle;
 }
+uint32_t Window::GetClientWidth() const
+{
+	return m_clientWidth;
+}
+uint32_t Window::GetClientHeight() const
+{
+	return m_clientHeight;
+}
 
 bool Window::Initialize(WNDPROC mainWindowProc)
 {
@@ -45,18 +53,19 @@ bool Window::Initialize(WNDPROC mainWindowProc)
 	}
 
 	// Determine the resolution of the clients desktop screen:
-	auto screenHeight = GetSystemMetrics(SM_CYSCREEN);
-	auto screenWidth = GetSystemMetrics(SM_CXSCREEN);
 	int positionX, positionY;
 
 	// Setup the screen settings depending on whether it is running in full screen or in windowed mode:
 	if (m_fullscreen)
 	{
+		m_clientWidth = GetSystemMetrics(SM_CXSCREEN);
+		m_clientHeight = GetSystemMetrics(SM_CYSCREEN);
+
 		// If full screen set the screen to maximum size of the users desktop and 32bit:
 		DEVMODE dmScreenSettings = {};
 		dmScreenSettings.dmSize = sizeof(dmScreenSettings);
-		dmScreenSettings.dmPelsHeight = static_cast<unsigned long>(screenHeight);
-		dmScreenSettings.dmPelsWidth = static_cast<unsigned long>(screenWidth);
+		dmScreenSettings.dmPelsWidth = static_cast<unsigned long>(m_clientWidth);
+		dmScreenSettings.dmPelsHeight = static_cast<unsigned long>(m_clientHeight);
 		dmScreenSettings.dmBitsPerPel = 32;
 		dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
@@ -68,13 +77,9 @@ bool Window::Initialize(WNDPROC mainWindowProc)
 	}
 	else
 	{
-		// If windowed then set it to 800x600 resolution:
-		screenWidth = 800;
-		screenHeight = 600;
-
 		// Place the window in the middle of the screen.
-		positionX = (GetSystemMetrics(SM_CXSCREEN) - screenWidth) / 2;
-		positionY = (GetSystemMetrics(SM_CYSCREEN) - screenHeight) / 2;
+		positionX = (GetSystemMetrics(SM_CXSCREEN) - m_clientWidth) / 2;
+		positionY = (GetSystemMetrics(SM_CYSCREEN) - m_clientHeight) / 2;
 	}
 
 	// Create the window with the screen settings and get the handle to it:
@@ -83,7 +88,7 @@ bool Window::Initialize(WNDPROC mainWindowProc)
 		m_applicationName.c_str(), 
 		m_applicationName.c_str(),
 		WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
-		positionX, positionY, screenWidth, screenHeight,
+		positionX, positionY, m_clientWidth, m_clientHeight,
 		nullptr, 
 		nullptr, 
 		m_hInstance, nullptr

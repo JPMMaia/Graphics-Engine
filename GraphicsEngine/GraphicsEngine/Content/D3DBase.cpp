@@ -10,8 +10,10 @@ using namespace std;
 using namespace GraphicsEngine;
 using namespace Microsoft::WRL;
 
-D3DBase::D3DBase(HWND outputWindow) : 
-	m_outputWindow(outputWindow)
+D3DBase::D3DBase(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight) :
+	m_outputWindow(outputWindow),
+	m_clientWidth(clientWidth),
+	m_clientHeight(clientHeight)
 {
 	// Create the ID3D12Device using the D3D12CreateDevice function:
 	CreateDevice();
@@ -37,7 +39,7 @@ D3DBase::D3DBase(HWND outputWindow) :
 	// Create the descriptor heaps the application requires:
 	CreateDescriptorHeaps();
 
-	OnResize();
+	OnResize(clientWidth, clientHeight);
 }
 D3DBase::~D3DBase()
 {
@@ -45,6 +47,22 @@ D3DBase::~D3DBase()
 		FlushCommandQueue();
 }
 
+ID3D12Device* D3DBase::GetDevice() const
+{
+	return m_d3dDevice.Get();
+}
+ID3D12GraphicsCommandList* D3DBase::GetCommandList() const
+{
+	return m_commandList.Get();
+}
+ID3D12CommandAllocator* D3DBase::GetCommandAllocator() const
+{
+	return m_commandAllocator.Get();
+}
+ID3D12CommandQueue* D3DBase::GetCommandQueue() const
+{
+	return m_commandQueue.Get();
+}
 D3D12_CPU_DESCRIPTOR_HANDLE D3DBase::GetCurrentBackBufferView() const
 {
 	return CD3DX12_CPU_DESCRIPTOR_HANDLE(
@@ -56,6 +74,26 @@ D3D12_CPU_DESCRIPTOR_HANDLE D3DBase::GetCurrentBackBufferView() const
 D3D12_CPU_DESCRIPTOR_HANDLE D3DBase::GetDepthStencilView() const
 {
 	return m_dsvHeap->GetCPUDescriptorHandleForHeapStart();
+}
+DXGI_FORMAT D3DBase::GetBackBufferFormat() const
+{
+	return m_backBufferFormat;
+}
+DXGI_FORMAT D3DBase::GetDepthStencilFormat() const
+{
+	return m_depthStencilFormat;
+}
+uint32_t D3DBase::GetSampleCount() const
+{
+	return m_4xMsaaState ? 4 : 1;
+}
+uint32_t D3DBase::GetSampleQuality() const
+{
+	return m_4xMsaaState ? (m_4xMsaaQuality - 1) : 0;
+}
+float D3DBase::GetAspectRatio() const
+{
+	return static_cast<float>(m_clientWidth) / m_clientHeight;
 }
 
 void D3DBase::CreateDevice()
@@ -195,8 +233,8 @@ void D3DBase::CreateSwapChain()
 	sd.BufferDesc.Format = m_backBufferFormat;
 	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	sd.SampleDesc.Count = m_4xMsaaState ? 4 : 1;
-	sd.SampleDesc.Quality = m_4xMsaaState ? (m_4xMsaaQuality - 1) : 0;
+	sd.SampleDesc.Count = GetSampleCount();
+	sd.SampleDesc.Quality = GetSampleQuality();
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.BufferCount = s_swapChainBufferCount;
 	sd.OutputWindow = m_outputWindow;
@@ -246,8 +284,11 @@ void D3DBase::CreateDescriptorHeaps()
 	}
 }
 
-void D3DBase::OnResize()
+void D3DBase::OnResize(uint32_t clientWidth, uint32_t clientHeight)
 {
+	m_clientWidth = clientWidth;
+	m_clientHeight = clientHeight;
+
 	assert(m_d3dDevice);
 	assert(m_dxgiSwapChain);
 	assert(m_commandAllocator);
@@ -321,8 +362,8 @@ void D3DBase::CreateDepthStencilBufferAndView()
 		depthStencilDescription.DepthOrArraySize = 1;
 		depthStencilDescription.MipLevels = 1;
 		depthStencilDescription.Format = m_depthStencilFormat;
-		depthStencilDescription.SampleDesc.Count = m_4xMsaaState ? 4 : 1;
-		depthStencilDescription.SampleDesc.Quality = m_4xMsaaState ? (m_4xMsaaQuality - 1) : 0;
+		depthStencilDescription.SampleDesc.Count = GetSampleCount();
+		depthStencilDescription.SampleDesc.Quality = GetSampleQuality();
 		depthStencilDescription.Layout = D3D12_TEXTURE_LAYOUT::D3D12_TEXTURE_LAYOUT_UNKNOWN;
 		depthStencilDescription.Flags = D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 

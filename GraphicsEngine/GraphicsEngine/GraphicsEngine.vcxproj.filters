@@ -66,9 +66,6 @@
     <ClInclude Include="Content\Helpers.h">
       <Filter>Content\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="Content\GeometryHelper.h">
-      <Filter>Content\DirectX12\Geometry</Filter>
-    </ClInclude>
     <ClInclude Include="Content\Graphics.h">
       <Filter>Content\DirectX12</Filter>
     </ClInclude>
@@ -90,6 +87,24 @@
     <ClInclude Include="Content\Technique.h">
       <Filter>Content\DirectX12\Techniques</Filter>
     </ClInclude>
+    <ClInclude Include="Content\VertexBuffer.h">
+      <Filter>Content\DirectX12\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\SubmeshGeometry.h">
+      <Filter>Content\DirectX12\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\MeshGeometry.h">
+      <Filter>Content\DirectX12\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\IndexBuffer.h">
+      <Filter>Content\DirectX12\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\BaseGeometryBuffer.h">
+      <Filter>Content\DirectX12\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\VertexTypes.h">
+      <Filter>Content\DirectX12\Geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -103,9 +118,6 @@
     </ClCompile>
     <ClCompile Include="Content\SettingsManager.cpp">
       <Filter>Content\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\GeometryHelper.cpp">
-      <Filter>Content\DirectX12\Geometry</Filter>
     </ClCompile>
     <ClCompile Include="Content\Graphics.cpp">
       <Filter>Content\DirectX12</Filter>
@@ -121,6 +133,18 @@
     </ClCompile>
     <ClCompile Include="Content\Technique.cpp">
       <Filter>Content\DirectX12\Techniques</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\MeshGeometry.cpp">
+      <Filter>Content\DirectX12\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\VertexBuffer.cpp">
+      <Filter>Content\DirectX12\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\IndexBuffer.cpp">
+      <Filter>Content\DirectX12\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\BaseGeometryBuffer.cpp">
+      <Filter>Content\DirectX12\Buffers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

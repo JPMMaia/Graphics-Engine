@@ -1,25 +1,43 @@
 ﻿#pragma once
+
+#include "MeshGeometry.h"
 #include "Shader.h"
+#include "UploadBuffer.h"
+#include "DirectXMath.h"
+
+#include <memory>
 
 namespace GraphicsEngine
 {
+	class D3DBase;
+
+	struct PerObjectCBType
+	{
+		DirectX::XMFLOAT4X4 WorldViewProjectionMatrix;
+	};
+
 	class Technique
 	{
 	public:
-		explicit Technique(const std::wstring& vertexShaderFilename, const std::wstring& pixelShaderFilename);
-		Technique(const Technique& other) = delete;
-		Technique& operator=(const Technique& other) = delete;
+		Technique() = default;
+		explicit Technique(const D3DBase& d3dBase);
 
 	protected:
-		void InitializeRootSignature();
-		void InitializePipelineState();
 		void InitializeInputLayout();
+		void InitializeRootSignature(const D3DBase& d3dBase);
+		void InitializeDescriptorHeaps(const D3DBase& d3dBase);
+		void InitializeConstantBuffers(const D3DBase& d3dBase);
+		void InitializePipelineState(const D3DBase& d3dBase);
 
 	private:
-		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
-		Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
-		std::vector<D3D12_INPUT_LAYOUT_DESC> m_inputLayout;
 		Shader m_vertexShader;
 		Shader m_pixelShader;
+
+		std::vector<D3D12_INPUT_ELEMENT_DESC> m_inputLayout;
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
+
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_cbvHeap;
+		std::unique_ptr<UploadBuffer<PerObjectCBType>> m_perObjectCB;
 	};
 }

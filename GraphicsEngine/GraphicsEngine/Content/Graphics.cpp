@@ -65,34 +65,21 @@ void Graphics::Update(const Timer& timer)
 }
 void Graphics::Render(const Timer& timer)
 {
-	auto commandAllocator = m_d3d.GetCommandAllocator();
+	m_d3d.FlushCommandQueue();
+
+	// Prepare scene to be drawn:
+	m_d3d.BeginScene(m_technique.GetPipelineState());
+
 	auto commandList = m_d3d.GetCommandList();
 
-	// Reuse the memory associated with command recording.
-	// We can only reset when the associated command lists have finished execution on the GPU.
-	DX::ThrowIfFailed(commandAllocator->Reset());
+	// Apply technique:
+	m_technique.Render(commandList);
 
-	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
-	// Reusing the command list reuses memory.
-	commandList->Reset(commandAllocator, m_technique.GetPipelineState());
+	// Draw box:
+	m_boxGeometry->Render(commandList);
 
-	commandList->RSSetViewports(1, &m_d3d.GetScreenViewport());
-	commandList->RSSetScissorRects(1, &m_d3d.GetScissorRect());
-
-	// Indicate a state transition on the resource usage:
-	auto transition1 = CD3DX12_RESOURCE_BARRIER::Transition(
-		m_d3d.GetCurrentBackBuffer(), 
-		D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT, 
-		D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET
-		);
-	commandList->ResourceBarrier(1, &transition1);
-
-	// Clear the back buffer and depth buffer:
-	commandList->ClearRenderTargetView(m_d3d.GetCurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
-	commandList->ClearDepthStencilView(m_d3d.GetDepthStencilView(), D3D12_CLEAR_FLAGS::D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAGS::D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
-
-	// Specify the buffers we are going to render to:
-
+	// Present the rendered scene to the screen:
+	m_d3d.EndScene();
 }
 
 void Graphics::InitializeGeometry(const D3DBase& d3dBase)
@@ -146,6 +133,6 @@ void Graphics::InitializeGeometry(const D3DBase& d3dBase)
 	m_boxGeometry = make_unique<MeshGeometry>();
 	m_boxGeometry->Name = "Box Geometry";
 	m_boxGeometry->Vertices = VertexBuffer(d3dBase, vertices.data(), static_cast<uint32_t>(vertices.size()), sizeof(VertexTypes::ColorVertexType));
-	m_boxGeometry->Indices = IndexBuffer(d3dBase, indices.data(), static_cast<uint32_t>(indices.size()), sizeof(uint16_t), DXGI_FORMAT::DXGI_FORMAT_R16G16_UINT);
+	m_boxGeometry->Indices = IndexBuffer(d3dBase, indices.data(), static_cast<uint32_t>(indices.size()), sizeof(uint16_t), DXGI_FORMAT::DXGI_FORMAT_R16_UINT);
 	m_boxGeometry->DrawArgs["Box"] = submesh;
 }

@@ -23,6 +23,24 @@ D3D12_INDEX_BUFFER_VIEW MeshGeometry::GetIndexBufferView() const
 	return indexBufferView;
 }
 
+void MeshGeometry::Render(ID3D12GraphicsCommandList* commandList) const
+{
+	// Set vertex buffer:
+	auto vertexBufferView = GetVertexBufferView();
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+	// Set index buffer:
+	auto indexBufferView = GetIndexBufferView();
+	commandList->IASetIndexBuffer(&indexBufferView);
+
+	// Set primitive topology:
+	commandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// Draw mesh:
+	auto box = DrawArgs.at("Box");
+	commandList->DrawIndexedInstanced(box.IndexCount, 1, box.StartIndexLocation, box.BaseVertexLocation, 0);
+}
+
 void MeshGeometry::DisposeUploaders()
 {
 	this->Vertices.DisposeUploadBuffer();

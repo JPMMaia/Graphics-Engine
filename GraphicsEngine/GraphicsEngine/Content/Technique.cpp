@@ -13,7 +13,16 @@ Technique::Technique(const D3DBase& d3dBase) :
 	InitializeInputLayout();
 	InitializeRootSignature(d3dBase);
 	InitializeDescriptorHeaps(d3dBase);
+	InitializeConstantBuffers(d3dBase);
 	InitializePipelineState(d3dBase);
+}
+
+void Technique::Render(ID3D12GraphicsCommandList* commandList) const
+{
+	ID3D12DescriptorHeap* descriptorHeaps[] = { m_cbvHeap.Get() };
+	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+	commandList->SetGraphicsRootSignature(m_rootSignature.Get());
 }
 
 void Technique::UpdatePerObjectCB(const PerObjectCBType& perObjectCB) const

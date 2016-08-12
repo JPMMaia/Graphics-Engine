@@ -20,6 +20,9 @@ namespace GraphicsEngine
 
 		void FlushCommandQueue();
 
+		void BeginScene(ID3D12PipelineState* initialState) const;
+		void EndScene();
+
 		ID3D12Device* GetDevice() const;
 		ID3D12GraphicsCommandList* GetCommandList() const;
 		ID3D12CommandAllocator* GetCommandAllocator() const;

@@ -5,10 +5,12 @@
 #include <cassert>
 #include <string>
 #include <vector>
+#include <DirectXColors.h>
 
-using namespace std;
+using namespace DirectX;
 using namespace GraphicsEngine;
 using namespace Microsoft::WRL;
+using namespace std;
 
 D3DBase::D3DBase(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight) :
 	m_outputWindow(outputWindow),
@@ -454,6 +456,65 @@ void D3DBase::FlushCommandQueue()
 		WaitForSingleObject(eventHandle, INFINITE);
 		CloseHandle(eventHandle);
 	}
+}
+
+void D3DBase::BeginScene(ID3D12PipelineState* initialState) const
+{
+	// Reuse the memory associated with command recording.
+	// We can only reset when the associated command lists have finished execution on the GPU.
+	DX::ThrowIfFailed(m_commandAllocator->Reset());
+
+	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
+	// Reusing the command list reuses memory.
+	m_commandList->Reset(m_commandAllocator.Get(), initialState);
+
+	m_commandList->RSSetViewports(1, &m_screenViewport);
+	m_commandList->RSSetScissorRects(1, &m_scissorRect);
+
+	// Indicate a state transition on the resource usage:
+	auto backBufferTransition = CD3DX12_RESOURCE_BARRIER::Transition(
+		GetCurrentBackBuffer(),
+		D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT,
+		D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET
+		);
+	m_commandList->ResourceBarrier(1, &backBufferTransition);
+
+	// Clear the back buffer:
+	auto currentBackBufferView = GetCurrentBackBufferView();
+	m_commandList->ClearRenderTargetView(currentBackBufferView, DirectX::Colors::LightSteelBlue, 0, nullptr);
+
+	// Clear the depth stencil buffer:
+	auto depthStencilView = GetDepthStencilView();
+	m_commandList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAGS::D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAGS::D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+
+	// Specify the buffers we are going to render to:
+	m_commandList->OMSetRenderTargets(1, &currentBackBufferView, true, &depthStencilView);
+}
+void D3DBase::EndScene()
+{
+	// Indicate a state transition on the resource usage:
+	auto backBufferTransition = CD3DX12_RESOURCE_BARRIER::Transition(
+		GetCurrentBackBuffer(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, 
+		D3D12_RESOURCE_STATE_PRESENT
+		);
+	m_commandList->ResourceBarrier(1, &backBufferTransition);
+
+	// Done recording commands:
+	DX::ThrowIfFailed(m_commandList->Close());
+
+	// Add the command list to the queue for execution:
+	ID3D12CommandList* commandLists[] = { m_commandList.Get() };
+	m_commandQueue->ExecuteCommandLists(_countof(commandLists), commandLists);
+
+	// Swap the back and front buffers:
+	DX::ThrowIfFailed(m_dxgiSwapChain->Present(0, 0));
+	m_currentBackBuffer = (m_currentBackBuffer + 1) % s_swapChainBufferCount;
+
+	// Wait until frame commands are complete.  This waiting is inefficient and is
+	// done for simplicity.  Later we will show how to organize our rendering code
+	// so we do not have to wait per frame.
+	FlushCommandQueue();
 }
 
 void D3DBase::GetHardwareAdapter(IDXGIFactory4* pFactory, IDXGIAdapter1** ppAdapter)

@@ -25,6 +25,8 @@ namespace GraphicsEngine
 	public:
 		MeshGeometry() = default;
 
+		void Render(ID3D12GraphicsCommandList* commandList) const;
+
 		/// <sumary>
 		/// We can free this memory after we finish upload to the GPU.
 		/// </sumary>

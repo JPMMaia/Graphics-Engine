@@ -34,10 +34,12 @@ int Application::Run()
 
 	auto update = [this](const Timer& timer)
 	{
+		m_graphics.Update(timer);
 	};
 
 	auto render = [this](const Timer& timer)
 	{
+		m_graphics.Render(timer);
 	};
 
 	auto processInput = [this]()

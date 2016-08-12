@@ -4,6 +4,7 @@
 #include "Shader.h"
 #include "UploadBuffer.h"
 #include "DirectXMath.h"
+#include "MathHelper.h"
 
 #include <memory>
 
@@ -13,7 +14,7 @@ namespace GraphicsEngine
 
 	struct PerObjectCBType
 	{
-		DirectX::XMFLOAT4X4 WorldViewProjectionMatrix;
+		DirectX::XMFLOAT4X4 WorldViewProjectionMatrix = MathHelper::Identity4x4();
 	};
 
 	class Technique

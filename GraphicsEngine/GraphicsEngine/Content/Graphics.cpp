@@ -12,6 +12,8 @@ using namespace std;
 Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight) :
 	m_d3d(outputWindow, clientWidth, clientHeight)
 {
+	UpdateProjectionMatrix();
+
 	// Reset the command list to prepare for initialization commands:
 	auto commandList = m_d3d.GetCommandList();
 	DX::ThrowIfFailed(commandList->Reset(m_d3d.GetCommandAllocator(), nullptr));
@@ -27,17 +29,16 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	ID3D12CommandList* commandLists[] = { commandList };
 	auto commandQueue = m_d3d.GetCommandQueue();
 	commandQueue->ExecuteCommandLists(1, commandLists);
+
+	// Wait until the initialization is complete:
+	m_d3d.FlushCommandQueue();
 }
 
 void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
 {
 	m_d3d.OnResize(clientWidth, clientHeight);
 
-	// Update the projection matrix with the new aspect ratio:
-	XMStoreFloat4x4(
-		&m_projectionMatrix,
-		XMMatrixPerspectiveFovLH(0.25f * DirectX::XM_PI, m_d3d.GetAspectRatio(), 1.0f, 1000.0f)
-		);
+	UpdateProjectionMatrix();
 }
 void Graphics::Update(const Timer& timer)
 {
@@ -65,8 +66,6 @@ void Graphics::Update(const Timer& timer)
 }
 void Graphics::Render(const Timer& timer)
 {
-	m_d3d.FlushCommandQueue();
-
 	// Prepare scene to be drawn:
 	m_d3d.BeginScene(m_technique.GetPipelineState());
 
@@ -135,4 +134,13 @@ void Graphics::InitializeGeometry(const D3DBase& d3dBase)
 	m_boxGeometry->Vertices = VertexBuffer(d3dBase, vertices.data(), static_cast<uint32_t>(vertices.size()), sizeof(VertexTypes::ColorVertexType));
 	m_boxGeometry->Indices = IndexBuffer(d3dBase, indices.data(), static_cast<uint32_t>(indices.size()), sizeof(uint16_t), DXGI_FORMAT::DXGI_FORMAT_R16_UINT);
 	m_boxGeometry->DrawArgs["Box"] = submesh;
+}
+
+void Graphics::UpdateProjectionMatrix()
+{
+	// Update the projection matrix with the new aspect ratio:
+	XMStoreFloat4x4(
+		&m_projectionMatrix,
+		XMMatrixPerspectiveFovLH(0.25f * DirectX::XM_PI, m_d3d.GetAspectRatio(), 1.0f, 1000.0f)
+		);
 }

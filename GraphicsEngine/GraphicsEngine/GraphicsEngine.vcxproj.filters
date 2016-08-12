@@ -105,6 +105,9 @@
     <ClInclude Include="Content\VertexTypes.h">
       <Filter>Content\DirectX12\Geometry</Filter>
     </ClInclude>
+    <ClInclude Include="Content\MathHelper.h">
+      <Filter>Content\DirectX12\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -145,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="Content\BaseGeometryBuffer.cpp">
       <Filter>Content\DirectX12\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\MathHelper.cpp">
+      <Filter>Content\DirectX12\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

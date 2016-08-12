@@ -23,6 +23,7 @@ void Technique::Render(ID3D12GraphicsCommandList* commandList) const
 	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	commandList->SetGraphicsRootSignature(m_rootSignature.Get());
+	commandList->SetGraphicsRootDescriptorTable(0, m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
 }
 
 void Technique::UpdatePerObjectCB(const PerObjectCBType& perObjectCB) const

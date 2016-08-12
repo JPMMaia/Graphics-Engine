@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Content/Graphics.h"
-#include "Content/InputHandler.h"
+#include "Content/DXInputHandler.h"
 #include "Content/Timer.h"
 #include "Window.h"
 
@@ -14,7 +14,7 @@ namespace Win32Application
 
 		int Run();
 
-		LRESULT CALLBACK MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+		static LRESULT CALLBACK MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	protected:
 		Application();
@@ -26,7 +26,7 @@ namespace Win32Application
 		const double c_millisecondsPerUpdate = 10.0;
 		GraphicsEngine::Timer m_timer;
 
-		GraphicsEngine::InputHandler m_input;
+		GraphicsEngine::DXInputHandler m_input;
 		GraphicsEngine::Graphics m_graphics;
 	};
 }

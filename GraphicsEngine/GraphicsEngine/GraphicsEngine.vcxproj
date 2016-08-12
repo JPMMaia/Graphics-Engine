@@ -144,6 +144,7 @@
     <ClInclude Include="Content\D3DBase.h" />
     <ClInclude Include="Content\DirectXHelper.h" />
     <ClInclude Include="Content\IndexBuffer.h" />
+    <ClInclude Include="Content\DXInputHandler.h" />
     <ClInclude Include="Content\MathHelper.h" />
     <ClInclude Include="Content\MeshGeometry.h" />
     <ClInclude Include="Content\Graphics.h" />
@@ -168,6 +169,7 @@
     <ClCompile Include="Content\D3DBase.cpp" />
     <ClCompile Include="Content\DirectXHelper.cpp" />
     <ClCompile Include="Content\IndexBuffer.cpp" />
+    <ClCompile Include="Content\DXInputHandler.cpp" />
     <ClCompile Include="Content\MathHelper.cpp" />
     <ClCompile Include="Content\MeshGeometry.cpp" />
     <ClCompile Include="Content\Graphics.cpp" />

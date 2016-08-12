@@ -44,8 +44,10 @@ int Application::Run()
 
 	auto processInput = [this]()
 	{
+		m_input.Frame();
+
 		// Exit application if exit function is pressed:
-		if (m_input.IsKeyDown(VK_ESCAPE))
+		if (m_input.IsKeyDown(DIK_ESCAPE))
 			return false;
 
 		return true;
@@ -74,32 +76,14 @@ int Application::Run()
 
 LRESULT Application::MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	switch (msg)
-	{
-		// Check if a key has been pressed on the keyboard:
-	case WM_KEYDOWN:
-
-		// If a key is pressed send it to the input object so it can record that state:
-		m_input.OnKeyDown(wParam);
-		return 0;
-
-		// Check if a key has been released on the keyboard:
-	case WM_KEYUP:
-
-		// If a key is released then send it to the input object so it can unset the state for that key:
-		m_input.OnKeyUp(wParam);
-		return 0;
-
-		// Any other messages send to the default message handler as our application won't make use of them:
-	default:
-		return DefWindowProc(hwnd, msg, wParam, lParam);
-	}
+	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
 Application Application::s_instance = Application();
 Application::Application() :
 	m_window(MainWindowProc),
 	m_timer(c_millisecondsPerUpdate),
-	m_graphics(m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight())
+	m_graphics(m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight()),
+	m_input(m_window.GetHInstance(), m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight())
 {
 }

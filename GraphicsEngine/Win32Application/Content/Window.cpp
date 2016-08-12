@@ -12,6 +12,10 @@ Window::~Window()
 	Shutdown();
 }
 
+HINSTANCE Window::GetHInstance() const
+{
+	return m_hInstance;
+}
 HWND Window::GetWindowHandle() const
 {
 	return m_windowHandle;

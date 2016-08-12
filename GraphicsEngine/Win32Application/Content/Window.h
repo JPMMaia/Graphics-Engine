@@ -12,6 +12,7 @@ namespace Win32Application
 		explicit Window(WNDPROC mainWindowProc);
 		~Window();
 
+		HINSTANCE GetHInstance() const;
 		HWND GetWindowHandle() const;
 		uint32_t GetClientWidth() const;
 		uint32_t GetClientHeight() const;

@@ -37,6 +37,9 @@
     <Filter Include="Content\DirectX12\Techniques">
       <UniqueIdentifier>{c593a79c-36de-49d9-8cf8-d5b220550f8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\DirectX12\Input">
+      <UniqueIdentifier>{f59321bd-250e-4a28-94a5-56252d3ccd36}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -108,6 +111,9 @@
     <ClInclude Include="Content\MathHelper.h">
       <Filter>Content\DirectX12\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Content\DXInputHandler.h">
+      <Filter>Content\DirectX12\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -151,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="Content\MathHelper.cpp">
       <Filter>Content\DirectX12\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\DXInputHandler.cpp">
+      <Filter>Content\DirectX12\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

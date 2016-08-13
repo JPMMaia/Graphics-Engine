@@ -26,7 +26,7 @@ void Technique::Render(ID3D12GraphicsCommandList* commandList) const
 	commandList->SetGraphicsRootDescriptorTable(0, m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
 }
 
-void Technique::UpdatePerObjectCB(const PerObjectCBType& perObjectCB) const
+void Technique::UpdatePerObjectCB(const ConstantBufferTypes::ObjectConstants& perObjectCB) const
 {
 	m_perObjectCB->CopyData(0, perObjectCB);
 }
@@ -92,9 +92,9 @@ void Technique::InitializeConstantBuffers(const D3DBase& d3dBase)
 {
 	auto d3dDevice = d3dBase.GetDevice();
 
-	m_perObjectCB = std::make_unique<UploadBuffer<PerObjectCBType>>(d3dDevice, 1, true);
+	m_perObjectCB = std::make_unique<UploadBuffer<ConstantBufferTypes::ObjectConstants>>(d3dDevice, 1, true);
 
-	auto cbByteSize = DX::CalculateConstantBufferByteSize(sizeof(PerObjectCBType));
+	auto cbByteSize = DX::CalculateConstantBufferByteSize(sizeof(ConstantBufferTypes::ObjectConstants));
 	auto boxCbIndex = 0;
 	auto cbGpuAddress = m_perObjectCB->GetResource()->GetGPUVirtualAddress();
 	cbGpuAddress += boxCbIndex * cbByteSize;

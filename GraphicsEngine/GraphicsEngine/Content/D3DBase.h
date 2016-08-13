@@ -37,6 +37,8 @@ namespace GraphicsEngine
 		float GetAspectRatio() const;
 		const D3D12_VIEWPORT& GetScreenViewport() const;
 		const D3D12_RECT& GetScissorRect() const;
+		ID3D12Fence* GetFence() const;
+		uint64_t GetCurrentFenceValue() const;
 
 	protected:
 

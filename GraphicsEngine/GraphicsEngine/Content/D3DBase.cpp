@@ -109,6 +109,14 @@ const D3D12_RECT& D3DBase::GetScissorRect() const
 {
 	return m_scissorRect;
 }
+ID3D12Fence* D3DBase::GetFence() const
+{
+	return m_fence.Get();
+}
+uint64_t D3DBase::GetCurrentFenceValue() const
+{
+	return m_currentFence;
+}
 
 void D3DBase::CreateDevice()
 {

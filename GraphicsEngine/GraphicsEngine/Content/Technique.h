@@ -3,19 +3,13 @@
 #include "MeshGeometry.h"
 #include "Shader.h"
 #include "UploadBuffer.h"
-#include "DirectXMath.h"
-#include "MathHelper.h"
+#include "ConstantBufferTypes.h"
 
 #include <memory>
 
 namespace GraphicsEngine
 {
 	class D3DBase;
-
-	struct PerObjectCBType
-	{
-		DirectX::XMFLOAT4X4 WorldViewProjectionMatrix = MathHelper::Identity4x4();
-	};
 
 	class Technique
 	{
@@ -25,7 +19,7 @@ namespace GraphicsEngine
 
 		void Render(ID3D12GraphicsCommandList* commandList) const;
 
-		void UpdatePerObjectCB(const PerObjectCBType& perObjectCB) const;
+		void UpdatePerObjectCB(const ConstantBufferTypes::ObjectConstants& perObjectCB) const;
 
 		ID3D12PipelineState* GetPipelineState() const;
 
@@ -45,6 +39,6 @@ namespace GraphicsEngine
 		Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
 
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_cbvHeap;
-		std::unique_ptr<UploadBuffer<PerObjectCBType>> m_perObjectCB;
+		std::unique_ptr<UploadBuffer<ConstantBufferTypes::ObjectConstants>> m_perObjectCB;
 	};
 }

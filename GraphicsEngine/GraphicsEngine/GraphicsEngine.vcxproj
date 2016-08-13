@@ -140,9 +140,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Content\BaseGeometryBuffer.h" />
+    <ClInclude Include="Content\ConstantBufferTypes.h" />
     <ClInclude Include="Content\d3dx12.h" />
     <ClInclude Include="Content\D3DBase.h" />
     <ClInclude Include="Content\DirectXHelper.h" />
+    <ClInclude Include="Content\FrameResource.h" />
     <ClInclude Include="Content\IndexBuffer.h" />
     <ClInclude Include="Content\DXInputHandler.h" />
     <ClInclude Include="Content\MathHelper.h" />
@@ -151,6 +153,7 @@
     <ClInclude Include="Content\Helpers.h" />
     <ClInclude Include="Content\InputHandler.h" />
     <ClInclude Include="Content\ISceneRenderer.h" />
+    <ClInclude Include="Content\RenderItem.h" />
     <ClInclude Include="Content\SceneRenderer.h" />
     <ClInclude Include="Content\SettingsManager.h" />
     <ClInclude Include="Content\Shader.h" />
@@ -168,12 +171,14 @@
     <ClCompile Include="Content\BaseGeometryBuffer.cpp" />
     <ClCompile Include="Content\D3DBase.cpp" />
     <ClCompile Include="Content\DirectXHelper.cpp" />
+    <ClCompile Include="Content\FrameResource.cpp" />
     <ClCompile Include="Content\IndexBuffer.cpp" />
     <ClCompile Include="Content\DXInputHandler.cpp" />
     <ClCompile Include="Content\MathHelper.cpp" />
     <ClCompile Include="Content\MeshGeometry.cpp" />
     <ClCompile Include="Content\Graphics.cpp" />
     <ClCompile Include="Content\InputHandler.cpp" />
+    <ClCompile Include="Content\RenderItem.cpp" />
     <ClCompile Include="Content\SceneRenderer.cpp" />
     <ClCompile Include="Content\SettingsManager.cpp" />
     <ClCompile Include="Content\Shader.cpp" />

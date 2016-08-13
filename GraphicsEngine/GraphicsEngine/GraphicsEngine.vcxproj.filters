@@ -114,6 +114,15 @@
     <ClInclude Include="Content\DXInputHandler.h">
       <Filter>Content\DirectX12\Input</Filter>
     </ClInclude>
+    <ClInclude Include="Content\FrameResource.h">
+      <Filter>Content\DirectX12\Techniques</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\ConstantBufferTypes.h">
+      <Filter>Content\DirectX12\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\RenderItem.h">
+      <Filter>Content\DirectX12\Geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -160,6 +169,12 @@
     </ClCompile>
     <ClCompile Include="Content\DXInputHandler.cpp">
       <Filter>Content\DirectX12\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\FrameResource.cpp">
+      <Filter>Content\DirectX12\Techniques</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\RenderItem.cpp">
+      <Filter>Content\DirectX12\Geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

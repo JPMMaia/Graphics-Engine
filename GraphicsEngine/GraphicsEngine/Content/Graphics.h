@@ -21,7 +21,13 @@ namespace GraphicsEngine
 		static int GetFrameResourcesCount();
 		
 	private:
+		void InitializeInputLayout();
+		void InitializeRootSignature(const D3DBase& d3dBase);
+		void InitializeDescriptorHeaps(const D3DBase& d3dBase);
+		void InitializeConstantBuffers(const D3DBase& d3dBase);
+		void InitializePipelineState(const D3DBase& d3dBase);
 		void InitializeGeometry(const D3DBase& d3dBase);
+
 		void UpdateProjectionMatrix();
 		void UpdateCamera();
 		void UpdateObjectConstantBuffer();
@@ -29,7 +35,6 @@ namespace GraphicsEngine
 
 	private:
 		D3DBase m_d3d;
-		Technique m_technique;
 		
 		std::unique_ptr<MeshGeometry> m_boxGeometry;
 		
@@ -51,5 +56,15 @@ namespace GraphicsEngine
 		float m_theta = 1.5f * DirectX::XM_PI;
 		float m_phi = DirectX::XM_PIDIV4;
 		float m_radius = 5.0f;
+
+		Shader m_vertexShader;
+		Shader m_pixelShader;
+
+		std::vector<D3D12_INPUT_ELEMENT_DESC> m_inputLayout;
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
+
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_cbvHeap;
+		std::unique_ptr<UploadBuffer<ConstantBufferTypes::ObjectConstants>> m_perObjectCB;
 	};
 }

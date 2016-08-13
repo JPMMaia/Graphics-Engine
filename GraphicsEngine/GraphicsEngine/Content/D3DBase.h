@@ -39,6 +39,8 @@ namespace GraphicsEngine
 		const D3D12_RECT& GetScissorRect() const;
 		ID3D12Fence* GetFence() const;
 		uint64_t GetCurrentFenceValue() const;
+		int32_t GetClientWidth() const;
+		int32_t GetClientHeight() const;
 
 	protected:
 

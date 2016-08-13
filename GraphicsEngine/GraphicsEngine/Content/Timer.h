@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <exception>
-#include <wrl.h>
 
 namespace GraphicsEngine
 {
@@ -18,6 +17,7 @@ namespace GraphicsEngine
 
 		double GetMillisecondsPerUpdate() const;
 		double GetTotalMilliseconds() const;
+		double GetDeltaMilliseconds() const;
 		double GetLeftover() const;
 
 	private:
@@ -88,6 +88,11 @@ namespace GraphicsEngine
 	inline double Timer::GetTotalMilliseconds() const
 	{
 		return TicksToMilliseconds(m_totalTicks);
+	}
+
+	inline double Timer::GetDeltaMilliseconds() const
+	{
+		return TicksToMilliseconds(m_deltaTicks);
 	}
 
 	inline double Timer::GetLeftover() const

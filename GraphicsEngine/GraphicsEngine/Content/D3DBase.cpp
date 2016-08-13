@@ -117,6 +117,14 @@ uint64_t D3DBase::GetCurrentFenceValue() const
 {
 	return m_currentFence;
 }
+int32_t D3DBase::GetClientWidth() const
+{
+	return m_clientWidth;
+}
+int32_t D3DBase::GetClientHeight() const
+{
+	return m_clientHeight;
+}
 
 void D3DBase::CreateDevice()
 {

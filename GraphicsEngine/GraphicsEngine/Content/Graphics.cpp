@@ -4,6 +4,8 @@
 
 #include <array>
 #include <DirectXColors.h>
+#include "GeometryGenerator.h"
+#include <D3Dcompiler.h>
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -11,7 +13,9 @@ using namespace Microsoft::WRL;
 using namespace std;
 
 Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight) :
-	m_d3d(outputWindow, clientWidth, clientHeight)
+	m_d3d(outputWindow, clientWidth, clientHeight),
+	m_vertexShader(L"ColorVertexShader.cso"),
+	m_pixelShader(L"ColorPixelShader.cso")
 {
 	UpdateProjectionMatrix();
 
@@ -19,13 +23,14 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	auto commandList = m_d3d.GetCommandList();
 	DX::ThrowIfFailed(commandList->Reset(m_d3d.GetCommandAllocator(), nullptr));
 
-
-	InitializeInputLayout();
 	InitializeRootSignature(m_d3d);
+	InitializeInputLayout();
+	InitializeGeometry(m_d3d);
+	InitializeRenderItems();
+	// TODO frame resources
 	InitializeDescriptorHeaps(m_d3d);
 	InitializeConstantBuffers(m_d3d);
-	InitializePipelineState(m_d3d);
-	InitializeGeometry(m_d3d);
+	InitializePipelineStateObjects(m_d3d);
 
 	// Execute the initialization commands:
 	DX::ThrowIfFailed(commandList->Close());
@@ -104,18 +109,21 @@ void Graphics::InitializeInputLayout()
 }
 void Graphics::InitializeRootSignature(const D3DBase& d3dBase)
 {
-	// Root parameter can be a table, a root descriptor or a root constant:
-	CD3DX12_ROOT_PARAMETER slotRootParameter[1];
+	CD3DX12_DESCRIPTOR_RANGE cbvTable0;
+	cbvTable0.Init(D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
 
-	// Create a single descriptor table of CBVs:
-	CD3DX12_DESCRIPTOR_RANGE cbvTable;
-	cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-	slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable);
+	CD3DX12_DESCRIPTOR_RANGE cbvTable1;
+	cbvTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
+
+	// Create root CBVs:
+	CD3DX12_ROOT_PARAMETER slotRootParameter[2];
+	slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable0);
+	slotRootParameter[1].InitAsDescriptorTable(1, &cbvTable1);
 
 	// A root signature is an array of root parameters:
-	CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDescription(1, slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+	CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDescription(2, slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-	// Create a root signature with a single slot which points to a descriptor range consisting of a single constant buffer:
+	// Create root signature:
 	{
 		ComPtr<ID3DBlob> serializedRootSignature;
 		ComPtr<ID3DBlob> errorBlob = nullptr;
@@ -163,7 +171,7 @@ void Graphics::InitializeConstantBuffers(const D3DBase& d3dBase)
 
 	d3dDevice->CreateConstantBufferView(&cbvDescription, m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
 }
-void Graphics::InitializePipelineState(const D3DBase& d3dBase)
+void Graphics::InitializePipelineStateObjects(const D3DBase& d3dBase)
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDescription = {};
 	pipelineStateDescription.InputLayout.pInputElementDescs = &m_inputLayout[0];
@@ -188,57 +196,183 @@ void Graphics::InitializePipelineState(const D3DBase& d3dBase)
 }
 void Graphics::InitializeGeometry(const D3DBase& d3dBase)
 {
-	array<VertexTypes::ColorVertexType, 8> vertices =
+	auto box = GeometryGenerator::CreateBox(1.5f, 0.5f, 1.5f, 3);
+	auto grid = GeometryGenerator::CreateGrid(20.0f, 30.0f, 60, 40);
+	auto sphere = GeometryGenerator::CreateSphere(0.5f, 20, 20);
+	auto cylinder = GeometryGenerator::CreateCylinder(0.5f, 0.3f, 3.0f, 20, 20);
+
+	//
+	// We are concatenating all the geometry into one big vertex/index buffer.  So
+	// define the regions in the buffer each submesh covers.
+	//
+
+	// Cache the vertex offsets to each object in the concatenated vertex buffer.
+	uint32_t boxVertexOffset = 0;
+	auto gridVertexOffset = static_cast<uint32_t>(box.Vertices.size());
+	auto sphereVertexOffset = gridVertexOffset + static_cast<uint32_t>(grid.Vertices.size());
+	auto cylinderVertexOffset = sphereVertexOffset + static_cast<uint32_t>(sphere.Vertices.size());
+
+	// Cache the starting index for each object in the concatenated index buffer.
+	uint32_t boxIndexOffset = 0;
+	auto gridIndexOffset = static_cast<uint32_t>(box.Indices32.size());
+	auto sphereIndexOffset = gridIndexOffset + static_cast<uint32_t>(grid.Indices32.size());
+	auto cylinderIndexOffset = sphereIndexOffset + static_cast<uint32_t>(sphere.Indices32.size());
+
+	// Define the SubmeshGeometry that cover different 
+	// regions of the vertex/index buffers.
+
+	SubmeshGeometry boxSubmesh;
+	boxSubmesh.IndexCount = static_cast<uint32_t>(box.Indices32.size());
+	boxSubmesh.StartIndexLocation = boxIndexOffset;
+	boxSubmesh.BaseVertexLocation = boxVertexOffset;
+
+	SubmeshGeometry gridSubmesh;
+	gridSubmesh.IndexCount = static_cast<uint32_t>(grid.Indices32.size());
+	gridSubmesh.StartIndexLocation = gridIndexOffset;
+	gridSubmesh.BaseVertexLocation = gridVertexOffset;
+
+	SubmeshGeometry sphereSubmesh;
+	sphereSubmesh.IndexCount = static_cast<uint32_t>(sphere.Indices32.size());
+	sphereSubmesh.StartIndexLocation = sphereIndexOffset;
+	sphereSubmesh.BaseVertexLocation = sphereVertexOffset;
+
+	SubmeshGeometry cylinderSubmesh;
+	cylinderSubmesh.IndexCount = static_cast<uint32_t>(cylinder.Indices32.size());
+	cylinderSubmesh.StartIndexLocation = cylinderIndexOffset;
+	cylinderSubmesh.BaseVertexLocation = cylinderVertexOffset;
+
+	//
+	// Extract the vertex elements we are interested in and pack the
+	// vertices of all the meshes into one vertex buffer.
+	//
+
+	auto totalVertexCount =
+		box.Vertices.size() +
+		grid.Vertices.size() +
+		sphere.Vertices.size() +
+		cylinder.Vertices.size();
+
+	vector<VertexTypes::ColorVertexType> vertices(totalVertexCount);
+
+	UINT k = 0;
+	for (size_t i = 0; i < box.Vertices.size(); ++i, ++k)
 	{
-		{
-			{ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::White) },
-			{ XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Black) },
-			{ XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Red) },
-			{ XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::Green) },
-			{ XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Blue) },
-			{ XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Yellow) },
-			{ XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Cyan) },
-			{ XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Magenta) }
-		}
-	};
+		vertices[k].Position = box.Vertices[i].Position;
+		vertices[k].Color = XMFLOAT4(Colors::DarkGreen);
+	}
 
-	array<uint16_t, 36> indices =
+	for (size_t i = 0; i < grid.Vertices.size(); ++i, ++k)
 	{
-		// front face
-		0, 1, 2,
-		0, 2, 3,
+		vertices[k].Position = grid.Vertices[i].Position;
+		vertices[k].Color = XMFLOAT4(Colors::ForestGreen);
+	}
 
-		// back face
-		4, 6, 5,
-		4, 7, 6,
+	for (size_t i = 0; i < sphere.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Position = sphere.Vertices[i].Position;
+		vertices[k].Color = XMFLOAT4(Colors::Crimson);
+	}
 
-		// left face
-		4, 5, 1,
-		4, 1, 0,
+	for (size_t i = 0; i < cylinder.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Position = cylinder.Vertices[i].Position;
+		vertices[k].Color = XMFLOAT4(Colors::SteelBlue);
+	}
 
-		// right face
-		3, 2, 6,
-		3, 6, 7,
+	vector<uint16_t> indices;
+	indices.insert(indices.end(), std::begin(box.GetIndices16()), std::end(box.GetIndices16()));
+	indices.insert(indices.end(), std::begin(grid.GetIndices16()), std::end(grid.GetIndices16()));
+	indices.insert(indices.end(), std::begin(sphere.GetIndices16()), std::end(sphere.GetIndices16()));
+	indices.insert(indices.end(), std::begin(cylinder.GetIndices16()), std::end(cylinder.GetIndices16()));
 
-		// top face
-		1, 5, 6,
-		1, 6, 2,
+	auto geometry = std::make_unique<MeshGeometry>();
+	geometry->Name = "ShapeGeo";
+	geometry->Vertices = VertexBuffer(d3dBase, vertices.data(), static_cast<uint32_t>(vertices.size()), sizeof(VertexTypes::ColorVertexType));
+	geometry->Indices = IndexBuffer(d3dBase, indices.data(), static_cast<uint32_t>(indices.size()), sizeof(uint16_t), DXGI_FORMAT::DXGI_FORMAT_R16_UINT);
+	geometry->DrawArgs["Box"] = boxSubmesh;
+	geometry->DrawArgs["Grid"] = gridSubmesh;
+	geometry->DrawArgs["Sphere"] = sphereSubmesh;
+	geometry->DrawArgs["Cylinder"] = cylinderSubmesh;
 
-		// bottom face
-		4, 0, 3,
-		4, 3, 7
-	};
+	m_geometries[geometry->Name] = std::move(geometry);
+}
+void Graphics::InitializeRenderItems()
+{
+	auto boxRenderItem = std::make_unique<RenderItem>();
+	XMStoreFloat4x4(&boxRenderItem->WorldMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f)*XMMatrixTranslation(0.0f, 0.5f, 0.0f));
+	boxRenderItem->ObjectCBIndex = 0;
+	boxRenderItem->Mesh = m_geometries["ShapeGeo"].get();
+	boxRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	boxRenderItem->IndexCount = boxRenderItem->Mesh->DrawArgs["Box"].IndexCount;
+	boxRenderItem->StartIndexLocation = boxRenderItem->Mesh->DrawArgs["Box"].StartIndexLocation;
+	boxRenderItem->BaseVertexLocation = boxRenderItem->Mesh->DrawArgs["Box"].BaseVertexLocation;
+	m_allRenderItems.push_back(std::move(boxRenderItem));
 
-	SubmeshGeometry submesh;
-	submesh.IndexCount = static_cast<uint32_t>(indices.size());
-	submesh.StartIndexLocation = 0;
-	submesh.BaseVertexLocation = 0;
+	auto gridRitem = std::make_unique<RenderItem>();
+	gridRitem->WorldMatrix = MathHelper::Identity4x4();
+	gridRitem->ObjectCBIndex = 1;
+	gridRitem->Mesh = m_geometries["ShapeGeo"].get();
+	gridRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	gridRitem->IndexCount = gridRitem->Mesh->DrawArgs["Grid"].IndexCount;
+	gridRitem->StartIndexLocation = gridRitem->Mesh->DrawArgs["Grid"].StartIndexLocation;
+	gridRitem->BaseVertexLocation = gridRitem->Mesh->DrawArgs["Grid"].BaseVertexLocation;
+	m_allRenderItems.push_back(std::move(gridRitem));
 
-	m_boxGeometry = make_unique<MeshGeometry>();
-	m_boxGeometry->Name = "Box Geometry";
-	m_boxGeometry->Vertices = VertexBuffer(d3dBase, vertices.data(), static_cast<uint32_t>(vertices.size()), sizeof(VertexTypes::ColorVertexType));
-	m_boxGeometry->Indices = IndexBuffer(d3dBase, indices.data(), static_cast<uint32_t>(indices.size()), sizeof(uint16_t), DXGI_FORMAT::DXGI_FORMAT_R16_UINT);
-	m_boxGeometry->DrawArgs["Box"] = submesh;
+	UINT objCBIndex = 2;
+	for (auto i = 0; i < 5; ++i)
+	{
+		auto leftCylRitem = std::make_unique<RenderItem>();
+		auto rightCylRitem = std::make_unique<RenderItem>();
+		auto leftSphereRitem = std::make_unique<RenderItem>();
+		auto rightSphereRitem = std::make_unique<RenderItem>();
+
+		XMMATRIX leftCylWorld = XMMatrixTranslation(-5.0f, 1.5f, -10.0f + i*5.0f);
+		XMMATRIX rightCylWorld = XMMatrixTranslation(+5.0f, 1.5f, -10.0f + i*5.0f);
+
+		XMMATRIX leftSphereWorld = XMMatrixTranslation(-5.0f, 3.5f, -10.0f + i*5.0f);
+		XMMATRIX rightSphereWorld = XMMatrixTranslation(+5.0f, 3.5f, -10.0f + i*5.0f);
+
+		XMStoreFloat4x4(&leftCylRitem->WorldMatrix, rightCylWorld);
+		leftCylRitem->ObjectCBIndex = objCBIndex++;
+		leftCylRitem->Mesh = m_geometries["ShapeGeo"].get();
+		leftCylRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		leftCylRitem->IndexCount = leftCylRitem->Mesh->DrawArgs["Cylinder"].IndexCount;
+		leftCylRitem->StartIndexLocation = leftCylRitem->Mesh->DrawArgs["Cylinder"].StartIndexLocation;
+		leftCylRitem->BaseVertexLocation = leftCylRitem->Mesh->DrawArgs["Cylinder"].BaseVertexLocation;
+
+		XMStoreFloat4x4(&rightCylRitem->WorldMatrix, leftCylWorld);
+		rightCylRitem->ObjectCBIndex = objCBIndex++;
+		rightCylRitem->Mesh = m_geometries["ShapeGeo"].get();
+		rightCylRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		rightCylRitem->IndexCount = rightCylRitem->Mesh->DrawArgs["Cylinder"].IndexCount;
+		rightCylRitem->StartIndexLocation = rightCylRitem->Mesh->DrawArgs["Cylinder"].StartIndexLocation;
+		rightCylRitem->BaseVertexLocation = rightCylRitem->Mesh->DrawArgs["Cylinder"].BaseVertexLocation;
+
+		XMStoreFloat4x4(&leftSphereRitem->WorldMatrix, leftSphereWorld);
+		leftSphereRitem->ObjectCBIndex = objCBIndex++;
+		leftSphereRitem->Mesh = m_geometries["ShapeGeo"].get();
+		leftSphereRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		leftSphereRitem->IndexCount = leftSphereRitem->Mesh->DrawArgs["Sphere"].IndexCount;
+		leftSphereRitem->StartIndexLocation = leftSphereRitem->Mesh->DrawArgs["Sphere"].StartIndexLocation;
+		leftSphereRitem->BaseVertexLocation = leftSphereRitem->Mesh->DrawArgs["Sphere"].BaseVertexLocation;
+
+		XMStoreFloat4x4(&rightSphereRitem->WorldMatrix, rightSphereWorld);
+		rightSphereRitem->ObjectCBIndex = objCBIndex++;
+		rightSphereRitem->Mesh = m_geometries["ShapeGeo"].get();
+		rightSphereRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		rightSphereRitem->IndexCount = rightSphereRitem->Mesh->DrawArgs["Sphere"].IndexCount;
+		rightSphereRitem->StartIndexLocation = rightSphereRitem->Mesh->DrawArgs["Sphere"].StartIndexLocation;
+		rightSphereRitem->BaseVertexLocation = rightSphereRitem->Mesh->DrawArgs["Sphere"].BaseVertexLocation;
+
+		m_allRenderItems.push_back(std::move(leftCylRitem));
+		m_allRenderItems.push_back(std::move(rightCylRitem));
+		m_allRenderItems.push_back(std::move(leftSphereRitem));
+		m_allRenderItems.push_back(std::move(rightSphereRitem));
+	}
+
+	// All the render items are opaque.
+	for (auto& e : m_allRenderItems)
+		m_opaqueRenderItems.push_back(e.get());
 }
 
 void Graphics::UpdateProjectionMatrix()
@@ -311,8 +445,8 @@ void Graphics::UpdateMainPassConstantBuffer(const Timer& timer)
 	m_passConstants.InverseRenderTargetSize = XMFLOAT2(1.0f / static_cast<float>(m_d3d.GetClientWidth()), 1.0f / static_cast<float>(m_d3d.GetClientHeight()));
 	m_passConstants.NearZ = 1.0f;
 	m_passConstants.FarZ = 1000.0f;
-	m_passConstants.TotalTime = timer.GetTotalMilliseconds();
-	m_passConstants.DeltaTime = timer.GetDeltaMilliseconds();
+	m_passConstants.TotalTime = static_cast<float>(timer.GetTotalMilliseconds());
+	m_passConstants.DeltaTime = static_cast<float>(timer.GetDeltaMilliseconds());
 
 	auto currentPassCB = m_currentFrameResource->PassConstants.get();
 	currentPassCB->CopyData(0, m_passConstants);

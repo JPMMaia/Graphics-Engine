@@ -7,9 +7,6 @@
     <Filter Include="Common">
       <UniqueIdentifier>{ec3aa1d3-4132-4dee-99ef-3d2ac45f6e1f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\Shaders">
-      <UniqueIdentifier>{5ca19ed7-13f2-4b69-8e57-f930434741a7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Content\Timer">
       <UniqueIdentifier>{ebdcfab2-a651-4961-be44-e01b9e0f0170}</UniqueIdentifier>
     </Filter>
@@ -39,6 +36,9 @@
     </Filter>
     <Filter Include="Content\DirectX12\Input">
       <UniqueIdentifier>{f59321bd-250e-4a28-94a5-56252d3ccd36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\DirectX12\Shaders\HLSL">
+      <UniqueIdentifier>{5ca19ed7-13f2-4b69-8e57-f930434741a7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -87,9 +87,6 @@
     <ClInclude Include="Content\D3DBase.h">
       <Filter>Content\DirectX12</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Technique.h">
-      <Filter>Content\DirectX12\Techniques</Filter>
-    </ClInclude>
     <ClInclude Include="Content\VertexBuffer.h">
       <Filter>Content\DirectX12\Buffers</Filter>
     </ClInclude>
@@ -123,6 +120,9 @@
     <ClInclude Include="Content\RenderItem.h">
       <Filter>Content\DirectX12\Geometry</Filter>
     </ClInclude>
+    <ClInclude Include="Content\GeometryGenerator.h">
+      <Filter>Content\DirectX12\Geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -149,9 +149,6 @@
     <ClCompile Include="Content\D3DBase.cpp">
       <Filter>Content\DirectX12</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Technique.cpp">
-      <Filter>Content\DirectX12\Techniques</Filter>
-    </ClCompile>
     <ClCompile Include="Content\MeshGeometry.cpp">
       <Filter>Content\DirectX12\Geometry</Filter>
     </ClCompile>
@@ -176,13 +173,16 @@
     <ClCompile Include="Content\RenderItem.cpp">
       <Filter>Content\DirectX12\Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="Content\GeometryGenerator.cpp">
+      <Filter>Content\DirectX12\Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Content\Shaders\ColorVertexShader.hlsl">
-      <Filter>Content\Shaders</Filter>
+      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="Content\Shaders\ColorPixelShader.hlsl">
-      <Filter>Content\Shaders</Filter>
+      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -1,11 +1,14 @@
 ﻿#pragma once
 
 #include "D3DBase.h"
-#include "Technique.h"
+#include "MeshGeometry.h"
 #include "Timer.h"
 #include "MathHelper.h"
 #include "FrameResource.h"
 #include "RenderItem.h"
+#include "Shader.h"
+
+#include <vector>
 
 namespace GraphicsEngine
 {
@@ -25,8 +28,9 @@ namespace GraphicsEngine
 		void InitializeRootSignature(const D3DBase& d3dBase);
 		void InitializeDescriptorHeaps(const D3DBase& d3dBase);
 		void InitializeConstantBuffers(const D3DBase& d3dBase);
-		void InitializePipelineState(const D3DBase& d3dBase);
+		void InitializePipelineStateObjects(const D3DBase& d3dBase);
 		void InitializeGeometry(const D3DBase& d3dBase);
+		void InitializeRenderItems();
 
 		void UpdateProjectionMatrix();
 		void UpdateCamera();
@@ -48,7 +52,7 @@ namespace GraphicsEngine
 		int m_currentFrameResourceIndex = 0;
 
 		std::vector<std::unique_ptr<RenderItem>> m_allRenderItems;
-		std::vector<RenderItem*> m_opaqueItems;
+		std::vector<RenderItem*> m_opaqueRenderItems;
 
 		ConstantBufferTypes::PassConstants m_passConstants;
 
@@ -66,5 +70,7 @@ namespace GraphicsEngine
 
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_cbvHeap;
 		std::unique_ptr<UploadBuffer<ConstantBufferTypes::ObjectConstants>> m_perObjectCB;
+
+		std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> m_geometries;
 	};
 }

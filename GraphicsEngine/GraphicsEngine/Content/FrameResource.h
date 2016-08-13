@@ -1,6 +1,9 @@
 ﻿#pragma once
+
 #include "UploadBuffer.h"
 #include "ConstantBufferTypes.h"
+
+#include <memory>
 
 namespace GraphicsEngine
 {

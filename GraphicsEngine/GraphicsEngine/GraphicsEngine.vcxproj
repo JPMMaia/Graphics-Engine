@@ -145,6 +145,7 @@
     <ClInclude Include="Content\D3DBase.h" />
     <ClInclude Include="Content\DirectXHelper.h" />
     <ClInclude Include="Content\FrameResource.h" />
+    <ClInclude Include="Content\GeometryGenerator.h" />
     <ClInclude Include="Content\IndexBuffer.h" />
     <ClInclude Include="Content\DXInputHandler.h" />
     <ClInclude Include="Content\MathHelper.h" />
@@ -158,7 +159,6 @@
     <ClInclude Include="Content\SettingsManager.h" />
     <ClInclude Include="Content\Shader.h" />
     <ClInclude Include="Content\SubmeshGeometry.h" />
-    <ClInclude Include="Content\Technique.h" />
     <ClInclude Include="Content\Timer.h" />
     <ClInclude Include="Content\UploadBuffer.h" />
     <ClInclude Include="Content\VertexBuffer.h" />
@@ -172,6 +172,7 @@
     <ClCompile Include="Content\D3DBase.cpp" />
     <ClCompile Include="Content\DirectXHelper.cpp" />
     <ClCompile Include="Content\FrameResource.cpp" />
+    <ClCompile Include="Content\GeometryGenerator.cpp" />
     <ClCompile Include="Content\IndexBuffer.cpp" />
     <ClCompile Include="Content\DXInputHandler.cpp" />
     <ClCompile Include="Content\MathHelper.cpp" />
@@ -182,7 +183,6 @@
     <ClCompile Include="Content\SceneRenderer.cpp" />
     <ClCompile Include="Content\SettingsManager.cpp" />
     <ClCompile Include="Content\Shader.cpp" />
-    <ClCompile Include="Content\Technique.cpp" />
     <ClCompile Include="Content\VertexBuffer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

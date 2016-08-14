@@ -11,8 +11,8 @@ DXInputHandler::DXInputHandler(HINSTANCE hInstance, HWND hWindow, uint32_t clien
 	m_screenHeight = clientHeight;
 
 	// Initialize the location of the mouse on the screen:
-	m_mouseX = 0;
-	m_mouseY = 0;
+	m_mousePositionX = 0;
+	m_mousePositionY = 0;
 
 	// Initialize the main direct input interface:
 	DX::ThrowIfFailed(DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, reinterpret_cast<void**>(m_directInput.GetAddressOf()), nullptr));
@@ -102,18 +102,24 @@ void DXInputHandler::ReadMouse()
 void DXInputHandler::ProcessInput()
 {
 	// Update the location of the mouse cursor based on the change of the mouse location during the frame:
-	m_mouseX += m_mouseState.lX;
-	m_mouseY += m_mouseState.lY;
+	m_mousePositionX += m_mouseState.lX;
+	m_mousePositionY += m_mouseState.lY;
 
 	// Ensure the mouse location doesn't exceed the screen width or height:
-	if (m_mouseX < 0) m_mouseX = 0;
-	if (m_mouseY < 0) m_mouseY = 0;
-	if (m_mouseX > static_cast<int>(m_screenWidth)) m_mouseX = m_screenWidth;
-	if (m_mouseY > static_cast<int>(m_screenHeight)) m_mouseY = m_screenHeight;
+	if (m_mousePositionX < 0) m_mousePositionX = 0;
+	if (m_mousePositionY < 0) m_mousePositionY = 0;
+	if (m_mousePositionX > static_cast<int>(m_screenWidth)) m_mousePositionX = m_screenWidth;
+	if (m_mousePositionY > static_cast<int>(m_screenHeight)) m_mousePositionY = m_screenHeight;
 }
 
-void DXInputHandler::GetMouseLocation(uint32_t& mouseX, uint32_t& mouseY) const
+void DXInputHandler::GetMousePosition(uint32_t& mouseX, uint32_t& mouseY) const
 {
-	mouseX = static_cast<uint32_t>(m_mouseX);
-	mouseY = static_cast<uint32_t>(m_mouseY);
+	mouseX = static_cast<uint32_t>(m_mousePositionX);
+	mouseY = static_cast<uint32_t>(m_mousePositionY);
+}
+
+void DXInputHandler::GetMouseVelocity(int& deltaX, int& deltaY) const
+{
+	deltaX = m_mouseState.lX;
+	deltaY = m_mouseState.lY;
 }

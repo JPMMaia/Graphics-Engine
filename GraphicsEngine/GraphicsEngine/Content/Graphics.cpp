@@ -13,10 +13,9 @@ using namespace Microsoft::WRL;
 using namespace std;
 
 Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight) :
-	m_d3d(outputWindow, clientWidth, clientHeight)
+	m_d3d(outputWindow, clientWidth, clientHeight),
+	m_camera(m_d3d.GetAspectRatio(), 0.25f*DirectX::XM_PI, 1.0f, 1000.0f, XMMatrixIdentity())
 {
-	UpdateProjectionMatrix();
-
 	// Reset the command list to prepare for initialization commands:
 	auto commandList = m_d3d.GetCommandList();
 	DX::ThrowIfFailed(commandList->Reset(m_d3d.GetCommandAllocator(), nullptr));
@@ -43,8 +42,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
 {
 	m_d3d.OnResize(clientWidth, clientHeight);
-
-	UpdateProjectionMatrix();
+	m_camera.SetAspectRatio(m_d3d.GetAspectRatio());
 }
 void Graphics::Update(const Timer& timer)
 {
@@ -109,6 +107,10 @@ void Graphics::Render(const Timer& timer)
 	m_d3d.GetCommandQueue()->Signal(m_d3d.GetFence(), currentFence);
 }
 
+Camera* Graphics::GetCamera()
+{
+	return &m_camera;
+}
 void Graphics::SetWireframeMode(bool enable)
 {
 	m_wireframeEnabled = enable;
@@ -450,29 +452,9 @@ void Graphics::InitializeFrameResources()
 	m_currentFrameResource = m_frameResources[m_currentFrameResourceIndex].get();
 }
 
-void Graphics::UpdateProjectionMatrix()
-{
-	// Update the projection matrix with the new aspect ratio:
-	XMStoreFloat4x4(
-		&m_projectionMatrix,
-		XMMatrixPerspectiveFovLH(0.25f * DirectX::XM_PI, m_d3d.GetAspectRatio(), 1.0f, 1000.0f)
-		);
-}
-
 void Graphics::UpdateCamera()
 {
-	// Convert Spherical to Cartesian coordinates:
-	m_eyePosition.x = m_radius*sinf(m_phi)*cosf(m_theta);
-	m_eyePosition.z = m_radius*sinf(m_phi)*sinf(m_theta);
-	m_eyePosition.y = m_radius*cosf(m_phi);
-
-	// Build the view matrix:
-	auto position = XMVectorSet(m_eyePosition.x, m_eyePosition.y, m_eyePosition.z, 1.0f);
-	auto target = XMVectorZero();
-	auto up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-
-	auto view = XMMatrixLookAtLH(position, target, up);
-	XMStoreFloat4x4(&m_viewMatrix, view);
+	m_camera.Update();
 }
 void Graphics::UpdateObjectConstantBuffer()
 {
@@ -497,11 +479,11 @@ void Graphics::UpdateObjectConstantBuffer()
 }
 void Graphics::UpdateMainPassConstantBuffer(const Timer& timer)
 {
-	auto viewMatrix = XMLoadFloat4x4(&m_viewMatrix);
+	auto viewMatrix = m_camera.GetViewMatrix();
 	auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
 	auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
 
-	auto projectionMatrix = XMLoadFloat4x4(&m_projectionMatrix);
+	auto projectionMatrix = m_camera.GetProjectionMatrix();
 	auto projectionMatrixDeterminant = XMMatrixDeterminant(projectionMatrix);
 	auto inverseProjectionMatrix = XMMatrixInverse(&projectionMatrixDeterminant, projectionMatrix);
 
@@ -515,7 +497,7 @@ void Graphics::UpdateMainPassConstantBuffer(const Timer& timer)
 	XMStoreFloat4x4(&m_passConstants.InverseProjectionMatrix, XMMatrixTranspose(inverseProjectionMatrix));
 	XMStoreFloat4x4(&m_passConstants.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
 	XMStoreFloat4x4(&m_passConstants.InverseProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
-	m_passConstants.EyePositionW = m_eyePosition;
+	XMStoreFloat3(&m_passConstants.EyePositionW, m_camera.GetPosition());
 	m_passConstants.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3d.GetClientWidth()), static_cast<float>(m_d3d.GetClientHeight()));
 	m_passConstants.InverseRenderTargetSize = XMFLOAT2(1.0f / static_cast<float>(m_d3d.GetClientWidth()), 1.0f / static_cast<float>(m_d3d.GetClientHeight()));
 	m_passConstants.NearZ = 1.0f;
@@ -544,4 +526,3 @@ void Graphics::DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std
 		renderItem->Render(commandList);
 	}
 }
-

@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Camera.h"
 #include "D3DBase.h"
 #include "MeshGeometry.h"
 #include "Timer.h"
@@ -24,6 +25,7 @@ namespace GraphicsEngine
 		void SetWireframeMode(bool enable);
 
 		static int GetFrameResourcesCount();
+		Camera* GetCamera();
 		
 	private:
 		void InitializeShadersAndInputLayout();
@@ -35,7 +37,6 @@ namespace GraphicsEngine
 		void InitializeRenderItems();
 		void InitializeFrameResources();
 
-		void UpdateProjectionMatrix();
 		void UpdateCamera();
 		void UpdateObjectConstantBuffer();
 		void UpdateMainPassConstantBuffer(const Timer& timer);
@@ -44,11 +45,6 @@ namespace GraphicsEngine
 
 	private:
 		D3DBase m_d3d;
-		
-		std::unique_ptr<MeshGeometry> m_boxGeometry;
-		
-		DirectX::XMFLOAT4X4 m_viewMatrix = MathHelper::Identity4x4();
-		DirectX::XMFLOAT4X4 m_projectionMatrix = MathHelper::Identity4x4();
 
 		static const int s_frameResourcesCount = 3;
 		std::vector<std::unique_ptr<FrameResource>> m_frameResources;
@@ -59,11 +55,6 @@ namespace GraphicsEngine
 		std::vector<RenderItem*> m_opaqueRenderItems;
 
 		ConstantBufferTypes::PassConstants m_passConstants;
-
-		DirectX::XMFLOAT3 m_eyePosition = { 0.0f, 0.0f, 0.0f };
-		float m_theta = 1.5f * DirectX::XM_PI;
-		float m_phi = 0.2f * DirectX::XM_PI;
-		float m_radius = 15.0f;
 
 		std::vector<D3D12_INPUT_ELEMENT_DESC> m_inputLayout;
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
@@ -77,5 +68,6 @@ namespace GraphicsEngine
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>> m_pipelineStateObjects;
 
 		bool m_wireframeEnabled = false;
+		Camera m_camera;
 	};
 }

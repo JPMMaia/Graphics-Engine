@@ -2,6 +2,7 @@
 
 using namespace Win32Application;
 using namespace GraphicsEngine;
+using namespace DirectX;
 
 LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -54,6 +55,23 @@ int Application::Run()
 			m_graphics.SetWireframeMode(false);
 		else if (m_input.IsKeyDown(DIK_2))
 			m_graphics.SetWireframeMode(true);
+
+		auto camera = m_graphics.GetCamera();
+		static const auto scalar = 0.01f;
+		if (m_input.IsKeyDown(DIK_W))
+			camera->MoveForward(scalar);
+		if (m_input.IsKeyDown(DIK_S))
+			camera->MoveForward(-scalar);
+		if (m_input.IsKeyDown(DIK_A))
+			camera->MoveLeft(scalar);
+		if (m_input.IsKeyDown(DIK_D))
+			camera->MoveLeft(-scalar);
+		
+		static const auto mouseSensibility = 0.005f;
+		int mouseDeltaX, mouseDeltaY;
+		m_input.GetMouseVelocity(mouseDeltaX, mouseDeltaY);
+		camera->RotateWorldY(-mouseDeltaX * mouseSensibility);
+		camera->RotateLocalX(mouseDeltaY * mouseSensibility);
 
 		return true;
 	};

@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Content\BaseGeometryBuffer.h" />
+    <ClInclude Include="Content\Camera.h" />
     <ClInclude Include="Content\ConstantBufferTypes.h" />
     <ClInclude Include="Content\d3dx12.h" />
     <ClInclude Include="Content\D3DBase.h" />
@@ -169,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Content\BaseGeometryBuffer.cpp" />
+    <ClCompile Include="Content\Camera.cpp" />
     <ClCompile Include="Content\D3DBase.cpp" />
     <ClCompile Include="Content\DirectXHelper.cpp" />
     <ClCompile Include="Content\FrameResource.cpp" />

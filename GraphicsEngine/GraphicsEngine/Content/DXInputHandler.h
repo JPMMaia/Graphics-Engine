@@ -21,7 +21,8 @@ namespace GraphicsEngine
 		template<typename VirtualKey, typename = std::enable_if_t<std::is_enum<VirtualKey>::value || std::is_integral<VirtualKey>::value>>
 		bool IsKeyDown(VirtualKey key) const;
 
-		void GetMouseLocation(uint32_t& mouseX, uint32_t& mouseY) const;
+		void GetMousePosition(uint32_t& mouseX, uint32_t& mouseY) const;
+		void GetMouseVelocity(int& deltaX, int& deltaY) const;
 
 	private:
 		void ReadKeyboard();
@@ -37,7 +38,7 @@ namespace GraphicsEngine
 		DIMOUSESTATE2 m_mouseState;
 
 		uint32_t m_screenWidth, m_screenHeight;
-		int m_mouseX, m_mouseY;
+		int m_mousePositionX, m_mousePositionY;
 	};
 
 	template <typename VirtualKey, typename>

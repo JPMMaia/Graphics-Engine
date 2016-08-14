@@ -40,6 +40,9 @@
     <Filter Include="Content\DirectX12\Shaders\HLSL">
       <UniqueIdentifier>{5ca19ed7-13f2-4b69-8e57-f930434741a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\DirectX12\Cameras">
+      <UniqueIdentifier>{822d41ca-56c4-4fb4-b685-ecda53720413}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -123,6 +126,9 @@
     <ClInclude Include="Content\GeometryGenerator.h">
       <Filter>Content\DirectX12\Geometry</Filter>
     </ClInclude>
+    <ClInclude Include="Content\Camera.h">
+      <Filter>Content\DirectX12\Cameras</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -175,6 +181,9 @@
     </ClCompile>
     <ClCompile Include="Content\GeometryGenerator.cpp">
       <Filter>Content\DirectX12\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Camera.cpp">
+      <Filter>Content\DirectX12\Cameras</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

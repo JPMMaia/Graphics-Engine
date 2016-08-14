@@ -125,6 +125,18 @@ int32_t D3DBase::GetClientHeight() const
 {
 	return m_clientHeight;
 }
+uint32_t D3DBase::GetCbvSrvUavDescriptorSize() const
+{
+	return m_cbvSrvUavDescriptorSize;
+}
+uint32_t D3DBase::GetDsvDescriptorSize() const
+{
+	return m_dsvDescriptorSize;
+}
+uint32_t D3DBase::GetRtvDescriptorSize() const
+{
+	return m_rtvDescriptorSize;
+}
 
 void D3DBase::CreateDevice()
 {
@@ -474,15 +486,15 @@ void D3DBase::FlushCommandQueue()
 	}
 }
 
-void D3DBase::BeginScene(ID3D12PipelineState* initialState) const
+void D3DBase::BeginScene(ID3D12CommandAllocator* commandAllocator, ID3D12PipelineState* initialState) const
 {
 	// Reuse the memory associated with command recording.
 	// We can only reset when the associated command lists have finished execution on the GPU.
-	DX::ThrowIfFailed(m_commandAllocator->Reset());
+	DX::ThrowIfFailed(commandAllocator->Reset());
 
 	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
 	// Reusing the command list reuses memory.
-	m_commandList->Reset(m_commandAllocator.Get(), initialState);
+	m_commandList->Reset(commandAllocator, initialState);
 
 	m_commandList->RSSetViewports(1, &m_screenViewport);
 	m_commandList->RSSetScissorRects(1, &m_scissorRect);
@@ -531,6 +543,11 @@ void D3DBase::EndScene()
 	// done for simplicity.  Later we will show how to organize our rendering code
 	// so we do not have to wait per frame.
 	FlushCommandQueue();
+}
+
+uint64_t D3DBase::IncrementFence()
+{
+	return ++m_currentFence;
 }
 
 void D3DBase::GetHardwareAdapter(IDXGIFactory4* pFactory, IDXGIAdapter1** ppAdapter)

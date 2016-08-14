@@ -13,9 +13,7 @@ using namespace Microsoft::WRL;
 using namespace std;
 
 Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight) :
-	m_d3d(outputWindow, clientWidth, clientHeight),
-	m_vertexShader(L"ColorVertexShader.cso"),
-	m_pixelShader(L"ColorPixelShader.cso")
+	m_d3d(outputWindow, clientWidth, clientHeight)
 {
 	UpdateProjectionMatrix();
 
@@ -23,14 +21,14 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	auto commandList = m_d3d.GetCommandList();
 	DX::ThrowIfFailed(commandList->Reset(m_d3d.GetCommandAllocator(), nullptr));
 
-	InitializeRootSignature(m_d3d);
-	InitializeInputLayout();
-	InitializeGeometry(m_d3d);
+	InitializeRootSignature();
+	InitializeShadersAndInputLayout();
+	InitializeGeometry();
 	InitializeRenderItems();
-	// TODO frame resources
-	InitializeDescriptorHeaps(m_d3d);
-	InitializeConstantBuffers(m_d3d);
-	InitializePipelineStateObjects(m_d3d);
+	InitializeFrameResources();
+	InitializeDescriptorHeaps();
+	InitializeConstantBufferViews();
+	InitializePipelineStateObjects();
 
 	// Execute the initialization commands:
 	DX::ThrowIfFailed(commandList->Close());
@@ -75,23 +73,40 @@ void Graphics::Update(const Timer& timer)
 void Graphics::Render(const Timer& timer)
 {
 	// Prepare scene to be drawn:
-	m_d3d.BeginScene(m_pipelineState.Get());
+	auto initialPipelineState = m_pipelineStateObjects["Opaque"];
+	m_d3d.BeginScene(m_currentFrameResource->CommandAllocator.Get(), initialPipelineState.Get());
 
 	auto commandList = m_d3d.GetCommandList();
-	
-	{
-		ID3D12DescriptorHeap* descriptorHeaps[] = { m_cbvHeap.Get() };
-		commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
-		commandList->SetGraphicsRootSignature(m_rootSignature.Get());
-		commandList->SetGraphicsRootDescriptorTable(0, m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
+	// Set descriptor heaps:
+	ID3D12DescriptorHeap* descriptorHeaps[] = { m_cbvHeap.Get() };
+	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+	// Set root signature:
+	commandList->SetGraphicsRootSignature(m_rootSignature.Get());
+
+	// Set pass constant buffer:
+	{
+		auto passCbvIndex = static_cast<int>(m_allRenderItems.size() * s_frameResourcesCount + m_currentFrameResourceIndex);
+		auto passCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
+		passCbvHandle.Offset(passCbvIndex, m_d3d.GetCbvSrvUavDescriptorSize());
+		commandList->SetGraphicsRootDescriptorTable(1, passCbvHandle);
 	}
 
-	// Draw box:
-	m_boxGeometry->Render(commandList);
+	// Draw render items:
+	DrawRenderItems(commandList, m_opaqueRenderItems);
 
 	// Present the rendered scene to the screen:
 	m_d3d.EndScene();
+
+	// Advance the fence value to mark commands up to this fence point.
+	auto currentFence = m_d3d.IncrementFence();
+	m_currentFrameResource->Fence = currentFence;
+
+	// Add an instruction to the command queue to set a new fence point. 
+	// Because we are on the GPU timeline, the new fence point won't be 
+	// set until the GPU finishes processing all the commands prior to this Signal().
+	m_d3d.GetCommandQueue()->Signal(m_d3d.GetFence(), currentFence);
 }
 
 int Graphics::GetFrameResourcesCount()
@@ -99,15 +114,18 @@ int Graphics::GetFrameResourcesCount()
 	return s_frameResourcesCount;
 }
 
-void Graphics::InitializeInputLayout()
+void Graphics::InitializeShadersAndInputLayout()
 {
+	m_shaders["ColorVertexShader"] = Shader(L"ColorVertexShader.cso");
+	m_shaders["ColorPixelShader"] = Shader(L"ColorPixelShader.cso");
+
 	m_inputLayout =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 	};
 }
-void Graphics::InitializeRootSignature(const D3DBase& d3dBase)
+void Graphics::InitializeRootSignature()
 {
 	CD3DX12_DESCRIPTOR_RANGE cbvTable0;
 	cbvTable0.Init(D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
@@ -133,7 +151,7 @@ void Graphics::InitializeRootSignature(const D3DBase& d3dBase)
 		DX::ThrowIfFailed(hr);
 
 		DX::ThrowIfFailed(
-			d3dBase.GetDevice()->CreateRootSignature(
+			m_d3d.GetDevice()->CreateRootSignature(
 				0,
 				serializedRootSignature->GetBufferPointer(),
 				serializedRootSignature->GetBufferSize(),
@@ -142,59 +160,95 @@ void Graphics::InitializeRootSignature(const D3DBase& d3dBase)
 			);
 	}
 }
-void Graphics::InitializeDescriptorHeaps(const D3DBase& d3dBase)
+void Graphics::InitializeDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDescription;
-	cbvHeapDescription.NumDescriptors = 1;
+	cbvHeapDescription.NumDescriptors = static_cast<uint32_t>((m_allRenderItems.size() + 1) * s_frameResourcesCount);
 	cbvHeapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	cbvHeapDescription.Flags = D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	cbvHeapDescription.NodeMask = 0;
 
 	DX::ThrowIfFailed(
-		d3dBase.GetDevice()->CreateDescriptorHeap(&cbvHeapDescription, IID_PPV_ARGS(m_cbvHeap.GetAddressOf()))
+		m_d3d.GetDevice()->CreateDescriptorHeap(&cbvHeapDescription, IID_PPV_ARGS(m_cbvHeap.GetAddressOf()))
 		);
 }
-void Graphics::InitializeConstantBuffers(const D3DBase& d3dBase)
+void Graphics::InitializeConstantBufferViews()
 {
-	auto d3dDevice = d3dBase.GetDevice();
+	auto d3dDevice = m_d3d.GetDevice();
 
-	m_perObjectCB = std::make_unique<UploadBuffer<ConstantBufferTypes::ObjectConstants>>(d3dDevice, 1, true);
+	// Create objects constant buffer views:
+	auto objectCBByteSize = DX::CalculateConstantBufferByteSize(sizeof(ConstantBufferTypes::ObjectConstants));
+	for (auto frameIndex = 0; frameIndex < s_frameResourcesCount; ++frameIndex)
+	{
+		auto objectCB = m_frameResources[frameIndex]->ObjectConstants->GetResource();
+		for (auto objectIndex = 0; objectIndex < m_allRenderItems.size(); ++objectIndex)
+		{
+			auto gpuAddress = objectCB->GetGPUVirtualAddress();
+			gpuAddress += objectIndex * objectCBByteSize;
 
-	auto cbByteSize = DX::CalculateConstantBufferByteSize(sizeof(ConstantBufferTypes::ObjectConstants));
-	auto boxCbIndex = 0;
-	auto cbGpuAddress = m_perObjectCB->GetResource()->GetGPUVirtualAddress();
-	cbGpuAddress += boxCbIndex * cbByteSize;
+			D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDescription;
+			cbvDescription.BufferLocation = gpuAddress;
+			cbvDescription.SizeInBytes = objectCBByteSize;
 
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDescription;
-	cbvDescription.BufferLocation = cbGpuAddress;
-	cbvDescription.SizeInBytes = cbByteSize;
+			// Offset to the object cbv in the descriptor heap:
+			auto heapIndex = static_cast<int>(frameIndex*m_allRenderItems.size() + objectIndex);
+			auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
+			handle.Offset(heapIndex, m_d3d.GetCbvSrvUavDescriptorSize());
 
-	d3dDevice->CreateConstantBufferView(&cbvDescription, m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
+			d3dDevice->CreateConstantBufferView(&cbvDescription, handle);
+		}
+	}
+
+	// Create pass constant buffers:
+	auto passCBByteSize = DX::CalculateConstantBufferByteSize(sizeof(ConstantBufferTypes::PassConstants));
+	for (auto frameIndex = 0; frameIndex < s_frameResourcesCount; ++frameIndex)
+	{
+		auto passCB = m_frameResources[frameIndex]->PassConstants->GetResource();
+
+		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDescription;
+		cbvDescription.BufferLocation = passCB->GetGPUVirtualAddress();
+		cbvDescription.SizeInBytes = passCBByteSize;
+
+		auto heapIndex = static_cast<int>(m_allRenderItems.size() * s_frameResourcesCount + frameIndex);
+		auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
+		handle.Offset(heapIndex, m_d3d.GetCbvSrvUavDescriptorSize());
+
+		d3dDevice->CreateConstantBufferView(&cbvDescription, handle);
+	}
 }
-void Graphics::InitializePipelineStateObjects(const D3DBase& d3dBase)
+void Graphics::InitializePipelineStateObjects()
 {
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDescription = {};
-	pipelineStateDescription.InputLayout.pInputElementDescs = &m_inputLayout[0];
-	pipelineStateDescription.InputLayout.NumElements = static_cast<uint32_t>(m_inputLayout.size());
-	pipelineStateDescription.pRootSignature = m_rootSignature.Get();
-	pipelineStateDescription.VS = m_vertexShader.GetShaderBytecode();
-	pipelineStateDescription.PS = m_pixelShader.GetShaderBytecode();
-	pipelineStateDescription.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	pipelineStateDescription.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-	pipelineStateDescription.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-	pipelineStateDescription.SampleMask = UINT_MAX;
-	pipelineStateDescription.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	pipelineStateDescription.NumRenderTargets = 1;
-	pipelineStateDescription.SampleDesc.Count = d3dBase.GetSampleCount();
-	pipelineStateDescription.SampleDesc.Quality = d3dBase.GetSampleQuality();
-	pipelineStateDescription.RTVFormats[0] = d3dBase.GetBackBufferFormat();
-	pipelineStateDescription.DSVFormat = d3dBase.GetDepthStencilFormat();
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaquePSODescription = {};
+	opaquePSODescription.InputLayout.pInputElementDescs = &m_inputLayout[0];
+	opaquePSODescription.InputLayout.NumElements = static_cast<uint32_t>(m_inputLayout.size());
+	opaquePSODescription.pRootSignature = m_rootSignature.Get();
+	opaquePSODescription.VS = m_shaders["ColorVertexShader"].GetShaderBytecode();
+	opaquePSODescription.PS = m_shaders["ColorPixelShader"].GetShaderBytecode();
+	opaquePSODescription.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	opaquePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_SOLID;
+	opaquePSODescription.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+	opaquePSODescription.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	opaquePSODescription.SampleMask = UINT_MAX;
+	opaquePSODescription.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	opaquePSODescription.NumRenderTargets = 1;
+	opaquePSODescription.SampleDesc.Count = m_d3d.GetSampleCount();
+	opaquePSODescription.SampleDesc.Quality = m_d3d.GetSampleQuality();
+	opaquePSODescription.RTVFormats[0] = m_d3d.GetBackBufferFormat();
+	opaquePSODescription.DSVFormat = m_d3d.GetDepthStencilFormat();
 
 	DX::ThrowIfFailed(
-		d3dBase.GetDevice()->CreateGraphicsPipelineState(&pipelineStateDescription, IID_PPV_ARGS(m_pipelineState.GetAddressOf()))
+		m_d3d.GetDevice()->CreateGraphicsPipelineState(&opaquePSODescription, IID_PPV_ARGS(&m_pipelineStateObjects["Opaque"]))
 		);
+
+	auto opaqueWireframePSODescription = opaquePSODescription;
+	opaqueWireframePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
+
+	DX::ThrowIfFailed(
+		m_d3d.GetDevice()->CreateGraphicsPipelineState(&opaqueWireframePSODescription, IID_PPV_ARGS(&m_pipelineStateObjects["Opaque Wireframe"]))
+		);
+
 }
-void Graphics::InitializeGeometry(const D3DBase& d3dBase)
+void Graphics::InitializeGeometry()
 {
 	auto box = GeometryGenerator::CreateBox(1.5f, 0.5f, 1.5f, 3);
 	auto grid = GeometryGenerator::CreateGrid(20.0f, 30.0f, 60, 40);
@@ -287,8 +341,8 @@ void Graphics::InitializeGeometry(const D3DBase& d3dBase)
 
 	auto geometry = std::make_unique<MeshGeometry>();
 	geometry->Name = "ShapeGeo";
-	geometry->Vertices = VertexBuffer(d3dBase, vertices.data(), static_cast<uint32_t>(vertices.size()), sizeof(VertexTypes::ColorVertexType));
-	geometry->Indices = IndexBuffer(d3dBase, indices.data(), static_cast<uint32_t>(indices.size()), sizeof(uint16_t), DXGI_FORMAT::DXGI_FORMAT_R16_UINT);
+	geometry->Vertices = VertexBuffer(m_d3d, vertices.data(), static_cast<uint32_t>(vertices.size()), sizeof(VertexTypes::ColorVertexType));
+	geometry->Indices = IndexBuffer(m_d3d, indices.data(), static_cast<uint32_t>(indices.size()), sizeof(uint16_t), DXGI_FORMAT::DXGI_FORMAT_R16_UINT);
 	geometry->DrawArgs["Box"] = boxSubmesh;
 	geometry->DrawArgs["Grid"] = gridSubmesh;
 	geometry->DrawArgs["Sphere"] = sphereSubmesh;
@@ -374,6 +428,13 @@ void Graphics::InitializeRenderItems()
 	for (auto& e : m_allRenderItems)
 		m_opaqueRenderItems.push_back(e.get());
 }
+void Graphics::InitializeFrameResources()
+{
+	for (auto i = 0; i < s_frameResourcesCount; ++i)
+		m_frameResources.push_back(std::make_unique<FrameResource>(m_d3d.GetDevice(), 1, static_cast<uint32_t>(m_allRenderItems.size())));
+
+	m_currentFrameResource = m_frameResources[m_currentFrameResourceIndex].get();
+}
 
 void Graphics::UpdateProjectionMatrix()
 {
@@ -450,4 +511,22 @@ void Graphics::UpdateMainPassConstantBuffer(const Timer& timer)
 
 	auto currentPassCB = m_currentFrameResource->PassConstants.get();
 	currentPassCB->CopyData(0, m_passConstants);
+}
+
+void Graphics::DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std::vector<RenderItem*>& renderItems)
+{
+	// For each render item:
+	for (size_t i = 0; i < renderItems.size(); ++i)
+	{
+		auto renderItem = renderItems[i];
+
+		// Offset to the CBV in the descriptor heap for this object and for this frame resource:
+		auto cbvIndex = static_cast<uint32_t>(m_currentFrameResourceIndex * m_allRenderItems.size() + renderItem->ObjectCBIndex);
+		auto cbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
+		cbvHandle.Offset(cbvIndex, m_d3d.GetCbvSrvUavDescriptorSize());
+
+		commandList->SetGraphicsRootDescriptorTable(0, cbvHandle);
+
+		renderItem->Render(commandList);
+	}
 }

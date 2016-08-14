@@ -85,7 +85,7 @@ void DXInputHandler::ReadKeyboard()
 void DXInputHandler::ReadMouse()
 {
 	// Read the mouse device:
-	auto result = m_mouse->GetDeviceState(sizeof(DIMOUSESTATE), &m_mouseState);
+	auto result = m_mouse->GetDeviceState(sizeof(DIMOUSESTATE2), &m_mouseState);
 	if (FAILED(result))
 	{
 		// If the mouse lost focus or was not acquired then try to get control back:

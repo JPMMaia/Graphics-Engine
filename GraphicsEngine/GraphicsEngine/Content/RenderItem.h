@@ -11,11 +11,13 @@ namespace GraphicsEngine
 	public:
 		RenderItem();
 
+		void Render(ID3D12GraphicsCommandList* commandList) const;
+
 	public:
 		DirectX::XMFLOAT4X4 WorldMatrix = MathHelper::Identity4x4();
-		int FramesDirtyCount;
-		uint32_t ObjectCBIndex;
-		MeshGeometry* Mesh;
+		int FramesDirtyCount = 0;
+		uint32_t ObjectCBIndex = 0;
+		MeshGeometry* Mesh = nullptr;
 		D3D12_PRIMITIVE_TOPOLOGY PrimitiveType = D3D_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		uint32_t IndexCount = 0;
 		uint32_t StartIndexLocation = 0;

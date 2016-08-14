@@ -20,8 +20,10 @@ namespace GraphicsEngine
 
 		void FlushCommandQueue();
 
-		void BeginScene(ID3D12PipelineState* initialState) const;
+		void BeginScene(ID3D12CommandAllocator* commandAllocator, ID3D12PipelineState* initialState) const;
 		void EndScene();
+
+		uint64_t IncrementFence();
 
 		ID3D12Device* GetDevice() const;
 		ID3D12GraphicsCommandList* GetCommandList() const;
@@ -41,6 +43,9 @@ namespace GraphicsEngine
 		uint64_t GetCurrentFenceValue() const;
 		int32_t GetClientWidth() const;
 		int32_t GetClientHeight() const;
+		uint32_t GetCbvSrvUavDescriptorSize() const;
+		uint32_t GetDsvDescriptorSize() const;
+		uint32_t GetRtvDescriptorSize() const;
 
 	protected:
 

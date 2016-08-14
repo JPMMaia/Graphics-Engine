@@ -24,18 +24,21 @@ namespace GraphicsEngine
 		static int GetFrameResourcesCount();
 		
 	private:
-		void InitializeInputLayout();
-		void InitializeRootSignature(const D3DBase& d3dBase);
-		void InitializeDescriptorHeaps(const D3DBase& d3dBase);
-		void InitializeConstantBuffers(const D3DBase& d3dBase);
-		void InitializePipelineStateObjects(const D3DBase& d3dBase);
-		void InitializeGeometry(const D3DBase& d3dBase);
+		void InitializeShadersAndInputLayout();
+		void InitializeRootSignature();
+		void InitializeDescriptorHeaps();
+		void InitializeConstantBufferViews();
+		void InitializePipelineStateObjects();
+		void InitializeGeometry();
 		void InitializeRenderItems();
+		void InitializeFrameResources();
 
 		void UpdateProjectionMatrix();
 		void UpdateCamera();
 		void UpdateObjectConstantBuffer();
 		void UpdateMainPassConstantBuffer(const Timer& timer);
+
+		void DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std::vector<RenderItem*>& renderItems);
 
 	private:
 		D3DBase m_d3d;
@@ -61,16 +64,14 @@ namespace GraphicsEngine
 		float m_phi = DirectX::XM_PIDIV4;
 		float m_radius = 5.0f;
 
-		Shader m_vertexShader;
-		Shader m_pixelShader;
-
 		std::vector<D3D12_INPUT_ELEMENT_DESC> m_inputLayout;
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
-		Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
 
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_cbvHeap;
 		std::unique_ptr<UploadBuffer<ConstantBufferTypes::ObjectConstants>> m_perObjectCB;
 
 		std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> m_geometries;
+		std::unordered_map<std::string, Shader> m_shaders;
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>> m_pipelineStateObjects;
 	};
 }

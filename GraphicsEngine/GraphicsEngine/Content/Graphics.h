@@ -38,14 +38,13 @@ namespace GraphicsEngine
 		void UpdateObjectConstantBuffer();
 		void UpdateMainPassConstantBuffer(const Timer& timer);
 
-		void DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std::vector<RenderItem*>& renderItems);
+		void DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std::vector<RenderItem*>& renderItems) const;
 
 	private:
 		D3DBase m_d3d;
 		
 		std::unique_ptr<MeshGeometry> m_boxGeometry;
 		
-		DirectX::XMFLOAT4X4 m_modelMatrix = MathHelper::Identity4x4();
 		DirectX::XMFLOAT4X4 m_viewMatrix = MathHelper::Identity4x4();
 		DirectX::XMFLOAT4X4 m_projectionMatrix = MathHelper::Identity4x4();
 
@@ -59,19 +58,22 @@ namespace GraphicsEngine
 
 		ConstantBufferTypes::PassConstants m_passConstants;
 
-		DirectX::XMFLOAT3 m_eyePosition;
+		DirectX::XMFLOAT3 m_eyePosition = { 0.0f, 0.0f, 0.0f };
 		float m_theta = 1.5f * DirectX::XM_PI;
-		float m_phi = DirectX::XM_PIDIV4;
-		float m_radius = 5.0f;
+		float m_phi = 0.2f * DirectX::XM_PI;
+		float m_radius = 15.0f;
 
 		std::vector<D3D12_INPUT_ELEMENT_DESC> m_inputLayout;
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
 
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_cbvHeap;
+		uint32_t m_passCbvHeapOffset;
 		std::unique_ptr<UploadBuffer<ConstantBufferTypes::ObjectConstants>> m_perObjectCB;
 
 		std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> m_geometries;
 		std::unordered_map<std::string, Shader> m_shaders;
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>> m_pipelineStateObjects;
+
+		uint32_t m_consecutiveCalls = 0;
 	};
 }

@@ -538,11 +538,6 @@ void D3DBase::EndScene()
 	// Swap the back and front buffers:
 	DX::ThrowIfFailed(m_dxgiSwapChain->Present(0, 0));
 	m_currentBackBuffer = (m_currentBackBuffer + 1) % s_swapChainBufferCount;
-
-	// Wait until frame commands are complete.  This waiting is inefficient and is
-	// done for simplicity.  Later we will show how to organize our rendering code
-	// so we do not have to wait per frame.
-	FlushCommandQueue();
 }
 
 uint64_t D3DBase::IncrementFence()

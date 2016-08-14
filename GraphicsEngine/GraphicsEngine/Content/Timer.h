@@ -58,11 +58,11 @@ namespace GraphicsEngine
 	bool Timer::UpdateAndRender(UpdateFunctionType& update, RenderFunctionType render, ProcessInputFunctionType processInput)
 	{
 		m_qpcCurrentTick = GetCurrentTick();
-		auto deltaTicks = m_qpcCurrentTick.QuadPart - m_qpcPreviousTick.QuadPart;
+		m_deltaTicks = m_qpcCurrentTick.QuadPart - m_qpcPreviousTick.QuadPart;
 		m_qpcPreviousTick = m_qpcCurrentTick;
-		m_totalTicks += deltaTicks;
+		m_totalTicks += m_deltaTicks;
 
-		auto deltaMilliseconds = TicksToMilliseconds(deltaTicks);
+		auto deltaMilliseconds = TicksToMilliseconds(m_deltaTicks);
 		m_lag += deltaMilliseconds;
 
 		// Process input:

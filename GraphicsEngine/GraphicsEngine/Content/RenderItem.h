@@ -16,7 +16,7 @@ namespace GraphicsEngine
 	public:
 		DirectX::XMFLOAT4X4 WorldMatrix = MathHelper::Identity4x4();
 		int FramesDirtyCount = 0;
-		uint32_t ObjectCBIndex = 0;
+		uint32_t ObjectCBIndex = -1;
 		MeshGeometry* Mesh = nullptr;
 		D3D12_PRIMITIVE_TOPOLOGY PrimitiveType = D3D_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		uint32_t IndexCount = 0;

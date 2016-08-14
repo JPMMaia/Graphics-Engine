@@ -73,8 +73,8 @@ void Graphics::Update(const Timer& timer)
 void Graphics::Render(const Timer& timer)
 {
 	// Prepare scene to be drawn:
-	auto initialPipelineState = m_pipelineStateObjects["Opaque"];
-	m_d3d.BeginScene(m_currentFrameResource->CommandAllocator.Get(), initialPipelineState.Get());
+	auto initialPipelineState = m_pipelineStateObjects["Opaque"].Get();
+	m_d3d.BeginScene(m_currentFrameResource->CommandAllocator.Get(), initialPipelineState);
 
 	auto commandList = m_d3d.GetCommandList();
 
@@ -87,7 +87,7 @@ void Graphics::Render(const Timer& timer)
 
 	// Set pass constant buffer:
 	{
-		auto passCbvIndex = static_cast<int>(m_allRenderItems.size() * s_frameResourcesCount + m_currentFrameResourceIndex);
+		auto passCbvIndex = m_passCbvHeapOffset + m_currentFrameResourceIndex;
 		auto passCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
 		passCbvHandle.Offset(passCbvIndex, m_d3d.GetCbvSrvUavDescriptorSize());
 		commandList->SetGraphicsRootDescriptorTable(1, passCbvHandle);
@@ -116,8 +116,12 @@ int Graphics::GetFrameResourcesCount()
 
 void Graphics::InitializeShadersAndInputLayout()
 {
-	m_shaders["ColorVertexShader"] = Shader(L"ColorVertexShader.cso");
-	m_shaders["ColorPixelShader"] = Shader(L"ColorPixelShader.cso");
+	wchar_t buffer[1024];
+	GetModuleFileName(nullptr, buffer, 1024);
+	OutputDebugStringW(buffer);
+
+	m_shaders["ColorVertexShader"] = Shader(L"Shaders/ColorVertexShader.cso");
+	m_shaders["ColorPixelShader"] = Shader(L"Shaders/ColorPixelShader.cso");
 
 	m_inputLayout =
 	{
@@ -162,8 +166,13 @@ void Graphics::InitializeRootSignature()
 }
 void Graphics::InitializeDescriptorHeaps()
 {
+	auto objectCount = static_cast<uint32_t>(m_allRenderItems.size());
+
+	auto numDescriptors = (objectCount + 1) * s_frameResourcesCount;
+	m_passCbvHeapOffset = objectCount * s_frameResourcesCount;
+
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDescription;
-	cbvHeapDescription.NumDescriptors = static_cast<uint32_t>((m_allRenderItems.size() + 1) * s_frameResourcesCount);
+	cbvHeapDescription.NumDescriptors = numDescriptors;
 	cbvHeapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	cbvHeapDescription.Flags = D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	cbvHeapDescription.NodeMask = 0;
@@ -209,7 +218,7 @@ void Graphics::InitializeConstantBufferViews()
 		cbvDescription.BufferLocation = passCB->GetGPUVirtualAddress();
 		cbvDescription.SizeInBytes = passCBByteSize;
 
-		auto heapIndex = static_cast<int>(m_allRenderItems.size() * s_frameResourcesCount + frameIndex);
+		auto heapIndex = m_passCbvHeapOffset + frameIndex;
 		auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
 		handle.Offset(heapIndex, m_d3d.GetCbvSrvUavDescriptorSize());
 
@@ -237,14 +246,14 @@ void Graphics::InitializePipelineStateObjects()
 	opaquePSODescription.DSVFormat = m_d3d.GetDepthStencilFormat();
 
 	DX::ThrowIfFailed(
-		m_d3d.GetDevice()->CreateGraphicsPipelineState(&opaquePSODescription, IID_PPV_ARGS(&m_pipelineStateObjects["Opaque"]))
+		m_d3d.GetDevice()->CreateGraphicsPipelineState(&opaquePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Opaque"].GetAddressOf()))
 		);
 
 	auto opaqueWireframePSODescription = opaquePSODescription;
 	opaqueWireframePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
 
 	DX::ThrowIfFailed(
-		m_d3d.GetDevice()->CreateGraphicsPipelineState(&opaqueWireframePSODescription, IID_PPV_ARGS(&m_pipelineStateObjects["Opaque Wireframe"]))
+		m_d3d.GetDevice()->CreateGraphicsPipelineState(&opaqueWireframePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Opaque Wireframe"].GetAddressOf()))
 		);
 
 }
@@ -513,7 +522,7 @@ void Graphics::UpdateMainPassConstantBuffer(const Timer& timer)
 	currentPassCB->CopyData(0, m_passConstants);
 }
 
-void Graphics::DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std::vector<RenderItem*>& renderItems)
+void Graphics::DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std::vector<RenderItem*>& renderItems) const
 {
 	// For each render item:
 	for (size_t i = 0; i < renderItems.size(); ++i)
@@ -521,7 +530,7 @@ void Graphics::DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std
 		auto renderItem = renderItems[i];
 
 		// Offset to the CBV in the descriptor heap for this object and for this frame resource:
-		auto cbvIndex = static_cast<uint32_t>(m_currentFrameResourceIndex * m_allRenderItems.size() + renderItem->ObjectCBIndex);
+		auto cbvIndex = m_currentFrameResourceIndex * static_cast<uint32_t>(m_allRenderItems.size()) + renderItem->ObjectCBIndex;
 		auto cbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
 		cbvHandle.Offset(cbvIndex, m_d3d.GetCbvSrvUavDescriptorSize());
 
@@ -530,3 +539,4 @@ void Graphics::DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std
 		renderItem->Render(commandList);
 	}
 }
+

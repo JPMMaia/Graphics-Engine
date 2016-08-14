@@ -41,7 +41,7 @@ void Camera::Update()
 		// Build view matrix:
 		auto up = m_rotationMatrix.r[1];
 		auto forward = m_rotationMatrix.r[2];
-		m_viewMatrix = XMMatrixLookToRH(m_position, forward, up);
+		m_viewMatrix = XMMatrixLookToLH(m_position, forward, up);
 
 		m_dirty = false;
 	}
@@ -57,11 +57,11 @@ void Camera::Move(FXMVECTOR axis, float scalar)
 
 	m_dirty = true;
 }
-void Camera::MoveLeft(float scalar)
+void Camera::MoveRight(float scalar)
 {
 	// Translate along the X-axis:
-	const auto& left = m_rotationMatrix.r[0];
-	Move(left, scalar);
+	const auto& right = m_rotationMatrix.r[0];
+	Move(right, scalar);
 }
 void Camera::MoveForward(float scalar)
 {
@@ -83,8 +83,8 @@ void Camera::Rotate(FXMVECTOR axis, float radians)
 void Camera::RotateLocalX(float radians)
 {
 	// Calculate the rotation arround the camera local X-axis:
-	const auto& left = m_rotationMatrix.r[0];
-	Rotate(left, radians);
+	const auto& right = m_rotationMatrix.r[0];
+	Rotate(right, radians);
 }
 void Camera::RotateWorldY(float radians)
 {
@@ -149,7 +149,7 @@ bool Camera::IsDirty() const
 void Camera::InitializeProjectionMatrix(FXMMATRIX orientationMatrix)
 {
 	// Build a perspective matrix:
-	auto perspectiveMatrix = XMMatrixPerspectiveFovRH(
+	auto perspectiveMatrix = XMMatrixPerspectiveFovLH(
 		m_fovAngleY,
 		m_aspectRatio,
 		m_nearZ,

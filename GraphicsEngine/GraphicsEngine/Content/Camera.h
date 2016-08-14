@@ -15,7 +15,7 @@ namespace GraphicsEngine
 		void Update();
 
 		void XM_CALLCONV Move(DirectX::FXMVECTOR axis, float scalar);
-		void MoveLeft(float scalar);
+		void MoveRight(float scalar);
 		void MoveForward(float scalar);
 
 		void XM_CALLCONV Rotate(DirectX::FXMVECTOR axis, float radians);

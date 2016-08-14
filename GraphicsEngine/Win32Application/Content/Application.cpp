@@ -63,14 +63,14 @@ int Application::Run()
 		if (m_input.IsKeyDown(DIK_S))
 			camera->MoveForward(-scalar);
 		if (m_input.IsKeyDown(DIK_A))
-			camera->MoveLeft(scalar);
+			camera->MoveRight(-scalar);
 		if (m_input.IsKeyDown(DIK_D))
-			camera->MoveLeft(-scalar);
+			camera->MoveRight(scalar);
 		
 		static const auto mouseSensibility = 0.005f;
 		int mouseDeltaX, mouseDeltaY;
 		m_input.GetMouseVelocity(mouseDeltaX, mouseDeltaY);
-		camera->RotateWorldY(-mouseDeltaX * mouseSensibility);
+		camera->RotateWorldY(mouseDeltaX * mouseSensibility);
 		camera->RotateLocalX(mouseDeltaY * mouseSensibility);
 
 		return true;

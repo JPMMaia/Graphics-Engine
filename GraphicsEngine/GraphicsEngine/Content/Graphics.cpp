@@ -54,11 +54,11 @@ void Graphics::Update(const Timer& timer)
 	m_currentFrameResourceIndex = (m_currentFrameResourceIndex + 1) % s_frameResourcesCount;
 	m_currentFrameResource = m_frameResources[m_currentFrameResourceIndex].get();
 
-	// Has the GPU finished processing the commands of the current frame resource.
-	// If not, wait until the GPU has completed commands up to this fence point.
+	// Has the GPU finished processing the commands of the current frame resource?
 	auto fence = m_d3d.GetFence();
 	if (m_currentFrameResource->Fence != 0 && fence->GetCompletedValue() < m_currentFrameResource->Fence)
 	{
+		// If not, wait until the GPU has completed commands up to this fence point:
 		auto eventHandle = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
 		DX::ThrowIfFailed(
 			fence->SetEventOnCompletion(m_currentFrameResource->Fence, eventHandle)
@@ -73,7 +73,7 @@ void Graphics::Update(const Timer& timer)
 void Graphics::Render(const Timer& timer)
 {
 	// Prepare scene to be drawn:
-	auto initialPipelineState = m_pipelineStateObjects["Opaque"].Get();
+	auto initialPipelineState = m_pipelineStateObjects[m_wireframeEnabled ? "Opaque Wireframe" : "Opaque"].Get();
 	m_d3d.BeginScene(m_currentFrameResource->CommandAllocator.Get(), initialPipelineState);
 
 	auto commandList = m_d3d.GetCommandList();
@@ -107,6 +107,11 @@ void Graphics::Render(const Timer& timer)
 	// Because we are on the GPU timeline, the new fence point won't be 
 	// set until the GPU finishes processing all the commands prior to this Signal().
 	m_d3d.GetCommandQueue()->Signal(m_d3d.GetFence(), currentFence);
+}
+
+void Graphics::SetWireframeMode(bool enable)
+{
+	m_wireframeEnabled = enable;
 }
 
 int Graphics::GetFrameResourcesCount()

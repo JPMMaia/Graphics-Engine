@@ -21,6 +21,8 @@ namespace GraphicsEngine
 		void Update(const Timer& timer);
 		void Render(const Timer& timer);
 
+		void SetWireframeMode(bool enable);
+
 		static int GetFrameResourcesCount();
 		
 	private:
@@ -74,6 +76,6 @@ namespace GraphicsEngine
 		std::unordered_map<std::string, Shader> m_shaders;
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>> m_pipelineStateObjects;
 
-		uint32_t m_consecutiveCalls = 0;
+		bool m_wireframeEnabled = false;
 	};
 }

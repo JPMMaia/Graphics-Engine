@@ -34,11 +34,11 @@ int Application::Run()
 
 	auto update = [this](const Timer& timer)
 	{
-		m_graphics.Update(timer);
 	};
 
 	auto render = [this](const Timer& timer)
 	{
+		m_graphics.Update(timer);
 		m_graphics.Render(timer);
 	};
 
@@ -49,6 +49,11 @@ int Application::Run()
 		// Exit application if exit function is pressed:
 		if (m_input.IsKeyDown(DIK_ESCAPE))
 			return false;
+
+		if (m_input.IsKeyDown(DIK_1))
+			m_graphics.SetWireframeMode(false);
+		else if (m_input.IsKeyDown(DIK_2))
+			m_graphics.SetWireframeMode(true);
 
 		return true;
 	};

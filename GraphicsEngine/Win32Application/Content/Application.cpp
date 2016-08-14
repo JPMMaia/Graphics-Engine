@@ -106,7 +106,7 @@ Application Application::s_instance = Application();
 Application::Application() :
 	m_window(MainWindowProc),
 	m_timer(c_millisecondsPerUpdate),
-	m_graphics(m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight()),
-	m_input(m_window.GetHInstance(), m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight())
+	m_input(m_window.GetHInstance(), m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight()),
+	m_graphics(m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight())
 {
 }

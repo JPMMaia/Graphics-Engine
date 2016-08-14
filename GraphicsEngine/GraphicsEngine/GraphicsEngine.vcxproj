@@ -149,6 +149,7 @@
     <ClInclude Include="Content\GeometryGenerator.h" />
     <ClInclude Include="Content\IndexBuffer.h" />
     <ClInclude Include="Content\DXInputHandler.h" />
+    <ClInclude Include="Content\Light.h" />
     <ClInclude Include="Content\MathHelper.h" />
     <ClInclude Include="Content\MeshGeometry.h" />
     <ClInclude Include="Content\Graphics.h" />
@@ -210,6 +211,9 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DeploymentContent>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\Shaders\LightingUtils.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

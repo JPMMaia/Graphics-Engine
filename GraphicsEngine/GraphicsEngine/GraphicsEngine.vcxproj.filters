@@ -43,6 +43,9 @@
     <Filter Include="Content\DirectX12\Cameras">
       <UniqueIdentifier>{822d41ca-56c4-4fb4-b685-ecda53720413}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\DirectX12\Lights">
+      <UniqueIdentifier>{f8f1d852-6cb2-42f7-9fc6-bfe6235f2235}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -129,6 +132,9 @@
     <ClInclude Include="Content\Camera.h">
       <Filter>Content\DirectX12\Cameras</Filter>
     </ClInclude>
+    <ClInclude Include="Content\Light.h">
+      <Filter>Content\DirectX12\Lights</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -193,5 +199,10 @@
     <FxCompile Include="Content\Shaders\ColorPixelShader.hlsl">
       <Filter>Content\DirectX12\Shaders\HLSL</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\Shaders\LightingUtils.hlsli">
+      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

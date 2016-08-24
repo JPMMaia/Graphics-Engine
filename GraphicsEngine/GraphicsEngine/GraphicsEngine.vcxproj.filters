@@ -31,9 +31,6 @@
     <Filter Include="Content\DirectX12\Helpers">
       <UniqueIdentifier>{2fd1a73f-940c-4f28-a403-7720b997640e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectX12\Techniques">
-      <UniqueIdentifier>{c593a79c-36de-49d9-8cf8-d5b220550f8e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Content\DirectX12\Input">
       <UniqueIdentifier>{f59321bd-250e-4a28-94a5-56252d3ccd36}</UniqueIdentifier>
     </Filter>
@@ -42,6 +39,12 @@
     </Filter>
     <Filter Include="Content\DirectX12\Cameras">
       <UniqueIdentifier>{822d41ca-56c4-4fb4-b685-ecda53720413}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\DirectX12\Lighting">
+      <UniqueIdentifier>{f8f1d852-6cb2-42f7-9fc6-bfe6235f2235}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\DirectX12\Resources">
+      <UniqueIdentifier>{c593a79c-36de-49d9-8cf8-d5b220550f8e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -115,19 +118,31 @@
       <Filter>Content\DirectX12\Input</Filter>
     </ClInclude>
     <ClInclude Include="Content\FrameResource.h">
-      <Filter>Content\DirectX12\Techniques</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\ConstantBufferTypes.h">
-      <Filter>Content\DirectX12\Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\RenderItem.h">
-      <Filter>Content\DirectX12\Geometry</Filter>
+      <Filter>Content\DirectX12\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Content\GeometryGenerator.h">
       <Filter>Content\DirectX12\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="Content\Camera.h">
       <Filter>Content\DirectX12\Cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Light.h">
+      <Filter>Content\DirectX12\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\ConstantBufferTypes.h">
+      <Filter>Content\DirectX12\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\RenderItem.h">
+      <Filter>Content\DirectX12\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Material.h">
+      <Filter>Content\DirectX12\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\EngineException.h">
+      <Filter>Content\DirectX12\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Texture.h">
+      <Filter>Content\DirectX12\Lighting</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -174,10 +189,7 @@
       <Filter>Content\DirectX12\Input</Filter>
     </ClCompile>
     <ClCompile Include="Content\FrameResource.cpp">
-      <Filter>Content\DirectX12\Techniques</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\RenderItem.cpp">
-      <Filter>Content\DirectX12\Geometry</Filter>
+      <Filter>Content\DirectX12\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Content\GeometryGenerator.cpp">
       <Filter>Content\DirectX12\Geometry</Filter>
@@ -185,13 +197,39 @@
     <ClCompile Include="Content\Camera.cpp">
       <Filter>Content\DirectX12\Cameras</Filter>
     </ClCompile>
+    <ClCompile Include="Content\RenderItem.cpp">
+      <Filter>Content\DirectX12\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Material.cpp">
+      <Filter>Content\DirectX12\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\EngineException.cpp">
+      <Filter>Content\DirectX12\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Timer.cpp">
+      <Filter>Content\Timer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Content\Shaders\ColorVertexShader.hlsl">
+    <FxCompile Include="Content\Shaders\DefaultPixelShader.hlsl">
       <Filter>Content\DirectX12\Shaders\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="Content\Shaders\ColorPixelShader.hlsl">
+    <FxCompile Include="Content\Shaders\DefaultVertexShader.hlsl">
       <Filter>Content\DirectX12\Shaders\HLSL</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\Shaders\LightingUtils.hlsl">
+      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
+    </None>
+    <None Include="Content\Shaders\MaterialConstants.hlsl">
+      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
+    </None>
+    <None Include="Content\Shaders\ObjectConstants.hlsl">
+      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
+    </None>
+    <None Include="Content\Shaders\PassConstants.hlsl">
+      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

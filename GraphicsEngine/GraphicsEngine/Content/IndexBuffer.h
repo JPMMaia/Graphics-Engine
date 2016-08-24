@@ -10,7 +10,7 @@ namespace GraphicsEngine
 	{
 	public:
 		IndexBuffer() = default;
-		explicit IndexBuffer(const D3DBase& d3dBase, const void* indices, uint32_t indexCount, uint32_t indexByteSize, DXGI_FORMAT indexFormat);
+		explicit IndexBuffer(const D3DBase& d3dBase, const void* indices, size_t indexCount, size_t indexByteSize, DXGI_FORMAT indexFormat);
 		IndexBuffer(const IndexBuffer& rhs) = default;
 		IndexBuffer& operator=(const IndexBuffer& rhs) = default;
 

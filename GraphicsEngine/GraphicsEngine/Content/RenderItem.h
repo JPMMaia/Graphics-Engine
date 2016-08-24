@@ -1,8 +1,10 @@
 ﻿#pragma once
 
 #include <DirectXMath.h>
+#include "Material.h"
 #include "MathHelper.h"
 #include "MeshGeometry.h"
+
 
 namespace GraphicsEngine
 {
@@ -14,7 +16,6 @@ namespace GraphicsEngine
 		void Render(ID3D12GraphicsCommandList* commandList) const;
 
 	public:
-		DirectX::XMFLOAT4X4 WorldMatrix = MathHelper::Identity4x4();
 		int FramesDirtyCount = 0;
 		uint32_t ObjectCBIndex = -1;
 		MeshGeometry* Mesh = nullptr;
@@ -22,5 +23,8 @@ namespace GraphicsEngine
 		uint32_t IndexCount = 0;
 		uint32_t StartIndexLocation = 0;
 		int BaseVertexLocation = 0;
+
+		Material* Material = nullptr;
+		DirectX::XMFLOAT4X4 WorldMatrix = MathHelper::Identity4x4();
 	};
 }

@@ -10,6 +10,7 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
+#include <memory>
 #include <unordered_map>
 
 namespace GraphicsEngine
@@ -32,5 +33,7 @@ namespace GraphicsEngine
 
 		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView() const;
 		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView() const;
+
+		static std::unique_ptr<MeshGeometry> LoadFromFile(const D3DBase& d3dBase, const std::string& name, const std::wstring& filename);
 	};
 }

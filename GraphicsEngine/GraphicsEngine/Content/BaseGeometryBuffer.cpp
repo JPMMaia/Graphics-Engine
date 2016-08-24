@@ -6,8 +6,8 @@
 
 using namespace GraphicsEngine;
 
-BaseGeometryBuffer::BaseGeometryBuffer(const D3DBase& d3dBase, const void* data, uint32_t count, uint32_t elementByteSize) :
-	m_bufferByteSize(count * elementByteSize)
+BaseGeometryBuffer::BaseGeometryBuffer(const D3DBase& d3dBase, const void* data, size_t count, size_t elementByteSize) :
+	m_bufferByteSize(static_cast<uint32_t>(count * elementByteSize))
 {
 	// Create CPU buffer and copy vertex data:
 	DX::ThrowIfFailed(

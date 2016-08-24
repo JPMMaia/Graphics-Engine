@@ -145,10 +145,13 @@
     <ClInclude Include="Content\d3dx12.h" />
     <ClInclude Include="Content\D3DBase.h" />
     <ClInclude Include="Content\DirectXHelper.h" />
+    <ClInclude Include="Content\EngineException.h" />
     <ClInclude Include="Content\FrameResource.h" />
     <ClInclude Include="Content\GeometryGenerator.h" />
     <ClInclude Include="Content\IndexBuffer.h" />
     <ClInclude Include="Content\DXInputHandler.h" />
+    <ClInclude Include="Content\Light.h" />
+    <ClInclude Include="Content\Material.h" />
     <ClInclude Include="Content\MathHelper.h" />
     <ClInclude Include="Content\MeshGeometry.h" />
     <ClInclude Include="Content\Graphics.h" />
@@ -160,6 +163,7 @@
     <ClInclude Include="Content\SettingsManager.h" />
     <ClInclude Include="Content\Shader.h" />
     <ClInclude Include="Content\SubmeshGeometry.h" />
+    <ClInclude Include="Content\Texture.h" />
     <ClInclude Include="Content\Timer.h" />
     <ClInclude Include="Content\UploadBuffer.h" />
     <ClInclude Include="Content\VertexBuffer.h" />
@@ -173,10 +177,12 @@
     <ClCompile Include="Content\Camera.cpp" />
     <ClCompile Include="Content\D3DBase.cpp" />
     <ClCompile Include="Content\DirectXHelper.cpp" />
+    <ClCompile Include="Content\EngineException.cpp" />
     <ClCompile Include="Content\FrameResource.cpp" />
     <ClCompile Include="Content\GeometryGenerator.cpp" />
     <ClCompile Include="Content\IndexBuffer.cpp" />
     <ClCompile Include="Content\DXInputHandler.cpp" />
+    <ClCompile Include="Content\Material.cpp" />
     <ClCompile Include="Content\MathHelper.cpp" />
     <ClCompile Include="Content\MeshGeometry.cpp" />
     <ClCompile Include="Content\Graphics.cpp" />
@@ -185,6 +191,7 @@
     <ClCompile Include="Content\SceneRenderer.cpp" />
     <ClCompile Include="Content\SettingsManager.cpp" />
     <ClCompile Include="Content\Shader.cpp" />
+    <ClCompile Include="Content\Timer.cpp" />
     <ClCompile Include="Content\VertexBuffer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -194,22 +201,50 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Content\Shaders\ColorPixelShader.hlsl">
+    <FxCompile Include="Content\Shaders\DefaultPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Shaders\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="Content\Shaders\ColorVertexShader.hlsl">
+    <FxCompile Include="Content\Shaders\DefaultVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Shaders\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\Shaders\LightingUtils.hlsl">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+    </None>
+    <None Include="Content\Shaders\MaterialConstants.hlsl">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+    </None>
+    <None Include="Content\Shaders\ObjectConstants.hlsl">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+    </None>
+    <None Include="Content\Shaders\PassConstants.hlsl">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

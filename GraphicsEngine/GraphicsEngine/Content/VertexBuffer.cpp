@@ -3,8 +3,8 @@
 
 using namespace GraphicsEngine;
 
-VertexBuffer::VertexBuffer(const D3DBase& d3dBase, const void* vertices, uint32_t vertexCount, uint32_t vertexByteSize) :
-	m_vertexByteStride(vertexByteSize),
+VertexBuffer::VertexBuffer(const D3DBase& d3dBase, const void* vertices, size_t vertexCount, size_t vertexByteSize) :
+	m_vertexByteStride(static_cast<uint32_t>(vertexByteSize)),
 	BaseGeometryBuffer(d3dBase, vertices, vertexCount, vertexByteSize)
 {
 }

@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Shader.h"
+#include "EngineException.h"
 
 #include <D3Dcompiler.h>
 
@@ -16,7 +17,7 @@ void Shader::LoadBinary(const wstring& filename)
 {
 	ifstream filestream(filename, ios::binary);
 	if (!filestream.good())
-		throw exception("Filename not found!");
+		ThrowEngineException(L"File not found!");
 
 	filestream.seekg(0, ios_base::end);
 	auto size = filestream.tellg();

@@ -13,13 +13,14 @@ namespace GraphicsEngine
 	struct FrameResource
 	{
 	public:
-		FrameResource(ID3D12Device* d3dDevice, uint32_t passCount, uint32_t objectCount);
+		FrameResource(ID3D12Device* d3dDevice, uint32_t passCount, uint32_t objectCount, uint32_t materialCount);
 
 	public:
 		uint64_t Fence = 0;
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> CommandAllocator;
 
-		std::unique_ptr<UploadBuffer<ConstantBufferTypes::PassConstants>> PassConstants;
-		std::unique_ptr<UploadBuffer<ConstantBufferTypes::ObjectConstants>> ObjectConstants;
+		std::unique_ptr<UploadBuffer<ConstantBufferTypes::PassConstants>> PassConstantBuffer;
+		std::unique_ptr<UploadBuffer<ConstantBufferTypes::MaterialConstants>> MaterialsConstantBuffer;
+		std::unique_ptr<UploadBuffer<ConstantBufferTypes::ObjectConstants>> ObjectsConstantBuffer;
 	};
 }

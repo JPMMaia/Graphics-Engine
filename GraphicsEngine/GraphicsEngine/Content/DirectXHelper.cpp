@@ -4,6 +4,17 @@
 using namespace GraphicsEngine;
 using namespace Microsoft::WRL;
 
+void DX::ThrowIfFailed(HRESULT hr)
+{
+	if (FAILED(hr))
+	{
+		_com_error error(hr);
+
+		// Set a breakpoint on this line to catch Win32 API errors.
+		ThrowEngineException(error.ErrorMessage());
+	}
+}
+
 ComPtr<ID3D12Resource> DX::CreateDefaultBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const void* initialData, uint64_t byteSize, ComPtr<ID3D12Resource>& uploadBuffer)
 {
 	ComPtr<ID3D12Resource> defaultBuffer;
@@ -76,4 +87,11 @@ ComPtr<ID3D12Resource> DX::CreateDefaultBuffer(ID3D12Device* d3dDevice, ID3D12Gr
 uint32_t DX::CalculateConstantBufferByteSize(uint32_t byteSize)
 {
 	return (byteSize + 255) & ~255;
+}
+
+std::wstring DX::AnsiToWString(const std::string& str)
+{
+	WCHAR buffer[512];
+	MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, buffer, 512);
+	return std::wstring(buffer);
 }

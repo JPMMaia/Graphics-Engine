@@ -8,7 +8,7 @@ namespace GraphicsEngine
 	{
 	protected:
 		BaseGeometryBuffer() = default;
-		BaseGeometryBuffer(const D3DBase& d3dBase, const void* data, uint32_t count, uint32_t elementByteSize);
+		BaseGeometryBuffer(const D3DBase& d3dBase, const void* data, size_t count, size_t elementByteSize);
 		BaseGeometryBuffer(const BaseGeometryBuffer& rhs) = default;
 		BaseGeometryBuffer& operator=(const BaseGeometryBuffer& rhs) = default;
 

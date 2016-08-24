@@ -10,7 +10,7 @@ namespace GraphicsEngine
 	{
 	public:
 		VertexBuffer() = default;
-		explicit VertexBuffer(const D3DBase& d3dBase, const void* vertices, uint32_t vertexCount, uint32_t vertexByteSize);
+		explicit VertexBuffer(const D3DBase& d3dBase, const void* vertices, size_t vertexCount, size_t vertexByteSize);
 		VertexBuffer(const VertexBuffer& rhs) = default;
 		VertexBuffer& operator=(const VertexBuffer& rhs) = default;
 

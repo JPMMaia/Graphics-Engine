@@ -159,8 +159,8 @@ void Graphics::InitializeShadersAndInputLayout()
 	GetModuleFileName(nullptr, buffer, 1024);
 	OutputDebugStringW(buffer);
 
-	m_shaders["DefaultVertexShader"] = Shader(L"../x64/Debug/DefaultVertexShader.cso");
-	m_shaders["DefaultPixelShader"] = Shader(L"../x64/Debug/DefaultPixelShader.cso");
+	m_shaders["DefaultVertexShader"] = Shader(L"Shaders/DefaultVertexShader.cso");
+	m_shaders["DefaultPixelShader"] = Shader(L"Shaders/DefaultPixelShader.cso");
 
 	m_inputLayout =
 	{
@@ -266,6 +266,10 @@ void Graphics::InitializeGeometry()
 	geo->DrawArgs["Cylinder"] = cylinderSubmesh;
 
 	m_geometries[geo->Name] = std::move(geo);
+
+	// Load skull:
+	auto skull = MeshGeometry::LoadFromFile(m_d3d, "Skull", L"Models/Skull.txt");
+	m_geometries[skull->Name] = std::move(skull);
 }
 void Graphics::InitializeMaterials()
 {
@@ -330,7 +334,18 @@ void Graphics::InitializeRenderItems()
 	gridRenderItem->BaseVertexLocation = gridRenderItem->Mesh->DrawArgs["Grid"].BaseVertexLocation;
 	m_allRenderItems.push_back(std::move(gridRenderItem));
 
-	UINT objCBIndex = 2;
+	auto skullRenderItem = std::make_unique<RenderItem>();
+	XMStoreFloat4x4(&skullRenderItem->WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f)*XMMatrixTranslation(0.0f, 1.0f, 0.0f));
+	skullRenderItem->ObjectCBIndex = 2;
+	skullRenderItem->Material = m_materials["SkullMaterial"].get();
+	skullRenderItem->Mesh = m_geometries["Skull"].get();
+	skullRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	skullRenderItem->IndexCount = skullRenderItem->Mesh->DrawArgs["Skull"].IndexCount;
+	skullRenderItem->StartIndexLocation = skullRenderItem->Mesh->DrawArgs["Skull"].StartIndexLocation;
+	skullRenderItem->BaseVertexLocation = skullRenderItem->Mesh->DrawArgs["Skull"].BaseVertexLocation;
+	m_allRenderItems.push_back(std::move(skullRenderItem));
+
+	UINT objCBIndex = 3;
 	for (auto i = 0; i < 5; ++i)
 	{
 		auto leftCylRitem = std::make_unique<RenderItem>();

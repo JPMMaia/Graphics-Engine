@@ -6,11 +6,11 @@ namespace GraphicsEngine
 {
 	struct Light
 	{
-		DirectX::XMFLOAT3 Strength;		// Light color
-		float FalloffStart;				// Point/Spot light only
-		DirectX::XMFLOAT3 Direction;	// Directional/Spot light only
-		float FalloffEnd;				// Point/Spot light only
-		DirectX::XMFLOAT3 Position;		// Point/Spot light only
-		float SpotPower;				// Spot light only
+		DirectX::XMFLOAT3 Strength = { 0.5f, 0.5f, 0.5f };		// Light color
+		float FalloffStart = 1.0f;								// Point/Spot light only
+		DirectX::XMFLOAT3 Direction = { 0.0f, -1.0f, 0.0f };	// Directional/Spot light only
+		float FalloffEnd = 10.0f;								// Point/Spot light only
+		DirectX::XMFLOAT3 Position = { 0.0f, 0.0f, 0.0f };		// Point/Spot light only
+		float SpotPower = 64.0f;								// Spot light only
 	};
 }

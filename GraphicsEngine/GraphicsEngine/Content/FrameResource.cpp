@@ -3,7 +3,7 @@
 
 using namespace GraphicsEngine;
 
-FrameResource::FrameResource(ID3D12Device* d3dDevice, uint32_t passCount, uint32_t objectCount)
+FrameResource::FrameResource(ID3D12Device* d3dDevice, uint32_t passCount, uint32_t objectCount, uint32_t materialCount)
 {
 	// Create command allocator:
 	DX::ThrowIfFailed(
@@ -13,6 +13,7 @@ FrameResource::FrameResource(ID3D12Device* d3dDevice, uint32_t passCount, uint32
 			)
 		);
 
-	PassConstants = std::make_unique<UploadBuffer<ConstantBufferTypes::PassConstants>>(d3dDevice, passCount, true);
-	ObjectConstants = std::make_unique<UploadBuffer<ConstantBufferTypes::ObjectConstants>>(d3dDevice, objectCount, true);
+	PassConstantBuffer = std::make_unique<UploadBuffer<ConstantBufferTypes::PassConstants>>(d3dDevice, passCount, true);
+	ObjectsConstantBuffer = std::make_unique<UploadBuffer<ConstantBufferTypes::ObjectConstants>>(d3dDevice, objectCount, true);
+	MaterialsConstantBuffer = std::make_unique <UploadBuffer<ConstantBufferTypes::MaterialConstants>>(d3dDevice, materialCount, true);
 }

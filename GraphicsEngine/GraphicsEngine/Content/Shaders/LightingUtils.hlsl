@@ -1,4 +1,13 @@
-#pragma once
+//***************************************************************************************
+// LightingUtil.hlsl by Frank Luna (C) 2015 All Rights Reserved.
+//
+// Contains API for shader lighting.
+//***************************************************************************************
+
+#ifndef __LIGHTING_UTILS__
+#define __LIGHTING_UTILS__
+
+#define MaxLights 16
 
 struct Light
 {
@@ -20,9 +29,9 @@ struct Material
 /// <sumary>
 ///	Linear falloff.
 /// </sumary>
-float CalculateAttenuation(float distance, float falloffStart, float fallofEnd)
+float CalculateAttenuation(float distance, float falloffStart, float falloffEnd)
 {
-	return saturate((fallofEnd - distance) / (falloffEnd - falloffStart));
+	return saturate((falloffEnd - distance) / (falloffEnd - falloffStart));
 }
 
 /// <sumary>
@@ -45,14 +54,21 @@ float3 BlinnPhong(float3 lightStrength, float3 lightVector, float3 normal, float
 	// Calculate the halfway vector:
 	float3 halfwayVector = normalize(toEye + lightVector);
 
+	// Calculate the specular albedo:
 	float roughnessFactor = (m + 8.0f) * pow(max(dot(halfwayVector, normal), 0.0f), m) / 8.0f;
 	float3 fresnelFactor = SchlickFresnel(material.FresnelR0, halfwayVector, lightVector);
+	float3 specularAlbedo = fresnelFactor * roughnessFactor;
 
-	// TODO specularAlbedo = specularAlbedo / (specularAlbedo + 1.0f);
+	// Our specular formula goes outside [0,1] range, but we are 
+	// doing LDR rendering.  So scale it down a bit.
+	specularAlbedo = specularAlbedo / (specularAlbedo + 1.0f);
 
-
+	return (material.DiffuseAlbedo.rgb + specularAlbedo) * lightStrength;
 }
 
+/// <sumary>
+/// Evaluates the lighting equation for directional lights.
+/// </sumary>
 float3 ComputeDirectionalLight(Light light, Material material, float3 normal, float3 toEye)
 {
 	// The light vector aims opposite the direction the light rays travel:
@@ -65,6 +81,9 @@ float3 ComputeDirectionalLight(Light light, Material material, float3 normal, fl
 	return BlinnPhong(lightStrength, lightVector, normal, toEye, material);
 }
 
+/// <sumary>
+/// Evaluates the lighting equation for point lights.
+/// </sumary>
 float3 ComputePointLight(Light light, Material material, float3 surfacePointPosition, float3 normal, float3 toEye)
 {
 	// The vector from the surface to the light:
@@ -85,12 +104,15 @@ float3 ComputePointLight(Light light, Material material, float3 surfacePointPosi
 	float3 lightStrength = lightIntensity * light.Strength;
 
 	// Attenuate light by distance:
-	float attenuation = CalculateAttenuation(distance, light.FallOffStart, light.FalloffEnd);
+	float attenuation = CalculateAttenuation(distance, light.FalloffStart, light.FalloffEnd);
 	lightStrength *= attenuation;
 
 	return BlinnPhong(lightStrength, lightVector, normal, toEye, material);
 }
 
+/// <sumary>
+/// Evaluates the lighting equation for spot lights.
+/// </sumary>
 float3 ComputeSpotLight(Light light, Material material, float3 surfacePointPosition, float3 normal, float3 toEye)
 {
 	// The vector from the surface to the light:
@@ -111,7 +133,7 @@ float3 ComputeSpotLight(Light light, Material material, float3 surfacePointPosit
 	float3 lightStrength = lightIntensity * light.Strength;
 
 	// Attenuate light by distance:
-	float attenuation = CalculateAttenuation(distance, light.FallOffStart, light.FalloffEnd);
+	float attenuation = CalculateAttenuation(distance, light.FalloffStart, light.FalloffEnd);
 	lightStrength *= attenuation;
 
 	// Scale by spotlight:
@@ -120,3 +142,35 @@ float3 ComputeSpotLight(Light light, Material material, float3 surfacePointPosit
 
 	return BlinnPhong(lightStrength, lightVector, normal, toEye, material);
 }
+
+float4 ComputeLighting(Light lights[MaxLights], Material material, float3 surfacePointPosition, float3 normal, float3 toEye, float3 shadowFactor)
+{
+	float3 result = 0.0f;
+
+	int i = 0;
+
+#if (NUM_DIR_LIGHTS > 0)
+	for (i = 0; i < NUM_DIR_LIGHTS; ++i)
+	{
+		result += shadowFactor[i] * ComputeDirectionalLight(lights[i], material, normal, toEye);
+	}
+#endif
+
+#if (NUM_POINT_LIGHTS > 0)
+	for (i = NUM_DIR_LIGHTS; i < NUM_DIR_LIGHTS + NUM_POINT_LIGHTS; ++i)
+	{
+		result += ComputePointLight(lights[i], material, surfacePointPosition, normal, toEye);
+	}
+#endif
+
+#if (NUM_SPOT_LIGHTS > 0)
+	for (i = NUM_DIR_LIGHTS + NUM_POINT_LIGHTS; i < NUM_DIR_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS; ++i)
+	{
+		result += ComputeSpotLight(lights[i], material, surfacePointPosition, normal, toEye);
+	}
+#endif 
+
+	return float4(result, 0.0f);
+}
+
+#endif

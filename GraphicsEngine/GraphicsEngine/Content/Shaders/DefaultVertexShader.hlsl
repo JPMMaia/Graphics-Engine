@@ -7,6 +7,7 @@ struct VertexIn
 {
 	float3 PositionL : POSITION;
 	float3 NormalL : NORMAL;
+	float2 TextureCoordinates : TEXCOORD0;
 };
 
 struct VertexOut

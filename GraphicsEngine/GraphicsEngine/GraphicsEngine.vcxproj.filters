@@ -46,6 +46,9 @@
     <Filter Include="Content\DirectX12\Resources">
       <UniqueIdentifier>{c593a79c-36de-49d9-8cf8-d5b220550f8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\DirectX12\Textures">
+      <UniqueIdentifier>{416b960a-41a9-477f-8b9b-8a27e51f350c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -108,9 +111,6 @@
     <ClInclude Include="Content\BaseGeometryBuffer.h">
       <Filter>Content\DirectX12\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="Content\VertexTypes.h">
-      <Filter>Content\DirectX12\Geometry</Filter>
-    </ClInclude>
     <ClInclude Include="Content\MathHelper.h">
       <Filter>Content\DirectX12\Helpers</Filter>
     </ClInclude>
@@ -141,8 +141,17 @@
     <ClInclude Include="Content\EngineException.h">
       <Filter>Content\DirectX12\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Content\VertexTypes.h">
+      <Filter>Content\DirectX12\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="Content\Texture.h">
-      <Filter>Content\DirectX12\Lighting</Filter>
+      <Filter>Content\DirectX12\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\DDSTextureLoader.h">
+      <Filter>Content\DirectX12\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Samplers.h">
+      <Filter>Content\DirectX12\Textures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -208,6 +217,15 @@
     </ClCompile>
     <ClCompile Include="Content\Timer.cpp">
       <Filter>Content\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Texture.cpp">
+      <Filter>Content\DirectX12\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\DDSTextureLoader.cpp">
+      <Filter>Content\DirectX12\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Samplers.cpp">
+      <Filter>Content\DirectX12\Textures</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

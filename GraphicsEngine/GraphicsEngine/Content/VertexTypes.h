@@ -18,6 +18,13 @@ namespace GraphicsEngine
 			DirectX::XMFLOAT3 Normal;
 		};
 
-		using DefaultVertexType = NormalVertexType;
+		struct NormalTextureVertexType
+		{
+			DirectX::XMFLOAT3 Position;
+			DirectX::XMFLOAT3 Normal;
+			DirectX::XMFLOAT2 TextureCoordinates;
+		};
+
+		using DefaultVertexType = NormalTextureVertexType;
 	}
 }

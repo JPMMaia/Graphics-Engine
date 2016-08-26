@@ -144,6 +144,7 @@
     <ClInclude Include="Content\ConstantBufferTypes.h" />
     <ClInclude Include="Content\d3dx12.h" />
     <ClInclude Include="Content\D3DBase.h" />
+    <ClInclude Include="Content\DDSTextureLoader.h" />
     <ClInclude Include="Content\DirectXHelper.h" />
     <ClInclude Include="Content\EngineException.h" />
     <ClInclude Include="Content\FrameResource.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="Content\InputHandler.h" />
     <ClInclude Include="Content\ISceneRenderer.h" />
     <ClInclude Include="Content\RenderItem.h" />
+    <ClInclude Include="Content\Samplers.h" />
     <ClInclude Include="Content\SceneRenderer.h" />
     <ClInclude Include="Content\SettingsManager.h" />
     <ClInclude Include="Content\Shader.h" />
@@ -176,6 +178,7 @@
     <ClCompile Include="Content\BaseGeometryBuffer.cpp" />
     <ClCompile Include="Content\Camera.cpp" />
     <ClCompile Include="Content\D3DBase.cpp" />
+    <ClCompile Include="Content\DDSTextureLoader.cpp" />
     <ClCompile Include="Content\DirectXHelper.cpp" />
     <ClCompile Include="Content\EngineException.cpp" />
     <ClCompile Include="Content\FrameResource.cpp" />
@@ -188,9 +191,11 @@
     <ClCompile Include="Content\Graphics.cpp" />
     <ClCompile Include="Content\InputHandler.cpp" />
     <ClCompile Include="Content\RenderItem.cpp" />
+    <ClCompile Include="Content\Samplers.cpp" />
     <ClCompile Include="Content\SceneRenderer.cpp" />
     <ClCompile Include="Content\SettingsManager.cpp" />
     <ClCompile Include="Content\Shader.cpp" />
+    <ClCompile Include="Content\Texture.cpp" />
     <ClCompile Include="Content\Timer.cpp" />
     <ClCompile Include="Content\VertexBuffer.cpp" />
     <ClCompile Include="stdafx.cpp">

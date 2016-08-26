@@ -7,6 +7,7 @@
 #include <D3Dcompiler.h>
 #include <DirectXColors.h>
 #include "Material.h"
+#include "Samplers.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -21,6 +22,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	auto commandList = m_d3d.GetCommandList();
 	DX::ThrowIfFailed(commandList->Reset(m_d3d.GetCommandAllocator(), nullptr));
 
+	LoadTextures();
 	InitializeRootSignature();
 	InitializeShadersAndInputLayout();
 	InitializeGeometry();
@@ -83,8 +85,12 @@ void Graphics::Render(const Timer& timer)
 	// Set pass constant buffer:
 	{
 		auto passCB = m_currentFrameResource->PassConstantBuffer->GetResource();
-		commandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(3, passCB->GetGPUVirtualAddress());
 	}
+
+	// Set texture descriptor heap:
+	ID3D12DescriptorHeap* descriptorHeaps = { m_textureDescriptorHeap.Get() };
+	commandList->SetDescriptorHeaps(1, &descriptorHeaps);
 
 	// Draw render items:
 	DrawRenderItems(commandList, m_opaqueRenderItems);
@@ -106,6 +112,13 @@ Camera* Graphics::GetCamera()
 {
 	return &m_camera;
 }
+
+void Graphics::LoadTextures()
+{
+	auto woodCrateTexture = std::make_unique<Texture>(m_d3d, "WoodCrate", L"Textures/WoodCrate01.dds");
+	m_textures[woodCrateTexture->Name] = std::move(woodCrateTexture);
+}
+
 void Graphics::SetWireframeMode(bool enable)
 {
 	m_wireframeEnabled = enable;
@@ -118,19 +131,31 @@ int Graphics::GetFrameResourcesCount()
 
 void Graphics::InitializeRootSignature()
 {
-	// Create root CBVs:
-	std::array<CD3DX12_ROOT_PARAMETER, 3> slotRootParameter;
-	slotRootParameter[0].InitAsConstantBufferView(0);
-	slotRootParameter[1].InitAsConstantBufferView(1);
-	slotRootParameter[2].InitAsConstantBufferView(2);
+	auto device = m_d3d.GetDevice();
+
+	// Describing textures tables:
+	CD3DX12_DESCRIPTOR_RANGE texturesTable(
+		D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+		1,
+		0
+		);
+
+	// Specifying root parameters:
+	std::array<CD3DX12_ROOT_PARAMETER, 4> slotRootParameter;
+	slotRootParameter[0].InitAsDescriptorTable(1, &texturesTable, D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_PIXEL);
+	slotRootParameter[1].InitAsConstantBufferView(0);
+	slotRootParameter[2].InitAsConstantBufferView(1);
+	slotRootParameter[3].InitAsConstantBufferView(2);
+
+	auto staticSamplers = Samplers::GetStaticSamplers();
 
 	// A root signature is an array of root parameters:
 	auto rootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDescription(
 		static_cast<uint32_t>(slotRootParameter.size()),	// Num root parameters
 		slotRootParameter.data(),							// Root parameters
-		0,													// Num static samplers
-		nullptr,											// Static samplers
+		static_cast<uint32_t>(staticSamplers.size()),		// Num static samplers
+		staticSamplers.data(),								// Static samplers
 		rootSignatureFlags
 		);
 
@@ -144,13 +169,42 @@ void Graphics::InitializeRootSignature()
 		DX::ThrowIfFailed(hr);
 
 		DX::ThrowIfFailed(
-			m_d3d.GetDevice()->CreateRootSignature(
+			device->CreateRootSignature(
 				0,
 				serializedRootSignature->GetBufferPointer(),
 				serializedRootSignature->GetBufferSize(),
 				IID_PPV_ARGS(m_rootSignature.GetAddressOf())
 				)
 			);
+	}
+
+	// Create textures heap:
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC texturesHeapDescription = {};
+		texturesHeapDescription.NumDescriptors = 3;
+		texturesHeapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		texturesHeapDescription.Flags = D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		texturesHeapDescription.NodeMask = 0;
+
+		DX::ThrowIfFailed(
+			device->CreateDescriptorHeap(&texturesHeapDescription, IID_PPV_ARGS(m_textureDescriptorHeap.GetAddressOf()))
+			);
+
+		// Create texture descriptors:
+		{
+			CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle(m_textureDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), 0, m_d3d.GetCbvSrvUavDescriptorSize());
+
+			auto woodCrateTexture = m_textures["WoodCrate"]->Resource.Get();
+			D3D12_SHADER_RESOURCE_VIEW_DESC textureDescription = {};
+			textureDescription.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+			textureDescription.Format = woodCrateTexture->GetDesc().Format;
+			textureDescription.ViewDimension = D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE2D;
+			textureDescription.Texture2D.MipLevels = woodCrateTexture->GetDesc().MipLevels;
+			textureDescription.Texture2D.MostDetailedMip = 0;
+			textureDescription.Texture2D.ResourceMinLODClamp = 0.0f;
+
+			device->CreateShaderResourceView(woodCrateTexture, &textureDescription, descriptorHandle);
+		}
 	}
 }
 void Graphics::InitializeShadersAndInputLayout()
@@ -166,6 +220,7 @@ void Graphics::InitializeShadersAndInputLayout()
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
 	};
 }
 void Graphics::InitializeGeometry()
@@ -230,24 +285,28 @@ void Graphics::InitializeGeometry()
 	{
 		vertices[k].Position = box.Vertices[i].Position;
 		vertices[k].Normal = box.Vertices[i].Normal;
+		vertices[k].TextureCoordinates = box.Vertices[i].TextureCoordinates;
 	}
 
 	for (size_t i = 0; i < grid.Vertices.size(); ++i, ++k)
 	{
 		vertices[k].Position = grid.Vertices[i].Position;
 		vertices[k].Normal = grid.Vertices[i].Normal;
+		vertices[k].TextureCoordinates = grid.Vertices[i].TextureCoordinates;
 	}
 
 	for (size_t i = 0; i < sphere.Vertices.size(); ++i, ++k)
 	{
 		vertices[k].Position = sphere.Vertices[i].Position;
 		vertices[k].Normal = sphere.Vertices[i].Normal;
+		vertices[k].TextureCoordinates = sphere.Vertices[i].TextureCoordinates;
 	}
 
 	for (size_t i = 0; i < cylinder.Vertices.size(); ++i, ++k)
 	{
 		vertices[k].Position = cylinder.Vertices[i].Position;
 		vertices[k].Normal = cylinder.Vertices[i].Normal;
+		vertices[k].TextureCoordinates = cylinder.Vertices[i].TextureCoordinates;
 	}
 
 	std::vector<std::uint16_t> indices;
@@ -284,7 +343,7 @@ void Graphics::InitializeMaterials()
 	auto stone0 = std::make_unique<Material>();
 	stone0->Name = "Stone0";
 	stone0->MaterialCBIndex = 1;
-	stone0->DiffuseSrvHeapIndex = 1;
+	stone0->DiffuseSrvHeapIndex = 0;
 	stone0->DiffuseAlbedo = XMFLOAT4(Colors::LightSteelBlue);
 	stone0->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 	stone0->Roughness = 0.3f;
@@ -292,7 +351,7 @@ void Graphics::InitializeMaterials()
 	auto tile0 = std::make_unique<Material>();
 	tile0->Name = "Tile0";
 	tile0->MaterialCBIndex = 2;
-	tile0->DiffuseSrvHeapIndex = 2;
+	tile0->DiffuseSrvHeapIndex = 0;
 	tile0->DiffuseAlbedo = XMFLOAT4(Colors::LightGray);
 	tile0->FresnelR0 = XMFLOAT3(0.02f, 0.02f, 0.02f);
 	tile0->Roughness = 0.2f;
@@ -300,7 +359,7 @@ void Graphics::InitializeMaterials()
 	auto skullMaterial = std::make_unique<Material>();
 	skullMaterial->Name = "SkullMaterial";
 	skullMaterial->MaterialCBIndex = 3;
-	skullMaterial->DiffuseSrvHeapIndex = 3;
+	skullMaterial->DiffuseSrvHeapIndex = 0;
 	skullMaterial->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	skullMaterial->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 	skullMaterial->Roughness = 0.3f;
@@ -541,17 +600,21 @@ void Graphics::DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std
 
 	auto objectCB = m_currentFrameResource->ObjectsConstantBuffer->GetResource();
 	auto materialCB = m_currentFrameResource->MaterialsConstantBuffer->GetResource();
+	CD3DX12_GPU_DESCRIPTOR_HANDLE textureHandle(m_textureDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 
 	// For each render item:
 	for (size_t i = 0; i < renderItems.size(); ++i)
 	{
 		auto renderItem = renderItems[i];
 
+		textureHandle.Offset(0, m_d3d.GetCbvSrvUavDescriptorSize());
+		commandList->SetGraphicsRootDescriptorTable(0, textureHandle);
+
 		auto objectCBAddress = static_cast<D3D12_GPU_VIRTUAL_ADDRESS>(objectCB->GetGPUVirtualAddress() + renderItem->ObjectCBIndex * objectCBByteSize);
-		commandList->SetGraphicsRootConstantBufferView(0, objectCBAddress);
+		commandList->SetGraphicsRootConstantBufferView(1, objectCBAddress);
 
 		auto materialCBAddress = static_cast<D3D12_GPU_VIRTUAL_ADDRESS>(materialCB->GetGPUVirtualAddress() + renderItem->Material->MaterialCBIndex * materialCBByteSize);
-		commandList->SetGraphicsRootConstantBufferView(1, materialCBAddress);
+		commandList->SetGraphicsRootConstantBufferView(2, materialCBAddress);
 
 		renderItem->Render(commandList);
 	}

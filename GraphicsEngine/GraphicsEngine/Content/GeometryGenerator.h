@@ -37,7 +37,7 @@ namespace GraphicsEngine
 				Position(p),
 				Normal(n),
 				TangentU(t),
-				TexC(uv) {}
+				TextureCoordinates(uv) {}
 			Vertex(
 				float px, float py, float pz,
 				float nx, float ny, float nz,
@@ -46,12 +46,12 @@ namespace GraphicsEngine
 				Position(px, py, pz),
 				Normal(nx, ny, nz),
 				TangentU(tx, ty, tz),
-				TexC(u, v) {}
+				TextureCoordinates(u, v) {}
 
 			DirectX::XMFLOAT3 Position;
 			DirectX::XMFLOAT3 Normal;
 			DirectX::XMFLOAT3 TangentU;
-			DirectX::XMFLOAT2 TexC;
+			DirectX::XMFLOAT2 TextureCoordinates;
 		};
 
 		struct MeshData
@@ -75,40 +75,40 @@ namespace GraphicsEngine
 			std::vector<uint16> m_indices16;
 		};
 
-		///<summary>
+		/// <summary>
 		/// Creates a box centered at the origin with the given dimensions, where each
 		/// face has m rows and n columns of vertices.
-		///</summary>
+		/// </summary>
 		static MeshData CreateBox(float width, float height, float depth, uint32 numSubdivisions);
 
-		///<summary>
+		/// <summary>
 		/// Creates a sphere centered at the origin with the given radius.  The
 		/// slices and stacks parameters control the degree of tessellation.
-		///</summary>
+		/// </summary>
 		static MeshData CreateSphere(float radius, uint32 sliceCount, uint32 stackCount);
 
-		///<summary>
+		/// <summary>
 		/// Creates a geosphere centered at the origin with the given radius.  The
 		/// depth controls the level of tessellation.
-		///</summary>
+		/// </summary>
 		static MeshData CreateGeosphere(float radius, uint32 numSubdivisions);
 
-		///<summary>
+		/// <summary>
 		/// Creates a cylinder parallel to the y-axis, and centered about the origin.  
 		/// The bottom and top radius can vary to form various cone shapes rather than true
-		// cylinders.  The slices and stacks parameters control the degree of tessellation.
-		///</summary>
+		/// cylinders.  The slices and stacks parameters control the degree of tessellation.
+		/// </summary>
 		static MeshData CreateCylinder(float bottomRadius, float topRadius, float height, uint32 sliceCount, uint32 stackCount);
 
-		///<summary>
+		/// <summary>
 		/// Creates an mxn grid in the xz-plane with m rows and n columns, centered
 		/// at the origin with the specified width and depth.
-		///</summary>
+		/// </summary>
 		static MeshData CreateGrid(float width, float depth, uint32 m, uint32 n);
 
-		///<summary>
+		/// <summary>
 		/// Creates a quad aligned with the screen.  This is useful for postprocessing and screen effects.
-		///</summary>
+		/// </summary>
 		static MeshData CreateQuad(float x, float y, float w, float h, float depth);
 
 	private:

@@ -7,6 +7,7 @@ struct VertexIn
 {
 	float3 PositionL : POSITION;
 	float3 NormalL : NORMAL;
+	float2 TextureCoordinates : TEXCOORD0;
 };
 
 struct VertexOut
@@ -14,6 +15,7 @@ struct VertexOut
 	float4 PositionH : SV_POSITION;
 	float3 PositionW : POSITION;
 	float3 NormalW : NORMAL;
+	float2 TextureCoordinates : TEXCOORD0;
 };
 
 ConstantBuffer<ObjectConstants> g_objectCB : register(b0);
@@ -32,6 +34,8 @@ VertexOut main(VertexIn input)
 
 	// Transform to Homogeneous clip space:
 	output.PositionH = mul(positionW, g_passCB.ViewProjectionMatrix);
+
+	output.TextureCoordinates = input.TextureCoordinates;
 
 	return output;
 }

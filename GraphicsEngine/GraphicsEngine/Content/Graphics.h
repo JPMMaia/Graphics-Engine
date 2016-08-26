@@ -11,6 +11,7 @@
 #include "Shader.h"
 
 #include <vector>
+#include "Texture.h"
 
 namespace GraphicsEngine
 {
@@ -29,6 +30,7 @@ namespace GraphicsEngine
 		Camera* GetCamera();
 		
 	private:
+		void LoadTextures();
 		void InitializeRootSignature();
 		void InitializeShadersAndInputLayout();
 		void InitializeGeometry();
@@ -54,6 +56,7 @@ namespace GraphicsEngine
 
 		std::vector<D3D12_INPUT_ELEMENT_DESC> m_inputLayout;
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_textureDescriptorHeap;
 		std::unordered_map<std::string, Shader> m_shaders;
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>> m_pipelineStateObjects;
 
@@ -61,6 +64,7 @@ namespace GraphicsEngine
 		std::unique_ptr<UploadBuffer<ConstantBufferTypes::ObjectConstants>> m_perObjectCB;
 		std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> m_geometries;
 		std::unordered_map<std::string, std::unique_ptr<Material>> m_materials;
+		std::unordered_map<std::string, std::unique_ptr<Texture>> m_textures;
 
 		std::vector<std::unique_ptr<RenderItem>> m_allRenderItems;
 		std::vector<RenderItem*> m_opaqueRenderItems;

@@ -1,7 +1,7 @@
 #include "LightingUtils.hlsl"
 #include "ObjectConstants.hlsl"
 #include "PassConstants.hlsl"
-#include "PassConstants.hlsl"
+#include "MaterialConstants.hlsl"
 
 struct VertexIn
 {
@@ -19,6 +19,7 @@ struct VertexOut
 };
 
 ConstantBuffer<ObjectConstants> g_objectCB : register(b0);
+ConstantBuffer<MaterialConstants> g_materialCB : register(b1);
 ConstantBuffer<PassConstants> g_passCB : register(b2);
 
 VertexOut main(VertexIn input)
@@ -35,7 +36,8 @@ VertexOut main(VertexIn input)
 	// Transform to Homogeneous clip space:
 	output.PositionH = mul(positionW, g_passCB.ViewProjectionMatrix);
 
-	output.TextureCoordinates = input.TextureCoordinates;
+	float4 textureCoordinates = mul(float4(input.TextureCoordinates, 0.0f, 1.0f), g_objectCB.TextureTransform);
+	output.TextureCoordinates = mul(textureCoordinates, g_materialCB.MaterialTransform).xy;
 
 	return output;
 }

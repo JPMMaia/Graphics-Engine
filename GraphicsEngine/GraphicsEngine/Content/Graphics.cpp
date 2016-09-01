@@ -373,6 +373,7 @@ void Graphics::InitializeRenderItems()
 {
 	auto boxRenderItem = std::make_unique<RenderItem>();
 	XMStoreFloat4x4(&boxRenderItem->WorldMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f)*XMMatrixTranslation(0.0f, 0.5f, 0.0f));
+	boxRenderItem->TextureTransform = MathHelper::Identity4x4();
 	boxRenderItem->ObjectCBIndex = 0;
 	boxRenderItem->Mesh = m_geometries["ShapeGeo"].get();
 	boxRenderItem->Material = m_materials["Stone0"].get();
@@ -384,6 +385,7 @@ void Graphics::InitializeRenderItems()
 
 	auto gridRenderItem = std::make_unique<RenderItem>();
 	gridRenderItem->WorldMatrix = MathHelper::Identity4x4();
+	gridRenderItem->TextureTransform = MathHelper::Identity4x4();
 	gridRenderItem->ObjectCBIndex = 1;
 	gridRenderItem->Mesh = m_geometries["ShapeGeo"].get();
 	gridRenderItem->Material = m_materials["Tile0"].get();
@@ -395,6 +397,7 @@ void Graphics::InitializeRenderItems()
 
 	auto skullRenderItem = std::make_unique<RenderItem>();
 	XMStoreFloat4x4(&skullRenderItem->WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f)*XMMatrixTranslation(0.0f, 1.0f, 0.0f));
+	skullRenderItem->TextureTransform = MathHelper::Identity4x4();
 	skullRenderItem->ObjectCBIndex = 2;
 	skullRenderItem->Material = m_materials["SkullMaterial"].get();
 	skullRenderItem->Mesh = m_geometries["Skull"].get();
@@ -419,6 +422,7 @@ void Graphics::InitializeRenderItems()
 		XMMATRIX rightSphereWorld = XMMatrixTranslation(+5.0f, 3.5f, -10.0f + i*5.0f);
 
 		XMStoreFloat4x4(&leftCylRitem->WorldMatrix, rightCylWorld);
+		leftCylRitem->TextureTransform = MathHelper::Identity4x4();
 		leftCylRitem->ObjectCBIndex = objCBIndex++;
 		leftCylRitem->Mesh = m_geometries["ShapeGeo"].get();
 		leftCylRitem->Material = m_materials["Bricks0"].get();
@@ -428,6 +432,7 @@ void Graphics::InitializeRenderItems()
 		leftCylRitem->BaseVertexLocation = leftCylRitem->Mesh->DrawArgs["Cylinder"].BaseVertexLocation;
 
 		XMStoreFloat4x4(&rightCylRitem->WorldMatrix, leftCylWorld);
+		rightCylRitem->TextureTransform = MathHelper::Identity4x4();
 		rightCylRitem->ObjectCBIndex = objCBIndex++;
 		rightCylRitem->Mesh = m_geometries["ShapeGeo"].get();
 		rightCylRitem->Material = m_materials["Bricks0"].get();
@@ -437,6 +442,7 @@ void Graphics::InitializeRenderItems()
 		rightCylRitem->BaseVertexLocation = rightCylRitem->Mesh->DrawArgs["Cylinder"].BaseVertexLocation;
 
 		XMStoreFloat4x4(&leftSphereRitem->WorldMatrix, leftSphereWorld);
+		leftSphereRitem->TextureTransform = MathHelper::Identity4x4();
 		leftSphereRitem->ObjectCBIndex = objCBIndex++;
 		leftSphereRitem->Mesh = m_geometries["ShapeGeo"].get();
 		leftSphereRitem->Material = m_materials["Stone0"].get();
@@ -446,6 +452,7 @@ void Graphics::InitializeRenderItems()
 		leftSphereRitem->BaseVertexLocation = leftSphereRitem->Mesh->DrawArgs["Sphere"].BaseVertexLocation;
 
 		XMStoreFloat4x4(&rightSphereRitem->WorldMatrix, rightSphereWorld);
+		rightSphereRitem->TextureTransform = MathHelper::Identity4x4();
 		rightSphereRitem->ObjectCBIndex = objCBIndex++;
 		rightSphereRitem->Mesh = m_geometries["ShapeGeo"].get();
 		rightSphereRitem->Material = m_materials["Stone0"].get();
@@ -517,10 +524,13 @@ void Graphics::UpdateObjectsConstantBuffer()
 		// This needs to be tracked per frame resource.
 		if (item->FramesDirtyCount > 0)
 		{
-			auto world = XMLoadFloat4x4(&item->WorldMatrix);
-
 			ConstantBufferTypes::ObjectConstants objectConstants;
-			XMStoreFloat4x4(&objectConstants.WorldMatrix, XMMatrixTranspose(world));
+
+			auto worldMatrix = XMLoadFloat4x4(&item->WorldMatrix);
+			XMStoreFloat4x4(&objectConstants.WorldMatrix, XMMatrixTranspose(worldMatrix));
+
+			auto textureTransfrom = XMLoadFloat4x4(&item->TextureTransform);
+			XMStoreFloat4x4(&objectConstants.TextureTransform, XMMatrixTranspose(textureTransfrom));
 
 			currentObjectConstantBuffer->CopyData(item->ObjectCBIndex, objectConstants);
 
@@ -539,7 +549,7 @@ void Graphics::UpdateMaterialsConstantBuffer()
 		auto material = e.second.get();
 		if (material->FramesDirtyCount > 0)
 		{
-			auto materialTransform = XMLoadFloat4x4(&material->MatTransform);
+			auto materialTransform = XMLoadFloat4x4(&material->MaterialTransform);
 
 			ConstantBufferTypes::MaterialConstants materialConstants;
 			materialConstants.DiffuseAlbedo = material->DiffuseAlbedo;

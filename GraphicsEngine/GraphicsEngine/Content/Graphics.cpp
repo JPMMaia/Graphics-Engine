@@ -31,6 +31,8 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	InitializeFrameResources();
 	InitializePipelineStateObjects();
 
+	m_d3d.SetClearColor(m_passConstants.FogColor);
+
 	// Execute the initialization commands:
 	DX::ThrowIfFailed(commandList->Close());
 	ID3D12CommandList* commandLists[] = { commandList };
@@ -480,35 +482,72 @@ void Graphics::InitializeFrameResources()
 }
 void Graphics::InitializePipelineStateObjects()
 {
+	auto device = m_d3d.GetDevice();
+
+	// Opaque:
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaquePSODescription = {};
-	opaquePSODescription.InputLayout.pInputElementDescs = &m_inputLayout[0];
-	opaquePSODescription.InputLayout.NumElements = static_cast<uint32_t>(m_inputLayout.size());
-	opaquePSODescription.pRootSignature = m_rootSignature.Get();
-	opaquePSODescription.VS = m_shaders["DefaultVertexShader"].GetShaderBytecode();
-	opaquePSODescription.PS = m_shaders["DefaultPixelShader"].GetShaderBytecode();
-	opaquePSODescription.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	opaquePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_SOLID;
-	opaquePSODescription.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-	opaquePSODescription.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-	opaquePSODescription.SampleMask = UINT_MAX;
-	opaquePSODescription.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	opaquePSODescription.NumRenderTargets = 1;
-	opaquePSODescription.SampleDesc.Count = m_d3d.GetSampleCount();
-	opaquePSODescription.SampleDesc.Quality = m_d3d.GetSampleQuality();
-	opaquePSODescription.RTVFormats[0] = m_d3d.GetBackBufferFormat();
-	opaquePSODescription.DSVFormat = m_d3d.GetDepthStencilFormat();
+	{
+		opaquePSODescription.InputLayout.pInputElementDescs = &m_inputLayout[0];
+		opaquePSODescription.InputLayout.NumElements = static_cast<uint32_t>(m_inputLayout.size());
+		opaquePSODescription.pRootSignature = m_rootSignature.Get();
+		opaquePSODescription.VS = m_shaders["DefaultVertexShader"].GetShaderBytecode();
+		opaquePSODescription.PS = m_shaders["DefaultPixelShader"].GetShaderBytecode();
+		opaquePSODescription.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		opaquePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_SOLID;
+		opaquePSODescription.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		opaquePSODescription.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		opaquePSODescription.SampleMask = UINT_MAX;
+		opaquePSODescription.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		opaquePSODescription.NumRenderTargets = 1;
+		opaquePSODescription.SampleDesc.Count = m_d3d.GetSampleCount();
+		opaquePSODescription.SampleDesc.Quality = m_d3d.GetSampleQuality();
+		opaquePSODescription.RTVFormats[0] = m_d3d.GetBackBufferFormat();
+		opaquePSODescription.DSVFormat = m_d3d.GetDepthStencilFormat();
 
-	DX::ThrowIfFailed(
-		m_d3d.GetDevice()->CreateGraphicsPipelineState(&opaquePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Opaque"].GetAddressOf()))
-		);
+		DX::ThrowIfFailed(
+			device->CreateGraphicsPipelineState(&opaquePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Opaque"].GetAddressOf()))
+			);
+	}
 
-	auto opaqueWireframePSODescription = opaquePSODescription;
-	opaqueWireframePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
+	// Opaque wireframe:
+	{
+		auto opaqueWireframePSODescription = opaquePSODescription;
+		opaqueWireframePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
+		DX::ThrowIfFailed(
+			device->CreateGraphicsPipelineState(&opaqueWireframePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Opaque Wireframe"].GetAddressOf()))
+			);
+	}
 
-	DX::ThrowIfFailed(
-		m_d3d.GetDevice()->CreateGraphicsPipelineState(&opaqueWireframePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Opaque Wireframe"].GetAddressOf()))
-		);
+	// Transparent:
+	auto transparentPSODescription = opaquePSODescription;
+	{
+		D3D12_RENDER_TARGET_BLEND_DESC blendDescription = {};
+		blendDescription.BlendEnable = true;
+		blendDescription.LogicOpEnable = false;
+		blendDescription.SrcBlend = D3D12_BLEND::D3D12_BLEND_SRC_ALPHA;
+		blendDescription.DestBlend = D3D12_BLEND::D3D12_BLEND_INV_SRC_ALPHA;
+		blendDescription.BlendOp = D3D12_BLEND_OP::D3D12_BLEND_OP_ADD;
+		blendDescription.SrcBlendAlpha = D3D12_BLEND::D3D12_BLEND_ONE;
+		blendDescription.DestBlendAlpha = D3D12_BLEND::D3D12_BLEND_ZERO;
+		blendDescription.BlendOpAlpha = D3D12_BLEND_OP::D3D12_BLEND_OP_ADD;
+		blendDescription.LogicOp = D3D12_LOGIC_OP::D3D12_LOGIC_OP_NOOP;
+		blendDescription.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE::D3D12_COLOR_WRITE_ENABLE_ALL;
+		transparentPSODescription.BlendState.RenderTarget[0] = blendDescription;
 
+		DX::ThrowIfFailed(
+			device->CreateGraphicsPipelineState(&transparentPSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Transparent"].GetAddressOf()))
+			);
+	}
+
+	// Transparent wireframe:
+	{
+		auto transparentWireframePSODescription = transparentPSODescription;
+		transparentWireframePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
+
+		DX::ThrowIfFailed(
+			device->CreateGraphicsPipelineState(&transparentWireframePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Transparent Wireframe"].GetAddressOf()))
+			);
+	}
 }
 
 void Graphics::UpdateCamera()

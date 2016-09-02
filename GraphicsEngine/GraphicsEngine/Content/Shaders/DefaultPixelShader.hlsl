@@ -36,11 +36,21 @@ Texture2D g_diffuseMap : register(t0);
 
 float4 main(VertexOut input) : SV_TARGET
 {
+
+#if defined(ALPHA_TEST)
+	
+	// Clip if alpha is near 0:
+	clip(g_materialCB.DiffuseAlbedo.a - 0.1f);
+
+#endif
+
 	// Interpolating normal can unormalize it, so normalize it:
 	input.NormalW = normalize(input.NormalW);
 
 	// Vector from point being lit to eye:
-	float3 toEyeW = normalize(g_passCB.EyePositionW - input.PositionW);
+	float3 toEyeW = g_passCB.EyePositionW - input.PositionW;
+	float distanceToEyeW = length(toEyeW);
+	toEyeW /= distanceToEyeW;
 
 	// Indirect lighting:
 	float4 ambientLight = g_passCB.AmbientLight * g_materialCB.DiffuseAlbedo;
@@ -53,6 +63,13 @@ float4 main(VertexOut input) : SV_TARGET
 	float4 directLight = ComputeLighting(g_passCB.Lights, material, input.PositionW, input.NormalW, toEyeW, shadowFactor);
 
 	float4 litColor = ambientLight + directLight;
+
+#if defined(FOG)
+
+	float fogIntensity = saturate((distanceToEyeW - g_passCB.FogStart) / g_passCB.FogRange);
+	litColor = (1.0f - fogIntensity) * litColor + fogIntensity * g_passCB.FogColor;
+
+#endif
 
 	// Common convention to take alpha from diffuse material:
 	litColor.a = g_materialCB.DiffuseAlbedo.a;

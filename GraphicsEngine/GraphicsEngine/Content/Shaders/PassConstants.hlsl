@@ -17,6 +17,10 @@ struct PassConstants
 	float FarZ;
 	float TotalTime;
 	float DeltaTime;
+	float4 FogColor;
+	float FogStart;
+	float FogRange;
+	float2 Padding2;
 	float4 AmbientLight;
 	Light Lights[MaxLights];
 };

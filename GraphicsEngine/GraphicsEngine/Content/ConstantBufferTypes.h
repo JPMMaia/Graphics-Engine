@@ -37,6 +37,10 @@ namespace GraphicsEngine
 			float FarZ;
 			float TotalTime;
 			float DeltaTime;
+			DirectX::XMFLOAT4 FogColor = { 0.5f, 0.5f, 0.5f, 1.0f };
+			float FogStart = 5.0f;
+			float FogRange = 20.0f;
+			DirectX::XMFLOAT2 Padding2;
 			DirectX::XMFLOAT4 AmbientLight = { 0.0f, 0.0f, 0.0f, 1.0f };
 			Light Lights[16];
 		};

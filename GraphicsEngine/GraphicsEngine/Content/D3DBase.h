@@ -2,8 +2,8 @@
 
 #include <d3d12.h>
 #include <dxgi1_5.h>
-#include <cstdint>
 #include <wrl/client.h>
+#include <DirectXMath.h>
 
 namespace GraphicsEngine
 {
@@ -46,6 +46,8 @@ namespace GraphicsEngine
 		uint32_t GetCbvSrvUavDescriptorSize() const;
 		uint32_t GetDsvDescriptorSize() const;
 		uint32_t GetRtvDescriptorSize() const;
+
+		void SetClearColor(const DirectX::XMFLOAT4& clearColor);
 
 	protected:
 
@@ -146,5 +148,7 @@ namespace GraphicsEngine
 		DXGI_FORMAT m_depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		int32_t m_clientWidth;
 		int32_t m_clientHeight;
+
+		DirectX::XMFLOAT4 m_clearColor = { 0.8f, 0.8f, 0.8f, 1.0f };
 	};
 }

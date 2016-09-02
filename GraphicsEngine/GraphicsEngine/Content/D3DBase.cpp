@@ -138,6 +138,11 @@ uint32_t D3DBase::GetRtvDescriptorSize() const
 	return m_rtvDescriptorSize;
 }
 
+void D3DBase::SetClearColor(const XMFLOAT4& clearColor)
+{
+	m_clearColor = clearColor;
+}
+
 void D3DBase::CreateDevice()
 {
 #if defined(_DEBUG)
@@ -509,7 +514,7 @@ void D3DBase::BeginScene(ID3D12CommandAllocator* commandAllocator, ID3D12Pipelin
 
 	// Clear the back buffer:
 	auto currentBackBufferView = GetCurrentBackBufferView();
-	m_commandList->ClearRenderTargetView(currentBackBufferView, DirectX::Colors::LightSteelBlue, 0, nullptr);
+	m_commandList->ClearRenderTargetView(currentBackBufferView, &m_clearColor.x, 0, nullptr);
 
 	// Clear the depth stencil buffer:
 	auto depthStencilView = GetDepthStencilView();

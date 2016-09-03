@@ -110,7 +110,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(SolutionDir)GraphicsEngine\Shaders  $(ProjectDir)Shaders /S /I /Y</Command>
+      <Command>xcopy $(SolutionDir)GraphicsEngine\Content\Shaders  $(ProjectDir)Shaders /S /I /Y</Command>
       <Message>
       </Message>
     </PostBuildEvent>

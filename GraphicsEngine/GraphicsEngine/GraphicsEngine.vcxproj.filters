@@ -49,6 +49,9 @@
     <Filter Include="Content\DirectX12\Textures">
       <UniqueIdentifier>{416b960a-41a9-477f-8b9b-8a27e51f350c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\DirectX12\Scene">
+      <UniqueIdentifier>{a786714d-b062-4a08-8ac0-ee80d5bf9134}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -152,6 +155,9 @@
     </ClInclude>
     <ClInclude Include="Content\Samplers.h">
       <Filter>Content\DirectX12\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\RenderLayer.h">
+      <Filter>Content\DirectX12\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

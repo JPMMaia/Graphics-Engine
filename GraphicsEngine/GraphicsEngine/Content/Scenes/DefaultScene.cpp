@@ -10,9 +10,10 @@ using namespace GraphicsEngine;
 
 DefaultScene::DefaultScene(Graphics* graphics, const D3DBase& d3dBase)
 {
-	InitializeGeometry(graphics, d3dBase);
-	InitializeMaterials(graphics, d3dBase);
-	InitializeRenderItems(graphics, d3dBase);
+	InitializeGeometry(d3dBase);
+	InitializeTextures(graphics, d3dBase);
+	InitializeMaterials();
+	InitializeRenderItems(graphics);
 }
 
 const std::unordered_map<std::string, std::unique_ptr<Material>>& DefaultScene::GetMaterials() const
@@ -20,7 +21,7 @@ const std::unordered_map<std::string, std::unique_ptr<Material>>& DefaultScene::
 	return m_materials;
 }
 
-void DefaultScene::InitializeGeometry(Graphics* graphics, const D3DBase& d3dBase)
+void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 {
 	// ShapeGeo:
 	{
@@ -132,7 +133,14 @@ void DefaultScene::InitializeGeometry(Graphics* graphics, const D3DBase& d3dBase
 		m_geometries[skull->Name] = std::move(skull);
 	}
 }
-void DefaultScene::InitializeMaterials(Graphics* graphics, const D3DBase& d3dBase)
+void DefaultScene::InitializeTextures(Graphics* graphics, const D3DBase& d3dBase) const
+{
+	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "BricksTexture", L"Textures/Bricks.dds", 0));
+	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "StoneTexture", L"Textures/Stone.dds", 1));
+	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "TileTexture", L"Textures/Tile.dds", 2));
+	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "CrateTexture", L"Textures/WoodCrate01.dds", 3));
+}
+void DefaultScene::InitializeMaterials()
 {
 	// Bricks0:
 	{
@@ -143,7 +151,7 @@ void DefaultScene::InitializeMaterials(Graphics* graphics, const D3DBase& d3dBas
 		bricks0->DiffuseAlbedo = XMFLOAT4(Colors::ForestGreen);
 		bricks0->FresnelR0 = XMFLOAT3(0.02f, 0.02f, 0.02f);
 		bricks0->Roughness = 0.1f;
-		m_materials["Bricks0"] = std::move(bricks0);
+		m_materials[bricks0->Name] = std::move(bricks0);
 	}
 
 	// Stone0:
@@ -151,11 +159,11 @@ void DefaultScene::InitializeMaterials(Graphics* graphics, const D3DBase& d3dBas
 		auto stone0 = std::make_unique<Material>();
 		stone0->Name = "Stone0";
 		stone0->MaterialCBIndex = 1;
-		stone0->DiffuseSrvHeapIndex = 0;
+		stone0->DiffuseSrvHeapIndex = 1;
 		stone0->DiffuseAlbedo = XMFLOAT4(Colors::LightSteelBlue);
 		stone0->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 		stone0->Roughness = 0.3f;
-		m_materials["Stone0"] = std::move(stone0);
+		m_materials[stone0->Name] = std::move(stone0);
 	}
 
 	// Tile0:
@@ -163,35 +171,47 @@ void DefaultScene::InitializeMaterials(Graphics* graphics, const D3DBase& d3dBas
 		auto tile0 = std::make_unique<Material>();
 		tile0->Name = "Tile0";
 		tile0->MaterialCBIndex = 2;
-		tile0->DiffuseSrvHeapIndex = 0;
+		tile0->DiffuseSrvHeapIndex = 2;
 		tile0->DiffuseAlbedo = XMFLOAT4(Colors::LightGray);
 		tile0->FresnelR0 = XMFLOAT3(0.02f, 0.02f, 0.02f);
 		tile0->Roughness = 0.2f;
-		m_materials["Tile0"] = std::move(tile0);
+		m_materials[tile0->Name] = std::move(tile0);
+	}
+
+	// Crate0:
+	{
+		auto crate0 = std::make_unique<Material>();
+		crate0->Name = "Crate0";
+		crate0->MaterialCBIndex = 3;
+		crate0->DiffuseSrvHeapIndex = 3;
+		crate0->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		crate0->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+		crate0->Roughness = 0.2f;
+		m_materials[crate0->Name] = std::move(crate0);
 	}
 
 	// SkullMaterial
 	{
 		auto skullMaterial = std::make_unique<Material>();
 		skullMaterial->Name = "SkullMaterial";
-		skullMaterial->MaterialCBIndex = 3;
+		skullMaterial->MaterialCBIndex = 4;
 		skullMaterial->DiffuseSrvHeapIndex = 0;
 		skullMaterial->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 		skullMaterial->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 		skullMaterial->Roughness = 0.3f;
-		m_materials["SkullMaterial"] = std::move(skullMaterial);
+		m_materials[skullMaterial->Name] = std::move(skullMaterial);
 	}
 }
-void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBase)
+void DefaultScene::InitializeRenderItems(Graphics* graphics)
 {
 	// Box:
 	{
 		auto boxRenderItem = std::make_unique<RenderItem>();
 		XMStoreFloat4x4(&boxRenderItem->WorldMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f)*XMMatrixTranslation(0.0f, 0.5f, 0.0f));
-		boxRenderItem->TextureTransform = MathHelper::Identity4x4();
+		XMStoreFloat4x4(&boxRenderItem->TextureTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 		boxRenderItem->ObjectCBIndex = 0;
 		boxRenderItem->Mesh = m_geometries["ShapeGeo"].get();
-		boxRenderItem->Material = m_materials["Stone0"].get();
+		boxRenderItem->Material = m_materials["Crate0"].get();
 		boxRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		boxRenderItem->IndexCount = boxRenderItem->Mesh->DrawArgs["Box"].IndexCount;
 		boxRenderItem->StartIndexLocation = boxRenderItem->Mesh->DrawArgs["Box"].StartIndexLocation;
@@ -203,7 +223,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 	{
 		auto gridRenderItem = std::make_unique<RenderItem>();
 		gridRenderItem->WorldMatrix = MathHelper::Identity4x4();
-		gridRenderItem->TextureTransform = MathHelper::Identity4x4();
+		XMStoreFloat4x4(&gridRenderItem->TextureTransform, XMMatrixScaling(8.0f, 8.0f, 1.0f));
 		gridRenderItem->ObjectCBIndex = 1;
 		gridRenderItem->Mesh = m_geometries["ShapeGeo"].get();
 		gridRenderItem->Material = m_materials["Tile0"].get();

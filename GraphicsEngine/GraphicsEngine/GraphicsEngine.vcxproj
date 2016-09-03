@@ -168,6 +168,7 @@
     <ClInclude Include="Content\Shader.h" />
     <ClInclude Include="Content\SubmeshGeometry.h" />
     <ClInclude Include="Content\Texture.h" />
+    <ClInclude Include="Content\TextureHeap.h" />
     <ClInclude Include="Content\Timer.h" />
     <ClInclude Include="Content\UploadBuffer.h" />
     <ClInclude Include="Content\VertexBuffer.h" />
@@ -199,6 +200,7 @@
     <ClCompile Include="Content\SettingsManager.cpp" />
     <ClCompile Include="Content\Shader.cpp" />
     <ClCompile Include="Content\Texture.cpp" />
+    <ClCompile Include="Content\TextureHeap.cpp" />
     <ClCompile Include="Content\Timer.cpp" />
     <ClCompile Include="Content\VertexBuffer.cpp" />
     <ClCompile Include="stdafx.cpp">

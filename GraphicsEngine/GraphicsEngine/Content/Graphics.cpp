@@ -16,14 +16,16 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_d3d(outputWindow, clientWidth, clientHeight),
 	m_camera(m_d3d.GetAspectRatio(), 0.25f*DirectX::XM_PI, 1.0f, 1000.0f, XMMatrixIdentity())
 {
+	m_camera.SetPosition(0.0f, 2.5f, -15.0f);
+
 	// Reset the command list to prepare for initialization commands:
 	auto commandList = m_d3d.GetCommandList();
 	DX::ThrowIfFailed(commandList->Reset(m_d3d.GetCommandAllocator(), nullptr));
 
-	LoadTextures();
 	InitializeRootSignature();
 	InitializeShadersAndInputLayout();
 	m_scene = DefaultScene(this, m_d3d);
+	m_textureHeap.Create(m_d3d);
 	InitializeFrameResources();
 	InitializePipelineStateObjects();
 
@@ -87,7 +89,7 @@ void Graphics::Render(const Timer& timer)
 	}
 
 	// Set texture descriptor heap:
-	ID3D12DescriptorHeap* descriptorHeaps = { m_textureDescriptorHeap.Get() };
+	ID3D12DescriptorHeap* descriptorHeaps = { m_textureHeap.GetDescriptorHeap() };
 	commandList->SetDescriptorHeaps(1, &descriptorHeaps);
 
 	// Draw render items:
@@ -119,16 +121,14 @@ Camera* Graphics::GetCamera()
 	return &m_camera;
 }
 
+void Graphics::AddTexture(unique_ptr<Texture>&& texture)
+{
+	m_textureHeap.AddTexture(std::move(texture));
+}
 void Graphics::AddRenderItem(unique_ptr<RenderItem>&& renderItem, RenderLayer renderLayer)
 {
 	m_renderItemLayers[static_cast<size_t>(renderLayer)].push_back(renderItem.get());
 	m_allRenderItems.push_back(std::move(renderItem));
-}
-
-void Graphics::LoadTextures()
-{
-	auto woodCrateTexture = std::make_unique<Texture>(m_d3d, "WoodCrate", L"Textures/WoodCrate01.dds");
-	m_textures[woodCrateTexture->Name] = std::move(woodCrateTexture);
 }
 
 void Graphics::SetWireframeMode(bool enable)
@@ -188,35 +188,6 @@ void Graphics::InitializeRootSignature()
 				IID_PPV_ARGS(m_rootSignature.GetAddressOf())
 				)
 			);
-	}
-
-	// Create textures heap:
-	{
-		D3D12_DESCRIPTOR_HEAP_DESC texturesHeapDescription = {};
-		texturesHeapDescription.NumDescriptors = 3;
-		texturesHeapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-		texturesHeapDescription.Flags = D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		texturesHeapDescription.NodeMask = 0;
-
-		DX::ThrowIfFailed(
-			device->CreateDescriptorHeap(&texturesHeapDescription, IID_PPV_ARGS(m_textureDescriptorHeap.GetAddressOf()))
-			);
-
-		// Create texture descriptors:
-		{
-			CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle(m_textureDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), 0, m_d3d.GetCbvSrvUavDescriptorSize());
-
-			auto woodCrateTexture = m_textures["WoodCrate"]->Resource.Get();
-			D3D12_SHADER_RESOURCE_VIEW_DESC textureDescription = {};
-			textureDescription.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-			textureDescription.Format = woodCrateTexture->GetDesc().Format;
-			textureDescription.ViewDimension = D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE2D;
-			textureDescription.Texture2D.MipLevels = woodCrateTexture->GetDesc().MipLevels;
-			textureDescription.Texture2D.MostDetailedMip = 0;
-			textureDescription.Texture2D.ResourceMinLODClamp = 0.0f;
-
-			device->CreateShaderResourceView(woodCrateTexture, &textureDescription, descriptorHandle);
-		}
 	}
 }
 void Graphics::InitializeShadersAndInputLayout()
@@ -443,14 +414,14 @@ void Graphics::DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std
 
 	auto objectCB = m_currentFrameResource->ObjectsConstantBuffer->GetResource();
 	auto materialCB = m_currentFrameResource->MaterialsConstantBuffer->GetResource();
-	CD3DX12_GPU_DESCRIPTOR_HANDLE textureHandle(m_textureDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 
 	// For each render item:
 	for (size_t i = 0; i < renderItems.size(); ++i)
 	{
 		auto renderItem = renderItems[i];
 
-		textureHandle.Offset(0, m_d3d.GetCbvSrvUavDescriptorSize());
+		CD3DX12_GPU_DESCRIPTOR_HANDLE textureHandle(m_textureHeap.GetDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
+		textureHandle.Offset(renderItem->Material->DiffuseSrvHeapIndex, m_d3d.GetCbvSrvUavDescriptorSize());
 		commandList->SetGraphicsRootDescriptorTable(0, textureHandle);
 
 		auto objectCBAddress = static_cast<D3D12_GPU_VIRTUAL_ADDRESS>(objectCB->GetGPUVirtualAddress() + renderItem->ObjectCBIndex * objectCBByteSize);

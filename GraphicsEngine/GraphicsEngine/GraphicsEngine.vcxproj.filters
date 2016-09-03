@@ -162,6 +162,9 @@
     <ClInclude Include="Content\Scenes\DefaultScene.h">
       <Filter>Content\DirectX12\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Content\TextureHeap.h">
+      <Filter>Content\DirectX12\Textures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -238,6 +241,9 @@
     </ClCompile>
     <ClCompile Include="Content\Scenes\DefaultScene.cpp">
       <Filter>Content\DirectX12\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\TextureHeap.cpp">
+      <Filter>Content\DirectX12\Textures</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

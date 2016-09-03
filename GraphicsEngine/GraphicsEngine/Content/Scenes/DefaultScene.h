@@ -7,6 +7,7 @@
 
 namespace GraphicsEngine
 {
+	class TextureHeap;
 	class D3DBase;
 	class Graphics;
 
@@ -19,9 +20,10 @@ namespace GraphicsEngine
 		const std::unordered_map<std::string, std::unique_ptr<Material>>& GetMaterials() const;
 
 	private:
-		void InitializeGeometry(Graphics* graphics, const D3DBase& d3dBase);
-		void InitializeMaterials(Graphics* graphics, const D3DBase& d3dBase);
-		void InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBase);
+		void InitializeGeometry(const D3DBase& d3dBase);
+		void InitializeTextures(Graphics* graphics, const D3DBase& d3dBase) const;
+		void InitializeMaterials();
+		void InitializeRenderItems(Graphics* graphics);
 
 	private:
 		std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> m_geometries;

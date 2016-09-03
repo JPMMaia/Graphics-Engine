@@ -11,8 +11,8 @@
 #include "Shader.h"
 
 #include <vector>
-#include "Texture.h"
 #include "Scenes/DefaultScene.h"
+#include "TextureHeap.h"
 
 namespace GraphicsEngine
 {
@@ -32,10 +32,10 @@ namespace GraphicsEngine
 
 		Camera* GetCamera();
 
+		void AddTexture(std::unique_ptr<Texture>&& texture);
 		void AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, RenderLayer renderLayer);
 		
 	private:
-		void LoadTextures();
 		void InitializeRootSignature();
 		void InitializeShadersAndInputLayout();
 		void InitializeFrameResources();
@@ -58,13 +58,11 @@ namespace GraphicsEngine
 
 		std::vector<D3D12_INPUT_ELEMENT_DESC> m_inputLayout;
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_textureDescriptorHeap;
 		std::unordered_map<std::string, Shader> m_shaders;
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>> m_pipelineStateObjects;
 
 		ConstantBufferTypes::PassConstants m_passConstants;
 		std::unique_ptr<UploadBuffer<ConstantBufferTypes::ObjectConstants>> m_perObjectCB;
-		std::unordered_map<std::string, std::unique_ptr<Texture>> m_textures;
 
 		std::vector<std::unique_ptr<RenderItem>> m_allRenderItems;
 		std::vector<RenderItem*> m_renderItemLayers[static_cast<size_t>(RenderLayer::Count)];
@@ -72,5 +70,6 @@ namespace GraphicsEngine
 		bool m_wireframeEnabled = false;
 		Camera m_camera;
 		DefaultScene m_scene;
+		TextureHeap m_textureHeap;
 	};
 }

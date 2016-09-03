@@ -8,6 +8,7 @@
 #include "Material.h"
 #include "FrameResource.h"
 #include "RenderItem.h"
+#include "RenderLayer.h"
 #include "Shader.h"
 
 #include <vector>
@@ -67,7 +68,7 @@ namespace GraphicsEngine
 		std::unordered_map<std::string, std::unique_ptr<Texture>> m_textures;
 
 		std::vector<std::unique_ptr<RenderItem>> m_allRenderItems;
-		std::vector<RenderItem*> m_opaqueRenderItems;
+		std::vector<RenderItem*> m_renderItemLayers[static_cast<size_t>(RenderLayer::Count)];
 
 		bool m_wireframeEnabled = false;
 		Camera m_camera;

@@ -95,7 +95,15 @@ void Graphics::Render(const Timer& timer)
 	commandList->SetDescriptorHeaps(1, &descriptorHeaps);
 
 	// Draw render items:
-	DrawRenderItems(commandList, m_opaqueRenderItems);
+	{
+		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)]);
+
+		commandList->SetPipelineState(m_pipelineStateObjects[m_wireframeEnabled ? "Transparent Wireframe" : "Transparent"].Get());
+		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::Transparent)]);
+
+		commandList->SetPipelineState(m_pipelineStateObjects[m_wireframeEnabled ? "Alpha Tested Wireframe" : "Alpha Tested"].Get());
+		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::AlphaTested)]);
+	}
 
 	// Present the rendered scene to the screen:
 	m_d3d.EndScene();
@@ -211,12 +219,22 @@ void Graphics::InitializeRootSignature()
 }
 void Graphics::InitializeShadersAndInputLayout()
 {
-	wchar_t buffer[1024];
-	GetModuleFileName(nullptr, buffer, 1024);
-	OutputDebugStringW(buffer);
+	m_shaders["StandardVS"] = Shader::CompileShader(L"Shaders/DefaultVertexShader.hlsl", nullptr, "main", "vs_5_1");
 
-	m_shaders["DefaultVertexShader"] = Shader(L"Shaders/DefaultVertexShader.cso");
-	m_shaders["DefaultPixelShader"] = Shader(L"Shaders/DefaultPixelShader.cso");
+	const D3D_SHADER_MACRO opaqueDefines[] =
+	{
+		"FOG", "1",
+		nullptr, nullptr
+	};
+	m_shaders["OpaquePS"] = Shader::CompileShader(L"Shaders/DefaultPixelShader.hlsl", opaqueDefines, "main", "ps_5_1");
+
+	const D3D_SHADER_MACRO alphaTestedDefines[] =
+	{
+		"FOG", "1",
+		"ALPHA_TEST", "1",
+		nullptr, nullptr
+	};
+	m_shaders["AlphaTestedPS"] = Shader::CompileShader(L"Shaders/DefaultPixelShader.hlsl", alphaTestedDefines, "main", "ps_5_1");
 
 	m_inputLayout =
 	{
@@ -383,6 +401,7 @@ void Graphics::InitializeRenderItems()
 	boxRenderItem->IndexCount = boxRenderItem->Mesh->DrawArgs["Box"].IndexCount;
 	boxRenderItem->StartIndexLocation = boxRenderItem->Mesh->DrawArgs["Box"].StartIndexLocation;
 	boxRenderItem->BaseVertexLocation = boxRenderItem->Mesh->DrawArgs["Box"].BaseVertexLocation;
+	m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)].push_back(boxRenderItem.get());
 	m_allRenderItems.push_back(std::move(boxRenderItem));
 
 	auto gridRenderItem = std::make_unique<RenderItem>();
@@ -395,6 +414,7 @@ void Graphics::InitializeRenderItems()
 	gridRenderItem->IndexCount = gridRenderItem->Mesh->DrawArgs["Grid"].IndexCount;
 	gridRenderItem->StartIndexLocation = gridRenderItem->Mesh->DrawArgs["Grid"].StartIndexLocation;
 	gridRenderItem->BaseVertexLocation = gridRenderItem->Mesh->DrawArgs["Grid"].BaseVertexLocation;
+	m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)].push_back(gridRenderItem.get());
 	m_allRenderItems.push_back(std::move(gridRenderItem));
 
 	auto skullRenderItem = std::make_unique<RenderItem>();
@@ -407,6 +427,7 @@ void Graphics::InitializeRenderItems()
 	skullRenderItem->IndexCount = skullRenderItem->Mesh->DrawArgs["Skull"].IndexCount;
 	skullRenderItem->StartIndexLocation = skullRenderItem->Mesh->DrawArgs["Skull"].StartIndexLocation;
 	skullRenderItem->BaseVertexLocation = skullRenderItem->Mesh->DrawArgs["Skull"].BaseVertexLocation;
+	m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)].push_back(skullRenderItem.get());
 	m_allRenderItems.push_back(std::move(skullRenderItem));
 
 	UINT objCBIndex = 3;
@@ -463,15 +484,15 @@ void Graphics::InitializeRenderItems()
 		rightSphereRitem->StartIndexLocation = rightSphereRitem->Mesh->DrawArgs["Sphere"].StartIndexLocation;
 		rightSphereRitem->BaseVertexLocation = rightSphereRitem->Mesh->DrawArgs["Sphere"].BaseVertexLocation;
 
+		m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)].push_back(leftCylRitem.get());
+		m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)].push_back(rightCylRitem.get());
+		m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)].push_back(leftSphereRitem.get());
+		m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)].push_back(rightSphereRitem.get());
 		m_allRenderItems.push_back(std::move(leftCylRitem));
 		m_allRenderItems.push_back(std::move(rightCylRitem));
 		m_allRenderItems.push_back(std::move(leftSphereRitem));
 		m_allRenderItems.push_back(std::move(rightSphereRitem));
 	}
-
-	// All the render items are opaque.
-	for (auto& e : m_allRenderItems)
-		m_opaqueRenderItems.push_back(e.get());
 }
 void Graphics::InitializeFrameResources()
 {
@@ -490,8 +511,8 @@ void Graphics::InitializePipelineStateObjects()
 		opaquePSODescription.InputLayout.pInputElementDescs = &m_inputLayout[0];
 		opaquePSODescription.InputLayout.NumElements = static_cast<uint32_t>(m_inputLayout.size());
 		opaquePSODescription.pRootSignature = m_rootSignature.Get();
-		opaquePSODescription.VS = m_shaders["DefaultVertexShader"].GetShaderBytecode();
-		opaquePSODescription.PS = m_shaders["DefaultPixelShader"].GetShaderBytecode();
+		opaquePSODescription.VS = m_shaders["StandardVS"].GetShaderBytecode();
+		opaquePSODescription.PS = m_shaders["OpaquePS"].GetShaderBytecode();
 		opaquePSODescription.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		opaquePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_SOLID;
 		opaquePSODescription.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
@@ -507,20 +528,21 @@ void Graphics::InitializePipelineStateObjects()
 		DX::ThrowIfFailed(
 			device->CreateGraphicsPipelineState(&opaquePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Opaque"].GetAddressOf()))
 			);
-	}
 
-	// Opaque wireframe:
-	{
-		auto opaqueWireframePSODescription = opaquePSODescription;
-		opaqueWireframePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
-		DX::ThrowIfFailed(
-			device->CreateGraphicsPipelineState(&opaqueWireframePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Opaque Wireframe"].GetAddressOf()))
-			);
+		// Opaque wireframe:
+		{
+			auto opaqueWireframePSODescription = opaquePSODescription;
+			opaqueWireframePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
+			DX::ThrowIfFailed(
+				device->CreateGraphicsPipelineState(&opaqueWireframePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Opaque Wireframe"].GetAddressOf()))
+				);
+		}
 	}
 
 	// Transparent:
-	auto transparentPSODescription = opaquePSODescription;
 	{
+		auto transparentPSODescription = opaquePSODescription;
+
 		D3D12_RENDER_TARGET_BLEND_DESC blendDescription = {};
 		blendDescription.BlendEnable = true;
 		blendDescription.LogicOpEnable = false;
@@ -537,16 +559,37 @@ void Graphics::InitializePipelineStateObjects()
 		DX::ThrowIfFailed(
 			device->CreateGraphicsPipelineState(&transparentPSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Transparent"].GetAddressOf()))
 			);
+
+		// Transparent wireframe:
+		{
+			auto transparentWireframePSODescription = transparentPSODescription;
+			transparentWireframePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
+
+			DX::ThrowIfFailed(
+				device->CreateGraphicsPipelineState(&transparentWireframePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Transparent Wireframe"].GetAddressOf()))
+				);
+		}
 	}
 
-	// Transparent wireframe:
+	// Alpha Tested:
 	{
-		auto transparentWireframePSODescription = transparentPSODescription;
-		transparentWireframePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
+		auto alphaTestedPSODescription = opaquePSODescription;
+		alphaTestedPSODescription.PS = m_shaders["AlphaTestedPS"].GetShaderBytecode();
+		alphaTestedPSODescription.RasterizerState.CullMode = D3D12_CULL_MODE::D3D12_CULL_MODE_NONE;
 
 		DX::ThrowIfFailed(
-			device->CreateGraphicsPipelineState(&transparentWireframePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Transparent Wireframe"].GetAddressOf()))
+			device->CreateGraphicsPipelineState(&alphaTestedPSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Alpha Tested"].GetAddressOf()))
 			);
+
+		// Alpha tested wireframe
+		{
+			auto alphaTestedWireframePSODescription = alphaTestedPSODescription;
+			alphaTestedWireframePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
+
+			DX::ThrowIfFailed(
+				device->CreateGraphicsPipelineState(&alphaTestedWireframePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Alpha Tested Wireframe"].GetAddressOf()))
+				);
+		}
 	}
 }
 

@@ -37,10 +37,12 @@ Texture2D g_diffuseMap : register(t0);
 float4 main(VertexOut input) : SV_TARGET
 {
 
+	float4 diffuseAlbedo = g_diffuseMap.Sample(g_samplerAnisotropicWrap, input.TextureCoordinates) * g_materialCB.DiffuseAlbedo;
+
 #if defined(ALPHA_TEST)
 	
 	// Clip if alpha is near 0:
-	clip(g_materialCB.DiffuseAlbedo.a - 0.1f);
+	clip(diffuseAlbedo.a - 0.1f);
 
 #endif
 
@@ -57,7 +59,6 @@ float4 main(VertexOut input) : SV_TARGET
 
 	// Direct lighting:
 	const float shininess = 1.0f - g_materialCB.Roughness;
-	float4 diffuseAlbedo = g_diffuseMap.Sample(g_samplerAnisotropicWrap, input.TextureCoordinates) * g_materialCB.DiffuseAlbedo;
 	Material material = { diffuseAlbedo, g_materialCB.FresnelR0, shininess };
 	float3 shadowFactor = float3(1.0f, 1.0f, 1.0f);
 	float4 directLight = ComputeLighting(g_passCB.Lights, material, input.PositionW, input.NormalW, toEyeW, shadowFactor);
@@ -71,8 +72,8 @@ float4 main(VertexOut input) : SV_TARGET
 
 #endif
 
-	// Common convention to take alpha from diffuse material:
-	litColor.a = g_materialCB.DiffuseAlbedo.a;
+	// Common convention to take alpha from diffuse albedo:
+	litColor.a = diffuseAlbedo.a;
 
 	return litColor;
 }

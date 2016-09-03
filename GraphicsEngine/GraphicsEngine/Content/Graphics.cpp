@@ -3,9 +3,7 @@
 #include "VertexTypes.h"
 
 #include <array>
-#include "GeometryGenerator.h"
 #include <D3Dcompiler.h>
-#include <DirectXColors.h>
 #include "Material.h"
 #include "Samplers.h"
 
@@ -25,9 +23,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	LoadTextures();
 	InitializeRootSignature();
 	InitializeShadersAndInputLayout();
-	InitializeGeometry();
-	InitializeMaterials();
-	InitializeRenderItems();
+	m_scene = DefaultScene(this, m_d3d);
 	InitializeFrameResources();
 	InitializePipelineStateObjects();
 
@@ -121,6 +117,12 @@ void Graphics::Render(const Timer& timer)
 Camera* Graphics::GetCamera()
 {
 	return &m_camera;
+}
+
+void Graphics::AddRenderItem(unique_ptr<RenderItem>&& renderItem, RenderLayer renderLayer)
+{
+	m_renderItemLayers[static_cast<size_t>(renderLayer)].push_back(renderItem.get());
+	m_allRenderItems.push_back(std::move(renderItem));
 }
 
 void Graphics::LoadTextures()
@@ -243,261 +245,10 @@ void Graphics::InitializeShadersAndInputLayout()
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
 	};
 }
-void Graphics::InitializeGeometry()
-{
-	auto box = GeometryGenerator::CreateBox(1.5f, 0.5f, 1.5f, 3);
-	auto grid = GeometryGenerator::CreateGrid(20.0f, 30.0f, 60, 40);
-	auto sphere = GeometryGenerator::CreateSphere(0.5f, 20, 20);
-	auto cylinder = GeometryGenerator::CreateCylinder(0.5f, 0.3f, 3.0f, 20, 20);
-
-	//
-	// We are concatenating all the geometry into one big vertex/index buffer.  So
-	// define the regions in the buffer each submesh covers.
-	//
-
-	// Cache the vertex offsets to each object in the concatenated vertex buffer.
-	UINT boxVertexOffset = 0;
-	UINT gridVertexOffset = static_cast<UINT>(box.Vertices.size());
-	UINT sphereVertexOffset = gridVertexOffset + static_cast<UINT>(grid.Vertices.size());
-	UINT cylinderVertexOffset = sphereVertexOffset + static_cast<UINT>(sphere.Vertices.size());
-
-	// Cache the starting index for each object in the concatenated index buffer.
-	UINT boxIndexOffset = 0;
-	UINT gridIndexOffset = static_cast<UINT>(box.Indices32.size());
-	UINT sphereIndexOffset = gridIndexOffset + static_cast<UINT>(grid.Indices32.size());
-	UINT cylinderIndexOffset = sphereIndexOffset + static_cast<UINT>(sphere.Indices32.size());
-
-	SubmeshGeometry boxSubmesh;
-	boxSubmesh.IndexCount = static_cast<UINT>(box.Indices32.size());
-	boxSubmesh.StartIndexLocation = boxIndexOffset;
-	boxSubmesh.BaseVertexLocation = boxVertexOffset;
-
-	SubmeshGeometry gridSubmesh;
-	gridSubmesh.IndexCount = static_cast<UINT>(grid.Indices32.size());
-	gridSubmesh.StartIndexLocation = gridIndexOffset;
-	gridSubmesh.BaseVertexLocation = gridVertexOffset;
-
-	SubmeshGeometry sphereSubmesh;
-	sphereSubmesh.IndexCount = static_cast<UINT>(sphere.Indices32.size());
-	sphereSubmesh.StartIndexLocation = sphereIndexOffset;
-	sphereSubmesh.BaseVertexLocation = sphereVertexOffset;
-
-	SubmeshGeometry cylinderSubmesh;
-	cylinderSubmesh.IndexCount = static_cast<UINT>(cylinder.Indices32.size());
-	cylinderSubmesh.StartIndexLocation = cylinderIndexOffset;
-	cylinderSubmesh.BaseVertexLocation = cylinderVertexOffset;
-
-	//
-	// Extract the vertex elements we are interested in and pack the
-	// vertices of all the meshes into one vertex buffer.
-	//
-
-	auto totalVertexCount =
-		box.Vertices.size() +
-		grid.Vertices.size() +
-		sphere.Vertices.size() +
-		cylinder.Vertices.size();
-
-	std::vector<VertexTypes::DefaultVertexType> vertices(totalVertexCount);
-
-	UINT k = 0;
-	for (size_t i = 0; i < box.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Position = box.Vertices[i].Position;
-		vertices[k].Normal = box.Vertices[i].Normal;
-		vertices[k].TextureCoordinates = box.Vertices[i].TextureCoordinates;
-	}
-
-	for (size_t i = 0; i < grid.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Position = grid.Vertices[i].Position;
-		vertices[k].Normal = grid.Vertices[i].Normal;
-		vertices[k].TextureCoordinates = grid.Vertices[i].TextureCoordinates;
-	}
-
-	for (size_t i = 0; i < sphere.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Position = sphere.Vertices[i].Position;
-		vertices[k].Normal = sphere.Vertices[i].Normal;
-		vertices[k].TextureCoordinates = sphere.Vertices[i].TextureCoordinates;
-	}
-
-	for (size_t i = 0; i < cylinder.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Position = cylinder.Vertices[i].Position;
-		vertices[k].Normal = cylinder.Vertices[i].Normal;
-		vertices[k].TextureCoordinates = cylinder.Vertices[i].TextureCoordinates;
-	}
-
-	std::vector<std::uint16_t> indices;
-	indices.insert(indices.end(), std::begin(box.GetIndices16()), std::end(box.GetIndices16()));
-	indices.insert(indices.end(), std::begin(grid.GetIndices16()), std::end(grid.GetIndices16()));
-	indices.insert(indices.end(), std::begin(sphere.GetIndices16()), std::end(sphere.GetIndices16()));
-	indices.insert(indices.end(), std::begin(cylinder.GetIndices16()), std::end(cylinder.GetIndices16()));
-
-	auto geo = std::make_unique<MeshGeometry>();
-	geo->Name = "ShapeGeo";
-	geo->Vertices = VertexBuffer(m_d3d, vertices.data(), static_cast<uint32_t>(vertices.size()), sizeof(VertexTypes::DefaultVertexType));
-	geo->Indices = IndexBuffer(m_d3d, indices.data(), static_cast<uint32_t>(indices.size()), sizeof(std::uint16_t), DXGI_FORMAT::DXGI_FORMAT_R16_UINT);
-	geo->DrawArgs["Box"] = boxSubmesh;
-	geo->DrawArgs["Grid"] = gridSubmesh;
-	geo->DrawArgs["Sphere"] = sphereSubmesh;
-	geo->DrawArgs["Cylinder"] = cylinderSubmesh;
-
-	m_geometries[geo->Name] = std::move(geo);
-
-	// Load skull:
-	auto skull = MeshGeometry::LoadFromFile(m_d3d, "Skull", L"Models/Skull.txt");
-	m_geometries[skull->Name] = std::move(skull);
-}
-void Graphics::InitializeMaterials()
-{
-	auto bricks0 = std::make_unique<Material>();
-	bricks0->Name = "Bricks0";
-	bricks0->MaterialCBIndex = 0;
-	bricks0->DiffuseSrvHeapIndex = 0;
-	bricks0->DiffuseAlbedo = XMFLOAT4(Colors::ForestGreen);
-	bricks0->FresnelR0 = XMFLOAT3(0.02f, 0.02f, 0.02f);
-	bricks0->Roughness = 0.1f;
-
-	auto stone0 = std::make_unique<Material>();
-	stone0->Name = "Stone0";
-	stone0->MaterialCBIndex = 1;
-	stone0->DiffuseSrvHeapIndex = 0;
-	stone0->DiffuseAlbedo = XMFLOAT4(Colors::LightSteelBlue);
-	stone0->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
-	stone0->Roughness = 0.3f;
-
-	auto tile0 = std::make_unique<Material>();
-	tile0->Name = "Tile0";
-	tile0->MaterialCBIndex = 2;
-	tile0->DiffuseSrvHeapIndex = 0;
-	tile0->DiffuseAlbedo = XMFLOAT4(Colors::LightGray);
-	tile0->FresnelR0 = XMFLOAT3(0.02f, 0.02f, 0.02f);
-	tile0->Roughness = 0.2f;
-
-	auto skullMaterial = std::make_unique<Material>();
-	skullMaterial->Name = "SkullMaterial";
-	skullMaterial->MaterialCBIndex = 3;
-	skullMaterial->DiffuseSrvHeapIndex = 0;
-	skullMaterial->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	skullMaterial->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
-	skullMaterial->Roughness = 0.3f;
-
-	m_materials["Bricks0"] = std::move(bricks0);
-	m_materials["Stone0"] = std::move(stone0);
-	m_materials["Tile0"] = std::move(tile0);
-	m_materials["SkullMaterial"] = std::move(skullMaterial);
-}
-void Graphics::InitializeRenderItems()
-{
-	auto boxRenderItem = std::make_unique<RenderItem>();
-	XMStoreFloat4x4(&boxRenderItem->WorldMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f)*XMMatrixTranslation(0.0f, 0.5f, 0.0f));
-	boxRenderItem->TextureTransform = MathHelper::Identity4x4();
-	boxRenderItem->ObjectCBIndex = 0;
-	boxRenderItem->Mesh = m_geometries["ShapeGeo"].get();
-	boxRenderItem->Material = m_materials["Stone0"].get();
-	boxRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	boxRenderItem->IndexCount = boxRenderItem->Mesh->DrawArgs["Box"].IndexCount;
-	boxRenderItem->StartIndexLocation = boxRenderItem->Mesh->DrawArgs["Box"].StartIndexLocation;
-	boxRenderItem->BaseVertexLocation = boxRenderItem->Mesh->DrawArgs["Box"].BaseVertexLocation;
-	m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)].push_back(boxRenderItem.get());
-	m_allRenderItems.push_back(std::move(boxRenderItem));
-
-	auto gridRenderItem = std::make_unique<RenderItem>();
-	gridRenderItem->WorldMatrix = MathHelper::Identity4x4();
-	gridRenderItem->TextureTransform = MathHelper::Identity4x4();
-	gridRenderItem->ObjectCBIndex = 1;
-	gridRenderItem->Mesh = m_geometries["ShapeGeo"].get();
-	gridRenderItem->Material = m_materials["Tile0"].get();
-	gridRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	gridRenderItem->IndexCount = gridRenderItem->Mesh->DrawArgs["Grid"].IndexCount;
-	gridRenderItem->StartIndexLocation = gridRenderItem->Mesh->DrawArgs["Grid"].StartIndexLocation;
-	gridRenderItem->BaseVertexLocation = gridRenderItem->Mesh->DrawArgs["Grid"].BaseVertexLocation;
-	m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)].push_back(gridRenderItem.get());
-	m_allRenderItems.push_back(std::move(gridRenderItem));
-
-	auto skullRenderItem = std::make_unique<RenderItem>();
-	XMStoreFloat4x4(&skullRenderItem->WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f)*XMMatrixTranslation(0.0f, 1.0f, 0.0f));
-	skullRenderItem->TextureTransform = MathHelper::Identity4x4();
-	skullRenderItem->ObjectCBIndex = 2;
-	skullRenderItem->Material = m_materials["SkullMaterial"].get();
-	skullRenderItem->Mesh = m_geometries["Skull"].get();
-	skullRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	skullRenderItem->IndexCount = skullRenderItem->Mesh->DrawArgs["Skull"].IndexCount;
-	skullRenderItem->StartIndexLocation = skullRenderItem->Mesh->DrawArgs["Skull"].StartIndexLocation;
-	skullRenderItem->BaseVertexLocation = skullRenderItem->Mesh->DrawArgs["Skull"].BaseVertexLocation;
-	m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)].push_back(skullRenderItem.get());
-	m_allRenderItems.push_back(std::move(skullRenderItem));
-
-	UINT objCBIndex = 3;
-	for (auto i = 0; i < 5; ++i)
-	{
-		auto leftCylRitem = std::make_unique<RenderItem>();
-		auto rightCylRitem = std::make_unique<RenderItem>();
-		auto leftSphereRitem = std::make_unique<RenderItem>();
-		auto rightSphereRitem = std::make_unique<RenderItem>();
-
-		XMMATRIX leftCylWorld = XMMatrixTranslation(-5.0f, 1.5f, -10.0f + i*5.0f);
-		XMMATRIX rightCylWorld = XMMatrixTranslation(+5.0f, 1.5f, -10.0f + i*5.0f);
-
-		XMMATRIX leftSphereWorld = XMMatrixTranslation(-5.0f, 3.5f, -10.0f + i*5.0f);
-		XMMATRIX rightSphereWorld = XMMatrixTranslation(+5.0f, 3.5f, -10.0f + i*5.0f);
-
-		XMStoreFloat4x4(&leftCylRitem->WorldMatrix, rightCylWorld);
-		leftCylRitem->TextureTransform = MathHelper::Identity4x4();
-		leftCylRitem->ObjectCBIndex = objCBIndex++;
-		leftCylRitem->Mesh = m_geometries["ShapeGeo"].get();
-		leftCylRitem->Material = m_materials["Bricks0"].get();
-		leftCylRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		leftCylRitem->IndexCount = leftCylRitem->Mesh->DrawArgs["Cylinder"].IndexCount;
-		leftCylRitem->StartIndexLocation = leftCylRitem->Mesh->DrawArgs["Cylinder"].StartIndexLocation;
-		leftCylRitem->BaseVertexLocation = leftCylRitem->Mesh->DrawArgs["Cylinder"].BaseVertexLocation;
-
-		XMStoreFloat4x4(&rightCylRitem->WorldMatrix, leftCylWorld);
-		rightCylRitem->TextureTransform = MathHelper::Identity4x4();
-		rightCylRitem->ObjectCBIndex = objCBIndex++;
-		rightCylRitem->Mesh = m_geometries["ShapeGeo"].get();
-		rightCylRitem->Material = m_materials["Bricks0"].get();
-		rightCylRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		rightCylRitem->IndexCount = rightCylRitem->Mesh->DrawArgs["Cylinder"].IndexCount;
-		rightCylRitem->StartIndexLocation = rightCylRitem->Mesh->DrawArgs["Cylinder"].StartIndexLocation;
-		rightCylRitem->BaseVertexLocation = rightCylRitem->Mesh->DrawArgs["Cylinder"].BaseVertexLocation;
-
-		XMStoreFloat4x4(&leftSphereRitem->WorldMatrix, leftSphereWorld);
-		leftSphereRitem->TextureTransform = MathHelper::Identity4x4();
-		leftSphereRitem->ObjectCBIndex = objCBIndex++;
-		leftSphereRitem->Mesh = m_geometries["ShapeGeo"].get();
-		leftSphereRitem->Material = m_materials["Stone0"].get();
-		leftSphereRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		leftSphereRitem->IndexCount = leftSphereRitem->Mesh->DrawArgs["Sphere"].IndexCount;
-		leftSphereRitem->StartIndexLocation = leftSphereRitem->Mesh->DrawArgs["Sphere"].StartIndexLocation;
-		leftSphereRitem->BaseVertexLocation = leftSphereRitem->Mesh->DrawArgs["Sphere"].BaseVertexLocation;
-
-		XMStoreFloat4x4(&rightSphereRitem->WorldMatrix, rightSphereWorld);
-		rightSphereRitem->TextureTransform = MathHelper::Identity4x4();
-		rightSphereRitem->ObjectCBIndex = objCBIndex++;
-		rightSphereRitem->Mesh = m_geometries["ShapeGeo"].get();
-		rightSphereRitem->Material = m_materials["Stone0"].get();
-		rightSphereRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		rightSphereRitem->IndexCount = rightSphereRitem->Mesh->DrawArgs["Sphere"].IndexCount;
-		rightSphereRitem->StartIndexLocation = rightSphereRitem->Mesh->DrawArgs["Sphere"].StartIndexLocation;
-		rightSphereRitem->BaseVertexLocation = rightSphereRitem->Mesh->DrawArgs["Sphere"].BaseVertexLocation;
-
-		m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)].push_back(leftCylRitem.get());
-		m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)].push_back(rightCylRitem.get());
-		m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)].push_back(leftSphereRitem.get());
-		m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)].push_back(rightSphereRitem.get());
-		m_allRenderItems.push_back(std::move(leftCylRitem));
-		m_allRenderItems.push_back(std::move(rightCylRitem));
-		m_allRenderItems.push_back(std::move(leftSphereRitem));
-		m_allRenderItems.push_back(std::move(rightSphereRitem));
-	}
-}
 void Graphics::InitializeFrameResources()
 {
 	for (auto i = 0; i < s_frameResourcesCount; ++i)
-		m_frameResources.push_back(std::make_unique<FrameResource>(m_d3d.GetDevice(), 1, static_cast<uint32_t>(m_allRenderItems.size()), static_cast<uint32_t>(m_materials.size())));
+		m_frameResources.push_back(std::make_unique<FrameResource>(m_d3d.GetDevice(), 1, static_cast<uint32_t>(m_allRenderItems.size()), static_cast<uint32_t>(m_scene.GetMaterials().size())));
 
 	m_currentFrameResource = m_frameResources[m_currentFrameResourceIndex].get();
 }
@@ -621,10 +372,10 @@ void Graphics::UpdateObjectsConstantBuffer()
 		}
 	}
 }
-void Graphics::UpdateMaterialsConstantBuffer()
+void Graphics::UpdateMaterialsConstantBuffer() const
 {
 	auto currentMaterialCB = m_currentFrameResource->MaterialsConstantBuffer.get();
-	for (auto& e : m_materials)
+	for (auto& e : m_scene.GetMaterials())
 	{
 		// Only update the cbuffer data if the constants have changed.  If the cbuffer
 		// data changes, it needs to be updated for each FrameResource.

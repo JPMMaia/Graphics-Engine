@@ -163,6 +163,7 @@
     <ClInclude Include="Content\RenderLayer.h" />
     <ClInclude Include="Content\Samplers.h" />
     <ClInclude Include="Content\SceneRenderer.h" />
+    <ClInclude Include="Content\Scenes\DefaultScene.h" />
     <ClInclude Include="Content\SettingsManager.h" />
     <ClInclude Include="Content\Shader.h" />
     <ClInclude Include="Content\SubmeshGeometry.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="Content\RenderItem.cpp" />
     <ClCompile Include="Content\Samplers.cpp" />
     <ClCompile Include="Content\SceneRenderer.cpp" />
+    <ClCompile Include="Content\Scenes\DefaultScene.cpp" />
     <ClCompile Include="Content\SettingsManager.cpp" />
     <ClCompile Include="Content\Shader.cpp" />
     <ClCompile Include="Content\Texture.cpp" />

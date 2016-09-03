@@ -5,7 +5,6 @@
 #include "MeshGeometry.h"
 #include "Timer.h"
 #include "MathHelper.h"
-#include "Material.h"
 #include "FrameResource.h"
 #include "RenderItem.h"
 #include "RenderLayer.h"
@@ -13,11 +12,15 @@
 
 #include <vector>
 #include "Texture.h"
+#include "Scenes/DefaultScene.h"
 
 namespace GraphicsEngine
 {
 	class Graphics
 	{
+	public:
+		static int GetFrameResourcesCount();
+
 	public:
 		explicit Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight);
 
@@ -27,22 +30,20 @@ namespace GraphicsEngine
 
 		void SetWireframeMode(bool enable);
 
-		static int GetFrameResourcesCount();
 		Camera* GetCamera();
+
+		void AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, RenderLayer renderLayer);
 		
 	private:
 		void LoadTextures();
 		void InitializeRootSignature();
 		void InitializeShadersAndInputLayout();
-		void InitializeGeometry();
-		void InitializeMaterials();
-		void InitializeRenderItems();
 		void InitializeFrameResources();
 		void InitializePipelineStateObjects();
 
 		void UpdateCamera();
 		void UpdateObjectsConstantBuffer();
-		void UpdateMaterialsConstantBuffer();
+		void UpdateMaterialsConstantBuffer() const;
 		void UpdateMainPassConstantBuffer(const Timer& timer);
 
 		void DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std::vector<RenderItem*>& renderItems) const;
@@ -63,8 +64,6 @@ namespace GraphicsEngine
 
 		ConstantBufferTypes::PassConstants m_passConstants;
 		std::unique_ptr<UploadBuffer<ConstantBufferTypes::ObjectConstants>> m_perObjectCB;
-		std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> m_geometries;
-		std::unordered_map<std::string, std::unique_ptr<Material>> m_materials;
 		std::unordered_map<std::string, std::unique_ptr<Texture>> m_textures;
 
 		std::vector<std::unique_ptr<RenderItem>> m_allRenderItems;
@@ -72,5 +71,6 @@ namespace GraphicsEngine
 
 		bool m_wireframeEnabled = false;
 		Camera m_camera;
+		DefaultScene m_scene;
 	};
 }

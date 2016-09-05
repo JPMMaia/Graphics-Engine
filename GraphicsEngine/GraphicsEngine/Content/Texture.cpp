@@ -5,9 +5,10 @@
 
 using namespace GraphicsEngine;
 
-Texture::Texture(const D3DBase& d3dBase, const std::string& name, const std::wstring& filename) :
+Texture::Texture(const D3DBase& d3dBase, const std::string& name, const std::wstring& filename, int heapIndex) :
 	Name(name),
-	Filename(filename)
+	Filename(filename),
+	HeapIndex(heapIndex)
 {
 	DX::ThrowIfFailed(
 		DirectX::CreateDDSTextureFromFile12(

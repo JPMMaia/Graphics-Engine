@@ -135,10 +135,10 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 }
 void DefaultScene::InitializeTextures(Graphics* graphics, const D3DBase& d3dBase) const
 {
-	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "BricksTexture", L"Textures/Bricks.dds", 0));
-	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "StoneTexture", L"Textures/Stone.dds", 1));
-	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "TileTexture", L"Textures/Tile.dds", 2));
-	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "CrateTexture", L"Textures/WoodCrate01.dds", 3));
+	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "BricksTexture", L"Textures/bricks.dds", 0));
+	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "StoneTexture", L"Textures/stone.dds", 1));
+	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "TileTexture", L"Textures/tile.dds", 2));
+	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "CrateTexture", L"Textures/wood_crate_01.dds", 3));
 }
 void DefaultScene::InitializeMaterials()
 {
@@ -216,7 +216,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 		boxRenderItem->IndexCount = boxRenderItem->Mesh->DrawArgs["Box"].IndexCount;
 		boxRenderItem->StartIndexLocation = boxRenderItem->Mesh->DrawArgs["Box"].StartIndexLocation;
 		boxRenderItem->BaseVertexLocation = boxRenderItem->Mesh->DrawArgs["Box"].BaseVertexLocation;
-		graphics->AddRenderItem(std::move(boxRenderItem), RenderLayer::Opaque);
+		graphics->AddRenderItem(std::move(boxRenderItem), { RenderLayer::Opaque });
 	}
 
 	// Grid:
@@ -231,7 +231,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 		gridRenderItem->IndexCount = gridRenderItem->Mesh->DrawArgs["Grid"].IndexCount;
 		gridRenderItem->StartIndexLocation = gridRenderItem->Mesh->DrawArgs["Grid"].StartIndexLocation;
 		gridRenderItem->BaseVertexLocation = gridRenderItem->Mesh->DrawArgs["Grid"].BaseVertexLocation;
-		graphics->AddRenderItem(std::move(gridRenderItem), RenderLayer::Opaque);
+		graphics->AddRenderItem(std::move(gridRenderItem), { RenderLayer::Opaque });
 	}
 
 	// Skull:
@@ -246,7 +246,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 		skullRenderItem->IndexCount = skullRenderItem->Mesh->DrawArgs["Skull"].IndexCount;
 		skullRenderItem->StartIndexLocation = skullRenderItem->Mesh->DrawArgs["Skull"].StartIndexLocation;
 		skullRenderItem->BaseVertexLocation = skullRenderItem->Mesh->DrawArgs["Skull"].BaseVertexLocation;
-		graphics->AddRenderItem(std::move(skullRenderItem), RenderLayer::Opaque);
+		graphics->AddRenderItem(std::move(skullRenderItem), { RenderLayer::Opaque });
 	}
 
 	UINT objCBIndex = 3;
@@ -265,7 +265,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 			leftCylinderRenderItem->IndexCount = leftCylinderRenderItem->Mesh->DrawArgs["Cylinder"].IndexCount;
 			leftCylinderRenderItem->StartIndexLocation = leftCylinderRenderItem->Mesh->DrawArgs["Cylinder"].StartIndexLocation;
 			leftCylinderRenderItem->BaseVertexLocation = leftCylinderRenderItem->Mesh->DrawArgs["Cylinder"].BaseVertexLocation;
-			graphics->AddRenderItem(std::move(leftCylinderRenderItem), RenderLayer::Opaque);
+			graphics->AddRenderItem(std::move(leftCylinderRenderItem), { RenderLayer::Opaque });
 		}
 
 		// Right Cylinder:
@@ -281,7 +281,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 			rightCylinderRenderItem->IndexCount = rightCylinderRenderItem->Mesh->DrawArgs["Cylinder"].IndexCount;
 			rightCylinderRenderItem->StartIndexLocation = rightCylinderRenderItem->Mesh->DrawArgs["Cylinder"].StartIndexLocation;
 			rightCylinderRenderItem->BaseVertexLocation = rightCylinderRenderItem->Mesh->DrawArgs["Cylinder"].BaseVertexLocation;
-			graphics->AddRenderItem(std::move(rightCylinderRenderItem), RenderLayer::Opaque);
+			graphics->AddRenderItem(std::move(rightCylinderRenderItem), { RenderLayer::Opaque });
 		}
 
 		// Left Sphere:
@@ -297,7 +297,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 			leftSphereRenderItem->IndexCount = leftSphereRenderItem->Mesh->DrawArgs["Sphere"].IndexCount;
 			leftSphereRenderItem->StartIndexLocation = leftSphereRenderItem->Mesh->DrawArgs["Sphere"].StartIndexLocation;
 			leftSphereRenderItem->BaseVertexLocation = leftSphereRenderItem->Mesh->DrawArgs["Sphere"].BaseVertexLocation;
-			graphics->AddRenderItem(std::move(leftSphereRenderItem), RenderLayer::Opaque);
+			graphics->AddRenderItem(std::move(leftSphereRenderItem), { RenderLayer::Opaque });
 		}
 
 		// Right Sphere:
@@ -313,7 +313,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 			rightSphereRenderItem->IndexCount = rightSphereRenderItem->Mesh->DrawArgs["Sphere"].IndexCount;
 			rightSphereRenderItem->StartIndexLocation = rightSphereRenderItem->Mesh->DrawArgs["Sphere"].StartIndexLocation;
 			rightSphereRenderItem->BaseVertexLocation = rightSphereRenderItem->Mesh->DrawArgs["Sphere"].BaseVertexLocation;
-			graphics->AddRenderItem(std::move(rightSphereRenderItem), RenderLayer::Opaque);
+			graphics->AddRenderItem(std::move(rightSphereRenderItem), { RenderLayer::Opaque });
 		}
 	}
 }

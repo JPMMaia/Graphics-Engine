@@ -151,6 +151,7 @@
     <ClInclude Include="Content\GeometryGenerator.h" />
     <ClInclude Include="Content\IndexBuffer.h" />
     <ClInclude Include="Content\DXInputHandler.h" />
+    <ClInclude Include="Content\IScene.h" />
     <ClInclude Include="Content\Light.h" />
     <ClInclude Include="Content\Material.h" />
     <ClInclude Include="Content\MathHelper.h" />
@@ -164,6 +165,7 @@
     <ClInclude Include="Content\Samplers.h" />
     <ClInclude Include="Content\SceneRenderer.h" />
     <ClInclude Include="Content\Scenes\DefaultScene.h" />
+    <ClInclude Include="Content\Scenes\MirrorScene.h" />
     <ClInclude Include="Content\SettingsManager.h" />
     <ClInclude Include="Content\Shader.h" />
     <ClInclude Include="Content\SubmeshGeometry.h" />
@@ -197,6 +199,7 @@
     <ClCompile Include="Content\Samplers.cpp" />
     <ClCompile Include="Content\SceneRenderer.cpp" />
     <ClCompile Include="Content\Scenes\DefaultScene.cpp" />
+    <ClCompile Include="Content\Scenes\MirrorScene.cpp" />
     <ClCompile Include="Content\SettingsManager.cpp" />
     <ClCompile Include="Content\Shader.cpp" />
     <ClCompile Include="Content\Texture.cpp" />

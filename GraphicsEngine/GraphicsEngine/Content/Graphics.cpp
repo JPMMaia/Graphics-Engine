@@ -24,7 +24,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 
 	InitializeRootSignature();
 	InitializeShadersAndInputLayout();
-	m_scene = DefaultScene(this, m_d3d);
+	m_scene = MirrorScene(this, m_d3d);
 	m_textureHeap.Create(m_d3d);
 	InitializeFrameResources();
 	InitializePipelineStateObjects();
@@ -101,6 +101,10 @@ void Graphics::Render(const Timer& timer)
 
 		commandList->SetPipelineState(m_pipelineStateObjects[m_wireframeEnabled ? "Alpha Tested Wireframe" : "Alpha Tested"].Get());
 		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::AlphaTested)]);
+
+		commandList->SetPipelineState(m_pipelineStateObjects["Shadow"].Get());
+		commandList->OMSetStencilRef(0);
+		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::Shadow)]);
 	}
 
 	// Present the rendered scene to the screen:
@@ -125,9 +129,13 @@ void Graphics::AddTexture(unique_ptr<Texture>&& texture)
 {
 	m_textureHeap.AddTexture(std::move(texture));
 }
-void Graphics::AddRenderItem(unique_ptr<RenderItem>&& renderItem, RenderLayer renderLayer)
+void Graphics::AddRenderItem(unique_ptr<RenderItem>&& renderItem, initializer_list<RenderLayer> renderLayers)
 {
-	m_renderItemLayers[static_cast<size_t>(renderLayer)].push_back(renderItem.get());
+	for(auto renderLayer : renderLayers)
+	{
+		m_renderItemLayers[static_cast<size_t>(renderLayer)].push_back(renderItem.get());
+	}
+
 	m_allRenderItems.push_back(std::move(renderItem));
 }
 
@@ -262,9 +270,8 @@ void Graphics::InitializePipelineStateObjects()
 	}
 
 	// Transparent:
+	auto transparentPSODescription = opaquePSODescription;
 	{
-		auto transparentPSODescription = opaquePSODescription;
-
 		D3D12_RENDER_TARGET_BLEND_DESC blendDescription = {};
 		blendDescription.BlendEnable = true;
 		blendDescription.LogicOpEnable = false;
@@ -312,6 +319,33 @@ void Graphics::InitializePipelineStateObjects()
 				device->CreateGraphicsPipelineState(&alphaTestedWireframePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Alpha Tested Wireframe"].GetAddressOf()))
 				);
 		}
+	}
+
+	// Shadows:
+	{
+		D3D12_DEPTH_STENCIL_DESC shadowDepthStencilState;
+		shadowDepthStencilState.DepthEnable = true;
+		shadowDepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+		shadowDepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+		shadowDepthStencilState.StencilEnable = true;
+		shadowDepthStencilState.StencilReadMask = 0xFF;
+		shadowDepthStencilState.StencilWriteMask = 0xFF;
+
+		shadowDepthStencilState.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+		shadowDepthStencilState.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+		shadowDepthStencilState.FrontFace.StencilPassOp = D3D12_STENCIL_OP_INCR;
+		shadowDepthStencilState.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL;
+
+		shadowDepthStencilState.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+		shadowDepthStencilState.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+		shadowDepthStencilState.BackFace.StencilPassOp = D3D12_STENCIL_OP_INCR;
+		shadowDepthStencilState.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL;
+
+		auto shadowPSODescription = transparentPSODescription;
+		shadowPSODescription.DepthStencilState = shadowDepthStencilState;
+		DX::ThrowIfFailed(
+			device->CreateGraphicsPipelineState(&shadowPSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Shadow"].GetAddressOf()))
+			);
 	}
 }
 

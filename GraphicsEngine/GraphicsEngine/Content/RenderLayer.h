@@ -7,6 +7,9 @@ namespace GraphicsEngine
 		Opaque,
 		Transparent,
 		AlphaTested,
+		Mirrors,
+		Reflected,
+		Shadow,
 		Count
 	};
 }

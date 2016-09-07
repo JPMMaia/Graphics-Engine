@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Content/IScene.h"
 #include "Content/Material.h"
 #include "Content/MeshGeometry.h"
 
@@ -11,13 +12,13 @@ namespace GraphicsEngine
 	class D3DBase;
 	class Graphics;
 
-	class DefaultScene
+	class DefaultScene : public IScene
 	{
 	public:
 		DefaultScene() = default;
 		explicit DefaultScene(Graphics* graphics, const D3DBase& d3dBase);
 
-		const std::unordered_map<std::string, std::unique_ptr<Material>>& GetMaterials() const;
+		const std::unordered_map<std::string, std::unique_ptr<Material>>& GetMaterials() const override;
 
 	private:
 		void InitializeGeometry(const D3DBase& d3dBase);

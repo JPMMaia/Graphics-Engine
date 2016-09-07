@@ -9,10 +9,10 @@
 #include "RenderItem.h"
 #include "RenderLayer.h"
 #include "Shader.h"
+#include "TextureHeap.h"
+#include "Scenes/MirrorScene.h"
 
 #include <vector>
-#include "Scenes/DefaultScene.h"
-#include "TextureHeap.h"
 
 namespace GraphicsEngine
 {
@@ -33,7 +33,7 @@ namespace GraphicsEngine
 		Camera* GetCamera();
 
 		void AddTexture(std::unique_ptr<Texture>&& texture);
-		void AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, RenderLayer renderLayer);
+		void AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
 		
 	private:
 		void InitializeRootSignature();
@@ -69,7 +69,7 @@ namespace GraphicsEngine
 
 		bool m_wireframeEnabled = false;
 		Camera m_camera;
-		DefaultScene m_scene;
+		MirrorScene m_scene;
 		TextureHeap m_textureHeap;
 	};
 }

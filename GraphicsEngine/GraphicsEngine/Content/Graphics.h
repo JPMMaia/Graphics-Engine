@@ -6,9 +6,9 @@
 #include "Timer.h"
 #include "MathHelper.h"
 #include "FrameResource.h"
+#include "PipelineStateManager.h"
 #include "RenderItem.h"
 #include "RenderLayer.h"
-#include "Shader.h"
 #include "TextureHeap.h"
 #include "Scenes/MirrorScene.h"
 
@@ -37,9 +37,7 @@ namespace GraphicsEngine
 		
 	private:
 		void InitializeRootSignature();
-		void InitializeShadersAndInputLayout();
 		void InitializeFrameResources();
-		void InitializePipelineStateObjects();
 
 		void UpdateCamera();
 		void UpdateObjectsConstantBuffer();
@@ -56,10 +54,8 @@ namespace GraphicsEngine
 		FrameResource* m_currentFrameResource = nullptr;
 		int m_currentFrameResourceIndex = 0;
 
-		std::vector<D3D12_INPUT_ELEMENT_DESC> m_inputLayout;
+		PipelineStateManager m_pipelineStateManager;
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
-		std::unordered_map<std::string, Shader> m_shaders;
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>> m_pipelineStateObjects;
 
 		ConstantBufferTypes::PassConstants m_passConstants;
 		std::unique_ptr<UploadBuffer<ConstantBufferTypes::ObjectConstants>> m_perObjectCB;

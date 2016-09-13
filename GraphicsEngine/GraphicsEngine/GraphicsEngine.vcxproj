@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Content\BaseGeometryBuffer.h" />
+    <ClInclude Include="Content\BlurFilter.h" />
     <ClInclude Include="Content\Camera.h" />
     <ClInclude Include="Content\ConstantBufferTypes.h" />
     <ClInclude Include="Content\d3dx12.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Content\Helpers.h" />
     <ClInclude Include="Content\InputHandler.h" />
     <ClInclude Include="Content\ISceneRenderer.h" />
+    <ClInclude Include="Content\PipelineStateManager.h" />
     <ClInclude Include="Content\RenderItem.h" />
     <ClInclude Include="Content\RenderLayer.h" />
     <ClInclude Include="Content\Samplers.h" />
@@ -181,6 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Content\BaseGeometryBuffer.cpp" />
+    <ClCompile Include="Content\BlurFilter.cpp" />
     <ClCompile Include="Content\Camera.cpp" />
     <ClCompile Include="Content\D3DBase.cpp" />
     <ClCompile Include="Content\DDSTextureLoader.cpp" />
@@ -195,6 +198,7 @@
     <ClCompile Include="Content\MeshGeometry.cpp" />
     <ClCompile Include="Content\Graphics.cpp" />
     <ClCompile Include="Content\InputHandler.cpp" />
+    <ClCompile Include="Content\PipelineStateManager.cpp" />
     <ClCompile Include="Content\RenderItem.cpp" />
     <ClCompile Include="Content\Samplers.cpp" />
     <ClCompile Include="Content\SceneRenderer.cpp" />
@@ -214,6 +218,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Content\Shaders\BlurComputeShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Content\Shaders\DefaultPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

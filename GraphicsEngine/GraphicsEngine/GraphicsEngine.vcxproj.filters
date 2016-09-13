@@ -52,6 +52,9 @@
     <Filter Include="Content\DirectX12\Scene">
       <UniqueIdentifier>{a786714d-b062-4a08-8ac0-ee80d5bf9134}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\DirectX12\Effects">
+      <UniqueIdentifier>{d7b1f5e6-d92a-4316-a4de-9fdf8e947a6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -171,6 +174,12 @@
     <ClInclude Include="Content\IScene.h">
       <Filter>Content\DirectX12\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Content\BlurFilter.h">
+      <Filter>Content\DirectX12\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\PipelineStateManager.h">
+      <Filter>Content\DirectX12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -254,12 +263,21 @@
     <ClCompile Include="Content\Scenes\MirrorScene.cpp">
       <Filter>Content\DirectX12\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Content\BlurFilter.cpp">
+      <Filter>Content\DirectX12\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\PipelineStateManager.cpp">
+      <Filter>Content\DirectX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Content\Shaders\DefaultPixelShader.hlsl">
       <Filter>Content\DirectX12\Shaders\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="Content\Shaders\DefaultVertexShader.hlsl">
+      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Content\Shaders\BlurComputeShader.hlsl">
       <Filter>Content\DirectX12\Shaders\HLSL</Filter>
     </FxCompile>
   </ItemGroup>

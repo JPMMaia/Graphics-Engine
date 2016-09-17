@@ -23,8 +23,8 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	DX::ThrowIfFailed(commandList->Reset(m_d3d.GetCommandAllocator(), nullptr));
 
 	InitializeRootSignature();
-	m_pipelineStateManager = PipelineStateManager(m_d3d, m_rootSignature.Get());
-	m_scene = MirrorScene(this, m_d3d);
+	m_pipelineStateManager = PipelineStateManager(m_d3d, m_rootSignature.Get(), m_postProcessRootSignature.Get());
+	m_scene = MirrorScene(this, m_d3d, &m_textureHeap);
 	m_textureHeap.Create(m_d3d);
 	InitializeFrameResources();
 
@@ -73,7 +73,7 @@ void Graphics::Update(const Timer& timer)
 void Graphics::Render(const Timer& timer)
 {
 	// Prepare scene to be drawn:
-	auto initialPipelineState = m_pipelineStateManager.GetPipelineStateObject(m_wireframeEnabled ? "Opaque Wireframe" : "Opaque");
+	auto initialPipelineState = m_pipelineStateManager.GetPipelineState(m_wireframeEnabled ? "Opaque Wireframe" : "Opaque");
 	m_d3d.BeginScene(m_currentFrameResource->CommandAllocator.Get(), initialPipelineState);
 
 	auto commandList = m_d3d.GetCommandList();
@@ -95,13 +95,13 @@ void Graphics::Render(const Timer& timer)
 	{
 		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)]);
 
-		commandList->SetPipelineState(m_pipelineStateManager.GetPipelineStateObject(m_wireframeEnabled ? "Transparent Wireframe" : "Transparent"));
+		m_pipelineStateManager.SetPipelineState(commandList, m_wireframeEnabled ? "Transparent Wireframe" : "Transparent");
 		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::Transparent)]);
 
-		commandList->SetPipelineState(m_pipelineStateManager.GetPipelineStateObject(m_wireframeEnabled ? "Alpha Tested Wireframe" : "Alpha Tested"));
+		m_pipelineStateManager.SetPipelineState(commandList, m_wireframeEnabled ? "Alpha Tested Wireframe" : "Alpha Tested");
 		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::AlphaTested)]);
 
-		commandList->SetPipelineState(m_pipelineStateManager.GetPipelineStateObject("Shadow"));
+		m_pipelineStateManager.SetPipelineState(commandList, "Shadow");
 		commandList->OMSetStencilRef(0);
 		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::Shadow)]);
 	}
@@ -130,7 +130,7 @@ void Graphics::AddTexture(unique_ptr<Texture>&& texture)
 }
 void Graphics::AddRenderItem(unique_ptr<RenderItem>&& renderItem, initializer_list<RenderLayer> renderLayers)
 {
-	for(auto renderLayer : renderLayers)
+	for (auto renderLayer : renderLayers)
 	{
 		m_renderItemLayers[static_cast<size_t>(renderLayer)].push_back(renderItem.get());
 	}
@@ -152,49 +152,93 @@ void Graphics::InitializeRootSignature()
 {
 	auto device = m_d3d.GetDevice();
 
-	// Describing textures tables:
-	CD3DX12_DESCRIPTOR_RANGE texturesTable(
-		D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
-		1,
-		0
-		);
-
-	// Specifying root parameters:
-	std::array<CD3DX12_ROOT_PARAMETER, 4> slotRootParameter;
-	slotRootParameter[0].InitAsDescriptorTable(1, &texturesTable, D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_PIXEL);
-	slotRootParameter[1].InitAsConstantBufferView(0);
-	slotRootParameter[2].InitAsConstantBufferView(1);
-	slotRootParameter[3].InitAsConstantBufferView(2);
-
-	auto staticSamplers = Samplers::GetStaticSamplers();
-
-	// A root signature is an array of root parameters:
-	auto rootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDescription(
-		static_cast<uint32_t>(slotRootParameter.size()),	// Num root parameters
-		slotRootParameter.data(),							// Root parameters
-		static_cast<uint32_t>(staticSamplers.size()),		// Num static samplers
-		staticSamplers.data(),								// Static samplers
-		rootSignatureFlags
-		);
-
-	// Create root signature:
+	// Root signature:
 	{
-		ComPtr<ID3DBlob> serializedRootSignature;
-		ComPtr<ID3DBlob> errorBlob = nullptr;
-		auto hr = D3D12SerializeRootSignature(&rootSignatureDescription, D3D_ROOT_SIGNATURE_VERSION::D3D_ROOT_SIGNATURE_VERSION_1, serializedRootSignature.GetAddressOf(), errorBlob.GetAddressOf());
-		if (errorBlob != nullptr)
-			::OutputDebugStringA(static_cast<char*>(errorBlob->GetBufferPointer()));
-		DX::ThrowIfFailed(hr);
-
-		DX::ThrowIfFailed(
-			device->CreateRootSignature(
-				0,
-				serializedRootSignature->GetBufferPointer(),
-				serializedRootSignature->GetBufferSize(),
-				IID_PPV_ARGS(m_rootSignature.GetAddressOf())
-				)
+		// Describing textures tables:
+		CD3DX12_DESCRIPTOR_RANGE texturesTable(
+			D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+			1,
+			0
 			);
+
+		// Specifying root parameters:
+		std::array<CD3DX12_ROOT_PARAMETER, 4> slotRootParameter;
+		slotRootParameter[0].InitAsDescriptorTable(1, &texturesTable, D3D12_SHADER_VISIBILITY_PIXEL);
+		slotRootParameter[1].InitAsConstantBufferView(0);
+		slotRootParameter[2].InitAsConstantBufferView(1);
+		slotRootParameter[3].InitAsConstantBufferView(2);
+
+		auto staticSamplers = Samplers::GetStaticSamplers();
+
+		// A root signature is an array of root parameters:
+		auto rootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDescription(
+			static_cast<uint32_t>(slotRootParameter.size()),	// Num root parameters
+			slotRootParameter.data(),							// Root parameters
+			static_cast<uint32_t>(staticSamplers.size()),		// Num static samplers
+			staticSamplers.data(),								// Static samplers
+			rootSignatureFlags
+			);
+
+		// Create root signature:
+		{
+			ComPtr<ID3DBlob> serializedRootSignature;
+			ComPtr<ID3DBlob> errorBlob = nullptr;
+			auto hr = D3D12SerializeRootSignature(&rootSignatureDescription, D3D_ROOT_SIGNATURE_VERSION_1, serializedRootSignature.GetAddressOf(), errorBlob.GetAddressOf());
+			if (errorBlob != nullptr)
+				::OutputDebugStringA(static_cast<char*>(errorBlob->GetBufferPointer()));
+			DX::ThrowIfFailed(hr);
+
+			DX::ThrowIfFailed(
+				device->CreateRootSignature(
+					0,
+					serializedRootSignature->GetBufferPointer(),
+					serializedRootSignature->GetBufferSize(),
+					IID_PPV_ARGS(m_rootSignature.GetAddressOf())
+					)
+				);
+		}
+	}
+
+	// Post process root signature:
+	{
+		CD3DX12_DESCRIPTOR_RANGE srvTable;
+		srvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
+		CD3DX12_DESCRIPTOR_RANGE uavTable;
+		uavTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0);
+
+		std::array<CD3DX12_ROOT_PARAMETER, 2> parameters;
+		parameters[0].InitAsDescriptorTable(1, &srvTable);
+		parameters[1].InitAsDescriptorTable(1, &uavTable);
+
+		auto flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDescription(
+			static_cast<UINT>(parameters.size()),
+			parameters.data(),
+			0,
+			nullptr,
+			flags
+			);
+
+		// Create root signature:
+		{
+			ComPtr<ID3DBlob> serializedRootSignature;
+			ComPtr<ID3DBlob> errorBlob = nullptr;
+			auto hr = D3D12SerializeRootSignature(&rootSignatureDescription, D3D_ROOT_SIGNATURE_VERSION_1, serializedRootSignature.GetAddressOf(), errorBlob.GetAddressOf());
+			if (errorBlob != nullptr)
+				::OutputDebugStringA(static_cast<char*>(errorBlob->GetBufferPointer()));
+			DX::ThrowIfFailed(hr);
+
+			DX::ThrowIfFailed(
+				device->CreateRootSignature(
+					0,
+					serializedRootSignature->GetBufferPointer(),
+					serializedRootSignature->GetBufferSize(),
+					IID_PPV_ARGS(m_postProcessRootSignature.GetAddressOf())
+					)
+				);
+		}
 	}
 }
 

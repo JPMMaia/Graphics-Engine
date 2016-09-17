@@ -164,6 +164,7 @@
     <ClInclude Include="Content\PipelineStateManager.h" />
     <ClInclude Include="Content\RenderItem.h" />
     <ClInclude Include="Content\RenderLayer.h" />
+    <ClInclude Include="Content\RWTexture.h" />
     <ClInclude Include="Content\Samplers.h" />
     <ClInclude Include="Content\SceneRenderer.h" />
     <ClInclude Include="Content\Scenes\DefaultScene.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="Content\InputHandler.cpp" />
     <ClCompile Include="Content\PipelineStateManager.cpp" />
     <ClCompile Include="Content\RenderItem.cpp" />
+    <ClCompile Include="Content\RWTexture.cpp" />
     <ClCompile Include="Content\Samplers.cpp" />
     <ClCompile Include="Content\SceneRenderer.cpp" />
     <ClCompile Include="Content\Scenes\DefaultScene.cpp" />
@@ -222,11 +224,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Content\Shaders\DefaultPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

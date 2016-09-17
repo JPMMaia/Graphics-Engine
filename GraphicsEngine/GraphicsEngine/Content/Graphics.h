@@ -56,6 +56,7 @@ namespace GraphicsEngine
 
 		PipelineStateManager m_pipelineStateManager;
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_postProcessRootSignature;
 
 		ConstantBufferTypes::PassConstants m_passConstants;
 		std::unique_ptr<UploadBuffer<ConstantBufferTypes::ObjectConstants>> m_perObjectCB;

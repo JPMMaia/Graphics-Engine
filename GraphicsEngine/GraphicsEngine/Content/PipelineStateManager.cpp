@@ -4,13 +4,18 @@
 
 using namespace GraphicsEngine;
 
-PipelineStateManager::PipelineStateManager(const D3DBase& d3dBase, ID3D12RootSignature* rootSignature)
+PipelineStateManager::PipelineStateManager(const D3DBase& d3dBase, ID3D12RootSignature* rootSignature, ID3D12RootSignature* postProcessRootSignature)
 {
 	InitializeShadersAndInputLayout();
-	InitializePipelineStateObjects(d3dBase, rootSignature);
+	InitializePipelineStateObjects(d3dBase, rootSignature, postProcessRootSignature);
 }
 
-ID3D12PipelineState* PipelineStateManager::GetPipelineStateObject(const std::string& name) const
+void PipelineStateManager::SetPipelineState(ID3D12GraphicsCommandList* commandList, const std::string& name) const
+{
+	commandList->SetPipelineState(m_pipelineStateObjects.at(name).Get());
+}
+
+ID3D12PipelineState* PipelineStateManager::GetPipelineState(const std::string& name) const
 {
 	return m_pipelineStateObjects.at(name).Get();
 }
@@ -44,7 +49,7 @@ void PipelineStateManager::InitializeShadersAndInputLayout()
 	};
 }
 
-void PipelineStateManager::InitializePipelineStateObjects(const D3DBase& d3dBase, ID3D12RootSignature* rootSignature)
+void PipelineStateManager::InitializePipelineStateObjects(const D3DBase& d3dBase, ID3D12RootSignature* rootSignature, ID3D12RootSignature* postProcessRootSignature)
 {
 	auto device = d3dBase.GetDevice();
 
@@ -162,7 +167,7 @@ void PipelineStateManager::InitializePipelineStateObjects(const D3DBase& d3dBase
 	}
 
 	D3D12_COMPUTE_PIPELINE_STATE_DESC horizontalBlurPipelineStateDescription = {};
-	horizontalBlurPipelineStateDescription.pRootSignature = rootSignature;
+	horizontalBlurPipelineStateDescription.pRootSignature = postProcessRootSignature;
 	horizontalBlurPipelineStateDescription.CS = m_shaders["HorizontalBlurCS"].GetShaderBytecode();
 	horizontalBlurPipelineStateDescription.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 	DX::ThrowIfFailed(

@@ -13,6 +13,7 @@ namespace GraphicsEngine
 
 		void Create(const D3DBase& d3dBase);
 
+		size_t GetTextureCount() const;
 		ID3D12DescriptorHeap* GetDescriptorHeap() const;
 
 	private:

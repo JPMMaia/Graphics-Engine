@@ -22,28 +22,28 @@ void TextureHeap::Create(const D3DBase& d3dBase)
 		device->CreateDescriptorHeap(&texturesHeapDescription, IID_PPV_ARGS(m_textureDescriptorHeap.GetAddressOf()))
 		);
 
-	CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle(m_textureDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
-
 	// Create texture descriptors:
 	for(auto&& pair : m_textures)
 	{
-		auto&& texture = pair.second->Resource;
+		auto&& textureResource = pair.second->Resource;
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC textureDescription = {};
 		textureDescription.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		textureDescription.Format = texture->GetDesc().Format;
+		textureDescription.Format = textureResource->GetDesc().Format;
 		textureDescription.ViewDimension = D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE2D;
-		textureDescription.Texture2D.MipLevels = texture->GetDesc().MipLevels;
+		textureDescription.Texture2D.MipLevels = textureResource->GetDesc().MipLevels;
 		textureDescription.Texture2D.MostDetailedMip = 0;
 		textureDescription.Texture2D.ResourceMinLODClamp = 0.0f;
 
-		device->CreateShaderResourceView(texture.Get(), &textureDescription, descriptorHandle);
-
-		// Increment descriptor handle:
-		descriptorHandle.Offset(1, d3dBase.GetCbvSrvUavDescriptorSize());
+		CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle(m_textureDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), pair.second->HeapIndex, d3dBase.GetCbvSrvUavDescriptorSize());
+		device->CreateShaderResourceView(textureResource.Get(), &textureDescription, descriptorHandle);
 	}
 }
 
+size_t TextureHeap::GetTextureCount() const
+{
+	return m_textures.size();
+}
 ID3D12DescriptorHeap* TextureHeap::GetDescriptorHeap() const
 {
 	return m_textureDescriptorHeap.Get();

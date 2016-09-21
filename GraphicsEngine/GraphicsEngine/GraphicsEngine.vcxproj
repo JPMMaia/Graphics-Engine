@@ -146,6 +146,7 @@
     <ClInclude Include="Content\d3dx12.h" />
     <ClInclude Include="Content\D3DBase.h" />
     <ClInclude Include="Content\DDSTextureLoader.h" />
+    <ClInclude Include="Content\DescriptorHeap.h" />
     <ClInclude Include="Content\DirectXHelper.h" />
     <ClInclude Include="Content\EngineException.h" />
     <ClInclude Include="Content\FrameResource.h" />
@@ -173,7 +174,7 @@
     <ClInclude Include="Content\Shader.h" />
     <ClInclude Include="Content\SubmeshGeometry.h" />
     <ClInclude Include="Content\Texture.h" />
-    <ClInclude Include="Content\TextureHeap.h" />
+    <ClInclude Include="Content\TextureManager.h" />
     <ClInclude Include="Content\Timer.h" />
     <ClInclude Include="Content\UploadBuffer.h" />
     <ClInclude Include="Content\VertexBuffer.h" />
@@ -188,6 +189,7 @@
     <ClCompile Include="Content\Camera.cpp" />
     <ClCompile Include="Content\D3DBase.cpp" />
     <ClCompile Include="Content\DDSTextureLoader.cpp" />
+    <ClCompile Include="Content\DescriptorHeap.cpp" />
     <ClCompile Include="Content\DirectXHelper.cpp" />
     <ClCompile Include="Content\EngineException.cpp" />
     <ClCompile Include="Content\FrameResource.cpp" />
@@ -209,7 +211,7 @@
     <ClCompile Include="Content\SettingsManager.cpp" />
     <ClCompile Include="Content\Shader.cpp" />
     <ClCompile Include="Content\Texture.cpp" />
-    <ClCompile Include="Content\TextureHeap.cpp" />
+    <ClCompile Include="Content\TextureManager.cpp" />
     <ClCompile Include="Content\Timer.cpp" />
     <ClCompile Include="Content\VertexBuffer.cpp" />
     <ClCompile Include="stdafx.cpp">

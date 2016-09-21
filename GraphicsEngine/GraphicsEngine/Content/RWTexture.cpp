@@ -20,7 +20,7 @@ void RWTexture::BuildResource(ID3D12Device* device, UINT64 width, UINT64 height,
 	resourceDescription.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	resourceDescription.Alignment = 0;
 	resourceDescription.Width = width;
-	resourceDescription.Height = height;
+	resourceDescription.Height = static_cast<UINT>(height);
 	resourceDescription.DepthOrArraySize = 1;
 	resourceDescription.MipLevels = 1;
 	resourceDescription.Format = format;

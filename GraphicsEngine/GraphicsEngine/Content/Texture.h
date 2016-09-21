@@ -11,9 +11,11 @@ namespace GraphicsEngine
 		std::wstring Filename;
 		Microsoft::WRL::ComPtr<ID3D12Resource> Resource = nullptr;
 		Microsoft::WRL::ComPtr<ID3D12Resource> UploadHeap = nullptr;
-		int HeapIndex;
+		int HeapIndex = -1;
 
 	public:
-		Texture(const D3DBase& d3dBase, const std::string& name, const std::wstring& filename, int heapIndex);
+		Texture(const std::string& name, const std::wstring& filename);
+
+		void Load(const D3DBase& d3dBase);
 	};
 }

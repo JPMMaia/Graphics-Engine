@@ -5,16 +5,19 @@
 
 using namespace GraphicsEngine;
 
-Texture::Texture(const D3DBase& d3dBase, const std::string& name, const std::wstring& filename, int heapIndex) :
+Texture::Texture(const std::string& name, const std::wstring& filename) :
 	Name(name),
-	Filename(filename),
-	HeapIndex(heapIndex)
+	Filename(filename)
+{
+}
+
+void Texture::Load(const D3DBase& d3dBase)
 {
 	DX::ThrowIfFailed(
 		DirectX::CreateDDSTextureFromFile12(
 			d3dBase.GetDevice(),
 			d3dBase.GetCommandList(),
-			filename.c_str(),
+			this->Filename.c_str(),
 			this->Resource,
 			this->UploadHeap
 			)

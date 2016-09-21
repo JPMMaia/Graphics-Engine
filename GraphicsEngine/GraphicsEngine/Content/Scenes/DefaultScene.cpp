@@ -2,17 +2,25 @@
 #include "DefaultScene.h"
 #include "Content/Graphics.h"
 #include "Content/GeometryGenerator.h"
+#include "Content/Texture.h"
 #include "Content/VertexTypes.h"
 #include <DirectXColors.h>
 
 using namespace DirectX;
 using namespace GraphicsEngine;
 
-DefaultScene::DefaultScene(Graphics* graphics, const D3DBase& d3dBase)
+void DefaultScene::AddTextures(TextureManager* pTextureManager) const
+{
+	pTextureManager->AddTexture(std::make_unique<Texture>("BricksTexture", L"Textures/bricks.dds"));
+	pTextureManager->AddTexture(std::make_unique<Texture>("StoneTexture", L"Textures/stone.dds"));
+	pTextureManager->AddTexture(std::make_unique<Texture>("TileTexture", L"Textures/tile.dds"));
+	pTextureManager->AddTexture(std::make_unique<Texture>("CrateTexture", L"Textures/wood_crate01.dds"));
+}
+
+void DefaultScene::Initialize(Graphics* graphics, const D3DBase& d3dBase, const TextureManager& textureManager)
 {
 	InitializeGeometry(d3dBase);
-	InitializeTextures(graphics, d3dBase);
-	InitializeMaterials();
+	InitializeMaterials(textureManager);
 	InitializeRenderItems(graphics);
 }
 
@@ -133,21 +141,14 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 		m_geometries[skull->Name] = std::move(skull);
 	}
 }
-void DefaultScene::InitializeTextures(Graphics* graphics, const D3DBase& d3dBase) const
-{
-	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "BricksTexture", L"Textures/bricks.dds", 0));
-	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "StoneTexture", L"Textures/stone.dds", 1));
-	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "TileTexture", L"Textures/tile.dds", 2));
-	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "CrateTexture", L"Textures/wood_crate_01.dds", 3));
-}
-void DefaultScene::InitializeMaterials()
+void DefaultScene::InitializeMaterials(const TextureManager& textureManager)
 {
 	// Bricks0:
 	{
 		auto bricks0 = std::make_unique<Material>();
 		bricks0->Name = "Bricks0";
 		bricks0->MaterialCBIndex = 0;
-		bricks0->DiffuseSrvHeapIndex = 0;
+		bricks0->DiffuseSrvHeapIndex = textureManager.GetTexture("BricksTexture")->HeapIndex;
 		bricks0->DiffuseAlbedo = XMFLOAT4(Colors::ForestGreen);
 		bricks0->FresnelR0 = XMFLOAT3(0.02f, 0.02f, 0.02f);
 		bricks0->Roughness = 0.1f;
@@ -159,7 +160,7 @@ void DefaultScene::InitializeMaterials()
 		auto stone0 = std::make_unique<Material>();
 		stone0->Name = "Stone0";
 		stone0->MaterialCBIndex = 1;
-		stone0->DiffuseSrvHeapIndex = 1;
+		stone0->DiffuseSrvHeapIndex = textureManager.GetTexture("StoneTexture")->HeapIndex;
 		stone0->DiffuseAlbedo = XMFLOAT4(Colors::LightSteelBlue);
 		stone0->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 		stone0->Roughness = 0.3f;
@@ -171,7 +172,7 @@ void DefaultScene::InitializeMaterials()
 		auto tile0 = std::make_unique<Material>();
 		tile0->Name = "Tile0";
 		tile0->MaterialCBIndex = 2;
-		tile0->DiffuseSrvHeapIndex = 2;
+		tile0->DiffuseSrvHeapIndex = textureManager.GetTexture("TileTexture")->HeapIndex;
 		tile0->DiffuseAlbedo = XMFLOAT4(Colors::LightGray);
 		tile0->FresnelR0 = XMFLOAT3(0.02f, 0.02f, 0.02f);
 		tile0->Roughness = 0.2f;
@@ -183,7 +184,7 @@ void DefaultScene::InitializeMaterials()
 		auto crate0 = std::make_unique<Material>();
 		crate0->Name = "Crate0";
 		crate0->MaterialCBIndex = 3;
-		crate0->DiffuseSrvHeapIndex = 3;
+		crate0->DiffuseSrvHeapIndex = textureManager.GetTexture("CrateTexture")->HeapIndex;
 		crate0->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 		crate0->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 		crate0->Roughness = 0.2f;
@@ -195,7 +196,7 @@ void DefaultScene::InitializeMaterials()
 		auto skullMaterial = std::make_unique<Material>();
 		skullMaterial->Name = "SkullMaterial";
 		skullMaterial->MaterialCBIndex = 4;
-		skullMaterial->DiffuseSrvHeapIndex = 0;
+		skullMaterial->DiffuseSrvHeapIndex = textureManager.GetTexture("CrateTexture")->HeapIndex;
 		skullMaterial->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 		skullMaterial->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 		skullMaterial->Roughness = 0.3f;

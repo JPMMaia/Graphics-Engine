@@ -165,9 +165,6 @@
     <ClInclude Include="Content\Scenes\DefaultScene.h">
       <Filter>Content\DirectX12\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Content\TextureHeap.h">
-      <Filter>Content\DirectX12\Textures</Filter>
-    </ClInclude>
     <ClInclude Include="Content\Scenes\MirrorScene.h">
       <Filter>Content\DirectX12\Scene</Filter>
     </ClInclude>
@@ -181,6 +178,12 @@
       <Filter>Content\DirectX12</Filter>
     </ClInclude>
     <ClInclude Include="Content\RWTexture.h">
+      <Filter>Content\DirectX12\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\DescriptorHeap.h">
+      <Filter>Content\DirectX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\TextureManager.h">
       <Filter>Content\DirectX12\Textures</Filter>
     </ClInclude>
   </ItemGroup>
@@ -260,9 +263,6 @@
     <ClCompile Include="Content\Scenes\DefaultScene.cpp">
       <Filter>Content\DirectX12\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Content\TextureHeap.cpp">
-      <Filter>Content\DirectX12\Textures</Filter>
-    </ClCompile>
     <ClCompile Include="Content\Scenes\MirrorScene.cpp">
       <Filter>Content\DirectX12\Scene</Filter>
     </ClCompile>
@@ -273,6 +273,12 @@
       <Filter>Content\DirectX12</Filter>
     </ClCompile>
     <ClCompile Include="Content\RWTexture.cpp">
+      <Filter>Content\DirectX12\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\DescriptorHeap.cpp">
+      <Filter>Content\DirectX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\TextureManager.cpp">
       <Filter>Content\DirectX12\Textures</Filter>
     </ClCompile>
   </ItemGroup>

@@ -9,7 +9,8 @@
 #include "PipelineStateManager.h"
 #include "RenderItem.h"
 #include "RenderLayer.h"
-#include "TextureHeap.h"
+#include "TextureManager.h"
+#include "DescriptorHeap.h"
 #include "Scenes/MirrorScene.h"
 
 #include <vector>
@@ -32,7 +33,6 @@ namespace GraphicsEngine
 
 		Camera* GetCamera();
 
-		void AddTexture(std::unique_ptr<Texture>&& texture);
 		void AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
 		
 	private:
@@ -67,6 +67,7 @@ namespace GraphicsEngine
 		bool m_wireframeEnabled = false;
 		Camera m_camera;
 		MirrorScene m_scene;
-		TextureHeap m_textureHeap;
+		TextureManager m_textureManager;
+		DescriptorHeap m_descriptorHeap;
 	};
 }

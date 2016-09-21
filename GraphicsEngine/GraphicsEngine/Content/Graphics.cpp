@@ -1,11 +1,11 @@
 ﻿#include "stdafx.h"
 #include "Graphics.h"
 #include "VertexTypes.h"
+#include "Material.h"
+#include "Samplers.h"
 
 #include <array>
 #include <D3Dcompiler.h>
-#include "Material.h"
-#include "Samplers.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -24,8 +24,15 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 
 	InitializeRootSignature();
 	m_pipelineStateManager = PipelineStateManager(m_d3d, m_rootSignature.Get(), m_postProcessRootSignature.Get());
-	m_scene = MirrorScene(this, m_d3d, &m_textureHeap);
-	m_textureHeap.Create(m_d3d);
+	
+	m_scene.AddTextures(&m_textureManager);
+	m_textureManager.LoadAllTextures(m_d3d);
+
+	m_descriptorHeap = DescriptorHeap(m_d3d, m_textureManager.GetTextureCount());
+	m_textureManager.CreateShaderResourceViews(m_d3d, &m_descriptorHeap);
+
+	m_scene.Initialize(this, m_d3d, m_textureManager);
+
 	InitializeFrameResources();
 
 	m_d3d.SetClearColor(m_passConstants.FogColor);
@@ -88,7 +95,7 @@ void Graphics::Render(const Timer& timer)
 	}
 
 	// Set texture descriptor heap:
-	ID3D12DescriptorHeap* descriptorHeaps = { m_textureHeap.GetDescriptorHeap() };
+	ID3D12DescriptorHeap* descriptorHeaps = { m_descriptorHeap.Get() };
 	commandList->SetDescriptorHeaps(1, &descriptorHeaps);
 
 	// Draw render items:
@@ -124,10 +131,6 @@ Camera* Graphics::GetCamera()
 	return &m_camera;
 }
 
-void Graphics::AddTexture(unique_ptr<Texture>&& texture)
-{
-	m_textureHeap.AddTexture(std::move(texture));
-}
 void Graphics::AddRenderItem(unique_ptr<RenderItem>&& renderItem, initializer_list<RenderLayer> renderLayers)
 {
 	for (auto renderLayer : renderLayers)
@@ -355,7 +358,7 @@ void Graphics::DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std
 	{
 		auto renderItem = renderItems[i];
 
-		CD3DX12_GPU_DESCRIPTOR_HANDLE textureHandle(m_textureHeap.GetDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
+		CD3DX12_GPU_DESCRIPTOR_HANDLE textureHandle(m_descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart());
 		textureHandle.Offset(renderItem->Material->DiffuseSrvHeapIndex, m_d3d.GetCbvSrvUavDescriptorSize());
 		commandList->SetGraphicsRootDescriptorTable(0, textureHandle);
 

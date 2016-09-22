@@ -28,10 +28,12 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_scene.AddTextures(&m_textureManager);
 	m_textureManager.LoadAllTextures(m_d3d);
 
-	m_descriptorHeap = DescriptorHeap(m_d3d, m_textureManager.GetTextureCount());
+	size_t descriptorCount = m_textureManager.GetTextureCount() + 4;
+	m_descriptorHeap = DescriptorHeap(m_d3d, descriptorCount);
 	m_textureManager.CreateShaderResourceViews(m_d3d, &m_descriptorHeap);
+	m_blurFilter = BlurFilter(m_d3d, &m_descriptorHeap, clientWidth, clientHeight, m_d3d.GetBackBufferFormat());
 
-	m_scene.Initialize(this, m_d3d, m_textureManager);
+	m_scene.Initialize(this, m_d3d, m_textureManager);	
 
 	InitializeFrameResources();
 
@@ -112,6 +114,8 @@ void Graphics::Render(const Timer& timer)
 		commandList->OMSetStencilRef(0);
 		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::Shadow)]);
 	}
+
+	m_blurFilter.Execute(commandList, m_postProcessRootSignature.Get(), m_d3d.GetCurrentBackBuffer(), m_pipelineStateManager.GetPipelineState("HorizontalBlur"));
 
 	// Present the rendered scene to the screen:
 	m_d3d.EndScene();

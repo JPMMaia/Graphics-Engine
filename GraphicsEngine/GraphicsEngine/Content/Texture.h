@@ -4,6 +4,8 @@
 
 namespace GraphicsEngine
 {
+	class DescriptorHeap;
+
 	struct Texture
 	{
 	public:
@@ -17,5 +19,6 @@ namespace GraphicsEngine
 		Texture(const std::string& name, const std::wstring& filename);
 
 		void Load(const D3DBase& d3dBase);
+		void CreateShaderResourceView(const D3DBase& d3dBase, DescriptorHeap* pDescriptorHeap);
 	};
 }

@@ -1,7 +1,6 @@
 ﻿#include "stdafx.h"
 #include "DescriptorHeap.h"
 #include "D3DBase.h"
-#include "Texture.h"
 
 using namespace GraphicsEngine;
 
@@ -19,21 +18,26 @@ DescriptorHeap::DescriptorHeap(const D3DBase& d3dBase, size_t capacity) :
 	DX::ThrowIfFailed(device->CreateDescriptorHeap(&descriptorHeapDescription, IID_PPV_ARGS(m_descriptorHeap.GetAddressOf())));
 }
 
-INT DescriptorHeap::CreateShaderResourceView(const D3DBase& d3dBase, const Texture& texture)
+INT DescriptorHeap::CreateShaderResourceView(const D3DBase& d3dBase, ID3D12Resource* pResource, const D3D12_SHADER_RESOURCE_VIEW_DESC* pDescription)
+{
+	assert(m_count < m_capacity && "Descriptor heap is full!");
+	
+	auto heapIndex = static_cast<INT>(m_count++);
+	CD3DX12_CPU_DESCRIPTOR_HANDLE destinationDescriptor(m_descriptorHeap->GetCPUDescriptorHandleForHeapStart(), heapIndex, d3dBase.GetCbvSrvUavDescriptorSize());
+
+	d3dBase.GetDevice()->CreateShaderResourceView(pResource, pDescription, destinationDescriptor);
+
+	return heapIndex;
+}
+
+INT DescriptorHeap::CreateUnorderedAccessView(const D3DBase& d3dBase, ID3D12Resource* pResource, ID3D12Resource *pCounterResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC* pDescription)
 {
 	assert(m_count < m_capacity && "Descriptor heap is full!");
 
-	D3D12_SHADER_RESOURCE_VIEW_DESC textureViewDescription = {};
-	textureViewDescription.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	textureViewDescription.Format = texture.Resource->GetDesc().Format;
-	textureViewDescription.ViewDimension = D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE2D;
-	textureViewDescription.Texture2D.MipLevels = texture.Resource->GetDesc().MipLevels;
-	textureViewDescription.Texture2D.MostDetailedMip = 0;
-	textureViewDescription.Texture2D.ResourceMinLODClamp = 0.0f;
-
 	auto heapIndex = static_cast<INT>(m_count++);
-	CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle(m_descriptorHeap->GetCPUDescriptorHandleForHeapStart(), heapIndex, d3dBase.GetCbvSrvUavDescriptorSize());
-	d3dBase.GetDevice()->CreateShaderResourceView(texture.Resource.Get(), &textureViewDescription, descriptorHandle);
+	CD3DX12_CPU_DESCRIPTOR_HANDLE destinationDescriptor(m_descriptorHeap->GetCPUDescriptorHandleForHeapStart(), heapIndex, d3dBase.GetCbvSrvUavDescriptorSize());
+
+	d3dBase.GetDevice()->CreateUnorderedAccessView(pResource, pCounterResource, pDescription, destinationDescriptor);
 
 	return heapIndex;
 }

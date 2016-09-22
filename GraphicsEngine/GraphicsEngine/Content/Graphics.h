@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "BlurFilter.h"
 #include "Camera.h"
 #include "D3DBase.h"
 #include "MeshGeometry.h"
@@ -12,6 +13,7 @@
 #include "TextureManager.h"
 #include "DescriptorHeap.h"
 #include "Scenes/MirrorScene.h"
+
 
 #include <vector>
 
@@ -69,5 +71,6 @@ namespace GraphicsEngine
 		MirrorScene m_scene;
 		TextureManager m_textureManager;
 		DescriptorHeap m_descriptorHeap;
+		BlurFilter m_blurFilter;
 	};
 }

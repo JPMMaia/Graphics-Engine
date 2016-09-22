@@ -1,6 +1,5 @@
 ﻿#include "stdafx.h"
 #include "TextureManager.h"
-#include "Texture.h"
 #include "DescriptorHeap.h"
 
 using namespace GraphicsEngine;
@@ -23,7 +22,7 @@ void TextureManager::CreateShaderResourceViews(const D3DBase& d3dBase, Descripto
 	for(auto&& pair : m_textures)
 	{
 		auto pTexture = pair.second.get();
-		pTexture->HeapIndex = pDescriptorHeap->CreateShaderResourceView(d3dBase, *pTexture);
+		pTexture->CreateShaderResourceView(d3dBase, pDescriptorHeap);
 	}
 }
 

@@ -1,18 +1,20 @@
 ﻿#include "stdafx.h"
 #include "RWTexture.h"
+#include "DescriptorHeap.h"
+#include "D3DBase.h"
 
 using namespace GraphicsEngine;
 
-RWTexture::RWTexture(ID3D12Device* device, UINT64 width, UINT64 height, DXGI_FORMAT format, CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescriptor, UINT descriptorIncrementSize) :
+RWTexture::RWTexture(const D3DBase& d3dBase, DescriptorHeap* pDescriptorHeap, UINT64 width, UINT64 height, DXGI_FORMAT format) :
 	Width(width),
 	Height(height),
 	Format(format)
 {
-	BuildResource(device, width, height, format);
-	BuildDescriptors(device, cpuDescriptor, descriptorIncrementSize);
+	BuildResource(d3dBase, width, height, format);
+	BuildDescriptors(d3dBase, pDescriptorHeap);
 }
 
-void RWTexture::BuildResource(ID3D12Device* device, UINT64 width, UINT64 height, DXGI_FORMAT format)
+void RWTexture::BuildResource(const D3DBase& d3dBase, UINT64 width, UINT64 height, DXGI_FORMAT format)
 {
 	auto heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 
@@ -29,7 +31,7 @@ void RWTexture::BuildResource(ID3D12Device* device, UINT64 width, UINT64 height,
 	resourceDescription.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 	resourceDescription.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
-	device->CreateCommittedResource(
+	d3dBase.GetDevice()->CreateCommittedResource(
 		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDescription,
@@ -39,7 +41,7 @@ void RWTexture::BuildResource(ID3D12Device* device, UINT64 width, UINT64 height,
 		);
 }
 
-void RWTexture::BuildDescriptors(ID3D12Device* device, CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescriptor, UINT descriptorIncrementSize) const
+void RWTexture::BuildDescriptors(const D3DBase& d3dBase, DescriptorHeap* pDescriptorHeap)
 {
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDescription = {};
 	srvDescription.Format = this->Format;
@@ -48,14 +50,16 @@ void RWTexture::BuildDescriptors(ID3D12Device* device, CD3DX12_CPU_DESCRIPTOR_HA
 	srvDescription.Texture2D.MostDetailedMip = 0;
 	srvDescription.Texture2D.MipLevels = 1;
 
+	auto srvHeapIndex = pDescriptorHeap->CreateShaderResourceView(d3dBase, this->Resource.Get(), &srvDescription);
+	this->SrvCpuDescriptorHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(pDescriptorHeap->Get()->GetCPUDescriptorHandleForHeapStart(), srvHeapIndex, d3dBase.GetCbvSrvUavDescriptorSize());
+	this->SrvGpuDescriptorHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(pDescriptorHeap->Get()->GetGPUDescriptorHandleForHeapStart(), srvHeapIndex, d3dBase.GetCbvSrvUavDescriptorSize());
+
 	D3D12_UNORDERED_ACCESS_VIEW_DESC uavDescription = {};
 	uavDescription.Format = this->Format;
 	uavDescription.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
 	uavDescription.Texture2D.MipSlice = 0;
 
-	auto destinationDescriptor(cpuDescriptor);
-	device->CreateShaderResourceView(this->Resource.Get(), &srvDescription, destinationDescriptor);
-
-	cpuDescriptor.Offset(1, descriptorIncrementSize);
-	device->CreateUnorderedAccessView(this->Resource.Get(), nullptr, &uavDescription, destinationDescriptor);
+	auto uavHeapIndex = pDescriptorHeap->CreateUnorderedAccessView(d3dBase, this->Resource.Get(), nullptr, &uavDescription);
+	this->UavCpuDescriptorHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(pDescriptorHeap->Get()->GetCPUDescriptorHandleForHeapStart(), uavHeapIndex, d3dBase.GetCbvSrvUavDescriptorSize());
+	this->UavGpuDescriptorHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(pDescriptorHeap->Get()->GetGPUDescriptorHandleForHeapStart(), uavHeapIndex, d3dBase.GetCbvSrvUavDescriptorSize());
 }

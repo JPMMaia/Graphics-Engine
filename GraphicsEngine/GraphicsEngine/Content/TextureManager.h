@@ -1,11 +1,13 @@
 ﻿#pragma once
+
+#include "Texture.h"
+
 #include <unordered_map>
 
 namespace GraphicsEngine
 {
 	class DescriptorHeap;
 	class D3DBase;
-	struct Texture;
 
 	class TextureManager
 	{

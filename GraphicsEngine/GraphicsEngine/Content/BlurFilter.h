@@ -3,7 +3,7 @@
 #include "RWTexture.h"
 
 #include <d3d12.h>
-#include <wrl/client.h>
+#include <stdint.h>
 
 namespace GraphicsEngine
 {
@@ -11,7 +11,9 @@ namespace GraphicsEngine
 	{
 	public:
 		BlurFilter() = default;
-		BlurFilter(ID3D12Device* d3dDevice, uint32_t width, uint32_t height, DXGI_FORMAT format, CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescriptor, UINT descriptorIncrementSize);
+		BlurFilter(const D3DBase& d3dBase, DescriptorHeap* pDescriptorHeap, uint32_t width, uint32_t height, DXGI_FORMAT format);
+
+		void Execute(ID3D12GraphicsCommandList* pCommandList, ID3D12RootSignature* pRootSignature, ID3D12Resource* pInput, ID3D12PipelineState* horizontalBlurPSO) const;
 
 	private:
 		RWTexture m_blur0;

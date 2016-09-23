@@ -36,7 +36,7 @@ int Application::Run()
 	auto update = [this](const Timer& timer)
 	{
 		auto camera = m_graphics.GetCamera();
-		auto scalar = 0.01f * timer.GetMillisecondsPerUpdate();
+		auto scalar = 0.01f * static_cast<float>(timer.GetMillisecondsPerUpdate());
 		if (m_input.IsKeyDown(DIK_W))
 			camera->MoveForward(scalar);
 		if (m_input.IsKeyDown(DIK_S))

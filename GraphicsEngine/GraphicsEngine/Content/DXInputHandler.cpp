@@ -52,7 +52,7 @@ DXInputHandler::~DXInputHandler()
 		m_keyboard->Unacquire();
 }
 
-void DXInputHandler::Frame()
+void DXInputHandler::Update()
 {
 	// Read the current state of the keyboard:
 	ReadKeyboard();

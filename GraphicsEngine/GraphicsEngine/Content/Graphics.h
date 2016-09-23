@@ -14,7 +14,6 @@
 #include "DescriptorHeap.h"
 #include "Scenes/MirrorScene.h"
 
-
 #include <vector>
 
 namespace GraphicsEngine
@@ -30,6 +29,7 @@ namespace GraphicsEngine
 		void OnResize(uint32_t clientWidth, uint32_t clientHeight);
 		void Update(const Timer& timer);
 		void Render(const Timer& timer);
+		void FlushCommandQueue();
 
 		void SetWireframeMode(bool enable);
 

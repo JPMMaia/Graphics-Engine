@@ -22,14 +22,14 @@ ID3D12PipelineState* PipelineStateManager::GetPipelineState(const std::string& n
 
 void PipelineStateManager::InitializeShadersAndInputLayout()
 {
-	m_shaders["StandardVS"] = Shader::CompileShader(L"Shaders/DefaultVertexShader.hlsl", nullptr, "main", "vs_5_1");
+	m_shaders["StandardVS"] = Shader::CompileShader(L"Content/Shaders/DefaultVertexShader.hlsl", nullptr, "main", "vs_5_1");
 
 	const D3D_SHADER_MACRO opaqueDefines[] =
 	{
 		"FOG", "1",
 		nullptr, nullptr
 	};
-	m_shaders["OpaquePS"] = Shader::CompileShader(L"Shaders/DefaultPixelShader.hlsl", opaqueDefines, "main", "ps_5_1");
+	m_shaders["OpaquePS"] = Shader::CompileShader(L"Content/Shaders/DefaultPixelShader.hlsl", opaqueDefines, "main", "ps_5_1");
 
 	const D3D_SHADER_MACRO alphaTestedDefines[] =
 	{
@@ -37,9 +37,10 @@ void PipelineStateManager::InitializeShadersAndInputLayout()
 		"ALPHA_TEST", "1",
 		nullptr, nullptr
 	};
-	m_shaders["AlphaTestedPS"] = Shader::CompileShader(L"Shaders/DefaultPixelShader.hlsl", alphaTestedDefines, "main", "ps_5_1");
+	m_shaders["AlphaTestedPS"] = Shader::CompileShader(L"Content/Shaders/DefaultPixelShader.hlsl", alphaTestedDefines, "main", "ps_5_1");
 
-	m_shaders["HorizontalBlurCS"] = Shader::CompileShader(L"Shaders/BlurComputeShader.hlsl", nullptr, "main", "cs_5_1");
+	m_shaders["HorizontalBlurCS"] = Shader::CompileShader(L"Content/Shaders/BlurComputeShader.hlsl", nullptr, "HorizontalBlur", "cs_5_1");
+	m_shaders["VerticalBlurCS"] = Shader::CompileShader(L"Content/Shaders/BlurComputeShader.hlsl", nullptr, "VerticalBlur", "cs_5_1");
 
 	m_inputLayout =
 	{
@@ -166,11 +167,20 @@ void PipelineStateManager::InitializePipelineStateObjects(const D3DBase& d3dBase
 			);
 	}
 
-	D3D12_COMPUTE_PIPELINE_STATE_DESC horizontalBlurPipelineStateDescription = {};
-	horizontalBlurPipelineStateDescription.pRootSignature = postProcessRootSignature;
-	horizontalBlurPipelineStateDescription.CS = m_shaders["HorizontalBlurCS"].GetShaderBytecode();
-	horizontalBlurPipelineStateDescription.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
-	DX::ThrowIfFailed(
-		device->CreateComputePipelineState(&horizontalBlurPipelineStateDescription, IID_PPV_ARGS(m_pipelineStateObjects["HorizontalBlur"].GetAddressOf()))
+	// Blur:
+	{
+		D3D12_COMPUTE_PIPELINE_STATE_DESC horizontalBlurPipelineStateDescription = {};
+		horizontalBlurPipelineStateDescription.pRootSignature = postProcessRootSignature;
+		horizontalBlurPipelineStateDescription.CS = m_shaders["HorizontalBlurCS"].GetShaderBytecode();
+		horizontalBlurPipelineStateDescription.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+		DX::ThrowIfFailed(
+			device->CreateComputePipelineState(&horizontalBlurPipelineStateDescription, IID_PPV_ARGS(m_pipelineStateObjects["HorizontalBlur"].GetAddressOf()))
 		);
+
+		D3D12_COMPUTE_PIPELINE_STATE_DESC verticalBlurPipelineStateDescription = horizontalBlurPipelineStateDescription;
+		verticalBlurPipelineStateDescription.CS = m_shaders["VerticalBlurCS"].GetShaderBytecode();
+		DX::ThrowIfFailed(
+			device->CreateComputePipelineState(&verticalBlurPipelineStateDescription, IID_PPV_ARGS(m_pipelineStateObjects["VerticalBlur"].GetAddressOf()))
+		);
+	}
 }

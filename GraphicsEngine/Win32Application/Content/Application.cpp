@@ -35,6 +35,22 @@ int Application::Run()
 
 	auto update = [this](const Timer& timer)
 	{
+		auto camera = m_graphics.GetCamera();
+		auto scalar = 0.01f * timer.GetMillisecondsPerUpdate();
+		if (m_input.IsKeyDown(DIK_W))
+			camera->MoveForward(scalar);
+		if (m_input.IsKeyDown(DIK_S))
+			camera->MoveForward(-scalar);
+		if (m_input.IsKeyDown(DIK_A))
+			camera->MoveRight(-scalar);
+		if (m_input.IsKeyDown(DIK_D))
+			camera->MoveRight(scalar);
+
+		static const auto mouseSensibility = 0.005f;
+		int mouseDeltaX, mouseDeltaY;
+		m_input.GetMouseVelocity(mouseDeltaX, mouseDeltaY);
+		camera->RotateWorldY(mouseDeltaX * mouseSensibility);
+		camera->RotateLocalX(mouseDeltaY * mouseSensibility);
 	};
 
 	auto render = [this](const Timer& timer)
@@ -45,7 +61,7 @@ int Application::Run()
 
 	auto processInput = [this]()
 	{
-		m_input.Frame();
+		m_input.Update();
 
 		// Exit application if exit function is pressed:
 		if (m_input.IsKeyDown(DIK_ESCAPE))
@@ -55,23 +71,6 @@ int Application::Run()
 			m_graphics.SetWireframeMode(false);
 		else if (m_input.IsKeyDown(DIK_2))
 			m_graphics.SetWireframeMode(true);
-
-		auto camera = m_graphics.GetCamera();
-		static const auto scalar = 0.01f;
-		if (m_input.IsKeyDown(DIK_W))
-			camera->MoveForward(scalar);
-		if (m_input.IsKeyDown(DIK_S))
-			camera->MoveForward(-scalar);
-		if (m_input.IsKeyDown(DIK_A))
-			camera->MoveRight(-scalar);
-		if (m_input.IsKeyDown(DIK_D))
-			camera->MoveRight(scalar);
-		
-		static const auto mouseSensibility = 0.005f;
-		int mouseDeltaX, mouseDeltaY;
-		m_input.GetMouseVelocity(mouseDeltaX, mouseDeltaY);
-		camera->RotateWorldY(mouseDeltaX * mouseSensibility);
-		camera->RotateLocalX(mouseDeltaY * mouseSensibility);
 
 		return true;
 	};
@@ -90,6 +89,8 @@ int Application::Run()
 		// Otherwise, do animation/game stuff:
 		else if (!m_timer.UpdateAndRender(update, render, processInput))
 		{
+			// If exiting application, wait for all commands to finish, so that all objects can be destructed:
+			m_graphics.FlushCommandQueue();
 			break;
 		}
 	}

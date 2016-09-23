@@ -28,7 +28,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_scene.AddTextures(&m_textureManager);
 	m_textureManager.LoadAllTextures(m_d3d);
 
-	size_t descriptorCount = m_textureManager.GetTextureCount() + 4;
+	auto descriptorCount = m_textureManager.GetTextureCount() + 4;
 	m_descriptorHeap = DescriptorHeap(m_d3d, descriptorCount);
 	m_textureManager.CreateShaderResourceViews(m_d3d, &m_descriptorHeap);
 	m_blurFilter = BlurFilter(m_d3d, &m_descriptorHeap, clientWidth, clientHeight, m_d3d.GetBackBufferFormat());
@@ -115,7 +115,7 @@ void Graphics::Render(const Timer& timer)
 		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::Shadow)]);
 	}
 
-	m_blurFilter.Execute(commandList, m_postProcessRootSignature.Get(), m_d3d.GetCurrentBackBuffer(), m_pipelineStateManager.GetPipelineState("HorizontalBlur"));
+	m_blurFilter.Execute(commandList, m_postProcessRootSignature.Get(), m_d3d.GetCurrentBackBuffer(), m_pipelineStateManager.GetPipelineState("HorizontalBlur"), m_pipelineStateManager.GetPipelineState("VerticalBlur"), 1);
 
 	// Present the rendered scene to the screen:
 	m_d3d.EndScene();
@@ -128,6 +128,10 @@ void Graphics::Render(const Timer& timer)
 	// Because we are on the GPU timeline, the new fence point won't be 
 	// set until the GPU finishes processing all the commands prior to this Signal().
 	m_d3d.GetCommandQueue()->Signal(m_d3d.GetFence(), currentFence);
+}
+void Graphics::FlushCommandQueue()
+{
+	m_d3d.FlushCommandQueue();
 }
 
 Camera* Graphics::GetCamera()
@@ -215,9 +219,10 @@ void Graphics::InitializeRootSignature()
 		CD3DX12_DESCRIPTOR_RANGE uavTable;
 		uavTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0);
 
-		std::array<CD3DX12_ROOT_PARAMETER, 2> parameters;
-		parameters[0].InitAsDescriptorTable(1, &srvTable);
-		parameters[1].InitAsDescriptorTable(1, &uavTable);
+		std::array<CD3DX12_ROOT_PARAMETER, 3> parameters;
+		parameters[0].InitAsConstants(12, 0);
+		parameters[1].InitAsDescriptorTable(1, &srvTable);
+		parameters[2].InitAsDescriptorTable(1, &uavTable);
 
 		auto flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDescription(

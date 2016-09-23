@@ -3,17 +3,25 @@
 #include "Content/Texture.h"
 #include "Content/Graphics.h"
 #include "Content/VertexTypes.h"
+#include "Content/TextureManager.h"
 
 #include <array>
 
 using namespace DirectX;
 using namespace GraphicsEngine;
 
-MirrorScene::MirrorScene(Graphics* graphics, const D3DBase& d3dBase)
+void MirrorScene::AddTextures(TextureManager* pTextureManager) const
+{
+	pTextureManager->AddTexture(std::make_unique<Texture>("BricksTexture", L"Textures/bricks3.dds"));
+	pTextureManager->AddTexture(std::make_unique<Texture>("CheckboardTexture", L"Textures/checkboard.dds"));
+	pTextureManager->AddTexture(std::make_unique<Texture>("IceTexture", L"Textures/ice.dds"));
+	pTextureManager->AddTexture(std::make_unique<Texture>("White1x1Texture", L"Textures/white1x1.dds"));
+}
+
+void MirrorScene::Initialize(Graphics* graphics, const D3DBase& d3dBase, const TextureManager& textureManager)
 {
 	InitializeGeometry(d3dBase);
-	InitializeTextures(graphics, d3dBase);
-	InitializeMaterials();
+	InitializeMaterials(textureManager);
 	InitializeRenderItems(graphics);
 }
 
@@ -126,19 +134,12 @@ void MirrorScene::InitializeGeometry(const D3DBase& d3dBase)
 		m_geometries[skull->Name] = std::move(skull);
 	}
 }
-void MirrorScene::InitializeTextures(Graphics* graphics, const D3DBase& d3dBase) const
-{
-	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "BricksTexture", L"Textures/bricks3.dds", 0));
-	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "CheckboardTexture", L"Textures/checkboard.dds", 1));
-	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "IceTexture", L"Textures/ice.dds", 2));
-	graphics->AddTexture(std::make_unique<Texture>(d3dBase, "White1x1Texture", L"Textures/white1x1.dds", 3));
-}
-void MirrorScene::InitializeMaterials()
+void MirrorScene::InitializeMaterials(const TextureManager& textureManager)
 {
 	auto bricks = std::make_unique<Material>();
 	bricks->Name = "Bricks";
 	bricks->MaterialCBIndex = 0;
-	bricks->DiffuseSrvHeapIndex = 0;
+	bricks->DiffuseSrvHeapIndex = textureManager.GetTexture("BricksTexture")->HeapIndex;
 	bricks->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	bricks->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 	bricks->Roughness = 0.25f;
@@ -147,7 +148,7 @@ void MirrorScene::InitializeMaterials()
 	auto checkertile = std::make_unique<Material>();
 	checkertile->Name = "Checker Tile";
 	checkertile->MaterialCBIndex = 1;
-	checkertile->DiffuseSrvHeapIndex = 1;
+	checkertile->DiffuseSrvHeapIndex = textureManager.GetTexture("CheckboardTexture")->HeapIndex;
 	checkertile->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	checkertile->FresnelR0 = XMFLOAT3(0.07f, 0.07f, 0.07f);
 	checkertile->Roughness = 0.3f;
@@ -156,7 +157,7 @@ void MirrorScene::InitializeMaterials()
 	auto icemirror = std::make_unique<Material>();
 	icemirror->Name = "Ice Mirror";
 	icemirror->MaterialCBIndex = 2;
-	icemirror->DiffuseSrvHeapIndex = 2;
+	icemirror->DiffuseSrvHeapIndex = textureManager.GetTexture("CheckboardTexture")->HeapIndex;
 	icemirror->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.3f);
 	icemirror->FresnelR0 = XMFLOAT3(0.1f, 0.1f, 0.1f);
 	icemirror->Roughness = 0.5f;
@@ -165,7 +166,7 @@ void MirrorScene::InitializeMaterials()
 	auto skullMat = std::make_unique<Material>();
 	skullMat->Name = "Skull Material";
 	skullMat->MaterialCBIndex = 3;
-	skullMat->DiffuseSrvHeapIndex = 3;
+	skullMat->DiffuseSrvHeapIndex = textureManager.GetTexture("White1x1Texture")->HeapIndex;
 	skullMat->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	skullMat->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 	skullMat->Roughness = 0.3f;
@@ -174,7 +175,7 @@ void MirrorScene::InitializeMaterials()
 	auto shadowMat = std::make_unique<Material>();
 	shadowMat->Name = "Shadow Material";
 	shadowMat->MaterialCBIndex = 4;
-	shadowMat->DiffuseSrvHeapIndex = 3;
+	shadowMat->DiffuseSrvHeapIndex = textureManager.GetTexture("White1x1Texture")->HeapIndex;
 	shadowMat->DiffuseAlbedo = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f);
 	shadowMat->FresnelR0 = XMFLOAT3(0.001f, 0.001f, 0.001f);
 	shadowMat->Roughness = 0.0f;

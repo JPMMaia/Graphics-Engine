@@ -22,7 +22,7 @@
     <ProjectGuid>{93121AA0-BF28-4C55-8D26-B9BC5F389AA2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GraphicsEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -140,11 +140,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Content\BaseGeometryBuffer.h" />
+    <ClInclude Include="Content\BlurFilter.h" />
     <ClInclude Include="Content\Camera.h" />
     <ClInclude Include="Content\ConstantBufferTypes.h" />
     <ClInclude Include="Content\d3dx12.h" />
     <ClInclude Include="Content\D3DBase.h" />
     <ClInclude Include="Content\DDSTextureLoader.h" />
+    <ClInclude Include="Content\DescriptorHeap.h" />
     <ClInclude Include="Content\DirectXHelper.h" />
     <ClInclude Include="Content\EngineException.h" />
     <ClInclude Include="Content\FrameResource.h" />
@@ -160,8 +162,10 @@
     <ClInclude Include="Content\Helpers.h" />
     <ClInclude Include="Content\InputHandler.h" />
     <ClInclude Include="Content\ISceneRenderer.h" />
+    <ClInclude Include="Content\PipelineStateManager.h" />
     <ClInclude Include="Content\RenderItem.h" />
     <ClInclude Include="Content\RenderLayer.h" />
+    <ClInclude Include="Content\RWTexture.h" />
     <ClInclude Include="Content\Samplers.h" />
     <ClInclude Include="Content\SceneRenderer.h" />
     <ClInclude Include="Content\Scenes\DefaultScene.h" />
@@ -170,7 +174,7 @@
     <ClInclude Include="Content\Shader.h" />
     <ClInclude Include="Content\SubmeshGeometry.h" />
     <ClInclude Include="Content\Texture.h" />
-    <ClInclude Include="Content\TextureHeap.h" />
+    <ClInclude Include="Content\TextureManager.h" />
     <ClInclude Include="Content\Timer.h" />
     <ClInclude Include="Content\UploadBuffer.h" />
     <ClInclude Include="Content\VertexBuffer.h" />
@@ -181,9 +185,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Content\BaseGeometryBuffer.cpp" />
+    <ClCompile Include="Content\BlurFilter.cpp" />
     <ClCompile Include="Content\Camera.cpp" />
     <ClCompile Include="Content\D3DBase.cpp" />
     <ClCompile Include="Content\DDSTextureLoader.cpp" />
+    <ClCompile Include="Content\DescriptorHeap.cpp" />
     <ClCompile Include="Content\DirectXHelper.cpp" />
     <ClCompile Include="Content\EngineException.cpp" />
     <ClCompile Include="Content\FrameResource.cpp" />
@@ -195,7 +201,9 @@
     <ClCompile Include="Content\MeshGeometry.cpp" />
     <ClCompile Include="Content\Graphics.cpp" />
     <ClCompile Include="Content\InputHandler.cpp" />
+    <ClCompile Include="Content\PipelineStateManager.cpp" />
     <ClCompile Include="Content\RenderItem.cpp" />
+    <ClCompile Include="Content\RWTexture.cpp" />
     <ClCompile Include="Content\Samplers.cpp" />
     <ClCompile Include="Content\SceneRenderer.cpp" />
     <ClCompile Include="Content\Scenes\DefaultScene.cpp" />
@@ -203,7 +211,7 @@
     <ClCompile Include="Content\SettingsManager.cpp" />
     <ClCompile Include="Content\Shader.cpp" />
     <ClCompile Include="Content\Texture.cpp" />
-    <ClCompile Include="Content\TextureHeap.cpp" />
+    <ClCompile Include="Content\TextureManager.cpp" />
     <ClCompile Include="Content\Timer.cpp" />
     <ClCompile Include="Content\VertexBuffer.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -214,6 +222,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Content\Shaders\BlurComputeShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Content\Shaders\DefaultPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

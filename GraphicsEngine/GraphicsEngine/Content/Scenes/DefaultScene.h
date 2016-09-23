@@ -8,7 +8,7 @@
 
 namespace GraphicsEngine
 {
-	class TextureHeap;
+	class TextureManager;
 	class D3DBase;
 	class Graphics;
 
@@ -16,14 +16,15 @@ namespace GraphicsEngine
 	{
 	public:
 		DefaultScene() = default;
-		explicit DefaultScene(Graphics* graphics, const D3DBase& d3dBase);
+
+		void AddTextures(TextureManager* pTextureManager) const;
+		void Initialize(Graphics* graphics, const D3DBase& d3dBase, const TextureManager& textureManager);
 
 		const std::unordered_map<std::string, std::unique_ptr<Material>>& GetMaterials() const override;
 
 	private:
 		void InitializeGeometry(const D3DBase& d3dBase);
-		void InitializeTextures(Graphics* graphics, const D3DBase& d3dBase) const;
-		void InitializeMaterials();
+		void InitializeMaterials(const TextureManager& textureManager);
 		void InitializeRenderItems(Graphics* graphics);
 
 	private:

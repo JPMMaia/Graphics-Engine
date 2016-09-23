@@ -16,7 +16,7 @@ namespace GraphicsEngine
 		DXInputHandler(HINSTANCE hInstance, HWND hWindow, uint32_t clientWidth, uint32_t clientHeight);
 		~DXInputHandler();
 
-		void Frame();
+		void Update();
 
 		template<typename VirtualKey, typename = std::enable_if_t<std::is_enum<VirtualKey>::value || std::is_integral<VirtualKey>::value>>
 		bool IsKeyDown(VirtualKey key) const;

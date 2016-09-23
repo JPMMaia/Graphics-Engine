@@ -12,7 +12,7 @@ namespace GraphicsEngine
 		void Reset();
 
 		template<typename UpdateFunctionType, typename RenderFunctionType, typename ProcessInputFunctionType>
-		bool UpdateAndRender(UpdateFunctionType& update, RenderFunctionType render, ProcessInputFunctionType processInput);
+		bool UpdateAndRender(UpdateFunctionType&& update, RenderFunctionType&& render, ProcessInputFunctionType&& processInput);
 
 		double GetMillisecondsPerUpdate() const;
 		double GetTotalMilliseconds() const;
@@ -36,7 +36,7 @@ namespace GraphicsEngine
 	};
 
 	template <typename UpdateFunctionType, typename RenderFunctionType, typename ProcessInputFunctionType>
-	bool Timer::UpdateAndRender(UpdateFunctionType& update, RenderFunctionType render, ProcessInputFunctionType processInput)
+	bool Timer::UpdateAndRender(UpdateFunctionType&& update, RenderFunctionType&& render, ProcessInputFunctionType&& processInput)
 	{
 		m_qpcCurrentTick = GetCurrentTick();
 		m_deltaTicks = m_qpcCurrentTick.QuadPart - m_qpcPreviousTick.QuadPart;
@@ -47,7 +47,7 @@ namespace GraphicsEngine
 		m_lag += deltaMilliseconds;
 
 		// Process input:
-		if (!processInput())
+		if(!processInput())
 			return false;
 
 		while (m_lag >= m_millisecondsPerUpdate)

@@ -5,20 +5,22 @@
 
 namespace GraphicsEngine
 {
+	class TextureManager;
 	class Graphics;
 
 	class MirrorScene : public IScene
 	{
 	public:
 		MirrorScene() = default;
-		explicit MirrorScene(Graphics* graphics, const D3DBase& d3dBase);
+
+		void AddTextures(TextureManager* pTextureManager) const;
+		void Initialize(Graphics* graphics, const D3DBase& d3dBase, const TextureManager& textureManager);
 
 		const std::unordered_map<std::string, std::unique_ptr<Material>>& GetMaterials() const override;
 
 	private:
 		void InitializeGeometry(const D3DBase& d3dBase);
-		void InitializeTextures(Graphics* graphics, const D3DBase& d3dBase) const;
-		void InitializeMaterials();
+		void InitializeMaterials(const TextureManager& textureManager);
 		void InitializeRenderItems(Graphics* graphics);
 
 	private:

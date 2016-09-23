@@ -1,15 +1,17 @@
 ﻿#pragma once
 
+#include "BlurFilter.h"
 #include "Camera.h"
 #include "D3DBase.h"
 #include "MeshGeometry.h"
 #include "Timer.h"
 #include "MathHelper.h"
 #include "FrameResource.h"
+#include "PipelineStateManager.h"
 #include "RenderItem.h"
 #include "RenderLayer.h"
-#include "Shader.h"
-#include "TextureHeap.h"
+#include "TextureManager.h"
+#include "DescriptorHeap.h"
 #include "Scenes/MirrorScene.h"
 
 #include <vector>
@@ -27,19 +29,17 @@ namespace GraphicsEngine
 		void OnResize(uint32_t clientWidth, uint32_t clientHeight);
 		void Update(const Timer& timer);
 		void Render(const Timer& timer);
+		void FlushCommandQueue();
 
 		void SetWireframeMode(bool enable);
 
 		Camera* GetCamera();
 
-		void AddTexture(std::unique_ptr<Texture>&& texture);
 		void AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
 		
 	private:
 		void InitializeRootSignature();
-		void InitializeShadersAndInputLayout();
 		void InitializeFrameResources();
-		void InitializePipelineStateObjects();
 
 		void UpdateCamera();
 		void UpdateObjectsConstantBuffer();
@@ -56,10 +56,9 @@ namespace GraphicsEngine
 		FrameResource* m_currentFrameResource = nullptr;
 		int m_currentFrameResourceIndex = 0;
 
-		std::vector<D3D12_INPUT_ELEMENT_DESC> m_inputLayout;
+		PipelineStateManager m_pipelineStateManager;
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
-		std::unordered_map<std::string, Shader> m_shaders;
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>> m_pipelineStateObjects;
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_postProcessRootSignature;
 
 		ConstantBufferTypes::PassConstants m_passConstants;
 		std::unique_ptr<UploadBuffer<ConstantBufferTypes::ObjectConstants>> m_perObjectCB;
@@ -70,6 +69,8 @@ namespace GraphicsEngine
 		bool m_wireframeEnabled = false;
 		Camera m_camera;
 		MirrorScene m_scene;
-		TextureHeap m_textureHeap;
+		TextureManager m_textureManager;
+		DescriptorHeap m_descriptorHeap;
+		BlurFilter m_blurFilter;
 	};
 }

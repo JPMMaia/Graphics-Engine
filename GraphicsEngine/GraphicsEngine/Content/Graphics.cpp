@@ -1,11 +1,11 @@
 ﻿#include "stdafx.h"
 #include "Graphics.h"
 #include "VertexTypes.h"
+#include "Material.h"
+#include "Samplers.h"
 
 #include <array>
 #include <D3Dcompiler.h>
-#include "Material.h"
-#include "Samplers.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -23,11 +23,19 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	DX::ThrowIfFailed(commandList->Reset(m_d3d.GetCommandAllocator(), nullptr));
 
 	InitializeRootSignature();
-	InitializeShadersAndInputLayout();
-	m_scene = MirrorScene(this, m_d3d);
-	m_textureHeap.Create(m_d3d);
+	m_pipelineStateManager = PipelineStateManager(m_d3d, m_rootSignature.Get(), m_postProcessRootSignature.Get());
+	
+	m_scene.AddTextures(&m_textureManager);
+	m_textureManager.LoadAllTextures(m_d3d);
+
+	auto descriptorCount = m_textureManager.GetTextureCount() + 4;
+	m_descriptorHeap = DescriptorHeap(m_d3d, descriptorCount);
+	m_textureManager.CreateShaderResourceViews(m_d3d, &m_descriptorHeap);
+	m_blurFilter = BlurFilter(m_d3d, &m_descriptorHeap, clientWidth, clientHeight, m_d3d.GetBackBufferFormat());
+
+	m_scene.Initialize(this, m_d3d, m_textureManager);	
+
 	InitializeFrameResources();
-	InitializePipelineStateObjects();
 
 	m_d3d.SetClearColor(m_passConstants.FogColor);
 
@@ -74,7 +82,7 @@ void Graphics::Update(const Timer& timer)
 void Graphics::Render(const Timer& timer)
 {
 	// Prepare scene to be drawn:
-	auto initialPipelineState = m_pipelineStateObjects[m_wireframeEnabled ? "Opaque Wireframe" : "Opaque"].Get();
+	auto initialPipelineState = m_pipelineStateManager.GetPipelineState(m_wireframeEnabled ? "Opaque Wireframe" : "Opaque");
 	m_d3d.BeginScene(m_currentFrameResource->CommandAllocator.Get(), initialPipelineState);
 
 	auto commandList = m_d3d.GetCommandList();
@@ -89,23 +97,25 @@ void Graphics::Render(const Timer& timer)
 	}
 
 	// Set texture descriptor heap:
-	ID3D12DescriptorHeap* descriptorHeaps = { m_textureHeap.GetDescriptorHeap() };
+	ID3D12DescriptorHeap* descriptorHeaps = { m_descriptorHeap.Get() };
 	commandList->SetDescriptorHeaps(1, &descriptorHeaps);
 
 	// Draw render items:
 	{
 		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::Opaque)]);
 
-		commandList->SetPipelineState(m_pipelineStateObjects[m_wireframeEnabled ? "Transparent Wireframe" : "Transparent"].Get());
+		m_pipelineStateManager.SetPipelineState(commandList, m_wireframeEnabled ? "Transparent Wireframe" : "Transparent");
 		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::Transparent)]);
 
-		commandList->SetPipelineState(m_pipelineStateObjects[m_wireframeEnabled ? "Alpha Tested Wireframe" : "Alpha Tested"].Get());
+		m_pipelineStateManager.SetPipelineState(commandList, m_wireframeEnabled ? "Alpha Tested Wireframe" : "Alpha Tested");
 		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::AlphaTested)]);
 
-		commandList->SetPipelineState(m_pipelineStateObjects["Shadow"].Get());
+		m_pipelineStateManager.SetPipelineState(commandList, "Shadow");
 		commandList->OMSetStencilRef(0);
 		DrawRenderItems(commandList, m_renderItemLayers[static_cast<size_t>(RenderLayer::Shadow)]);
 	}
+
+	m_blurFilter.Execute(commandList, m_postProcessRootSignature.Get(), m_d3d.GetCurrentBackBuffer(), m_pipelineStateManager.GetPipelineState("HorizontalBlur"), m_pipelineStateManager.GetPipelineState("VerticalBlur"), 1);
 
 	// Present the rendered scene to the screen:
 	m_d3d.EndScene();
@@ -119,19 +129,19 @@ void Graphics::Render(const Timer& timer)
 	// set until the GPU finishes processing all the commands prior to this Signal().
 	m_d3d.GetCommandQueue()->Signal(m_d3d.GetFence(), currentFence);
 }
+void Graphics::FlushCommandQueue()
+{
+	m_d3d.FlushCommandQueue();
+}
 
 Camera* Graphics::GetCamera()
 {
 	return &m_camera;
 }
 
-void Graphics::AddTexture(unique_ptr<Texture>&& texture)
-{
-	m_textureHeap.AddTexture(std::move(texture));
-}
 void Graphics::AddRenderItem(unique_ptr<RenderItem>&& renderItem, initializer_list<RenderLayer> renderLayers)
 {
-	for(auto renderLayer : renderLayers)
+	for (auto renderLayer : renderLayers)
 	{
 		m_renderItemLayers[static_cast<size_t>(renderLayer)].push_back(renderItem.get());
 	}
@@ -153,200 +163,103 @@ void Graphics::InitializeRootSignature()
 {
 	auto device = m_d3d.GetDevice();
 
-	// Describing textures tables:
-	CD3DX12_DESCRIPTOR_RANGE texturesTable(
-		D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
-		1,
-		0
-		);
-
-	// Specifying root parameters:
-	std::array<CD3DX12_ROOT_PARAMETER, 4> slotRootParameter;
-	slotRootParameter[0].InitAsDescriptorTable(1, &texturesTable, D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_PIXEL);
-	slotRootParameter[1].InitAsConstantBufferView(0);
-	slotRootParameter[2].InitAsConstantBufferView(1);
-	slotRootParameter[3].InitAsConstantBufferView(2);
-
-	auto staticSamplers = Samplers::GetStaticSamplers();
-
-	// A root signature is an array of root parameters:
-	auto rootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDescription(
-		static_cast<uint32_t>(slotRootParameter.size()),	// Num root parameters
-		slotRootParameter.data(),							// Root parameters
-		static_cast<uint32_t>(staticSamplers.size()),		// Num static samplers
-		staticSamplers.data(),								// Static samplers
-		rootSignatureFlags
-		);
-
-	// Create root signature:
+	// Root signature:
 	{
-		ComPtr<ID3DBlob> serializedRootSignature;
-		ComPtr<ID3DBlob> errorBlob = nullptr;
-		auto hr = D3D12SerializeRootSignature(&rootSignatureDescription, D3D_ROOT_SIGNATURE_VERSION::D3D_ROOT_SIGNATURE_VERSION_1, serializedRootSignature.GetAddressOf(), errorBlob.GetAddressOf());
-		if (errorBlob != nullptr)
-			::OutputDebugStringA(static_cast<char*>(errorBlob->GetBufferPointer()));
-		DX::ThrowIfFailed(hr);
-
-		DX::ThrowIfFailed(
-			device->CreateRootSignature(
-				0,
-				serializedRootSignature->GetBufferPointer(),
-				serializedRootSignature->GetBufferSize(),
-				IID_PPV_ARGS(m_rootSignature.GetAddressOf())
-				)
+		// Describing textures tables:
+		CD3DX12_DESCRIPTOR_RANGE texturesTable(
+			D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+			1,
+			0
 			);
+
+		// Specifying root parameters:
+		std::array<CD3DX12_ROOT_PARAMETER, 4> slotRootParameter;
+		slotRootParameter[0].InitAsDescriptorTable(1, &texturesTable, D3D12_SHADER_VISIBILITY_PIXEL);
+		slotRootParameter[1].InitAsConstantBufferView(0);
+		slotRootParameter[2].InitAsConstantBufferView(1);
+		slotRootParameter[3].InitAsConstantBufferView(2);
+
+		auto staticSamplers = Samplers::GetStaticSamplers();
+
+		// A root signature is an array of root parameters:
+		auto rootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDescription(
+			static_cast<uint32_t>(slotRootParameter.size()),	// Num root parameters
+			slotRootParameter.data(),							// Root parameters
+			static_cast<uint32_t>(staticSamplers.size()),		// Num static samplers
+			staticSamplers.data(),								// Static samplers
+			rootSignatureFlags
+			);
+
+		// Create root signature:
+		{
+			ComPtr<ID3DBlob> serializedRootSignature;
+			ComPtr<ID3DBlob> errorBlob = nullptr;
+			auto hr = D3D12SerializeRootSignature(&rootSignatureDescription, D3D_ROOT_SIGNATURE_VERSION_1, serializedRootSignature.GetAddressOf(), errorBlob.GetAddressOf());
+			if (errorBlob != nullptr)
+				::OutputDebugStringA(static_cast<char*>(errorBlob->GetBufferPointer()));
+			DX::ThrowIfFailed(hr);
+
+			DX::ThrowIfFailed(
+				device->CreateRootSignature(
+					0,
+					serializedRootSignature->GetBufferPointer(),
+					serializedRootSignature->GetBufferSize(),
+					IID_PPV_ARGS(m_rootSignature.GetAddressOf())
+					)
+				);
+		}
+	}
+
+	// Post process root signature:
+	{
+		CD3DX12_DESCRIPTOR_RANGE srvTable;
+		srvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
+		CD3DX12_DESCRIPTOR_RANGE uavTable;
+		uavTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0);
+
+		std::array<CD3DX12_ROOT_PARAMETER, 3> parameters;
+		parameters[0].InitAsConstants(12, 0);
+		parameters[1].InitAsDescriptorTable(1, &srvTable);
+		parameters[2].InitAsDescriptorTable(1, &uavTable);
+
+		auto flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDescription(
+			static_cast<UINT>(parameters.size()),
+			parameters.data(),
+			0,
+			nullptr,
+			flags
+			);
+
+		// Create root signature:
+		{
+			ComPtr<ID3DBlob> serializedRootSignature;
+			ComPtr<ID3DBlob> errorBlob = nullptr;
+			auto hr = D3D12SerializeRootSignature(&rootSignatureDescription, D3D_ROOT_SIGNATURE_VERSION_1, serializedRootSignature.GetAddressOf(), errorBlob.GetAddressOf());
+			if (errorBlob != nullptr)
+				::OutputDebugStringA(static_cast<char*>(errorBlob->GetBufferPointer()));
+			DX::ThrowIfFailed(hr);
+
+			DX::ThrowIfFailed(
+				device->CreateRootSignature(
+					0,
+					serializedRootSignature->GetBufferPointer(),
+					serializedRootSignature->GetBufferSize(),
+					IID_PPV_ARGS(m_postProcessRootSignature.GetAddressOf())
+					)
+				);
+		}
 	}
 }
-void Graphics::InitializeShadersAndInputLayout()
-{
-	m_shaders["StandardVS"] = Shader::CompileShader(L"Shaders/DefaultVertexShader.hlsl", nullptr, "main", "vs_5_1");
 
-	const D3D_SHADER_MACRO opaqueDefines[] =
-	{
-		"FOG", "1",
-		nullptr, nullptr
-	};
-	m_shaders["OpaquePS"] = Shader::CompileShader(L"Shaders/DefaultPixelShader.hlsl", opaqueDefines, "main", "ps_5_1");
-
-	const D3D_SHADER_MACRO alphaTestedDefines[] =
-	{
-		"FOG", "1",
-		"ALPHA_TEST", "1",
-		nullptr, nullptr
-	};
-	m_shaders["AlphaTestedPS"] = Shader::CompileShader(L"Shaders/DefaultPixelShader.hlsl", alphaTestedDefines, "main", "ps_5_1");
-
-	m_inputLayout =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
-	};
-}
 void Graphics::InitializeFrameResources()
 {
 	for (auto i = 0; i < s_frameResourcesCount; ++i)
 		m_frameResources.push_back(std::make_unique<FrameResource>(m_d3d.GetDevice(), 1, static_cast<uint32_t>(m_allRenderItems.size()), static_cast<uint32_t>(m_scene.GetMaterials().size())));
 
 	m_currentFrameResource = m_frameResources[m_currentFrameResourceIndex].get();
-}
-void Graphics::InitializePipelineStateObjects()
-{
-	auto device = m_d3d.GetDevice();
-
-	// Opaque:
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaquePSODescription = {};
-	{
-		opaquePSODescription.InputLayout.pInputElementDescs = &m_inputLayout[0];
-		opaquePSODescription.InputLayout.NumElements = static_cast<uint32_t>(m_inputLayout.size());
-		opaquePSODescription.pRootSignature = m_rootSignature.Get();
-		opaquePSODescription.VS = m_shaders["StandardVS"].GetShaderBytecode();
-		opaquePSODescription.PS = m_shaders["OpaquePS"].GetShaderBytecode();
-		opaquePSODescription.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		opaquePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_SOLID;
-		opaquePSODescription.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-		opaquePSODescription.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-		opaquePSODescription.SampleMask = UINT_MAX;
-		opaquePSODescription.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-		opaquePSODescription.NumRenderTargets = 1;
-		opaquePSODescription.SampleDesc.Count = m_d3d.GetSampleCount();
-		opaquePSODescription.SampleDesc.Quality = m_d3d.GetSampleQuality();
-		opaquePSODescription.RTVFormats[0] = m_d3d.GetBackBufferFormat();
-		opaquePSODescription.DSVFormat = m_d3d.GetDepthStencilFormat();
-
-		DX::ThrowIfFailed(
-			device->CreateGraphicsPipelineState(&opaquePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Opaque"].GetAddressOf()))
-			);
-
-		// Opaque wireframe:
-		{
-			auto opaqueWireframePSODescription = opaquePSODescription;
-			opaqueWireframePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
-			DX::ThrowIfFailed(
-				device->CreateGraphicsPipelineState(&opaqueWireframePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Opaque Wireframe"].GetAddressOf()))
-				);
-		}
-	}
-
-	// Transparent:
-	auto transparentPSODescription = opaquePSODescription;
-	{
-		D3D12_RENDER_TARGET_BLEND_DESC blendDescription = {};
-		blendDescription.BlendEnable = true;
-		blendDescription.LogicOpEnable = false;
-		blendDescription.SrcBlend = D3D12_BLEND::D3D12_BLEND_SRC_ALPHA;
-		blendDescription.DestBlend = D3D12_BLEND::D3D12_BLEND_INV_SRC_ALPHA;
-		blendDescription.BlendOp = D3D12_BLEND_OP::D3D12_BLEND_OP_ADD;
-		blendDescription.SrcBlendAlpha = D3D12_BLEND::D3D12_BLEND_ONE;
-		blendDescription.DestBlendAlpha = D3D12_BLEND::D3D12_BLEND_ZERO;
-		blendDescription.BlendOpAlpha = D3D12_BLEND_OP::D3D12_BLEND_OP_ADD;
-		blendDescription.LogicOp = D3D12_LOGIC_OP::D3D12_LOGIC_OP_NOOP;
-		blendDescription.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE::D3D12_COLOR_WRITE_ENABLE_ALL;
-		transparentPSODescription.BlendState.RenderTarget[0] = blendDescription;
-
-		DX::ThrowIfFailed(
-			device->CreateGraphicsPipelineState(&transparentPSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Transparent"].GetAddressOf()))
-			);
-
-		// Transparent wireframe:
-		{
-			auto transparentWireframePSODescription = transparentPSODescription;
-			transparentWireframePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
-
-			DX::ThrowIfFailed(
-				device->CreateGraphicsPipelineState(&transparentWireframePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Transparent Wireframe"].GetAddressOf()))
-				);
-		}
-	}
-
-	// Alpha Tested:
-	{
-		auto alphaTestedPSODescription = opaquePSODescription;
-		alphaTestedPSODescription.PS = m_shaders["AlphaTestedPS"].GetShaderBytecode();
-		alphaTestedPSODescription.RasterizerState.CullMode = D3D12_CULL_MODE::D3D12_CULL_MODE_NONE;
-
-		DX::ThrowIfFailed(
-			device->CreateGraphicsPipelineState(&alphaTestedPSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Alpha Tested"].GetAddressOf()))
-			);
-
-		// Alpha tested wireframe
-		{
-			auto alphaTestedWireframePSODescription = alphaTestedPSODescription;
-			alphaTestedWireframePSODescription.RasterizerState.FillMode = D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
-
-			DX::ThrowIfFailed(
-				device->CreateGraphicsPipelineState(&alphaTestedWireframePSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Alpha Tested Wireframe"].GetAddressOf()))
-				);
-		}
-	}
-
-	// Shadows:
-	{
-		D3D12_DEPTH_STENCIL_DESC shadowDepthStencilState;
-		shadowDepthStencilState.DepthEnable = true;
-		shadowDepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-		shadowDepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-		shadowDepthStencilState.StencilEnable = true;
-		shadowDepthStencilState.StencilReadMask = 0xFF;
-		shadowDepthStencilState.StencilWriteMask = 0xFF;
-
-		shadowDepthStencilState.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-		shadowDepthStencilState.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
-		shadowDepthStencilState.FrontFace.StencilPassOp = D3D12_STENCIL_OP_INCR;
-		shadowDepthStencilState.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL;
-
-		shadowDepthStencilState.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-		shadowDepthStencilState.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
-		shadowDepthStencilState.BackFace.StencilPassOp = D3D12_STENCIL_OP_INCR;
-		shadowDepthStencilState.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL;
-
-		auto shadowPSODescription = transparentPSODescription;
-		shadowPSODescription.DepthStencilState = shadowDepthStencilState;
-		DX::ThrowIfFailed(
-			device->CreateGraphicsPipelineState(&shadowPSODescription, IID_PPV_ARGS(m_pipelineStateObjects["Shadow"].GetAddressOf()))
-			);
-	}
 }
 
 void Graphics::UpdateCamera()
@@ -454,7 +367,7 @@ void Graphics::DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std
 	{
 		auto renderItem = renderItems[i];
 
-		CD3DX12_GPU_DESCRIPTOR_HANDLE textureHandle(m_textureHeap.GetDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
+		CD3DX12_GPU_DESCRIPTOR_HANDLE textureHandle(m_descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart());
 		textureHandle.Offset(renderItem->Material->DiffuseSrvHeapIndex, m_d3d.GetCbvSrvUavDescriptorSize());
 		commandList->SetGraphicsRootDescriptorTable(0, textureHandle);
 

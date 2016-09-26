@@ -56,7 +56,7 @@ ComPtr<ID3D12Resource> DX::CreateDefaultBuffer(ID3D12Device* d3dDevice, ID3D12Gr
 		// Describe the data we want to copy into the default buffer:
 		D3D12_SUBRESOURCE_DATA subResourceData = {};
 		subResourceData.pData = initialData;
-		subResourceData.RowPitch = byteSize;
+		subResourceData.RowPitch = static_cast<LONG_PTR>(byteSize);
 		subResourceData.SlicePitch = subResourceData.RowPitch;
 
 		auto defaultBufferTransition1 = CD3DX12_RESOURCE_BARRIER::Transition(

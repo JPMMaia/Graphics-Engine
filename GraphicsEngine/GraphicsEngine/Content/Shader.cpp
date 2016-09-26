@@ -45,7 +45,7 @@ void Shader::LoadBinary(const wstring& filename)
 		ThrowEngineException(L"File not found!");
 
 	filestream.seekg(0, ios_base::end);
-	auto size = filestream.tellg();
+	auto size = static_cast<size_t>(filestream.tellg());
 	filestream.seekg(0, ios_base::beg);
 
 	DX::ThrowIfFailed(

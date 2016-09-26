@@ -39,7 +39,7 @@ void Camera::Update()
 		m_rotationMatrix = XMMatrixRotationQuaternion(m_rotationQuaternion);
 
 		// Build view matrix:
-		auto up = m_rotationMatrix.r[1];
+		auto up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 		auto forward = m_rotationMatrix.r[2];
 		m_viewMatrix = XMMatrixLookToLH(m_position, forward, up);
 
@@ -60,7 +60,7 @@ void Camera::Move(FXMVECTOR axis, float scalar)
 void Camera::MoveRight(float scalar)
 {
 	// Translate along the X-axis:
-	const auto& right = m_rotationMatrix.r[0];
+	const auto& right = XMVectorSet(XMVectorGetX(m_viewMatrix.r[0]), XMVectorGetX(m_viewMatrix.r[1]), XMVectorGetX(m_viewMatrix.r[2]), 0.0f);
 	Move(right, scalar);
 }
 void Camera::MoveForward(float scalar)
@@ -83,7 +83,7 @@ void Camera::Rotate(FXMVECTOR axis, float radians)
 void Camera::RotateLocalX(float radians)
 {
 	// Calculate the rotation arround the camera local X-axis:
-	const auto& right = m_rotationMatrix.r[0];
+	const auto& right = XMVectorSet(XMVectorGetX(m_viewMatrix.r[0]), XMVectorGetX(m_viewMatrix.r[1]), XMVectorGetX(m_viewMatrix.r[2]), 0.0f);
 	Rotate(right, radians);
 }
 void Camera::RotateWorldY(float radians)

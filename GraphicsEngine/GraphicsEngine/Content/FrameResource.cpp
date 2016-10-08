@@ -13,7 +13,7 @@ FrameResource::FrameResource(ID3D12Device* d3dDevice, uint32_t passCount, uint32
 			)
 		);
 
-	PassConstantBuffer = std::make_unique<UploadBuffer<ConstantBufferTypes::PassConstants>>(d3dDevice, passCount, true);
-	ObjectsConstantBuffer = std::make_unique<UploadBuffer<ConstantBufferTypes::ObjectConstants>>(d3dDevice, objectCount, true);
-	MaterialsConstantBuffer = std::make_unique <UploadBuffer<ConstantBufferTypes::MaterialConstants>>(d3dDevice, materialCount, true);
+	PassBuffer = std::make_unique<UploadBuffer<BufferTypes::PassData>>(d3dDevice, passCount, true);
+	ObjectsBuffer = std::make_unique<UploadBuffer<BufferTypes::ObjectData>>(d3dDevice, objectCount, true);
+	MaterialsBuffer = std::make_unique <UploadBuffer<BufferTypes::MaterialData>>(d3dDevice, materialCount, false);
 }

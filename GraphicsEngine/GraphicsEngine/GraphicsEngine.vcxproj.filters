@@ -135,9 +135,6 @@
     <ClInclude Include="Content\Light.h">
       <Filter>Content\DirectX12\Lighting</Filter>
     </ClInclude>
-    <ClInclude Include="Content\ConstantBufferTypes.h">
-      <Filter>Content\DirectX12\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Content\RenderItem.h">
       <Filter>Content\DirectX12\Resources</Filter>
     </ClInclude>
@@ -185,6 +182,9 @@
     </ClInclude>
     <ClInclude Include="Content\TextureManager.h">
       <Filter>Content\DirectX12\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\BufferTypes.h">
+      <Filter>Content\DirectX12\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -297,13 +297,13 @@
     <None Include="Content\Shaders\LightingUtils.hlsl">
       <Filter>Content\DirectX12\Shaders\HLSL</Filter>
     </None>
-    <None Include="Content\Shaders\MaterialConstants.hlsl">
+    <None Include="Content\Shaders\MaterialData.hlsl">
       <Filter>Content\DirectX12\Shaders\HLSL</Filter>
     </None>
-    <None Include="Content\Shaders\ObjectConstants.hlsl">
+    <None Include="Content\Shaders\ObjectData.hlsl">
       <Filter>Content\DirectX12\Shaders\HLSL</Filter>
     </None>
-    <None Include="Content\Shaders\PassConstants.hlsl">
+    <None Include="Content\Shaders\PassData.hlsl">
       <Filter>Content\DirectX12\Shaders\HLSL</Filter>
     </None>
   </ItemGroup>

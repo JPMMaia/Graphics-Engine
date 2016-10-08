@@ -147,7 +147,7 @@ void DefaultScene::InitializeMaterials(const TextureManager& textureManager)
 	{
 		auto bricks0 = std::make_unique<Material>();
 		bricks0->Name = "Bricks0";
-		bricks0->MaterialCBIndex = 0;
+		bricks0->MaterialIndex = 0;
 		bricks0->DiffuseSrvHeapIndex = textureManager.GetTexture("BricksTexture")->HeapIndex;
 		bricks0->DiffuseAlbedo = XMFLOAT4(Colors::ForestGreen);
 		bricks0->FresnelR0 = XMFLOAT3(0.02f, 0.02f, 0.02f);
@@ -159,7 +159,7 @@ void DefaultScene::InitializeMaterials(const TextureManager& textureManager)
 	{
 		auto stone0 = std::make_unique<Material>();
 		stone0->Name = "Stone0";
-		stone0->MaterialCBIndex = 1;
+		stone0->MaterialIndex = 1;
 		stone0->DiffuseSrvHeapIndex = textureManager.GetTexture("StoneTexture")->HeapIndex;
 		stone0->DiffuseAlbedo = XMFLOAT4(Colors::LightSteelBlue);
 		stone0->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
@@ -171,7 +171,7 @@ void DefaultScene::InitializeMaterials(const TextureManager& textureManager)
 	{
 		auto tile0 = std::make_unique<Material>();
 		tile0->Name = "Tile0";
-		tile0->MaterialCBIndex = 2;
+		tile0->MaterialIndex = 2;
 		tile0->DiffuseSrvHeapIndex = textureManager.GetTexture("TileTexture")->HeapIndex;
 		tile0->DiffuseAlbedo = XMFLOAT4(Colors::LightGray);
 		tile0->FresnelR0 = XMFLOAT3(0.02f, 0.02f, 0.02f);
@@ -183,7 +183,7 @@ void DefaultScene::InitializeMaterials(const TextureManager& textureManager)
 	{
 		auto crate0 = std::make_unique<Material>();
 		crate0->Name = "Crate0";
-		crate0->MaterialCBIndex = 3;
+		crate0->MaterialIndex = 3;
 		crate0->DiffuseSrvHeapIndex = textureManager.GetTexture("CrateTexture")->HeapIndex;
 		crate0->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 		crate0->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
@@ -195,7 +195,7 @@ void DefaultScene::InitializeMaterials(const TextureManager& textureManager)
 	{
 		auto skullMaterial = std::make_unique<Material>();
 		skullMaterial->Name = "SkullMaterial";
-		skullMaterial->MaterialCBIndex = 4;
+		skullMaterial->MaterialIndex = 4;
 		skullMaterial->DiffuseSrvHeapIndex = textureManager.GetTexture("CrateTexture")->HeapIndex;
 		skullMaterial->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 		skullMaterial->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);

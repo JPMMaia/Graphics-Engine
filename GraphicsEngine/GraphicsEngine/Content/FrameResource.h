@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "UploadBuffer.h"
-#include "ConstantBufferTypes.h"
+#include "BufferTypes.h"
 
 #include <memory>
 
@@ -19,8 +19,8 @@ namespace GraphicsEngine
 		uint64_t Fence = 0;
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> CommandAllocator;
 
-		std::unique_ptr<UploadBuffer<ConstantBufferTypes::PassConstants>> PassConstantBuffer;
-		std::unique_ptr<UploadBuffer<ConstantBufferTypes::MaterialConstants>> MaterialsConstantBuffer;
-		std::unique_ptr<UploadBuffer<ConstantBufferTypes::ObjectConstants>> ObjectsConstantBuffer;
+		std::unique_ptr<UploadBuffer<BufferTypes::PassData>> PassBuffer;
+		std::unique_ptr<UploadBuffer<BufferTypes::MaterialData>> MaterialsBuffer;
+		std::unique_ptr<UploadBuffer<BufferTypes::ObjectData>> ObjectsBuffer;
 	};
 }

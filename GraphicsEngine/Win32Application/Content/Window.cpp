@@ -29,6 +29,13 @@ uint32_t Window::GetClientHeight() const
 	return m_clientHeight;
 }
 
+void Window::SetWindowExtraCaption(const std::wstring& extraCaption) const
+{
+	auto windowCaption = m_windowCaption + L" | " + extraCaption;
+
+	SetWindowTextW(m_windowHandle, windowCaption.c_str());
+}
+
 bool Window::Initialize(WNDPROC mainWindowProc)
 {
 	// Get the instance of this application:
@@ -90,8 +97,8 @@ bool Window::Initialize(WNDPROC mainWindowProc)
 	m_windowHandle = CreateWindowEx(
 		WS_EX_APPWINDOW, 
 		m_applicationName.c_str(), 
-		m_applicationName.c_str(),
-		WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
+		m_windowCaption.c_str(),
+		WS_CAPTION | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
 		positionX, positionY, m_clientWidth, m_clientHeight,
 		nullptr, 
 		nullptr, 

@@ -26,20 +26,25 @@ double Timer::GetMillisecondsPerUpdate() const
 {
 	return m_millisecondsPerUpdate;
 }
-
 double Timer::GetTotalMilliseconds() const
 {
 	return TicksToMilliseconds(m_totalTicks);
 }
-
 double Timer::GetDeltaMilliseconds() const
 {
 	return TicksToMilliseconds(m_deltaTicks);
 }
-
 double Timer::GetLeftover() const
 {
 	return m_lag / m_millisecondsPerUpdate;
+}
+size_t Timer::GetFramesPerSecond() const
+{
+	return m_framesPerSecond;
+}
+double Timer::GetMillisecondsPerFrame() const
+{
+	return m_millisecondsPerFrame;
 }
 
 LARGE_INTEGER Timer::GetCurrentTick()

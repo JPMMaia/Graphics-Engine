@@ -8,7 +8,7 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 {
 	switch (msg)
 	{
-		// Check if the window is being destroyed.
+		// Check if the window is being destroyed:
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
@@ -63,7 +63,7 @@ int Application::Run()
 	{
 		m_input.Update();
 
-		// Exit application if exit function is pressed:
+		// Exit application if exit button is pressed:
 		if (m_input.IsKeyDown(DIK_ESCAPE))
 			return false;
 
@@ -73,6 +73,12 @@ int Application::Run()
 			m_graphics.SetWireframeMode(true);
 
 		return true;
+	};
+
+	auto processFrameStatistics = [this](const Timer& timer)
+	{
+		auto extraCaption = L"FPS: " + std::to_wstring(timer.GetFramesPerSecond()) + L" | MSPF: " + std::to_wstring(timer.GetMillisecondsPerFrame());
+		m_window.SetWindowExtraCaption(extraCaption);
 	};
 
 	m_timer.Reset();
@@ -87,7 +93,7 @@ int Application::Run()
 		}
 
 		// Otherwise, do animation/game stuff:
-		else if (!m_timer.UpdateAndRender(update, render, processInput))
+		else if (!m_timer.UpdateAndRender(update, render, processInput, processFrameStatistics))
 		{
 			// If exiting application, wait for all commands to finish, so that all objects can be destructed:
 			m_graphics.FlushCommandQueue();

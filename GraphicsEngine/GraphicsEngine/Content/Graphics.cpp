@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include "VertexTypes.h"
 #include "Samplers.h"
+#include "d3dx12.h"
 
 #include <array>
 #include <D3Dcompiler.h>
@@ -292,23 +293,47 @@ void Graphics::UpdateCamera()
 }
 void Graphics::UpdateInstancesBuffer()
 {
+	// Get view matrix and calculate its inverse:
+	auto viewMatrix = m_camera.GetViewMatrix();
+	auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
+	auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
+
+	// Build the view space camera frustum:
+	auto viewSpaceCameraFrustum = m_camera.BuildViewSpaceBoundingFrustum();
+
 	for(size_t i = 0; i < m_allRenderItems.size(); ++i)
 	{
 		auto& renderItem = m_allRenderItems[i];
 		auto& currentInstanceBuffer = m_currentFrameResource->InstancesBufferArray[i];
 
-		auto instanceIndex = 0U;
+		auto visibleInstanceCount = 0U;
 		for (auto& instanceData : renderItem->InstancesData)
 		{
-			BufferTypes::InstanceData data;
-			XMStoreFloat4x4(&data.WorldMatrix, XMMatrixTranspose(XMLoadFloat4x4(&instanceData.WorldMatrix)));
-			XMStoreFloat4x4(&data.TextureTransform, XMMatrixTranspose(XMLoadFloat4x4(&instanceData.TextureTransform)));
-			data.MaterialIndex = instanceData.MaterialIndex;
+			// Get the world matrix of the instance and calculate its inverse:
+			auto worldMatrix = XMLoadFloat4x4(&instanceData.WorldMatrix);
+			auto worldMatrixDeterminant = XMMatrixDeterminant(worldMatrix);
+			auto inverseWorldMatrix = XMMatrixInverse(&worldMatrixDeterminant, worldMatrix);
 
-			currentInstanceBuffer->CopyData(instanceIndex++, data);
+			// Calculate the matrix which transforms from view space to the instance's local space:
+			auto viewToLocalMatrix = XMMatrixMultiply(inverseViewMatrix, inverseWorldMatrix);
+
+			// Transform camera frustum from view space to local space:
+			BoundingFrustum localSpaceCameraFrustum;
+			viewSpaceCameraFrustum.Transform(localSpaceCameraFrustum, viewToLocalMatrix);
+
+			// If the camera frustum intersects the instance bounds:
+			if(localSpaceCameraFrustum.Contains(renderItem->Bounds) != ContainmentType::DISJOINT)
+			{
+				BufferTypes::InstanceData data;
+				XMStoreFloat4x4(&data.WorldMatrix, XMMatrixTranspose(XMLoadFloat4x4(&instanceData.WorldMatrix)));
+				XMStoreFloat4x4(&data.TextureTransform, XMMatrixTranspose(XMLoadFloat4x4(&instanceData.TextureTransform)));
+				data.MaterialIndex = instanceData.MaterialIndex;
+
+				currentInstanceBuffer->CopyData(visibleInstanceCount++, data);
+			}
 		}
 
-		renderItem->InstanceCount = instanceIndex;
+		renderItem->InstanceCount = visibleInstanceCount;
 	}
 }
 void Graphics::UpdateMaterialsBuffer() const

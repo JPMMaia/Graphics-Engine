@@ -2,6 +2,8 @@
 
 #include "BaseGeometryBuffer.h"
 
+#include <dxgi.h>
+
 namespace GraphicsEngine
 {
 	class D3DBase;

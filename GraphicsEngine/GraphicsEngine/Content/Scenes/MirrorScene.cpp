@@ -22,7 +22,7 @@ void MirrorScene::Initialize(Graphics* graphics, const D3DBase& d3dBase, const T
 {
 	InitializeGeometry(d3dBase);
 	InitializeMaterials(textureManager);
-	InitializeRenderItems(graphics, d3dBase);
+	InitializeRenderItems(graphics);
 }
 
 const std::unordered_map<std::string, std::unique_ptr<Material>>& MirrorScene::GetMaterials() const
@@ -125,7 +125,7 @@ void MirrorScene::InitializeGeometry(const D3DBase& d3dBase)
 		geo->DrawArgs["Wall"] = wallSubmesh;
 		geo->DrawArgs["Mirror"] = mirrorSubmesh;
 
-		m_geometries[geo->Name] = std::move(geo);
+		m_geometries[geo->Name] = std::move(geo);		
 	}
 
 	// Skull:
@@ -181,18 +181,18 @@ void MirrorScene::InitializeMaterials(const TextureManager& textureManager)
 	shadowMat->Roughness = 0.0f;
 	m_materials[shadowMat->Name] = std::move(shadowMat);
 }
-void MirrorScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBase)
+void MirrorScene::InitializeRenderItems(Graphics* graphics)
 {
-	auto d3dDevice = d3dBase.GetDevice();
-
 	// Floor:
 	{
 		auto floorRenderItem = std::make_unique<RenderItem>();
 		floorRenderItem->Mesh = m_geometries["Room Geometry"].get();
 		floorRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		floorRenderItem->IndexCount = floorRenderItem->Mesh->DrawArgs["Floor"].IndexCount;
-		floorRenderItem->StartIndexLocation = floorRenderItem->Mesh->DrawArgs["Floor"].StartIndexLocation;
-		floorRenderItem->BaseVertexLocation = floorRenderItem->Mesh->DrawArgs["Floor"].BaseVertexLocation;
+		const auto& submesh = floorRenderItem->Mesh->DrawArgs["Floor"];
+		floorRenderItem->IndexCount = submesh.IndexCount;
+		floorRenderItem->StartIndexLocation = submesh.StartIndexLocation;
+		floorRenderItem->BaseVertexLocation = submesh.BaseVertexLocation;
+		floorRenderItem->Bounds = MeshGeometry::CreateBoundingBoxFromMesh<VertexTypes::DefaultVertexType, uint16_t>(*floorRenderItem->Mesh, submesh);
 
 		// Add instances:
 		{
@@ -211,9 +211,11 @@ void MirrorScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBa
 		auto wallsRenderItem = std::make_unique<RenderItem>();
 		wallsRenderItem->Mesh = m_geometries["Room Geometry"].get();
 		wallsRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		wallsRenderItem->IndexCount = wallsRenderItem->Mesh->DrawArgs["Wall"].IndexCount;
-		wallsRenderItem->StartIndexLocation = wallsRenderItem->Mesh->DrawArgs["Wall"].StartIndexLocation;
-		wallsRenderItem->BaseVertexLocation = wallsRenderItem->Mesh->DrawArgs["Wall"].BaseVertexLocation;
+		const auto& submesh = wallsRenderItem->Mesh->DrawArgs["Wall"];
+		wallsRenderItem->IndexCount = submesh.IndexCount;
+		wallsRenderItem->StartIndexLocation = submesh.StartIndexLocation;
+		wallsRenderItem->BaseVertexLocation = submesh.BaseVertexLocation;
+		wallsRenderItem->Bounds = MeshGeometry::CreateBoundingBoxFromMesh<VertexTypes::DefaultVertexType, uint16_t>(*wallsRenderItem->Mesh, submesh);
 
 		// Add instances:
 		{
@@ -237,9 +239,11 @@ void MirrorScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBa
 		auto skullRenderItem = std::make_unique<RenderItem>();
 		skullRenderItem->Mesh = m_geometries["Skull"].get();
 		skullRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		skullRenderItem->IndexCount = skullRenderItem->Mesh->DrawArgs["Skull"].IndexCount;
-		skullRenderItem->StartIndexLocation = skullRenderItem->Mesh->DrawArgs["Skull"].StartIndexLocation;
-		skullRenderItem->BaseVertexLocation = skullRenderItem->Mesh->DrawArgs["Skull"].BaseVertexLocation;
+		const auto& submesh = skullRenderItem->Mesh->DrawArgs["Skull"];
+		skullRenderItem->IndexCount = submesh.IndexCount;
+		skullRenderItem->StartIndexLocation = submesh.StartIndexLocation;
+		skullRenderItem->BaseVertexLocation = submesh.BaseVertexLocation;
+		skullRenderItem->Bounds = MeshGeometry::CreateBoundingBoxFromMesh<VertexTypes::DefaultVertexType, uint32_t>(*skullRenderItem->Mesh, submesh);
 
 		// Add instances:
 		{
@@ -258,9 +262,11 @@ void MirrorScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBa
 		auto mirrorRenderItem = std::make_unique<RenderItem>();
 		mirrorRenderItem->Mesh = m_geometries["Room Geometry"].get();
 		mirrorRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		mirrorRenderItem->IndexCount = mirrorRenderItem->Mesh->DrawArgs["Mirror"].IndexCount;
-		mirrorRenderItem->StartIndexLocation = mirrorRenderItem->Mesh->DrawArgs["Mirror"].StartIndexLocation;
-		mirrorRenderItem->BaseVertexLocation = mirrorRenderItem->Mesh->DrawArgs["Mirror"].BaseVertexLocation;
+		const auto& submesh = mirrorRenderItem->Mesh->DrawArgs["Mirror"];
+		mirrorRenderItem->IndexCount = submesh.IndexCount;
+		mirrorRenderItem->StartIndexLocation = submesh.StartIndexLocation;
+		mirrorRenderItem->BaseVertexLocation = submesh.BaseVertexLocation;
+		mirrorRenderItem->Bounds = MeshGeometry::CreateBoundingBoxFromMesh<VertexTypes::DefaultVertexType, uint16_t>(*mirrorRenderItem->Mesh, submesh);
 
 		// Add instances:
 		{

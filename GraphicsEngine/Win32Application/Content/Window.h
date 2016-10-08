@@ -17,6 +17,8 @@ namespace Win32Application
 		uint32_t GetClientWidth() const;
 		uint32_t GetClientHeight() const;
 
+		void SetWindowExtraCaption(const std::wstring& extraCaption) const;
+
 	protected:
 		bool Initialize(WNDPROC mainWindowProc);
 		void Shutdown();

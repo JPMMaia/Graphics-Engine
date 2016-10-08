@@ -294,13 +294,21 @@ void Graphics::UpdateInstancesBuffer()
 {
 	for(size_t i = 0; i < m_allRenderItems.size(); ++i)
 	{
-		auto& item = m_allRenderItems[i];
-		auto& instancesData = item->InstancesData;
-
+		auto& renderItem = m_allRenderItems[i];
 		auto& currentInstanceBuffer = m_currentFrameResource->InstancesBufferArray[i];
-		currentInstanceBuffer->CopyData(&instancesData[0], instancesData.size() * sizeof(BufferTypes::InstanceData));
 
-		item->InstanceCount = static_cast<UINT>(item->InstancesData.size());
+		auto instanceIndex = 0U;
+		for (auto& instanceData : renderItem->InstancesData)
+		{
+			BufferTypes::InstanceData data;
+			XMStoreFloat4x4(&data.WorldMatrix, XMMatrixTranspose(XMLoadFloat4x4(&instanceData.WorldMatrix)));
+			XMStoreFloat4x4(&data.TextureTransform, XMMatrixTranspose(XMLoadFloat4x4(&instanceData.TextureTransform)));
+			data.MaterialIndex = instanceData.MaterialIndex;
+
+			currentInstanceBuffer->CopyData(instanceIndex++, data);
+		}
+
+		renderItem->InstanceCount = instanceIndex;
 	}
 }
 void Graphics::UpdateMaterialsBuffer() const

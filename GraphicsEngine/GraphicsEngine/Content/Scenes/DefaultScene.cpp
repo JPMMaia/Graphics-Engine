@@ -229,7 +229,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 	}
 
 	// Grid:
-	/*{
+	{
 		auto gridRenderItem = std::make_unique<RenderItem>();
 		gridRenderItem->Mesh = m_geometries["ShapeGeo"].get();
 		gridRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -328,5 +328,5 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 		}
 
 		graphics->AddRenderItem(std::move(sphereRenderItem), { RenderLayer::Opaque });
-	}*/
+	}
 }

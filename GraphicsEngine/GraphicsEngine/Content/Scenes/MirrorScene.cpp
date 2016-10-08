@@ -171,6 +171,15 @@ void MirrorScene::InitializeMaterials(const TextureManager& textureManager)
 	skullMat->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 	skullMat->Roughness = 0.3f;
 	m_materials[skullMat->Name] = std::move(skullMat);
+
+	auto shadowMat = std::make_unique<Material>();
+	shadowMat->Name = "Shadow Material";
+	shadowMat->MaterialIndex = 4;
+	shadowMat->DiffuseSrvHeapIndex = textureManager.GetTexture("White1x1Texture")->HeapIndex;
+	shadowMat->DiffuseAlbedo = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f);
+	shadowMat->FresnelR0 = XMFLOAT3(0.001f, 0.001f, 0.001f);
+	shadowMat->Roughness = 0.0f;
+	m_materials[shadowMat->Name] = std::move(shadowMat);
 }
 void MirrorScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBase)
 {
@@ -224,7 +233,6 @@ void MirrorScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBa
 		auto skullScale = XMMatrixScaling(0.45f, 0.45f, 0.45f);
 		auto skullOffset = XMMatrixTranslation(0.0f, 1.0f, -5.0f);
 		auto skullWorld = skullRotate * skullScale * skullOffset;
-		//auto skullWorld = XMMatrixIdentity();
 
 		auto skullRenderItem = std::make_unique<RenderItem>();
 		skullRenderItem->Mesh = m_geometries["Skull"].get();
@@ -241,33 +249,6 @@ void MirrorScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBa
 			skullInstanceData.MaterialIndex = m_materials["Skull Material"]->MaterialIndex;
 			skullRenderItem->AddInstance(skullInstanceData);
 		}
-
-		/*// Shadowed skull:
-		{
-			// Shadowed skull will have different world matrix, so it needs to be its own render item:
-			auto shadowedSkullRenderItem = std::make_unique<RenderItem>(d3dDevice, 1);
-			shadowedSkullRenderItem->Mesh = skullRenderItem->Mesh;
-			shadowedSkullRenderItem->PrimitiveType = skullRenderItem->PrimitiveType;
-			shadowedSkullRenderItem->IndexCount = skullRenderItem->IndexCount;
-			shadowedSkullRenderItem->StartIndexLocation = skullRenderItem->StartIndexLocation;
-			shadowedSkullRenderItem->BaseVertexLocation = skullRenderItem->BaseVertexLocation;
-
-			// Add instances:
-			{
-				auto shadowPlane = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f); // xz plane
-				auto toMainLight = XMVectorSet(-0.57735f, 0.57735f, -0.57735f, 0.0f);
-				auto shadowMatrix = XMMatrixShadow(shadowPlane, toMainLight);
-				auto shadowOffsetY = XMMatrixTranslation(0.0f, 0.005f, 0.0f);
-
-				BufferTypes::InstanceData shadowedSkullInstanceData;
-				XMStoreFloat4x4(&shadowedSkullInstanceData.WorldMatrix, skullWorld * shadowMatrix * shadowOffsetY);
-				XMStoreFloat4x4(&shadowedSkullInstanceData.TextureTransform, XMMatrixIdentity());
-				shadowedSkullInstanceData.MaterialIndex = m_materials["Shadow Material"]->MaterialIndex;
-				shadowedSkullRenderItem->AddInstance(shadowedSkullInstanceData);
-			}
-
-			graphics->AddRenderItem(std::move(shadowedSkullRenderItem), { RenderLayer::Shadow });
-		}*/
 
 		graphics->AddRenderItem(std::move(skullRenderItem), { RenderLayer::Opaque });
 	}

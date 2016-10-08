@@ -1,7 +1,7 @@
 #include "LightingUtils.hlsl"
-#include "ObjectConstants.hlsl"
-#include "PassConstants.hlsl"
-#include "MaterialConstants.hlsl"
+#include "ObjectData.hlsl"
+#include "MaterialData.hlsl"
+#include "PassData.hlsl"
 
 struct VertexIn
 {
@@ -18,26 +18,29 @@ struct VertexOut
 	float2 TextureCoordinates : TEXCOORD0;
 };
 
-ConstantBuffer<ObjectConstants> g_objectCB : register(b0);
-ConstantBuffer<MaterialConstants> g_materialCB : register(b1);
-ConstantBuffer<PassConstants> g_passCB : register(b2);
+ConstantBuffer<ObjectData> g_objectData : register(b0);
+ConstantBuffer<PassData> g_passData : register(b1);
+
+StructuredBuffer<MaterialData> g_materialData : register(t0, space1);
 
 VertexOut main(VertexIn input)
 {
 	VertexOut output;
 
 	// Transfrom to World space:
-	float4 positionW = mul(float4(input.PositionL, 1.0f), g_objectCB.WorldMatrix);
+	float4 positionW = mul(float4(input.PositionL, 1.0f), g_objectData.WorldMatrix);
 	output.PositionW = positionW.xyz;
 
 	// Assumes nonuniform scaling:
-	output.NormalW = mul(input.NormalL, (float3x3) g_objectCB.WorldMatrix);
+	output.NormalW = mul(input.NormalL, (float3x3) g_objectData.WorldMatrix);
 
 	// Transform to Homogeneous clip space:
-	output.PositionH = mul(positionW, g_passCB.ViewProjectionMatrix);
+	output.PositionH = mul(positionW, g_passData.ViewProjectionMatrix);
 
-	float4 textureCoordinates = mul(float4(input.TextureCoordinates, 0.0f, 1.0f), g_objectCB.TextureTransform);
-	output.TextureCoordinates = mul(textureCoordinates, g_materialCB.MaterialTransform).xy;
+	// Fetch material data and calculate texture coordinates:
+	MaterialData materialData = g_materialData[g_objectData.MaterialIndex];
+	float4 textureCoordinates = mul(float4(input.TextureCoordinates, 0.0f, 1.0f), g_objectData.TextureTransform);
+	output.TextureCoordinates = mul(textureCoordinates, materialData.MaterialTransform).xy;
 
 	return output;
 }

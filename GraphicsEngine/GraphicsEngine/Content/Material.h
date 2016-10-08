@@ -12,7 +12,7 @@ namespace GraphicsEngine
 		Material();
 
 		std::string Name;
-		int MaterialCBIndex = -1;
+		int MaterialIndex = -1;
 		int DiffuseSrvHeapIndex = -1;
 		int NormalSrvHeapIndex = -1;
 		int FramesDirtyCount;

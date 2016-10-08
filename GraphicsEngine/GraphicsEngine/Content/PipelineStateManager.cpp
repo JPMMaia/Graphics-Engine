@@ -4,9 +4,9 @@
 
 using namespace GraphicsEngine;
 
-PipelineStateManager::PipelineStateManager(const D3DBase& d3dBase, ID3D12RootSignature* rootSignature, ID3D12RootSignature* postProcessRootSignature)
+PipelineStateManager::PipelineStateManager(const D3DBase& d3dBase, ID3D12RootSignature* rootSignature, ID3D12RootSignature* postProcessRootSignature, size_t textureCount)
 {
-	InitializeShadersAndInputLayout();
+	InitializeShadersAndInputLayout(textureCount);
 	InitializePipelineStateObjects(d3dBase, rootSignature, postProcessRootSignature);
 }
 
@@ -20,12 +20,14 @@ ID3D12PipelineState* PipelineStateManager::GetPipelineState(const std::string& n
 	return m_pipelineStateObjects.at(name).Get();
 }
 
-void PipelineStateManager::InitializeShadersAndInputLayout()
+void PipelineStateManager::InitializeShadersAndInputLayout(size_t textureCount)
 {
 	m_shaders["StandardVS"] = Shader::CompileShader(L"Content/Shaders/DefaultVertexShader.hlsl", nullptr, "main", "vs_5_1");
 
+	auto textureCountString = std::to_string(textureCount);
 	const D3D_SHADER_MACRO opaqueDefines[] =
 	{
+		"NUM_TEXTURES", textureCountString.c_str(),
 		"FOG", "1",
 		nullptr, nullptr
 	};
@@ -33,6 +35,7 @@ void PipelineStateManager::InitializeShadersAndInputLayout()
 
 	const D3D_SHADER_MACRO alphaTestedDefines[] =
 	{
+		"NUM_TEXTURES", textureCountString.c_str(),
 		"FOG", "1",
 		"ALPHA_TEST", "1",
 		nullptr, nullptr

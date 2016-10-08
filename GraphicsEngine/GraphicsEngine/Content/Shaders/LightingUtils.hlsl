@@ -1,9 +1,3 @@
-//***************************************************************************************
-// LightingUtil.hlsl by Frank Luna (C) 2015 All Rights Reserved.
-//
-// Contains API for shader lighting.
-//***************************************************************************************
-
 #ifndef __LIGHTING_UTILS__
 #define __LIGHTING_UTILS__
 
@@ -36,7 +30,7 @@ float CalculateAttenuation(float distance, float falloffStart, float falloffEnd)
 
 /// <sumary>
 ///	Schlick gives an approximation to Fresnel reflectance.
-/// R0 = ( (n-1)/(n+1) )^2, where n is the index of refraction
+/// R0 = ( (n-1)/(n+1) )^2, where n is the index of refraction.
 /// </sumary>
 float3 SchlickFresnel(float3 r0, float3 normal, float3 lightVector)
 {
@@ -46,6 +40,9 @@ float3 SchlickFresnel(float3 r0, float3 normal, float3 lightVector)
 	return r0 + (1.0f - r0) * (f0 * f0 * f0 * f0 * f0);
 }
 
+/// <sumary>
+/// Evaluates the light strength given the parameters.
+/// </sumary>
 float3 BlinnPhong(float3 lightStrength, float3 lightVector, float3 normal, float3 toEye, Material material)
 {
 	// Derive m from the shininess, which is derived from the roughness:
@@ -59,7 +56,7 @@ float3 BlinnPhong(float3 lightStrength, float3 lightVector, float3 normal, float
 	float3 fresnelFactor = SchlickFresnel(material.FresnelR0, halfwayVector, lightVector);
 	float3 specularAlbedo = fresnelFactor * roughnessFactor;
 
-	// Our specular formula goes outside [0,1] range, but we are 
+	// The specular formula goes outside [0,1] range, but we are 
 	// doing LDR rendering.  So scale it down a bit.
 	specularAlbedo = specularAlbedo / (specularAlbedo + 1.0f);
 

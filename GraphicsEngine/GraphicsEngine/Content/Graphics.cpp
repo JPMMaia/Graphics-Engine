@@ -1,7 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Graphics.h"
 #include "VertexTypes.h"
-#include "Material.h"
 #include "Samplers.h"
 
 #include <array>
@@ -22,21 +21,31 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	auto commandList = m_d3d.GetCommandList();
 	DX::ThrowIfFailed(commandList->Reset(m_d3d.GetCommandAllocator(), nullptr));
 
-	InitializeRootSignature();
-	m_pipelineStateManager = PipelineStateManager(m_d3d, m_rootSignature.Get(), m_postProcessRootSignature.Get());
-	
-	m_scene.AddTextures(&m_textureManager);
-	m_textureManager.LoadAllTextures(m_d3d);
+	{
+		// Load all textures:
+		m_scene.AddTextures(&m_textureManager);
+		m_textureManager.LoadAllTextures(m_d3d);
 
-	auto descriptorCount = m_textureManager.GetTextureCount() + 4;
-	m_descriptorHeap = DescriptorHeap(m_d3d, descriptorCount);
-	m_textureManager.CreateShaderResourceViews(m_d3d, &m_descriptorHeap);
-	m_blurFilter = BlurFilter(m_d3d, &m_descriptorHeap, clientWidth, clientHeight, m_d3d.GetBackBufferFormat());
+		// Create a descriptor heap with capacity to hold all scene texture views plus the blur filter views:
+		auto descriptorCount = m_textureManager.GetTextureCount() + 4;
+		m_descriptorHeap = DescriptorHeap(m_d3d, descriptorCount);
+		m_textureManager.CreateShaderResourceViews(m_d3d, &m_descriptorHeap);
+		m_blurFilter = BlurFilter(m_d3d, &m_descriptorHeap, clientWidth, clientHeight, m_d3d.GetBackBufferFormat());
 
-	m_scene.Initialize(this, m_d3d, m_textureManager);	
+		// Initialize scene:
+		m_scene.Initialize(this, m_d3d, m_textureManager);
 
-	InitializeFrameResources();
+		// Initialize frame resources:
+		InitializeFrameResources();
+	}
 
+	// Initialize root signature and create pipeline state objects:
+	{
+		InitializeRootSignature();
+		m_pipelineStateManager = PipelineStateManager(m_d3d, m_rootSignature.Get(), m_postProcessRootSignature.Get(), m_textureManager.GetTextureCount());
+	}
+
+	// Set clear color the same color as the fog:
 	m_d3d.SetClearColor(m_passConstants.FogColor);
 
 	// Execute the initialization commands:
@@ -70,12 +79,12 @@ void Graphics::Update(const Timer& timer)
 		auto eventHandle = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
 		DX::ThrowIfFailed(
 			fence->SetEventOnCompletion(m_currentFrameResource->Fence, eventHandle)
-			);
+		);
 		WaitForSingleObject(eventHandle, INFINITE);
 		CloseHandle(eventHandle);
 	}
 
-	UpdateObjectsConstantBuffer();
+	UpdateObjectsBuffer();
 	UpdateMaterialsConstantBuffer();
 	UpdateMainPassConstantBuffer(timer);
 }
@@ -92,13 +101,27 @@ void Graphics::Render(const Timer& timer)
 
 	// Set pass constant buffer:
 	{
-		auto passCB = m_currentFrameResource->PassConstantBuffer->GetResource();
-		commandList->SetGraphicsRootConstantBufferView(3, passCB->GetGPUVirtualAddress());
+		auto passCB = m_currentFrameResource->PassBuffer->GetResource();
+		commandList->SetGraphicsRootConstantBufferView(1, passCB->GetGPUVirtualAddress());
 	}
 
-	// Set texture descriptor heap:
-	ID3D12DescriptorHeap* descriptorHeaps = { m_descriptorHeap.Get() };
-	commandList->SetDescriptorHeaps(1, &descriptorHeaps);
+	// Bind all materials used in this scene:
+	{
+		auto materialBuffer = m_currentFrameResource->MaterialsBuffer->GetResource();
+		commandList->SetGraphicsRootShaderResourceView(2, materialBuffer->GetGPUVirtualAddress());
+	}
+
+	// Bind all textures used in this scene:
+	{
+		auto descriptorHeap = m_descriptorHeap.Get();
+
+		// Set texture descriptor heap:
+		ID3D12DescriptorHeap* descriptorHeaps = { descriptorHeap };
+		commandList->SetDescriptorHeaps(1, &descriptorHeaps);
+
+		// Bind descriptor table. Only the first descriptor needs to be specifiec because the root signature knows how many descriptors are expected in the table:
+		commandList->SetGraphicsRootDescriptorTable(3, descriptorHeap->GetGPUDescriptorHandleForHeapStart());
+	}
 
 	// Draw render items:
 	{
@@ -167,17 +190,18 @@ void Graphics::InitializeRootSignature()
 	{
 		// Describing textures tables:
 		CD3DX12_DESCRIPTOR_RANGE texturesTable(
-			D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
-			1,
-			0
-			);
+			D3D12_DESCRIPTOR_RANGE_TYPE_SRV,						// Range Type
+			static_cast<UINT>(m_textureManager.GetTextureCount()),	// Number of Descriptors - this must be the same value as the shader macro NUM_TEXTURES
+			0,														// Base Shader Register
+			0														// Register Space
+		);
 
 		// Specifying root parameters:
 		std::array<CD3DX12_ROOT_PARAMETER, 4> slotRootParameter;
-		slotRootParameter[0].InitAsDescriptorTable(1, &texturesTable, D3D12_SHADER_VISIBILITY_PIXEL);
-		slotRootParameter[1].InitAsConstantBufferView(0);
-		slotRootParameter[2].InitAsConstantBufferView(1);
-		slotRootParameter[3].InitAsConstantBufferView(2);
+		slotRootParameter[0].InitAsConstantBufferView(0);
+		slotRootParameter[1].InitAsConstantBufferView(1);
+		slotRootParameter[2].InitAsShaderResourceView(0, 1); // Base Shader Register 0, Register Space 1
+		slotRootParameter[3].InitAsDescriptorTable(1, &texturesTable, D3D12_SHADER_VISIBILITY_PIXEL); // Base Shader Register 0, Register Space 0
 
 		auto staticSamplers = Samplers::GetStaticSamplers();
 
@@ -189,7 +213,7 @@ void Graphics::InitializeRootSignature()
 			static_cast<uint32_t>(staticSamplers.size()),		// Num static samplers
 			staticSamplers.data(),								// Static samplers
 			rootSignatureFlags
-			);
+		);
 
 		// Create root signature:
 		{
@@ -206,8 +230,8 @@ void Graphics::InitializeRootSignature()
 					serializedRootSignature->GetBufferPointer(),
 					serializedRootSignature->GetBufferSize(),
 					IID_PPV_ARGS(m_rootSignature.GetAddressOf())
-					)
-				);
+				)
+			);
 		}
 	}
 
@@ -231,7 +255,7 @@ void Graphics::InitializeRootSignature()
 			0,
 			nullptr,
 			flags
-			);
+		);
 
 		// Create root signature:
 		{
@@ -248,8 +272,8 @@ void Graphics::InitializeRootSignature()
 					serializedRootSignature->GetBufferPointer(),
 					serializedRootSignature->GetBufferSize(),
 					IID_PPV_ARGS(m_postProcessRootSignature.GetAddressOf())
-					)
-				);
+				)
+			);
 		}
 	}
 }
@@ -266,24 +290,26 @@ void Graphics::UpdateCamera()
 {
 	m_camera.Update();
 }
-void Graphics::UpdateObjectsConstantBuffer()
+void Graphics::UpdateObjectsBuffer()
 {
-	auto currentObjectConstantBuffer = m_currentFrameResource->ObjectsConstantBuffer.get();
+	auto currentObjectBuffer = m_currentFrameResource->ObjectsBuffer.get();
 	for (auto& item : m_allRenderItems)
 	{
 		// Only update the cbuffer data if the constants have changed.
 		// This needs to be tracked per frame resource.
 		if (item->FramesDirtyCount > 0)
 		{
-			ConstantBufferTypes::ObjectConstants objectConstants;
+			BufferTypes::ObjectData objectData;
 
 			auto worldMatrix = XMLoadFloat4x4(&item->WorldMatrix);
-			XMStoreFloat4x4(&objectConstants.WorldMatrix, XMMatrixTranspose(worldMatrix));
+			XMStoreFloat4x4(&objectData.WorldMatrix, XMMatrixTranspose(worldMatrix));
 
 			auto textureTransfrom = XMLoadFloat4x4(&item->TextureTransform);
-			XMStoreFloat4x4(&objectConstants.TextureTransform, XMMatrixTranspose(textureTransfrom));
+			XMStoreFloat4x4(&objectData.TextureTransform, XMMatrixTranspose(textureTransfrom));
 
-			currentObjectConstantBuffer->CopyData(item->ObjectCBIndex, objectConstants);
+			objectData.MaterialIndex = item->Material->MaterialIndex;
+
+			currentObjectBuffer->CopyData(item->ObjectCBIndex, objectData);
 
 			// Next FrameResource need to be updated too:
 			item->FramesDirtyCount--;
@@ -292,7 +318,7 @@ void Graphics::UpdateObjectsConstantBuffer()
 }
 void Graphics::UpdateMaterialsConstantBuffer() const
 {
-	auto currentMaterialCB = m_currentFrameResource->MaterialsConstantBuffer.get();
+	auto currentMaterialBuffer = m_currentFrameResource->MaterialsBuffer.get();
 	for (auto& e : m_scene.GetMaterials())
 	{
 		// Only update the cbuffer data if the constants have changed.  If the cbuffer
@@ -302,13 +328,14 @@ void Graphics::UpdateMaterialsConstantBuffer() const
 		{
 			auto materialTransform = XMLoadFloat4x4(&material->MaterialTransform);
 
-			ConstantBufferTypes::MaterialConstants materialConstants;
-			materialConstants.DiffuseAlbedo = material->DiffuseAlbedo;
-			materialConstants.FresnelR0 = material->FresnelR0;
-			materialConstants.Roughness = material->Roughness;
-			XMStoreFloat4x4(&materialConstants.MaterialTransform, XMMatrixTranspose(materialTransform));
+			BufferTypes::MaterialData materialData;
+			materialData.DiffuseAlbedo = material->DiffuseAlbedo;
+			materialData.FresnelR0 = material->FresnelR0;
+			materialData.Roughness = material->Roughness;
+			XMStoreFloat4x4(&materialData.MaterialTransform, XMMatrixTranspose(materialTransform));
+			materialData.DiffuseMapIndex = material->DiffuseSrvHeapIndex;
 
-			currentMaterialCB->CopyData(material->MaterialCBIndex, materialConstants);
+			currentMaterialBuffer->CopyData(material->MaterialIndex, materialData);
 
 			// Next FrameResource need to be updated too.
 			material->FramesDirtyCount--;
@@ -350,33 +377,25 @@ void Graphics::UpdateMainPassConstantBuffer(const Timer& timer)
 	m_passConstants.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
 	m_passConstants.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
 
-	auto currentPassCB = m_currentFrameResource->PassConstantBuffer.get();
+	auto currentPassCB = m_currentFrameResource->PassBuffer.get();
 	currentPassCB->CopyData(0, m_passConstants);
 }
 
 void Graphics::DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std::vector<RenderItem*>& renderItems) const
 {
-	auto objectCBByteSize = DX::CalculateConstantBufferByteSize(sizeof(ConstantBufferTypes::ObjectConstants));
-	auto materialCBByteSize = DX::CalculateConstantBufferByteSize(sizeof(ConstantBufferTypes::MaterialConstants));
-
-	auto objectCB = m_currentFrameResource->ObjectsConstantBuffer->GetResource();
-	auto materialCB = m_currentFrameResource->MaterialsConstantBuffer->GetResource();
+	auto objectCBByteSize = DX::CalculateConstantBufferByteSize(sizeof(BufferTypes::ObjectData));
+	auto objectCB = m_currentFrameResource->ObjectsBuffer->GetResource();
 
 	// For each render item:
 	for (size_t i = 0; i < renderItems.size(); ++i)
 	{
 		auto renderItem = renderItems[i];
 
-		CD3DX12_GPU_DESCRIPTOR_HANDLE textureHandle(m_descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart());
-		textureHandle.Offset(renderItem->Material->DiffuseSrvHeapIndex, m_d3d.GetCbvSrvUavDescriptorSize());
-		commandList->SetGraphicsRootDescriptorTable(0, textureHandle);
-
+		// Set Object Data:
 		auto objectCBAddress = static_cast<D3D12_GPU_VIRTUAL_ADDRESS>(objectCB->GetGPUVirtualAddress() + renderItem->ObjectCBIndex * objectCBByteSize);
-		commandList->SetGraphicsRootConstantBufferView(1, objectCBAddress);
+		commandList->SetGraphicsRootConstantBufferView(0, objectCBAddress);
 
-		auto materialCBAddress = static_cast<D3D12_GPU_VIRTUAL_ADDRESS>(materialCB->GetGPUVirtualAddress() + renderItem->Material->MaterialCBIndex * materialCBByteSize);
-		commandList->SetGraphicsRootConstantBufferView(2, materialCBAddress);
-
+		// Render:
 		renderItem->Render(commandList);
 	}
 }

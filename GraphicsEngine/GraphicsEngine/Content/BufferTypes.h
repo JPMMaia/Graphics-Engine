@@ -5,23 +5,31 @@
 
 namespace GraphicsEngine
 {
-	namespace ConstantBufferTypes
+	namespace BufferTypes
 	{
-		struct ObjectConstants
+		struct ObjectData
 		{
 			DirectX::XMFLOAT4X4 WorldMatrix = MathHelper::Identity4x4();
 			DirectX::XMFLOAT4X4 TextureTransform = MathHelper::Identity4x4();
+			UINT MaterialIndex = 0;
+			UINT Pad0;
+			UINT Pad1;
+			UINT Pad2;
 		};
 
-		struct MaterialConstants
+		struct MaterialData
 		{
 			DirectX::XMFLOAT4 DiffuseAlbedo = { 1.0f, 1.0f, 1.0f, 1.0f };;
 			DirectX::XMFLOAT3 FresnelR0 = { 0.01f, 0.01f, 0.01f };
 			float Roughness = 0.25f;
 			DirectX::XMFLOAT4X4 MaterialTransform = MathHelper::Identity4x4();
+			UINT DiffuseMapIndex = 0;
+			UINT Pad0;
+			UINT Pad1;
+			UINT Pad2;
 		};
 
-		struct PassConstants
+		struct PassData
 		{
 			DirectX::XMFLOAT4X4 ViewMatrix = MathHelper::Identity4x4();
 			DirectX::XMFLOAT4X4 InverseViewMatrix = MathHelper::Identity4x4();

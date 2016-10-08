@@ -4,6 +4,7 @@
 #include "Content/Material.h"
 #include "Content/MeshGeometry.h"
 
+#include <memory>
 #include <unordered_map>
 
 namespace GraphicsEngine

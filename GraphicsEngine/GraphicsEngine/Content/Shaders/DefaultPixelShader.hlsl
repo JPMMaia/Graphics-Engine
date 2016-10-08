@@ -10,9 +10,14 @@
 #define NUM_SPOT_LIGHTS 0
 #endif
 
+#ifndef NUM_TEXTURES
+#define NUM_TEXTURES 4
+#endif
+
 #include "LightingUtils.hlsl"
-#include "PassConstants.hlsl"
-#include "MaterialConstants.hlsl"
+#include "ObjectData.hlsl"
+#include "MaterialData.hlsl"
+#include "PassData.hlsl"
 
 SamplerState g_samplerPointWrap : register(s0);
 SamplerState g_samplerPointClamp : register(s1);
@@ -29,15 +34,19 @@ struct VertexOut
 	float2 TextureCoordinates : TEXCOORD0;
 };
 
-ConstantBuffer<MaterialConstants> g_materialCB : register(b1);
-ConstantBuffer<PassConstants> g_passCB : register(b2);
+ConstantBuffer<ObjectData> g_objectData : register(b0);
+ConstantBuffer<PassData> g_passData : register(b1);
 
-Texture2D g_diffuseMap : register(t0);
+Texture2D g_diffuseMap[NUM_TEXTURES] : register(t0, space0);
+StructuredBuffer<MaterialData> g_materialData : register(t0, space1);
 
 float4 main(VertexOut input) : SV_TARGET
 {
+	// Fetch material data:
+	MaterialData materialData = g_materialData[g_objectData.MaterialIndex];
 
-	float4 diffuseAlbedo = g_diffuseMap.Sample(g_samplerAnisotropicWrap, input.TextureCoordinates) * g_materialCB.DiffuseAlbedo;
+	// Calculate diffuse albedo by multiplying the sampling value of the diffuse map by the material diffuse albedo:
+	float4 diffuseAlbedo = g_diffuseMap[materialData.DiffuseMapIndex].Sample(g_samplerAnisotropicWrap, input.TextureCoordinates) * materialData.DiffuseAlbedo;
 
 #if defined(ALPHA_TEST)
 	
@@ -50,25 +59,25 @@ float4 main(VertexOut input) : SV_TARGET
 	input.NormalW = normalize(input.NormalW);
 
 	// Vector from point being lit to eye:
-	float3 toEyeW = g_passCB.EyePositionW - input.PositionW;
+	float3 toEyeW = g_passData.EyePositionW - input.PositionW;
 	float distanceToEyeW = length(toEyeW);
 	toEyeW /= distanceToEyeW;
 
 	// Indirect lighting:
-	float4 ambientLight = g_passCB.AmbientLight * g_materialCB.DiffuseAlbedo;
+	float4 ambientLight = g_passData.AmbientLight * materialData.DiffuseAlbedo;
 
 	// Direct lighting:
-	const float shininess = 1.0f - g_materialCB.Roughness;
-	Material material = { diffuseAlbedo, g_materialCB.FresnelR0, shininess };
+	const float shininess = 1.0f - materialData.Roughness;
+	Material material = { diffuseAlbedo, materialData.FresnelR0, shininess };
 	float3 shadowFactor = float3(1.0f, 1.0f, 1.0f);
-	float4 directLight = ComputeLighting(g_passCB.Lights, material, input.PositionW, input.NormalW, toEyeW, shadowFactor);
+	float4 directLight = ComputeLighting(g_passData.Lights, material, input.PositionW, input.NormalW, toEyeW, shadowFactor);
 
 	float4 litColor = ambientLight + directLight;
 
 #if defined(FOG)
 
-	float fogIntensity = saturate((distanceToEyeW - g_passCB.FogStart) / g_passCB.FogRange);
-	litColor = (1.0f - fogIntensity) * litColor + fogIntensity * g_passCB.FogColor;
+	float fogIntensity = saturate((distanceToEyeW - g_passData.FogStart) / g_passData.FogRange);
+	litColor = (1.0f - fogIntensity) * litColor + fogIntensity * g_passData.FogColor;
 
 #endif
 

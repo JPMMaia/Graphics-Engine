@@ -138,7 +138,7 @@ void MirrorScene::InitializeMaterials(const TextureManager& textureManager)
 {
 	auto bricks = std::make_unique<Material>();
 	bricks->Name = "Bricks";
-	bricks->MaterialCBIndex = 0;
+	bricks->MaterialIndex = 0;
 	bricks->DiffuseSrvHeapIndex = textureManager.GetTexture("BricksTexture")->HeapIndex;
 	bricks->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	bricks->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
@@ -147,7 +147,7 @@ void MirrorScene::InitializeMaterials(const TextureManager& textureManager)
 
 	auto checkertile = std::make_unique<Material>();
 	checkertile->Name = "Checker Tile";
-	checkertile->MaterialCBIndex = 1;
+	checkertile->MaterialIndex = 1;
 	checkertile->DiffuseSrvHeapIndex = textureManager.GetTexture("CheckboardTexture")->HeapIndex;
 	checkertile->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	checkertile->FresnelR0 = XMFLOAT3(0.07f, 0.07f, 0.07f);
@@ -156,7 +156,7 @@ void MirrorScene::InitializeMaterials(const TextureManager& textureManager)
 
 	auto icemirror = std::make_unique<Material>();
 	icemirror->Name = "Ice Mirror";
-	icemirror->MaterialCBIndex = 2;
+	icemirror->MaterialIndex = 2;
 	icemirror->DiffuseSrvHeapIndex = textureManager.GetTexture("CheckboardTexture")->HeapIndex;
 	icemirror->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.3f);
 	icemirror->FresnelR0 = XMFLOAT3(0.1f, 0.1f, 0.1f);
@@ -165,7 +165,7 @@ void MirrorScene::InitializeMaterials(const TextureManager& textureManager)
 
 	auto skullMat = std::make_unique<Material>();
 	skullMat->Name = "Skull Material";
-	skullMat->MaterialCBIndex = 3;
+	skullMat->MaterialIndex = 3;
 	skullMat->DiffuseSrvHeapIndex = textureManager.GetTexture("White1x1Texture")->HeapIndex;
 	skullMat->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	skullMat->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
@@ -174,7 +174,7 @@ void MirrorScene::InitializeMaterials(const TextureManager& textureManager)
 
 	auto shadowMat = std::make_unique<Material>();
 	shadowMat->Name = "Shadow Material";
-	shadowMat->MaterialCBIndex = 4;
+	shadowMat->MaterialIndex = 4;
 	shadowMat->DiffuseSrvHeapIndex = textureManager.GetTexture("White1x1Texture")->HeapIndex;
 	shadowMat->DiffuseAlbedo = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f);
 	shadowMat->FresnelR0 = XMFLOAT3(0.001f, 0.001f, 0.001f);

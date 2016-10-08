@@ -12,7 +12,7 @@
 #include "RenderLayer.h"
 #include "TextureManager.h"
 #include "DescriptorHeap.h"
-#include "Scenes/MirrorScene.h"
+#include "Scenes/DefaultScene.h"
 
 #include <vector>
 
@@ -42,9 +42,9 @@ namespace GraphicsEngine
 		void InitializeFrameResources();
 
 		void UpdateCamera();
-		void UpdateObjectsBuffer();
-		void UpdateMaterialsConstantBuffer() const;
-		void UpdateMainPassConstantBuffer(const Timer& timer);
+		void UpdateInstancesBuffer();
+		void UpdateMaterialsBuffer() const;
+		void UpdateMainPassBuffer(const Timer& timer);
 
 		void DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std::vector<RenderItem*>& renderItems) const;
 
@@ -61,14 +61,14 @@ namespace GraphicsEngine
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_postProcessRootSignature;
 
 		BufferTypes::PassData m_passConstants;
-		std::unique_ptr<UploadBuffer<BufferTypes::ObjectData>> m_perObjectCB;
+		std::unique_ptr<UploadBuffer<BufferTypes::InstanceData>> m_perObjectCB;
 
 		std::vector<std::unique_ptr<RenderItem>> m_allRenderItems;
 		std::vector<RenderItem*> m_renderItemLayers[static_cast<size_t>(RenderLayer::Count)];
 
 		bool m_wireframeEnabled = false;
 		Camera m_camera;
-		MirrorScene m_scene;
+		DefaultScene m_scene;
 		TextureManager m_textureManager;
 		DescriptorHeap m_descriptorHeap;
 		BlurFilter m_blurFilter;

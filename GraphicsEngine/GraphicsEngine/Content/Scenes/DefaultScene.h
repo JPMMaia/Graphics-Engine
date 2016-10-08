@@ -26,7 +26,7 @@ namespace GraphicsEngine
 	private:
 		void InitializeGeometry(const D3DBase& d3dBase);
 		void InitializeMaterials(const TextureManager& textureManager);
-		void InitializeRenderItems(Graphics* graphics);
+		void InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBase);
 
 	private:
 		std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> m_geometries;

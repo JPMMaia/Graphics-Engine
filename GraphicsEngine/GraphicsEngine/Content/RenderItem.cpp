@@ -9,6 +9,11 @@ RenderItem::RenderItem() :
 {
 }
 
+void RenderItem::AddInstance(const BufferTypes::InstanceData& instanceData)
+{
+	InstancesData.push_back(instanceData);
+}
+
 void RenderItem::Render(ID3D12GraphicsCommandList* commandList) const
 {
 	// Set vertex buffer:

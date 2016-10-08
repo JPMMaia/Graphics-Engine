@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <d3d12.h>
+
 namespace GraphicsEngine
 {
 	class D3DBase;

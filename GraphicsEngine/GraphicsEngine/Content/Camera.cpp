@@ -100,22 +100,6 @@ BoundingFrustum Camera::BuildViewSpaceBoundingFrustum() const
 
 	return boundingFrustum;
 }
-BoundingFrustum Camera::BuildWorldSpaceBoundingFrustum() const
-{
-	XMFLOAT3 position;
-	XMStoreFloat3(&position, m_position);
-
-	XMFLOAT4 orientation;
-	XMStoreFloat4(&orientation, m_rotationQuaternion);
-
-	// TODO
-	auto rightSlope = 1.0f;
-	auto leftSlope = 1.0f;
-	auto topSlope = 1.0f;
-	auto bottomSlope = 1.0f;
-
-	return BoundingFrustum(position, orientation, rightSlope, leftSlope, topSlope, bottomSlope, m_nearZ, m_farZ);
-}
 
 const XMVECTOR& Camera::GetPosition() const
 {

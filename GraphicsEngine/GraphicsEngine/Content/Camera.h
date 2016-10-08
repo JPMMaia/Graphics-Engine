@@ -23,7 +23,6 @@ namespace GraphicsEngine
 		void RotateWorldY(float radiansY);
 
 		DirectX::BoundingFrustum BuildViewSpaceBoundingFrustum() const;
-		DirectX::BoundingFrustum BuildWorldSpaceBoundingFrustum() const;
 
 		const DirectX::XMVECTOR& GetPosition() const;
 		const DirectX::XMMATRIX& GetViewMatrix() const;

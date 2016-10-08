@@ -15,7 +15,6 @@
 #endif
 
 #include "LightingUtils.hlsl"
-#include "ObjectData.hlsl"
 #include "MaterialData.hlsl"
 #include "PassData.hlsl"
 
@@ -32,18 +31,18 @@ struct VertexOut
 	float3 PositionW : POSITION;
 	float3 NormalW : NORMAL;
 	float2 TextureCoordinates : TEXCOORD0;
+	nointerpolation uint MaterialIndex : MATERIALINDEX;
 };
 
-ConstantBuffer<ObjectData> g_objectData : register(b0);
-ConstantBuffer<PassData> g_passData : register(b1);
+ConstantBuffer<PassData> g_passData : register(b0);
 
 Texture2D g_diffuseMap[NUM_TEXTURES] : register(t0, space0);
-StructuredBuffer<MaterialData> g_materialData : register(t0, space1);
+StructuredBuffer<MaterialData> g_materialData : register(t1, space1);
 
 float4 main(VertexOut input) : SV_TARGET
 {
 	// Fetch material data:
-	MaterialData materialData = g_materialData[g_objectData.MaterialIndex];
+	MaterialData materialData = g_materialData[input.MaterialIndex];
 
 	// Calculate diffuse albedo by multiplying the sampling value of the diffuse map by the material diffuse albedo:
 	float4 diffuseAlbedo = g_diffuseMap[materialData.DiffuseMapIndex].Sample(g_samplerAnisotropicWrap, input.TextureCoordinates) * materialData.DiffuseAlbedo;

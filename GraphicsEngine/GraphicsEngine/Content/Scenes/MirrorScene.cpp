@@ -22,7 +22,7 @@ void MirrorScene::Initialize(Graphics* graphics, const D3DBase& d3dBase, const T
 {
 	InitializeGeometry(d3dBase);
 	InitializeMaterials(textureManager);
-	InitializeRenderItems(graphics);
+	InitializeRenderItems(graphics, d3dBase);
 }
 
 const std::unordered_map<std::string, std::unique_ptr<Material>>& MirrorScene::GetMaterials() const
@@ -181,36 +181,50 @@ void MirrorScene::InitializeMaterials(const TextureManager& textureManager)
 	shadowMat->Roughness = 0.0f;
 	m_materials[shadowMat->Name] = std::move(shadowMat);
 }
-void MirrorScene::InitializeRenderItems(Graphics* graphics)
+void MirrorScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBase)
 {
+	auto d3dDevice = d3dBase.GetDevice();
+
 	// Floor:
 	{
-		auto floorRitem = std::make_unique<RenderItem>();
-		floorRitem->WorldMatrix = MathHelper::Identity4x4();
-		floorRitem->TextureTransform = MathHelper::Identity4x4();
-		floorRitem->ObjectCBIndex = 0;
-		floorRitem->Material = m_materials["Checker Tile"].get();
-		floorRitem->Mesh = m_geometries["Room Geometry"].get();
-		floorRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		floorRitem->IndexCount = floorRitem->Mesh->DrawArgs["Floor"].IndexCount;
-		floorRitem->StartIndexLocation = floorRitem->Mesh->DrawArgs["Floor"].StartIndexLocation;
-		floorRitem->BaseVertexLocation = floorRitem->Mesh->DrawArgs["Floor"].BaseVertexLocation;
-		graphics->AddRenderItem(std::move(floorRitem), { RenderLayer::Opaque });
+		auto floorRenderItem = std::make_unique<RenderItem>();
+		floorRenderItem->Mesh = m_geometries["Room Geometry"].get();
+		floorRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		floorRenderItem->IndexCount = floorRenderItem->Mesh->DrawArgs["Floor"].IndexCount;
+		floorRenderItem->StartIndexLocation = floorRenderItem->Mesh->DrawArgs["Floor"].StartIndexLocation;
+		floorRenderItem->BaseVertexLocation = floorRenderItem->Mesh->DrawArgs["Floor"].BaseVertexLocation;
+
+		// Add instances:
+		{
+			BufferTypes::InstanceData floorInstanceData;
+			XMStoreFloat4x4(&floorInstanceData.WorldMatrix, XMMatrixIdentity());
+			XMStoreFloat4x4(&floorInstanceData.TextureTransform, XMMatrixIdentity());
+			floorInstanceData.MaterialIndex = m_materials["Checker Tile"]->MaterialIndex;
+			floorRenderItem->AddInstance(floorInstanceData);
+		}
+
+		graphics->AddRenderItem(std::move(floorRenderItem), { RenderLayer::Opaque });
 	}
 
 	// Walls:
 	{
-		auto wallsRitem = std::make_unique<RenderItem>();
-		wallsRitem->WorldMatrix = MathHelper::Identity4x4();
-		wallsRitem->TextureTransform = MathHelper::Identity4x4();
-		wallsRitem->ObjectCBIndex = 1;
-		wallsRitem->Material = m_materials["Bricks"].get();
-		wallsRitem->Mesh = m_geometries["Room Geometry"].get();
-		wallsRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		wallsRitem->IndexCount = wallsRitem->Mesh->DrawArgs["Wall"].IndexCount;
-		wallsRitem->StartIndexLocation = wallsRitem->Mesh->DrawArgs["Wall"].StartIndexLocation;
-		wallsRitem->BaseVertexLocation = wallsRitem->Mesh->DrawArgs["Wall"].BaseVertexLocation;
-		graphics->AddRenderItem(std::move(wallsRitem), { RenderLayer::Opaque });
+		auto wallsRenderItem = std::make_unique<RenderItem>();
+		wallsRenderItem->Mesh = m_geometries["Room Geometry"].get();
+		wallsRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		wallsRenderItem->IndexCount = wallsRenderItem->Mesh->DrawArgs["Wall"].IndexCount;
+		wallsRenderItem->StartIndexLocation = wallsRenderItem->Mesh->DrawArgs["Wall"].StartIndexLocation;
+		wallsRenderItem->BaseVertexLocation = wallsRenderItem->Mesh->DrawArgs["Wall"].BaseVertexLocation;
+
+		// Add instances:
+		{
+			BufferTypes::InstanceData wallsInstanceData;
+			XMStoreFloat4x4(&wallsInstanceData.WorldMatrix, XMMatrixIdentity());
+			XMStoreFloat4x4(&wallsInstanceData.TextureTransform, XMMatrixIdentity());
+			wallsInstanceData.MaterialIndex = m_materials["Bricks"]->MaterialIndex;
+			wallsRenderItem->AddInstance(wallsInstanceData);
+		}
+
+		graphics->AddRenderItem(std::move(wallsRenderItem), { RenderLayer::Opaque });
 	}
 
 	// Skull:
@@ -218,63 +232,45 @@ void MirrorScene::InitializeRenderItems(Graphics* graphics)
 		auto skullRotate = XMMatrixRotationY(0.5f*MathHelper::Pi);
 		auto skullScale = XMMatrixScaling(0.45f, 0.45f, 0.45f);
 		auto skullOffset = XMMatrixTranslation(0.0f, 1.0f, -5.0f);
-		auto skullWorld = skullRotate*skullScale*skullOffset;
+		auto skullWorld = skullRotate * skullScale * skullOffset;
 
-		auto skullRitem = std::make_unique<RenderItem>();
-		XMStoreFloat4x4(&skullRitem->WorldMatrix, skullWorld);
-		skullRitem->TextureTransform = MathHelper::Identity4x4();
-		skullRitem->ObjectCBIndex = 2;
-		skullRitem->Material = m_materials["Skull Material"].get();
-		skullRitem->Mesh = m_geometries["Skull"].get();
-		skullRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		skullRitem->IndexCount = skullRitem->Mesh->DrawArgs["Skull"].IndexCount;
-		skullRitem->StartIndexLocation = skullRitem->Mesh->DrawArgs["Skull"].StartIndexLocation;
-		skullRitem->BaseVertexLocation = skullRitem->Mesh->DrawArgs["Skull"].BaseVertexLocation;
+		auto skullRenderItem = std::make_unique<RenderItem>();
+		skullRenderItem->Mesh = m_geometries["Skull"].get();
+		skullRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		skullRenderItem->IndexCount = skullRenderItem->Mesh->DrawArgs["Skull"].IndexCount;
+		skullRenderItem->StartIndexLocation = skullRenderItem->Mesh->DrawArgs["Skull"].StartIndexLocation;
+		skullRenderItem->BaseVertexLocation = skullRenderItem->Mesh->DrawArgs["Skull"].BaseVertexLocation;
 
-		// Reflected skull:
+		// Add instances:
 		{
-			auto mirrorPlane = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f); // xy plane
-			auto reflection = XMMatrixReflect(mirrorPlane);
-
-			// Reflected skull will have different world matrix, so it needs to be its own render item.
-			auto reflectedSkullRitem = std::make_unique<RenderItem>();
-			*reflectedSkullRitem = *skullRitem;
-			XMStoreFloat4x4(&reflectedSkullRitem->WorldMatrix, skullWorld * reflection);
-			reflectedSkullRitem->ObjectCBIndex = 3;
-			graphics->AddRenderItem(std::move(reflectedSkullRitem), { RenderLayer::Reflected });
+			BufferTypes::InstanceData skullInstanceData;
+			XMStoreFloat4x4(&skullInstanceData.WorldMatrix, skullWorld);
+			XMStoreFloat4x4(&skullInstanceData.TextureTransform, XMMatrixIdentity());
+			skullInstanceData.MaterialIndex = m_materials["Skull Material"]->MaterialIndex;
+			skullRenderItem->AddInstance(skullInstanceData);
 		}
 
-		// Shadowed skull:
-		{
-			auto shadowPlane = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f); // xz plane
-			auto toMainLight = XMVectorSet(-0.57735f, 0.57735f, -0.57735f, 0.0f);
-			auto shadowMatrix = XMMatrixShadow(shadowPlane, toMainLight);
-			auto shadowOffsetY = XMMatrixTranslation(0.0f, 0.005f, 0.0f);
-
-			// Shadowed skull will have different world matrix, so it needs to be its own render item.
-			auto shadowedSkullRitem = std::make_unique<RenderItem>();
-			*shadowedSkullRitem = *skullRitem;
-			XMStoreFloat4x4(&shadowedSkullRitem->WorldMatrix, skullWorld * shadowMatrix * shadowOffsetY);
-			shadowedSkullRitem->ObjectCBIndex = 4;
-			shadowedSkullRitem->Material = m_materials["Shadow Material"].get();
-			graphics->AddRenderItem(std::move(shadowedSkullRitem), { RenderLayer::Shadow });
-		}
-
-		graphics->AddRenderItem(std::move(skullRitem), { RenderLayer::Opaque });
+		graphics->AddRenderItem(std::move(skullRenderItem), { RenderLayer::Opaque });
 	}
 
 	// Mirror:
 	{
-		auto mirrorRitem = std::make_unique<RenderItem>();
-		mirrorRitem->WorldMatrix = MathHelper::Identity4x4();
-		mirrorRitem->TextureTransform = MathHelper::Identity4x4();
-		mirrorRitem->ObjectCBIndex = 5;
-		mirrorRitem->Material = m_materials["Ice Mirror"].get();
-		mirrorRitem->Mesh = m_geometries["Room Geometry"].get();
-		mirrorRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		mirrorRitem->IndexCount = mirrorRitem->Mesh->DrawArgs["Mirror"].IndexCount;
-		mirrorRitem->StartIndexLocation = mirrorRitem->Mesh->DrawArgs["Mirror"].StartIndexLocation;
-		mirrorRitem->BaseVertexLocation = mirrorRitem->Mesh->DrawArgs["Mirror"].BaseVertexLocation;
-		graphics->AddRenderItem(std::move(mirrorRitem), { RenderLayer::Transparent, RenderLayer::Mirrors });
+		auto mirrorRenderItem = std::make_unique<RenderItem>();
+		mirrorRenderItem->Mesh = m_geometries["Room Geometry"].get();
+		mirrorRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		mirrorRenderItem->IndexCount = mirrorRenderItem->Mesh->DrawArgs["Mirror"].IndexCount;
+		mirrorRenderItem->StartIndexLocation = mirrorRenderItem->Mesh->DrawArgs["Mirror"].StartIndexLocation;
+		mirrorRenderItem->BaseVertexLocation = mirrorRenderItem->Mesh->DrawArgs["Mirror"].BaseVertexLocation;
+
+		// Add instances:
+		{
+			BufferTypes::InstanceData mirrorInstanceData;
+			XMStoreFloat4x4(&mirrorInstanceData.WorldMatrix, XMMatrixIdentity());
+			XMStoreFloat4x4(&mirrorInstanceData.TextureTransform, XMMatrixIdentity());
+			mirrorInstanceData.MaterialIndex = m_materials["Ice Mirror"]->MaterialIndex;
+			mirrorRenderItem->AddInstance(mirrorInstanceData);
+		}
+
+		graphics->AddRenderItem(std::move(mirrorRenderItem), { RenderLayer::Transparent, RenderLayer::Mirrors });
 	}
 }

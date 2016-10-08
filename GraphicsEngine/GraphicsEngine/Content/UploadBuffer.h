@@ -53,7 +53,7 @@ namespace GraphicsEngine
 			return m_uploadBuffer.Get();
 		}
 
-		void CopyData(int elementIndex, const Type& data)
+		void CopyData(int elementIndex, const Type& data) const
 		{
 			memcpy_s(&m_mappedData[elementIndex * m_elementByteSize], sizeof(Type), &data, sizeof(Type));
 		}

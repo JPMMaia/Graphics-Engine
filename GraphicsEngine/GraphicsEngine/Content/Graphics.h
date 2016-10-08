@@ -42,9 +42,9 @@ namespace GraphicsEngine
 		void InitializeFrameResources();
 
 		void UpdateCamera();
-		void UpdateObjectsBuffer();
-		void UpdateMaterialsConstantBuffer() const;
-		void UpdateMainPassConstantBuffer(const Timer& timer);
+		void UpdateInstancesBuffer();
+		void UpdateMaterialsBuffer() const;
+		void UpdateMainPassBuffer(const Timer& timer);
 
 		void DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std::vector<RenderItem*>& renderItems) const;
 
@@ -61,7 +61,7 @@ namespace GraphicsEngine
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_postProcessRootSignature;
 
 		BufferTypes::PassData m_passConstants;
-		std::unique_ptr<UploadBuffer<BufferTypes::ObjectData>> m_perObjectCB;
+		std::unique_ptr<UploadBuffer<BufferTypes::InstanceData>> m_perObjectCB;
 
 		std::vector<std::unique_ptr<RenderItem>> m_allRenderItems;
 		std::vector<RenderItem*> m_renderItemLayers[static_cast<size_t>(RenderLayer::Count)];

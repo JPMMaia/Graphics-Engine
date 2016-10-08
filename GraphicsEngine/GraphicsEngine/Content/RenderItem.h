@@ -1,10 +1,9 @@
 ﻿#pragma once
 
-#include <DirectXMath.h>
-#include "Material.h"
-#include "MathHelper.h"
 #include "MeshGeometry.h"
+#include "BufferTypes.h"
 
+#include <DirectXMath.h>
 
 namespace GraphicsEngine
 {
@@ -13,19 +12,18 @@ namespace GraphicsEngine
 	public:
 		RenderItem();
 
+		void AddInstance(const BufferTypes::InstanceData& instanceData);
 		void Render(ID3D12GraphicsCommandList* commandList) const;
 
 	public:
 		int FramesDirtyCount = 0;
-		uint32_t ObjectCBIndex = -1;
 		MeshGeometry* Mesh = nullptr;
 		D3D12_PRIMITIVE_TOPOLOGY PrimitiveType = D3D_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		uint32_t IndexCount = 0;
 		uint32_t StartIndexLocation = 0;
 		int BaseVertexLocation = 0;
+		UINT InstanceCount = 0;
 
-		Material* Material = nullptr;
-		DirectX::XMFLOAT4X4 WorldMatrix = MathHelper::Identity4x4();
-		DirectX::XMFLOAT4X4 TextureTransform = MathHelper::Identity4x4();
+		std::vector<BufferTypes::InstanceData> InstancesData;
 	};
 }

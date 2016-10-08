@@ -21,7 +21,7 @@ void DefaultScene::Initialize(Graphics* graphics, const D3DBase& d3dBase, const 
 {
 	InitializeGeometry(d3dBase);
 	InitializeMaterials(textureManager);
-	InitializeRenderItems(graphics);
+	InitializeRenderItems(graphics, d3dBase);
 }
 
 const std::unordered_map<std::string, std::unique_ptr<Material>>& DefaultScene::GetMaterials() const
@@ -203,118 +203,130 @@ void DefaultScene::InitializeMaterials(const TextureManager& textureManager)
 		m_materials[skullMaterial->Name] = std::move(skullMaterial);
 	}
 }
-void DefaultScene::InitializeRenderItems(Graphics* graphics)
+void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBase)
 {
+	auto d3dDevice = d3dBase.GetDevice();
+
 	// Box:
 	{
 		auto boxRenderItem = std::make_unique<RenderItem>();
-		XMStoreFloat4x4(&boxRenderItem->WorldMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f)*XMMatrixTranslation(0.0f, 0.5f, 0.0f));
-		XMStoreFloat4x4(&boxRenderItem->TextureTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
-		boxRenderItem->ObjectCBIndex = 0;
 		boxRenderItem->Mesh = m_geometries["ShapeGeo"].get();
-		boxRenderItem->Material = m_materials["Crate0"].get();
 		boxRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		boxRenderItem->IndexCount = boxRenderItem->Mesh->DrawArgs["Box"].IndexCount;
 		boxRenderItem->StartIndexLocation = boxRenderItem->Mesh->DrawArgs["Box"].StartIndexLocation;
 		boxRenderItem->BaseVertexLocation = boxRenderItem->Mesh->DrawArgs["Box"].BaseVertexLocation;
+
+		// Add instances:
+		{
+			BufferTypes::InstanceData boxInstanceData;
+			XMStoreFloat4x4(&boxInstanceData.WorldMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f)*XMMatrixTranslation(0.0f, 0.5f, 0.0f));
+			XMStoreFloat4x4(&boxInstanceData.TextureTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
+			boxInstanceData.MaterialIndex = m_materials["Crate0"]->MaterialIndex;
+			boxRenderItem->AddInstance(boxInstanceData);
+		}
+
 		graphics->AddRenderItem(std::move(boxRenderItem), { RenderLayer::Opaque });
 	}
 
 	// Grid:
 	{
 		auto gridRenderItem = std::make_unique<RenderItem>();
-		gridRenderItem->WorldMatrix = MathHelper::Identity4x4();
-		XMStoreFloat4x4(&gridRenderItem->TextureTransform, XMMatrixScaling(8.0f, 8.0f, 1.0f));
-		gridRenderItem->ObjectCBIndex = 1;
 		gridRenderItem->Mesh = m_geometries["ShapeGeo"].get();
-		gridRenderItem->Material = m_materials["Tile0"].get();
 		gridRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		gridRenderItem->IndexCount = gridRenderItem->Mesh->DrawArgs["Grid"].IndexCount;
 		gridRenderItem->StartIndexLocation = gridRenderItem->Mesh->DrawArgs["Grid"].StartIndexLocation;
 		gridRenderItem->BaseVertexLocation = gridRenderItem->Mesh->DrawArgs["Grid"].BaseVertexLocation;
+
+		// Add instances:
+		{
+			BufferTypes::InstanceData gridInstanceData;
+			XMStoreFloat4x4(&gridInstanceData.WorldMatrix, XMMatrixIdentity());
+			XMStoreFloat4x4(&gridInstanceData.TextureTransform, XMMatrixScaling(8.0f, 8.0f, 1.0f));
+			gridInstanceData.MaterialIndex = m_materials["Tile0"]->MaterialIndex;
+			gridRenderItem->AddInstance(gridInstanceData);
+		}
+
 		graphics->AddRenderItem(std::move(gridRenderItem), { RenderLayer::Opaque });
 	}
 
 	// Skull:
 	{
 		auto skullRenderItem = std::make_unique<RenderItem>();
-		XMStoreFloat4x4(&skullRenderItem->WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f)*XMMatrixTranslation(0.0f, 1.0f, 0.0f));
-		skullRenderItem->TextureTransform = MathHelper::Identity4x4();
-		skullRenderItem->ObjectCBIndex = 2;
-		skullRenderItem->Material = m_materials["SkullMaterial"].get();
 		skullRenderItem->Mesh = m_geometries["Skull"].get();
 		skullRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		skullRenderItem->IndexCount = skullRenderItem->Mesh->DrawArgs["Skull"].IndexCount;
 		skullRenderItem->StartIndexLocation = skullRenderItem->Mesh->DrawArgs["Skull"].StartIndexLocation;
 		skullRenderItem->BaseVertexLocation = skullRenderItem->Mesh->DrawArgs["Skull"].BaseVertexLocation;
+
+		// Add instances:
+		{
+			BufferTypes::InstanceData skullInstanceData;
+			XMStoreFloat4x4(&skullInstanceData.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f)*XMMatrixTranslation(0.0f, 1.0f, 0.0f));
+			XMStoreFloat4x4(&skullInstanceData.TextureTransform, XMMatrixIdentity());
+			skullInstanceData.MaterialIndex = m_materials["SkullMaterial"]->MaterialIndex;
+			skullRenderItem->AddInstance(skullInstanceData);
+		}
+
 		graphics->AddRenderItem(std::move(skullRenderItem), { RenderLayer::Opaque });
 	}
 
-	UINT objCBIndex = 3;
-	for (auto i = 0; i < 5; ++i)
+	// Create cylinders:
 	{
-		// Left Cylinder:
+		auto cylinderRenderItem = std::make_unique<RenderItem>();
+		cylinderRenderItem->Mesh = m_geometries["ShapeGeo"].get();
+		cylinderRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		cylinderRenderItem->IndexCount = cylinderRenderItem->Mesh->DrawArgs["Cylinder"].IndexCount;
+		cylinderRenderItem->StartIndexLocation = cylinderRenderItem->Mesh->DrawArgs["Cylinder"].StartIndexLocation;
+		cylinderRenderItem->BaseVertexLocation = cylinderRenderItem->Mesh->DrawArgs["Cylinder"].BaseVertexLocation;
+		
+		// Add instances:
 		{
-			auto leftCylinderWorld = XMMatrixTranslation(-5.0f, 1.5f, -10.0f + i*5.0f);
-			auto leftCylinderRenderItem = std::make_unique<RenderItem>();
-			XMStoreFloat4x4(&leftCylinderRenderItem->WorldMatrix, leftCylinderWorld);
-			leftCylinderRenderItem->TextureTransform = MathHelper::Identity4x4();
-			leftCylinderRenderItem->ObjectCBIndex = objCBIndex++;
-			leftCylinderRenderItem->Mesh = m_geometries["ShapeGeo"].get();
-			leftCylinderRenderItem->Material = m_materials["Bricks0"].get();
-			leftCylinderRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			leftCylinderRenderItem->IndexCount = leftCylinderRenderItem->Mesh->DrawArgs["Cylinder"].IndexCount;
-			leftCylinderRenderItem->StartIndexLocation = leftCylinderRenderItem->Mesh->DrawArgs["Cylinder"].StartIndexLocation;
-			leftCylinderRenderItem->BaseVertexLocation = leftCylinderRenderItem->Mesh->DrawArgs["Cylinder"].BaseVertexLocation;
-			graphics->AddRenderItem(std::move(leftCylinderRenderItem), { RenderLayer::Opaque });
+			BufferTypes::InstanceData cylinderInstanceData;
+			XMStoreFloat4x4(&cylinderInstanceData.TextureTransform, XMMatrixIdentity());
+			cylinderInstanceData.MaterialIndex = m_materials["Bricks0"]->MaterialIndex;
+
+			for (auto i = 0; i < 5; ++i)
+			{
+				// Left cylinder:
+				XMStoreFloat4x4(&cylinderInstanceData.WorldMatrix, XMMatrixTranslation(-5.0f, 1.5f, -10.0f + i*5.0f));
+				cylinderRenderItem->AddInstance(cylinderInstanceData);
+
+				// Right cylinder:
+				XMStoreFloat4x4(&cylinderInstanceData.WorldMatrix, XMMatrixTranslation(+5.0f, 1.5f, -10.0f + i*5.0f));
+				cylinderRenderItem->AddInstance(cylinderInstanceData);
+			}
 		}
 
-		// Right Cylinder:
+		graphics->AddRenderItem(std::move(cylinderRenderItem), { RenderLayer::Opaque });
+	}
+
+	// Create spheres:
+	{
+		auto sphereRenderItem = std::make_unique<RenderItem>();
+		sphereRenderItem->Mesh = m_geometries["ShapeGeo"].get();
+		sphereRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		sphereRenderItem->IndexCount = sphereRenderItem->Mesh->DrawArgs["Sphere"].IndexCount;
+		sphereRenderItem->StartIndexLocation = sphereRenderItem->Mesh->DrawArgs["Sphere"].StartIndexLocation;
+		sphereRenderItem->BaseVertexLocation = sphereRenderItem->Mesh->DrawArgs["Sphere"].BaseVertexLocation;
+
+		// Add instances:
 		{
-			auto rightCylinderWorld = XMMatrixTranslation(+5.0f, 1.5f, -10.0f + i*5.0f);
-			auto rightCylinderRenderItem = std::make_unique<RenderItem>();
-			XMStoreFloat4x4(&rightCylinderRenderItem->WorldMatrix, rightCylinderWorld);
-			rightCylinderRenderItem->TextureTransform = MathHelper::Identity4x4();
-			rightCylinderRenderItem->ObjectCBIndex = objCBIndex++;
-			rightCylinderRenderItem->Mesh = m_geometries["ShapeGeo"].get();
-			rightCylinderRenderItem->Material = m_materials["Bricks0"].get();
-			rightCylinderRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			rightCylinderRenderItem->IndexCount = rightCylinderRenderItem->Mesh->DrawArgs["Cylinder"].IndexCount;
-			rightCylinderRenderItem->StartIndexLocation = rightCylinderRenderItem->Mesh->DrawArgs["Cylinder"].StartIndexLocation;
-			rightCylinderRenderItem->BaseVertexLocation = rightCylinderRenderItem->Mesh->DrawArgs["Cylinder"].BaseVertexLocation;
-			graphics->AddRenderItem(std::move(rightCylinderRenderItem), { RenderLayer::Opaque });
+			BufferTypes::InstanceData sphereInstanceData;
+			XMStoreFloat4x4(&sphereInstanceData.TextureTransform, XMMatrixIdentity());
+			sphereInstanceData.MaterialIndex = m_materials["Stone0"]->MaterialIndex;
+
+			for (auto i = 0; i < 5; ++i)
+			{
+				// Left sphere:
+				XMStoreFloat4x4(&sphereInstanceData.WorldMatrix, XMMatrixTranslation(-5.0f, 3.5f, -10.0f + i*5.0f));
+				sphereRenderItem->AddInstance(sphereInstanceData);
+
+				// Right sphere:
+				XMStoreFloat4x4(&sphereInstanceData.WorldMatrix, XMMatrixTranslation(+5.0f, 3.5f, -10.0f + i*5.0f));
+				sphereRenderItem->AddInstance(sphereInstanceData);
+			}
 		}
 
-		// Left Sphere:
-		{
-			auto leftSphereWorld = XMMatrixTranslation(-5.0f, 3.5f, -10.0f + i*5.0f);
-			auto leftSphereRenderItem = std::make_unique<RenderItem>();
-			XMStoreFloat4x4(&leftSphereRenderItem->WorldMatrix, leftSphereWorld);
-			leftSphereRenderItem->TextureTransform = MathHelper::Identity4x4();
-			leftSphereRenderItem->ObjectCBIndex = objCBIndex++;
-			leftSphereRenderItem->Mesh = m_geometries["ShapeGeo"].get();
-			leftSphereRenderItem->Material = m_materials["Stone0"].get();
-			leftSphereRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			leftSphereRenderItem->IndexCount = leftSphereRenderItem->Mesh->DrawArgs["Sphere"].IndexCount;
-			leftSphereRenderItem->StartIndexLocation = leftSphereRenderItem->Mesh->DrawArgs["Sphere"].StartIndexLocation;
-			leftSphereRenderItem->BaseVertexLocation = leftSphereRenderItem->Mesh->DrawArgs["Sphere"].BaseVertexLocation;
-			graphics->AddRenderItem(std::move(leftSphereRenderItem), { RenderLayer::Opaque });
-		}
-
-		// Right Sphere:
-		{
-			auto rightSphereWorld = XMMatrixTranslation(+5.0f, 3.5f, -10.0f + i*5.0f);
-			auto rightSphereRenderItem = std::make_unique<RenderItem>();
-			XMStoreFloat4x4(&rightSphereRenderItem->WorldMatrix, rightSphereWorld);
-			rightSphereRenderItem->TextureTransform = MathHelper::Identity4x4();
-			rightSphereRenderItem->ObjectCBIndex = objCBIndex++;
-			rightSphereRenderItem->Mesh = m_geometries["ShapeGeo"].get();
-			rightSphereRenderItem->Material = m_materials["Stone0"].get();
-			rightSphereRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			rightSphereRenderItem->IndexCount = rightSphereRenderItem->Mesh->DrawArgs["Sphere"].IndexCount;
-			rightSphereRenderItem->StartIndexLocation = rightSphereRenderItem->Mesh->DrawArgs["Sphere"].StartIndexLocation;
-			rightSphereRenderItem->BaseVertexLocation = rightSphereRenderItem->Mesh->DrawArgs["Sphere"].BaseVertexLocation;
-			graphics->AddRenderItem(std::move(rightSphereRenderItem), { RenderLayer::Opaque });
-		}
+		graphics->AddRenderItem(std::move(sphereRenderItem), { RenderLayer::Opaque });
 	}
 }

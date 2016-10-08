@@ -84,9 +84,9 @@ void Graphics::Update(const Timer& timer)
 		CloseHandle(eventHandle);
 	}
 
-	UpdateObjectsBuffer();
-	UpdateMaterialsConstantBuffer();
-	UpdateMainPassConstantBuffer(timer);
+	UpdateInstancesBuffer();
+	UpdateMaterialsBuffer();
+	UpdateMainPassBuffer(timer);
 }
 void Graphics::Render(const Timer& timer)
 {
@@ -102,13 +102,7 @@ void Graphics::Render(const Timer& timer)
 	// Set pass constant buffer:
 	{
 		auto passCB = m_currentFrameResource->PassBuffer->GetResource();
-		commandList->SetGraphicsRootConstantBufferView(1, passCB->GetGPUVirtualAddress());
-	}
-
-	// Bind all materials used in this scene:
-	{
-		auto materialBuffer = m_currentFrameResource->MaterialsBuffer->GetResource();
-		commandList->SetGraphicsRootShaderResourceView(2, materialBuffer->GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(3, passCB->GetGPUVirtualAddress());
 	}
 
 	// Bind all textures used in this scene:
@@ -120,7 +114,13 @@ void Graphics::Render(const Timer& timer)
 		commandList->SetDescriptorHeaps(1, &descriptorHeaps);
 
 		// Bind descriptor table. Only the first descriptor needs to be specifiec because the root signature knows how many descriptors are expected in the table:
-		commandList->SetGraphicsRootDescriptorTable(3, descriptorHeap->GetGPUDescriptorHandleForHeapStart());
+		commandList->SetGraphicsRootDescriptorTable(2, descriptorHeap->GetGPUDescriptorHandleForHeapStart());
+	}
+
+	// Bind all materials used in this scene:
+	{
+		auto materialBuffer = m_currentFrameResource->MaterialsBuffer->GetResource();
+		commandList->SetGraphicsRootShaderResourceView(1, materialBuffer->GetGPUVirtualAddress());
 	}
 
 	// Draw render items:
@@ -198,10 +198,10 @@ void Graphics::InitializeRootSignature()
 
 		// Specifying root parameters:
 		std::array<CD3DX12_ROOT_PARAMETER, 4> slotRootParameter;
-		slotRootParameter[0].InitAsConstantBufferView(0);
-		slotRootParameter[1].InitAsConstantBufferView(1);
-		slotRootParameter[2].InitAsShaderResourceView(0, 1); // Base Shader Register 0, Register Space 1
-		slotRootParameter[3].InitAsDescriptorTable(1, &texturesTable, D3D12_SHADER_VISIBILITY_PIXEL); // Base Shader Register 0, Register Space 0
+		slotRootParameter[0].InitAsShaderResourceView(0, 1); // Base Shader Register 0, Register Space 1
+		slotRootParameter[1].InitAsShaderResourceView(1, 1); // Base Shader Register 1, Register Space 1
+		slotRootParameter[2].InitAsDescriptorTable(1, &texturesTable, D3D12_SHADER_VISIBILITY_PIXEL); // Base Shader Register 0, Register Space 0
+		slotRootParameter[3].InitAsConstantBufferView(0);
 
 		auto staticSamplers = Samplers::GetStaticSamplers();
 
@@ -281,7 +281,7 @@ void Graphics::InitializeRootSignature()
 void Graphics::InitializeFrameResources()
 {
 	for (auto i = 0; i < s_frameResourcesCount; ++i)
-		m_frameResources.push_back(std::make_unique<FrameResource>(m_d3d.GetDevice(), 1, static_cast<uint32_t>(m_allRenderItems.size()), static_cast<uint32_t>(m_scene.GetMaterials().size())));
+		m_frameResources.push_back(std::make_unique<FrameResource>(m_d3d.GetDevice(), m_allRenderItems, static_cast<uint32_t>(m_scene.GetMaterials().size()), 1));
 
 	m_currentFrameResource = m_frameResources[m_currentFrameResourceIndex].get();
 }
@@ -290,33 +290,28 @@ void Graphics::UpdateCamera()
 {
 	m_camera.Update();
 }
-void Graphics::UpdateObjectsBuffer()
+void Graphics::UpdateInstancesBuffer()
 {
-	auto currentObjectBuffer = m_currentFrameResource->ObjectsBuffer.get();
-	for (auto& item : m_allRenderItems)
+	for(size_t i = 0; i < m_allRenderItems.size(); ++i)
 	{
-		// Only update the cbuffer data if the constants have changed.
-		// This needs to be tracked per frame resource.
-		if (item->FramesDirtyCount > 0)
+		auto& renderItem = m_allRenderItems[i];
+		auto& currentInstanceBuffer = m_currentFrameResource->InstancesBufferArray[i];
+
+		auto instanceIndex = 0U;
+		for (auto& instanceData : renderItem->InstancesData)
 		{
-			BufferTypes::ObjectData objectData;
+			BufferTypes::InstanceData data;
+			XMStoreFloat4x4(&data.WorldMatrix, XMMatrixTranspose(XMLoadFloat4x4(&instanceData.WorldMatrix)));
+			XMStoreFloat4x4(&data.TextureTransform, XMMatrixTranspose(XMLoadFloat4x4(&instanceData.TextureTransform)));
+			data.MaterialIndex = instanceData.MaterialIndex;
 
-			auto worldMatrix = XMLoadFloat4x4(&item->WorldMatrix);
-			XMStoreFloat4x4(&objectData.WorldMatrix, XMMatrixTranspose(worldMatrix));
-
-			auto textureTransfrom = XMLoadFloat4x4(&item->TextureTransform);
-			XMStoreFloat4x4(&objectData.TextureTransform, XMMatrixTranspose(textureTransfrom));
-
-			objectData.MaterialIndex = item->Material->MaterialIndex;
-
-			currentObjectBuffer->CopyData(item->ObjectCBIndex, objectData);
-
-			// Next FrameResource need to be updated too:
-			item->FramesDirtyCount--;
+			currentInstanceBuffer->CopyData(instanceIndex++, data);
 		}
+
+		renderItem->InstanceCount = instanceIndex;
 	}
 }
-void Graphics::UpdateMaterialsConstantBuffer() const
+void Graphics::UpdateMaterialsBuffer() const
 {
 	auto currentMaterialBuffer = m_currentFrameResource->MaterialsBuffer.get();
 	for (auto& e : m_scene.GetMaterials())
@@ -342,7 +337,7 @@ void Graphics::UpdateMaterialsConstantBuffer() const
 		}
 	}
 }
-void Graphics::UpdateMainPassConstantBuffer(const Timer& timer)
+void Graphics::UpdateMainPassBuffer(const Timer& timer)
 {
 	auto viewMatrix = m_camera.GetViewMatrix();
 	auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
@@ -383,19 +378,14 @@ void Graphics::UpdateMainPassConstantBuffer(const Timer& timer)
 
 void Graphics::DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std::vector<RenderItem*>& renderItems) const
 {
-	auto objectCBByteSize = DX::CalculateConstantBufferByteSize(sizeof(BufferTypes::ObjectData));
-	auto objectCB = m_currentFrameResource->ObjectsBuffer->GetResource();
-
 	// For each render item:
 	for (size_t i = 0; i < renderItems.size(); ++i)
 	{
-		auto renderItem = renderItems[i];
-
-		// Set Object Data:
-		auto objectCBAddress = static_cast<D3D12_GPU_VIRTUAL_ADDRESS>(objectCB->GetGPUVirtualAddress() + renderItem->ObjectCBIndex * objectCBByteSize);
-		commandList->SetGraphicsRootConstantBufferView(0, objectCBAddress);
+		// Set instance data:
+		auto instancesBuffer = m_currentFrameResource->InstancesBufferArray[i]->GetResource();
+		commandList->SetGraphicsRootShaderResourceView(0, instancesBuffer->GetGPUVirtualAddress());
 
 		// Render:
-		renderItem->Render(commandList);
+		renderItems[i]->Render(commandList);
 	}
 }

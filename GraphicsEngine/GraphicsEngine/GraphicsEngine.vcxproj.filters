@@ -300,10 +300,10 @@
     <None Include="Content\Shaders\MaterialData.hlsl">
       <Filter>Content\DirectX12\Shaders\HLSL</Filter>
     </None>
-    <None Include="Content\Shaders\ObjectData.hlsl">
+    <None Include="Content\Shaders\PassData.hlsl">
       <Filter>Content\DirectX12\Shaders\HLSL</Filter>
     </None>
-    <None Include="Content\Shaders\PassData.hlsl">
+    <None Include="Content\Shaders\InstanceData.hlsl">
       <Filter>Content\DirectX12\Shaders\HLSL</Filter>
     </None>
   </ItemGroup>

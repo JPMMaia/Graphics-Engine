@@ -12,7 +12,7 @@
 #include "RenderLayer.h"
 #include "TextureManager.h"
 #include "DescriptorHeap.h"
-#include "Scenes/DefaultScene.h"
+#include "Scenes/MirrorScene.h"
 
 #include <vector>
 
@@ -68,7 +68,7 @@ namespace GraphicsEngine
 
 		bool m_wireframeEnabled = false;
 		Camera m_camera;
-		DefaultScene m_scene;
+		MirrorScene m_scene;
 		TextureManager m_textureManager;
 		DescriptorHeap m_descriptorHeap;
 		BlurFilter m_blurFilter;

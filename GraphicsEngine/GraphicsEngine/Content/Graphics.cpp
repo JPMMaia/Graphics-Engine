@@ -295,19 +295,12 @@ void Graphics::UpdateInstancesBuffer()
 	for(size_t i = 0; i < m_allRenderItems.size(); ++i)
 	{
 		auto& item = m_allRenderItems[i];
+		auto& instancesData = item->InstancesData;
 
-		// Only update the instance data if the constants have changed.
-		// This needs to be tracked per frame resource.
-		if (item->FramesDirtyCount > 0)
-		{
-			auto& instancesData = item->InstancesData;
+		auto& currentInstanceBuffer = m_currentFrameResource->InstancesBufferArray[i];
+		currentInstanceBuffer->CopyData(&instancesData[0], instancesData.size() * sizeof(BufferTypes::InstanceData));
 
-			auto& currentInstanceBuffer = m_currentFrameResource->InstancesBufferArray[i];
-			currentInstanceBuffer->CopyData(&instancesData[0], instancesData.size() * sizeof(BufferTypes::InstanceData));
-
-			// Next FrameResource need to be updated too:
-			item->FramesDirtyCount--;
-		}
+		item->InstanceCount = static_cast<UINT>(item->InstancesData.size());
 	}
 }
 void Graphics::UpdateMaterialsBuffer() const

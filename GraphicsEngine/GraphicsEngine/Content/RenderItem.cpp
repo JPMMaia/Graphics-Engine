@@ -28,5 +28,5 @@ void RenderItem::Render(ID3D12GraphicsCommandList* commandList) const
 	commandList->IASetPrimitiveTopology(this->PrimitiveType);
 
 	// Draw mesh:
-	commandList->DrawIndexedInstanced(this->IndexCount, 1, this->StartIndexLocation, this->BaseVertexLocation, 0);
+	commandList->DrawIndexedInstanced(this->IndexCount, this->InstanceCount, this->StartIndexLocation, this->BaseVertexLocation, 0);
 }

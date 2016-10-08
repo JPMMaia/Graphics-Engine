@@ -22,6 +22,7 @@ namespace GraphicsEngine
 		uint32_t IndexCount = 0;
 		uint32_t StartIndexLocation = 0;
 		int BaseVertexLocation = 0;
+		UINT InstanceCount = 0;
 
 		std::vector<BufferTypes::InstanceData> InstancesData;
 	};

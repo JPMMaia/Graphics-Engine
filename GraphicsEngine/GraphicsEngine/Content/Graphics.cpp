@@ -21,21 +21,31 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	auto commandList = m_d3d.GetCommandList();
 	DX::ThrowIfFailed(commandList->Reset(m_d3d.GetCommandAllocator(), nullptr));
 
-	InitializeRootSignature();
-	m_pipelineStateManager = PipelineStateManager(m_d3d, m_rootSignature.Get(), m_postProcessRootSignature.Get());
+	{
+		// Load all textures:
+		m_scene.AddTextures(&m_textureManager);
+		m_textureManager.LoadAllTextures(m_d3d);
 
-	m_scene.AddTextures(&m_textureManager);
-	m_textureManager.LoadAllTextures(m_d3d);
+		// Create a descriptor heap with capacity to hold all scene texture views plus the blur filter views:
+		auto descriptorCount = m_textureManager.GetTextureCount() + 4;
+		m_descriptorHeap = DescriptorHeap(m_d3d, descriptorCount);
+		m_textureManager.CreateShaderResourceViews(m_d3d, &m_descriptorHeap);
+		m_blurFilter = BlurFilter(m_d3d, &m_descriptorHeap, clientWidth, clientHeight, m_d3d.GetBackBufferFormat());
 
-	auto descriptorCount = m_textureManager.GetTextureCount() + 4;
-	m_descriptorHeap = DescriptorHeap(m_d3d, descriptorCount);
-	m_textureManager.CreateShaderResourceViews(m_d3d, &m_descriptorHeap);
-	m_blurFilter = BlurFilter(m_d3d, &m_descriptorHeap, clientWidth, clientHeight, m_d3d.GetBackBufferFormat());
+		// Initialize scene:
+		m_scene.Initialize(this, m_d3d, m_textureManager);
 
-	m_scene.Initialize(this, m_d3d, m_textureManager);
+		// Initialize frame resources:
+		InitializeFrameResources();
+	}
 
-	InitializeFrameResources();
+	// Initialize root signature and create pipeline state objects:
+	{
+		InitializeRootSignature();
+		m_pipelineStateManager = PipelineStateManager(m_d3d, m_rootSignature.Get(), m_postProcessRootSignature.Get(), m_textureManager.GetTextureCount());
+	}
 
+	// Set clear color the same color as the fog:
 	m_d3d.SetClearColor(m_passConstants.FogColor);
 
 	// Execute the initialization commands:
@@ -180,10 +190,10 @@ void Graphics::InitializeRootSignature()
 	{
 		// Describing textures tables:
 		CD3DX12_DESCRIPTOR_RANGE texturesTable(
-			D3D12_DESCRIPTOR_RANGE_TYPE_SRV,		// Range Type
-			4,										// Number of Descriptors
-			0,										// Base Shader Register
-			0										// Register Space
+			D3D12_DESCRIPTOR_RANGE_TYPE_SRV,						// Range Type
+			static_cast<UINT>(m_textureManager.GetTextureCount()),	// Number of Descriptors - this must be the same value as the shader macro NUM_TEXTURES
+			0,														// Base Shader Register
+			0														// Register Space
 		);
 
 		// Specifying root parameters:

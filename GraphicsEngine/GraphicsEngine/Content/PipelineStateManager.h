@@ -12,14 +12,14 @@ namespace GraphicsEngine
 	{
 	public:
 		PipelineStateManager() = default;
-		PipelineStateManager(const D3DBase& d3dBase, ID3D12RootSignature* rootSignature, ID3D12RootSignature* postProcessRootSignature);
+		PipelineStateManager(const D3DBase& d3dBase, ID3D12RootSignature* rootSignature, ID3D12RootSignature* postProcessRootSignature, size_t textureCount);
 		
 		void SetPipelineState(ID3D12GraphicsCommandList* commandList, const std::string& name) const;
 
 		ID3D12PipelineState* GetPipelineState(const std::string& name) const;
 
 	private:
-		void InitializeShadersAndInputLayout();
+		void InitializeShadersAndInputLayout(size_t textureCount);
 		void InitializePipelineStateObjects(const D3DBase& d3dBase, ID3D12RootSignature* rootSignature, ID3D12RootSignature* postProcessRootSignature);
 
 	private:

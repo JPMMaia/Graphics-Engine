@@ -1,62 +1,59 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Content">
-      <UniqueIdentifier>{5e3eef02-b1a5-4687-822e-2a7c1d742d86}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common">
       <UniqueIdentifier>{ec3aa1d3-4132-4dee-99ef-3d2ac45f6e1f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\Timer">
+    <Filter Include="GraphicsEngine">
+      <UniqueIdentifier>{95d54f6d-8ee1-419d-86a0-0aedf536e1af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\Timer">
       <UniqueIdentifier>{ebdcfab2-a651-4961-be44-e01b9e0f0170}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectX12">
-      <UniqueIdentifier>{522e7f41-a386-424a-b51f-166acefe90aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Content\Input">
+    <Filter Include="GraphicsEngine\Input">
       <UniqueIdentifier>{4f187a28-3a26-441e-a6e9-4ddbc0806324}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\Helpers">
-      <UniqueIdentifier>{69a75813-f49e-4ff1-8d3f-9ff3ff9d103b}</UniqueIdentifier>
+    <Filter Include="GraphicsEngine\Settings">
+      <UniqueIdentifier>{a7420dd2-b0dc-4613-af02-cf5ff35ceea9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectX12\Geometry">
-      <UniqueIdentifier>{c5d00b11-b2f7-4164-bf6d-dc45cf87e6a5}</UniqueIdentifier>
+    <Filter Include="GraphicsEngine\DirectX12">
+      <UniqueIdentifier>{0b433ff0-9702-46f9-a198-64fb943f2312}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectX12\Buffers">
-      <UniqueIdentifier>{41607c1e-0191-4ff5-8507-9169456a3fc6}</UniqueIdentifier>
+    <Filter Include="GraphicsEngine\DirectX12\Buffers">
+      <UniqueIdentifier>{d502d7de-7977-4606-b56a-619af30b1afe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectX12\Shaders">
-      <UniqueIdentifier>{dbb2e2d9-03d3-40aa-9b3f-5577174a02a2}</UniqueIdentifier>
+    <Filter Include="GraphicsEngine\DirectX12\Cameras">
+      <UniqueIdentifier>{342b930f-3554-464a-9eba-ccdff6a2ce1d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectX12\Helpers">
-      <UniqueIdentifier>{2fd1a73f-940c-4f28-a403-7720b997640e}</UniqueIdentifier>
+    <Filter Include="GraphicsEngine\DirectX12\Effects">
+      <UniqueIdentifier>{ae5cd86f-c87a-468e-8d01-59195189f722}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectX12\Input">
-      <UniqueIdentifier>{f59321bd-250e-4a28-94a5-56252d3ccd36}</UniqueIdentifier>
+    <Filter Include="GraphicsEngine\DirectX12\Geometry">
+      <UniqueIdentifier>{f5dbcb95-ba61-4fdd-8355-016babc9bc42}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectX12\Shaders\HLSL">
-      <UniqueIdentifier>{5ca19ed7-13f2-4b69-8e57-f930434741a7}</UniqueIdentifier>
+    <Filter Include="GraphicsEngine\DirectX12\Helpers">
+      <UniqueIdentifier>{744fd8d5-38ea-4e7a-b43f-5fffb0892e53}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectX12\Cameras">
-      <UniqueIdentifier>{822d41ca-56c4-4fb4-b685-ecda53720413}</UniqueIdentifier>
+    <Filter Include="GraphicsEngine\DirectX12\Lighting">
+      <UniqueIdentifier>{7fd5c294-01c5-42ad-8c83-cd5770f626b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectX12\Lighting">
-      <UniqueIdentifier>{f8f1d852-6cb2-42f7-9fc6-bfe6235f2235}</UniqueIdentifier>
+    <Filter Include="GraphicsEngine\DirectX12\Resources">
+      <UniqueIdentifier>{7f964ab6-38e8-4894-9c25-8223e4a5d368}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectX12\Resources">
-      <UniqueIdentifier>{c593a79c-36de-49d9-8cf8-d5b220550f8e}</UniqueIdentifier>
+    <Filter Include="GraphicsEngine\DirectX12\Scenes">
+      <UniqueIdentifier>{bad03b30-a392-485b-a638-bda147db6058}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectX12\Textures">
-      <UniqueIdentifier>{416b960a-41a9-477f-8b9b-8a27e51f350c}</UniqueIdentifier>
+    <Filter Include="GraphicsEngine\DirectX12\Shaders">
+      <UniqueIdentifier>{04dbdc33-14a2-4700-8dab-35ab6f52c1f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectX12\Scene">
-      <UniqueIdentifier>{a786714d-b062-4a08-8ac0-ee80d5bf9134}</UniqueIdentifier>
+    <Filter Include="GraphicsEngine\DirectX12\Textures">
+      <UniqueIdentifier>{9075e811-ce62-4509-8905-9cb23e25a863}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectX12\Effects">
-      <UniqueIdentifier>{d7b1f5e6-d92a-4316-a4de-9fdf8e947a6f}</UniqueIdentifier>
+    <Filter Include="GraphicsEngine\DirectX12\Input">
+      <UniqueIdentifier>{02c456ba-3f70-4686-99de-d95883642e09}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\DirectSound">
-      <UniqueIdentifier>{04df5304-2b68-4060-b417-6ff49db38a26}</UniqueIdentifier>
+    <Filter Include="GraphicsEngine\DirectX12\Shaders\HLSL">
+      <UniqueIdentifier>{99a5e77d-0e19-4631-97e7-c6a1d6a7dcb9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -66,254 +63,228 @@
     <ClInclude Include="targetver.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Content\SceneRenderer.h">
-      <Filter>Content</Filter>
+    <ClInclude Include="GraphicsEngine\Timer.h">
+      <Filter>GraphicsEngine\Timer</Filter>
     </ClInclude>
-    <ClInclude Include="Content\ISceneRenderer.h">
-      <Filter>Content</Filter>
+    <ClInclude Include="GraphicsEngine\InputHandler.h">
+      <Filter>GraphicsEngine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Timer.h">
-      <Filter>Content\Timer</Filter>
+    <ClInclude Include="GraphicsEngine\VirtualKey.h">
+      <Filter>GraphicsEngine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Content\InputHandler.h">
-      <Filter>Content\Input</Filter>
+    <ClInclude Include="GraphicsEngine\SettingsManager.h">
+      <Filter>GraphicsEngine\Settings</Filter>
     </ClInclude>
-    <ClInclude Include="Content\VirtualKey.h">
-      <Filter>Content\Input</Filter>
+    <ClInclude Include="GraphicsEngine\D3DBase.h">
+      <Filter>GraphicsEngine\DirectX12</Filter>
     </ClInclude>
-    <ClInclude Include="Content\SettingsManager.h">
-      <Filter>Content\Helpers</Filter>
+    <ClInclude Include="GraphicsEngine\DescriptorHeap.h">
+      <Filter>GraphicsEngine\DirectX12</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Helpers.h">
-      <Filter>Content\Helpers</Filter>
+    <ClInclude Include="GraphicsEngine\Graphics.h">
+      <Filter>GraphicsEngine\DirectX12</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Graphics.h">
-      <Filter>Content\DirectX12</Filter>
+    <ClInclude Include="GraphicsEngine\PipelineStateManager.h">
+      <Filter>GraphicsEngine\DirectX12</Filter>
     </ClInclude>
-    <ClInclude Include="Content\UploadBuffer.h">
-      <Filter>Content\DirectX12\Buffers</Filter>
+    <ClInclude Include="GraphicsEngine\BaseGeometryBuffer.h">
+      <Filter>GraphicsEngine\DirectX12\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Shader.h">
-      <Filter>Content\DirectX12\Shaders</Filter>
+    <ClInclude Include="GraphicsEngine\IndexBuffer.h">
+      <Filter>GraphicsEngine\DirectX12\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="Content\DirectXHelper.h">
-      <Filter>Content\DirectX12\Helpers</Filter>
+    <ClInclude Include="GraphicsEngine\UploadBuffer.h">
+      <Filter>GraphicsEngine\DirectX12\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="Content\d3dx12.h">
-      <Filter>Content\DirectX12\Helpers</Filter>
+    <ClInclude Include="GraphicsEngine\VertexBuffer.h">
+      <Filter>GraphicsEngine\DirectX12\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="Content\D3DBase.h">
-      <Filter>Content\DirectX12</Filter>
+    <ClInclude Include="GraphicsEngine\Camera.h">
+      <Filter>GraphicsEngine\DirectX12\Cameras</Filter>
     </ClInclude>
-    <ClInclude Include="Content\VertexBuffer.h">
-      <Filter>Content\DirectX12\Buffers</Filter>
+    <ClInclude Include="GraphicsEngine\BlurFilter.h">
+      <Filter>GraphicsEngine\DirectX12\Effects</Filter>
     </ClInclude>
-    <ClInclude Include="Content\SubmeshGeometry.h">
-      <Filter>Content\DirectX12\Geometry</Filter>
+    <ClInclude Include="GraphicsEngine\GeometryGenerator.h">
+      <Filter>GraphicsEngine\DirectX12\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="Content\MeshGeometry.h">
-      <Filter>Content\DirectX12\Geometry</Filter>
+    <ClInclude Include="GraphicsEngine\MeshGeometry.h">
+      <Filter>GraphicsEngine\DirectX12\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="Content\IndexBuffer.h">
-      <Filter>Content\DirectX12\Buffers</Filter>
+    <ClInclude Include="GraphicsEngine\SubmeshGeometry.h">
+      <Filter>GraphicsEngine\DirectX12\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="Content\BaseGeometryBuffer.h">
-      <Filter>Content\DirectX12\Buffers</Filter>
+    <ClInclude Include="GraphicsEngine\d3dx12.h">
+      <Filter>GraphicsEngine\DirectX12\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="Content\MathHelper.h">
-      <Filter>Content\DirectX12\Helpers</Filter>
+    <ClInclude Include="GraphicsEngine\DirectXHelper.h">
+      <Filter>GraphicsEngine\DirectX12\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="Content\DXInputHandler.h">
-      <Filter>Content\DirectX12\Input</Filter>
+    <ClInclude Include="GraphicsEngine\MathHelper.h">
+      <Filter>GraphicsEngine\DirectX12\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="Content\FrameResource.h">
-      <Filter>Content\DirectX12\Resources</Filter>
+    <ClInclude Include="GraphicsEngine\DXInputHandler.h">
+      <Filter>GraphicsEngine\DirectX12\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Content\GeometryGenerator.h">
-      <Filter>Content\DirectX12\Geometry</Filter>
+    <ClInclude Include="GraphicsEngine\Light.h">
+      <Filter>GraphicsEngine\DirectX12\Lighting</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Camera.h">
-      <Filter>Content\DirectX12\Cameras</Filter>
+    <ClInclude Include="GraphicsEngine\Material.h">
+      <Filter>GraphicsEngine\DirectX12\Lighting</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Light.h">
-      <Filter>Content\DirectX12\Lighting</Filter>
+    <ClInclude Include="GraphicsEngine\BufferTypes.h">
+      <Filter>GraphicsEngine\DirectX12\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Content\RenderItem.h">
-      <Filter>Content\DirectX12\Resources</Filter>
+    <ClInclude Include="GraphicsEngine\FrameResource.h">
+      <Filter>GraphicsEngine\DirectX12\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Material.h">
-      <Filter>Content\DirectX12\Lighting</Filter>
+    <ClInclude Include="GraphicsEngine\RenderItem.h">
+      <Filter>GraphicsEngine\DirectX12\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Content\EngineException.h">
-      <Filter>Content\DirectX12\Helpers</Filter>
+    <ClInclude Include="GraphicsEngine\VertexTypes.h">
+      <Filter>GraphicsEngine\DirectX12\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Content\VertexTypes.h">
-      <Filter>Content\DirectX12\Resources</Filter>
+    <ClInclude Include="GraphicsEngine\IScene.h">
+      <Filter>GraphicsEngine\DirectX12\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Texture.h">
-      <Filter>Content\DirectX12\Textures</Filter>
+    <ClInclude Include="GraphicsEngine\Scenes\DefaultScene.h">
+      <Filter>GraphicsEngine\DirectX12\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Content\DDSTextureLoader.h">
-      <Filter>Content\DirectX12\Textures</Filter>
+    <ClInclude Include="GraphicsEngine\Scenes\MirrorScene.h">
+      <Filter>GraphicsEngine\DirectX12\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Samplers.h">
-      <Filter>Content\DirectX12\Textures</Filter>
+    <ClInclude Include="GraphicsEngine\RenderLayer.h">
+      <Filter>GraphicsEngine\DirectX12\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Content\RenderLayer.h">
-      <Filter>Content\DirectX12\Scene</Filter>
+    <ClInclude Include="GraphicsEngine\Shader.h">
+      <Filter>GraphicsEngine\DirectX12\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Scenes\DefaultScene.h">
-      <Filter>Content\DirectX12\Scene</Filter>
+    <ClInclude Include="GraphicsEngine\DDSTextureLoader.h">
+      <Filter>GraphicsEngine\DirectX12\Textures</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Scenes\MirrorScene.h">
-      <Filter>Content\DirectX12\Scene</Filter>
+    <ClInclude Include="GraphicsEngine\RWTexture.h">
+      <Filter>GraphicsEngine\DirectX12\Textures</Filter>
     </ClInclude>
-    <ClInclude Include="Content\IScene.h">
-      <Filter>Content\DirectX12\Scene</Filter>
+    <ClInclude Include="GraphicsEngine\Samplers.h">
+      <Filter>GraphicsEngine\DirectX12\Textures</Filter>
     </ClInclude>
-    <ClInclude Include="Content\BlurFilter.h">
-      <Filter>Content\DirectX12\Effects</Filter>
+    <ClInclude Include="GraphicsEngine\Texture.h">
+      <Filter>GraphicsEngine\DirectX12\Textures</Filter>
     </ClInclude>
-    <ClInclude Include="Content\PipelineStateManager.h">
-      <Filter>Content\DirectX12</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\RWTexture.h">
-      <Filter>Content\DirectX12\Textures</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\DescriptorHeap.h">
-      <Filter>Content\DirectX12</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\TextureManager.h">
-      <Filter>Content\DirectX12\Textures</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\BufferTypes.h">
-      <Filter>Content\DirectX12\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\SoundManager.h">
-      <Filter>Content\DirectSound</Filter>
+    <ClInclude Include="GraphicsEngine\TextureManager.h">
+      <Filter>GraphicsEngine\DirectX12\Textures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="Content\SceneRenderer.cpp">
-      <Filter>Content</Filter>
+    <ClCompile Include="GraphicsEngine\Timer.cpp">
+      <Filter>GraphicsEngine\Timer</Filter>
     </ClCompile>
-    <ClCompile Include="Content\InputHandler.cpp">
-      <Filter>Content\Input</Filter>
+    <ClCompile Include="GraphicsEngine\InputHandler.cpp">
+      <Filter>GraphicsEngine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Content\SettingsManager.cpp">
-      <Filter>Content\Helpers</Filter>
+    <ClCompile Include="GraphicsEngine\SettingsManager.cpp">
+      <Filter>GraphicsEngine\Settings</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Graphics.cpp">
-      <Filter>Content\DirectX12</Filter>
+    <ClCompile Include="GraphicsEngine\D3DBase.cpp">
+      <Filter>GraphicsEngine\DirectX12</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Shader.cpp">
-      <Filter>Content\DirectX12\Shaders</Filter>
+    <ClCompile Include="GraphicsEngine\DescriptorHeap.cpp">
+      <Filter>GraphicsEngine\DirectX12</Filter>
     </ClCompile>
-    <ClCompile Include="Content\DirectXHelper.cpp">
-      <Filter>Content\DirectX12\Helpers</Filter>
+    <ClCompile Include="GraphicsEngine\Graphics.cpp">
+      <Filter>GraphicsEngine\DirectX12</Filter>
     </ClCompile>
-    <ClCompile Include="Content\D3DBase.cpp">
-      <Filter>Content\DirectX12</Filter>
+    <ClCompile Include="GraphicsEngine\PipelineStateManager.cpp">
+      <Filter>GraphicsEngine\DirectX12</Filter>
     </ClCompile>
-    <ClCompile Include="Content\MeshGeometry.cpp">
-      <Filter>Content\DirectX12\Geometry</Filter>
+    <ClCompile Include="GraphicsEngine\BaseGeometryBuffer.cpp">
+      <Filter>GraphicsEngine\DirectX12\Buffers</Filter>
     </ClCompile>
-    <ClCompile Include="Content\VertexBuffer.cpp">
-      <Filter>Content\DirectX12\Buffers</Filter>
+    <ClCompile Include="GraphicsEngine\IndexBuffer.cpp">
+      <Filter>GraphicsEngine\DirectX12\Buffers</Filter>
     </ClCompile>
-    <ClCompile Include="Content\IndexBuffer.cpp">
-      <Filter>Content\DirectX12\Buffers</Filter>
+    <ClCompile Include="GraphicsEngine\VertexBuffer.cpp">
+      <Filter>GraphicsEngine\DirectX12\Buffers</Filter>
     </ClCompile>
-    <ClCompile Include="Content\BaseGeometryBuffer.cpp">
-      <Filter>Content\DirectX12\Buffers</Filter>
+    <ClCompile Include="GraphicsEngine\Camera.cpp">
+      <Filter>GraphicsEngine\DirectX12\Cameras</Filter>
     </ClCompile>
-    <ClCompile Include="Content\MathHelper.cpp">
-      <Filter>Content\DirectX12\Helpers</Filter>
+    <ClCompile Include="GraphicsEngine\BlurFilter.cpp">
+      <Filter>GraphicsEngine\DirectX12\Effects</Filter>
     </ClCompile>
-    <ClCompile Include="Content\DXInputHandler.cpp">
-      <Filter>Content\DirectX12\Input</Filter>
+    <ClCompile Include="GraphicsEngine\GeometryGenerator.cpp">
+      <Filter>GraphicsEngine\DirectX12\Geometry</Filter>
     </ClCompile>
-    <ClCompile Include="Content\FrameResource.cpp">
-      <Filter>Content\DirectX12\Resources</Filter>
+    <ClCompile Include="GraphicsEngine\MeshGeometry.cpp">
+      <Filter>GraphicsEngine\DirectX12\Geometry</Filter>
     </ClCompile>
-    <ClCompile Include="Content\GeometryGenerator.cpp">
-      <Filter>Content\DirectX12\Geometry</Filter>
+    <ClCompile Include="GraphicsEngine\DirectXHelper.cpp">
+      <Filter>GraphicsEngine\DirectX12\Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Camera.cpp">
-      <Filter>Content\DirectX12\Cameras</Filter>
+    <ClCompile Include="GraphicsEngine\MathHelper.cpp">
+      <Filter>GraphicsEngine\DirectX12\Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="Content\RenderItem.cpp">
-      <Filter>Content\DirectX12\Resources</Filter>
+    <ClCompile Include="GraphicsEngine\DXInputHandler.cpp">
+      <Filter>GraphicsEngine\DirectX12\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Material.cpp">
-      <Filter>Content\DirectX12\Lighting</Filter>
+    <ClCompile Include="GraphicsEngine\Material.cpp">
+      <Filter>GraphicsEngine\DirectX12\Lighting</Filter>
     </ClCompile>
-    <ClCompile Include="Content\EngineException.cpp">
-      <Filter>Content\DirectX12\Helpers</Filter>
+    <ClCompile Include="GraphicsEngine\FrameResource.cpp">
+      <Filter>GraphicsEngine\DirectX12\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Timer.cpp">
-      <Filter>Content\Timer</Filter>
+    <ClCompile Include="GraphicsEngine\RenderItem.cpp">
+      <Filter>GraphicsEngine\DirectX12\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Texture.cpp">
-      <Filter>Content\DirectX12\Textures</Filter>
+    <ClCompile Include="GraphicsEngine\Scenes\DefaultScene.cpp">
+      <Filter>GraphicsEngine\DirectX12\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Content\DDSTextureLoader.cpp">
-      <Filter>Content\DirectX12\Textures</Filter>
+    <ClCompile Include="GraphicsEngine\Scenes\MirrorScene.cpp">
+      <Filter>GraphicsEngine\DirectX12\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Samplers.cpp">
-      <Filter>Content\DirectX12\Textures</Filter>
+    <ClCompile Include="GraphicsEngine\Shader.cpp">
+      <Filter>GraphicsEngine\DirectX12\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Scenes\DefaultScene.cpp">
-      <Filter>Content\DirectX12\Scene</Filter>
+    <ClCompile Include="GraphicsEngine\DDSTextureLoader.cpp">
+      <Filter>GraphicsEngine\DirectX12\Textures</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Scenes\MirrorScene.cpp">
-      <Filter>Content\DirectX12\Scene</Filter>
+    <ClCompile Include="GraphicsEngine\RWTexture.cpp">
+      <Filter>GraphicsEngine\DirectX12\Textures</Filter>
     </ClCompile>
-    <ClCompile Include="Content\BlurFilter.cpp">
-      <Filter>Content\DirectX12\Effects</Filter>
+    <ClCompile Include="GraphicsEngine\Samplers.cpp">
+      <Filter>GraphicsEngine\DirectX12\Textures</Filter>
     </ClCompile>
-    <ClCompile Include="Content\PipelineStateManager.cpp">
-      <Filter>Content\DirectX12</Filter>
+    <ClCompile Include="GraphicsEngine\Texture.cpp">
+      <Filter>GraphicsEngine\DirectX12\Textures</Filter>
     </ClCompile>
-    <ClCompile Include="Content\RWTexture.cpp">
-      <Filter>Content\DirectX12\Textures</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\DescriptorHeap.cpp">
-      <Filter>Content\DirectX12</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\TextureManager.cpp">
-      <Filter>Content\DirectX12\Textures</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\SoundManager.cpp">
-      <Filter>Content\DirectSound</Filter>
+    <ClCompile Include="GraphicsEngine\TextureManager.cpp">
+      <Filter>GraphicsEngine\DirectX12\Textures</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Content\Shaders\DefaultPixelShader.hlsl">
-      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
+    <FxCompile Include="GraphicsEngine\Shaders\BlurComputeShader.hlsl">
+      <Filter>GraphicsEngine\DirectX12\Shaders\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="Content\Shaders\DefaultVertexShader.hlsl">
-      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
+    <FxCompile Include="GraphicsEngine\Shaders\DefaultPixelShader.hlsl">
+      <Filter>GraphicsEngine\DirectX12\Shaders\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="Content\Shaders\BlurComputeShader.hlsl">
-      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
+    <FxCompile Include="GraphicsEngine\Shaders\DefaultVertexShader.hlsl">
+      <Filter>GraphicsEngine\DirectX12\Shaders\HLSL</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Content\Shaders\LightingUtils.hlsl">
-      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
-    </None>
-    <None Include="Content\Shaders\MaterialData.hlsl">
-      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
-    </None>
-    <None Include="Content\Shaders\PassData.hlsl">
-      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
-    </None>
-    <None Include="Content\Shaders\InstanceData.hlsl">
-      <Filter>Content\DirectX12\Shaders\HLSL</Filter>
-    </None>
+    <FxCompile Include="GraphicsEngine\Shaders\InstanceData.hlsl">
+      <Filter>GraphicsEngine\DirectX12\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\LightingUtils.hlsl">
+      <Filter>GraphicsEngine\DirectX12\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\MaterialData.hlsl">
+      <Filter>GraphicsEngine\DirectX12\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\PassData.hlsl">
+      <Filter>GraphicsEngine\DirectX12\Shaders\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

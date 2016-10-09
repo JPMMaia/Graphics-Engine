@@ -19,7 +19,6 @@
 #include <wrl.h>
 #include <cstdint>
 
-#include "Content/d3dx12.h"
-#include "Content/Helpers.h"
-#include "Content/DirectXHelper.h"
-
+#include "Common/Helpers.h"
+#include "GraphicsEngine/d3dx12.h"
+#include "GraphicsEngine/DirectXHelper.h"

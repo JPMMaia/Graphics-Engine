@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "Content/Graphics.h"
-#include "Content/DXInputHandler.h"
-#include "Content/Timer.h"
+#include "GraphicsEngine/Graphics.h"
+#include "GraphicsEngine/DXInputHandler.h"
+#include "GraphicsEngine/Timer.h"
 #include "Window.h"
 
 namespace Win32Application

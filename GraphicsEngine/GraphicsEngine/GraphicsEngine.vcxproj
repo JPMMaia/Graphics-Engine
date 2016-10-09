@@ -172,6 +172,7 @@
     <ClInclude Include="Content\Scenes\MirrorScene.h" />
     <ClInclude Include="Content\SettingsManager.h" />
     <ClInclude Include="Content\Shader.h" />
+    <ClInclude Include="Content\SoundManager.h" />
     <ClInclude Include="Content\SubmeshGeometry.h" />
     <ClInclude Include="Content\Texture.h" />
     <ClInclude Include="Content\TextureManager.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="Content\Scenes\MirrorScene.cpp" />
     <ClCompile Include="Content\SettingsManager.cpp" />
     <ClCompile Include="Content\Shader.cpp" />
+    <ClCompile Include="Content\SoundManager.cpp" />
     <ClCompile Include="Content\Texture.cpp" />
     <ClCompile Include="Content\TextureManager.cpp" />
     <ClCompile Include="Content\Timer.cpp" />

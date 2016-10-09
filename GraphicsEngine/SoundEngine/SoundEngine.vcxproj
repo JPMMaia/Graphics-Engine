@@ -19,33 +19,33 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{C1AF559A-9231-4A99-AF83-4E6D7D4B4EC9}</ProjectGuid>
+    <ProjectGuid>{9B8F2E7F-5F9B-4885-8200-AD47BBECDFE1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Win32Application</RootNamespace>
+    <RootNamespace>SoundEngine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -71,19 +71,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Common;$(SolutionDir)GraphicsEngine;$(SolutionDir)SoundEngine;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Common;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Common;$(SolutionDir)GraphicsEngine;$(SolutionDir)SoundEngine;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Common;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Common;$(SolutionDir)GraphicsEngine;$(SolutionDir)SoundEngine;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Common;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Common;$(SolutionDir)GraphicsEngine;$(SolutionDir)SoundEngine;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Common;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -112,12 +112,6 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -156,25 +150,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Content\Application.h" />
-    <ClInclude Include="Content\Window.h" />
-    <ClInclude Include="Content\Win32Helper.h" />
+    <ClCompile Include="SoundEngine\SoundManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Content\Application.cpp" />
-    <ClCompile Include="Content\main.cpp" />
-    <ClCompile Include="Content\Window.cpp" />
-    <ClCompile Include="Content\Win32Helper.cpp" />
+    <ClInclude Include="SoundEngine\SoundManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">
       <Project>{cc3b7a1b-16ce-4ec6-8a29-fdcf307a0149}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GraphicsEngine\GraphicsEngine.vcxproj">
-      <Project>{93121aa0-bf28-4c55-8d26-b9bc5f389aa2}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\SoundEngine\SoundEngine.vcxproj">
-      <Project>{9b8f2e7f-5f9b-4885-8200-ad47bbecdfe1}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

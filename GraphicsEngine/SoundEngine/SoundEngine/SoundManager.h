@@ -43,7 +43,7 @@ namespace SoundEngine
 		explicit SoundManager(HWND windowHandle);
 
 		void Create2DSoundFromWaveFile(const std::string& name, const std::wstring& filename);
-		void Play2DSound(const std::string& name, float volumePercentage);
+		void Play2DSound(const std::string& name, float volumePercentage = 1.0f);
 
 	private:
 		void InitializeDirectSound(HWND windowHandle);

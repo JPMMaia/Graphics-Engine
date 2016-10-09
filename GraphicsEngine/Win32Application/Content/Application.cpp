@@ -72,6 +72,9 @@ int Application::Run()
 		else if (m_input.IsKeyDown(DIK_2))
 			m_graphics.SetWireframeMode(true);
 
+		if (m_input.IsKeyDown(DIK_T))
+			m_soundManager.Play2DSound("TestSound", 1.0f);
+
 		return true;
 	};
 
@@ -114,6 +117,8 @@ Application::Application() :
 	m_window(MainWindowProc),
 	m_timer(c_millisecondsPerUpdate),
 	m_input(m_window.GetHInstance(), m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight()),
-	m_graphics(m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight())
+	m_graphics(m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight()),
+	m_soundManager(m_window.GetWindowHandle())
 {
+	m_soundManager.Create2DSoundFromWaveFile("TestSound", L"Sounds/Sound01.wav");
 }

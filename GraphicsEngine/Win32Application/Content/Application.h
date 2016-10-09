@@ -3,6 +3,7 @@
 #include "GraphicsEngine/Graphics.h"
 #include "GraphicsEngine/DXInputHandler.h"
 #include "GraphicsEngine/Timer.h"
+#include "SoundEngine/SoundManager.h"
 #include "Window.h"
 
 namespace Win32Application
@@ -28,5 +29,6 @@ namespace Win32Application
 
 		GraphicsEngine::DXInputHandler m_input;
 		GraphicsEngine::Graphics m_graphics;
+		SoundEngine::SoundManager m_soundManager;
 	};
 }

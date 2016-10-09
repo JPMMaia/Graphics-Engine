@@ -84,6 +84,8 @@ void SoundManager::LoadWaveFile(const std::wstring& filename, IDirectSoundBuffer
 {
 	// Open the wave file in binary mode:
 	ifstream fileStream(filename, ios::in | ios::binary);
+	if (!fileStream)
+		ThrowEngineException(L"Sound file not found.");
 
 	// Read header:
 	WaveHeaderType waveFileHeader;
@@ -161,11 +163,10 @@ void SoundManager::LoadWaveFile(const std::wstring& filename, IDirectSoundBuffer
 	vector<uint8_t> waveData(waveFileHeader.DataSize);
 	{
 		// Move to the beginning of the wave data which starts at the end of the data chunk header:
-		fileStream.seekg(sizeof(WaveHeaderType), ios::beg);
+		fileStream.seekg(sizeof(WaveHeaderType), fileStream.beg);
 
 		// Read in the wave file data into the newly created buffer:
-		auto count = fileStream.readsome(reinterpret_cast<char*>(&waveData[0]), waveFileHeader.DataSize);
-		if (count != waveFileHeader.DataSize)
+		if(!fileStream.read(reinterpret_cast<char*>(&waveData[0]), waveFileHeader.DataSize))
 			ThrowEngineException(L"Number of read bytes doesn't match data size.");
 	}
 

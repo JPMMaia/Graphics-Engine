@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <string>
+#include "Helpers.h"
 
 namespace Common
 {

@@ -1,5 +1,6 @@
 ﻿#include "Application.h"
 
+using namespace Common;
 using namespace Win32Application;
 using namespace GraphicsEngine;
 using namespace DirectX;
@@ -67,11 +68,6 @@ int Application::Run()
 		if (m_input.IsKeyDown(DIK_ESCAPE))
 			return false;
 
-		if (m_input.IsKeyDown(DIK_1))
-			m_graphics.SetWireframeMode(false);
-		else if (m_input.IsKeyDown(DIK_2))
-			m_graphics.SetWireframeMode(true);
-
 		if (m_input.IsKeyDown(DIK_T))
 			m_soundManager.Play2DSound("TestSound", 1.0f);
 
@@ -98,8 +94,6 @@ int Application::Run()
 		// Otherwise, do animation/game stuff:
 		else if (!m_timer.UpdateAndRender(update, render, processInput, processFrameStatistics))
 		{
-			// If exiting application, wait for all commands to finish, so that all objects can be destructed:
-			m_graphics.FlushCommandQueue();
 			break;
 		}
 	}

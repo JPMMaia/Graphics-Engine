@@ -2,7 +2,7 @@
 
 #include "GraphicsEngine/Graphics.h"
 #include "GraphicsEngine/DXInputHandler.h"
-#include "GraphicsEngine/Timer.h"
+#include "Common/Timer.h"
 #include "SoundEngine/SoundManager.h"
 #include "Window.h"
 
@@ -25,7 +25,7 @@ namespace Win32Application
 		Window m_window;
 
 		const double c_millisecondsPerUpdate = 10.0;
-		GraphicsEngine::Timer m_timer;
+		Common::Timer m_timer;
 
 		GraphicsEngine::DXInputHandler m_input;
 		GraphicsEngine::Graphics m_graphics;

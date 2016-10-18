@@ -148,10 +148,14 @@
   <ItemGroup>
     <ClCompile Include="Common\EngineException.cpp" />
     <ClCompile Include="Common\Helpers.cpp" />
+    <ClCompile Include="Common\MathHelper.cpp" />
+    <ClCompile Include="Common\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\EngineException.h" />
     <ClInclude Include="Common\Helpers.h" />
+    <ClInclude Include="Common\MathHelper.h" />
+    <ClInclude Include="Common\Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,7 +3,6 @@
 #pragma comment(lib, "dsound.lib")
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "winmm.lib")
-#pragma comment(lib, "Dsound3d.dll")
 
 #include <windows.h>
 // ReSharper disable once CppUnusedIncludeDirective

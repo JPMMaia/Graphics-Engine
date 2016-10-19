@@ -45,6 +45,10 @@ ID3D11DeviceContext* D3DBase::GetDeviceContext() const
 {
 	return m_deviceContext.Get();
 }
+float D3DBase::GetAspectRatio() const
+{
+	return static_cast<float>(m_clientWidth) / m_clientHeight;
+}
 
 void D3DBase::SetClearColor(const DirectX::XMFLOAT3 clearColor)
 {

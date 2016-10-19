@@ -10,7 +10,7 @@ namespace GraphicsEngine
 	class Buffer
 	{
 	public:
-		Buffer();
+		Buffer() = default;
 
 		template<typename BufferType>
 		Buffer(ID3D11Device* d3dDevice, const std::vector<BufferType>& initialData);
@@ -43,14 +43,8 @@ namespace GraphicsEngine
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> m_buffer;
-		uint32_t m_bufferTypeSize;
+		uint32_t m_bufferTypeSize = 0;
 	};
-
-	template <D3D11_BIND_FLAG BIND_FLAG, D3D11_USAGE USAGE_FLAG, uint32_t CPU_ACCESS_FLAG>
-	Buffer<BIND_FLAG, USAGE_FLAG, CPU_ACCESS_FLAG>::Buffer() :
-		m_bufferTypeSize(0)
-	{
-	}
 
 	template <D3D11_BIND_FLAG BIND_FLAG, D3D11_USAGE USAGE_FLAG, uint32_t CPU_ACCESS_FLAG>
 	template<typename BufferType>
@@ -163,7 +157,7 @@ namespace GraphicsEngine
 			);
 
 		// Create buffer:
-		DX::ThrowIfFailed(
+		Common::ThrowIfFailed(
 			d3dDevice->CreateBuffer(&bufferDesc, initialData, m_buffer.GetAddressOf())
 			);
 	}

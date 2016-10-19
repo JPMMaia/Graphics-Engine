@@ -44,8 +44,41 @@
     <ClCompile Include="GraphicsEngine\Graphics.cpp">
       <Filter>GraphicsEngine</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsEngine\Scene.cpp">
-      <Filter>GraphicsEngine</Filter>
+    <ClCompile Include="GraphicsEngine\PipelineState.cpp">
+      <Filter>GraphicsEngine\PipelineState</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\DomainShader.cpp">
+      <Filter>GraphicsEngine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\HullShader.cpp">
+      <Filter>GraphicsEngine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\PixelShader.cpp">
+      <Filter>GraphicsEngine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\VertexShader.cpp">
+      <Filter>GraphicsEngine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\PipelineStateManager.cpp">
+      <Filter>GraphicsEngine\PipelineState</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\IShader.cpp">
+      <Filter>GraphicsEngine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="StandardPixelShader.hlsl">
+      <Filter>Shaders\Standard</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\GeometryGenerator.cpp">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\RenderItem.cpp">
+      <Filter>GraphicsEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\Scenes\DefaultScene.cpp">
+      <Filter>GraphicsEngine\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\FrameResource.cpp">
+      <Filter>GraphicsEngine\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -116,8 +149,59 @@
     <ClInclude Include="GraphicsEngine\Graphics.h">
       <Filter>GraphicsEngine</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsEngine\Scene.h">
-      <Filter>GraphicsEngine</Filter>
+    <ClInclude Include="GraphicsEngine\PipelineState.h">
+      <Filter>GraphicsEngine\PipelineState</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\DomainShader.h">
+      <Filter>GraphicsEngine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\HullShader.h">
+      <Filter>GraphicsEngine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\PixelShader.h">
+      <Filter>GraphicsEngine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\VertexShader.h">
+      <Filter>GraphicsEngine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\PipelineStateManager.h">
+      <Filter>GraphicsEngine\PipelineState</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\IShader.h">
+      <Filter>GraphicsEngine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\ShaderBufferTypes.h">
+      <Filter>GraphicsEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\VertexTypes.h">
+      <Filter>GraphicsEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\Light.h">
+      <Filter>GraphicsEngine\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\GeometryGenerator.h">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\MeshGeometry.h">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\SubmeshGeometry.h">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\RenderItem.h">
+      <Filter>GraphicsEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\RenderLayer.h">
+      <Filter>GraphicsEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\IScene.h">
+      <Filter>GraphicsEngine\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\Scenes\DefaultScene.h">
+      <Filter>GraphicsEngine\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\FrameResource.h">
+      <Filter>GraphicsEngine\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +259,27 @@
     <Filter Include="GraphicsEngine\Input">
       <UniqueIdentifier>{e984538a-169e-4d6f-b513-7b6dc4277724}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GraphicsEngine\PipelineState">
+      <UniqueIdentifier>{d7aca9a2-8f5a-4083-8144-6e28918a11cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\Shaders">
+      <UniqueIdentifier>{b5ab1a1c-01e3-4f50-a0e1-26b31df3ac7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Standard">
+      <UniqueIdentifier>{986b27bc-a29b-4929-8048-de7cd8648e22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\Model">
+      <UniqueIdentifier>{42c8d01b-c2a9-4d84-aaad-ea18758c4d4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\Resources">
+      <UniqueIdentifier>{b7959624-bc23-40d1-a512-05605882238e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\Light">
+      <UniqueIdentifier>{f4e07b19-ec5b-4b1d-89d2-3976760c262b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\Scenes">
+      <UniqueIdentifier>{62d9f80f-bba7-4e4b-96f9-8ba93834a7a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shaders\Common\Material.hlsli">
@@ -226,6 +331,9 @@
     </FxCompile>
     <FxCompile Include="Source\Shaders\TerrainPixelShader.hlsl">
       <Filter>Shaders\Terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\StandardVertexShader.hlsl">
+      <Filter>Shaders\Standard</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

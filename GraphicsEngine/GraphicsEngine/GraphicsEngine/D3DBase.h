@@ -22,6 +22,7 @@ namespace GraphicsEngine
 
 		ID3D11Device* GetDevice() const;
 		ID3D11DeviceContext* GetDeviceContext() const;
+		float GetAspectRatio() const;
 
 		void SetClearColor(const DirectX::XMFLOAT3 clearColor);
 

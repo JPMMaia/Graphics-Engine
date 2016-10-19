@@ -5,6 +5,10 @@
 #include "Camera.h"
 #include "D3DBase.h"
 #include "TextureManager.h"
+#include "PipelineStateManager.h"
+#include "RenderItem.h"
+#include "RenderLayer.h"
+#include "Scenes/DefaultScene.h"
 
 namespace GraphicsEngine
 {
@@ -19,7 +23,7 @@ namespace GraphicsEngine
 
 		Camera* GetCamera();
 
-		//void AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
+		void AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
 
 	private:
 		//void InitializeRootSignature();
@@ -30,7 +34,7 @@ namespace GraphicsEngine
 		//void UpdateMaterialsBuffer() const;
 		//void UpdateMainPassBuffer(const Timer& timer);
 
-		//void DrawRenderItems(ID3D12GraphicsCommandList* commandList, const std::vector<RenderItem*>& renderItems) const;
+		void DrawRenderItems(ID3D11DeviceContext* deviceContext, RenderLayer renderItems) const;
 
 	private:
 		D3DBase m_d3dBase;
@@ -40,18 +44,18 @@ namespace GraphicsEngine
 //		FrameResource* m_currentFrameResource = nullptr;
 //		int m_currentFrameResourceIndex = 0;
 
-//		PipelineStateManager m_pipelineStateManager;
+		PipelineStateManager m_pipelineStateManager;
 //		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
 //		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_postProcessRootSignature;
 
 //		BufferTypes::PassData m_passConstants;
 //		std::unique_ptr<UploadBuffer<BufferTypes::InstanceData>> m_perObjectCB;
 
-//		std::vector<std::unique_ptr<RenderItem>> m_allRenderItems;
-//		std::vector<RenderItem*> m_renderItemLayers[static_cast<size_t>(RenderLayer::Count)];
+		std::vector<std::unique_ptr<RenderItem>> m_allRenderItems;
+		std::vector<RenderItem*> m_renderItemLayers[static_cast<SIZE_T>(RenderLayer::Count)];
 
 		Camera m_camera;
-//		MirrorScene m_scene;
+		DefaultScene m_scene;
 		TextureManager m_textureManager;
 	};
 }

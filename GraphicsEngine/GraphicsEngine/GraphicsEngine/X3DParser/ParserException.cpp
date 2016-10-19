@@ -1,8 +1,9 @@
 ﻿#include "stdafx.h"
 #include "ParserException.h"
 
-#include <Source/Helpers.h>
+#include <Common/Helpers.h>
 
+using namespace Common;
 using namespace GraphicsEngine;
 using namespace std;
 

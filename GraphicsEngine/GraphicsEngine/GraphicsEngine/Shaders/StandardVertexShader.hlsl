@@ -1,9 +1,4 @@
-cbuffer MatrixBuffer
-{
-    matrix worldMatrix;
-    matrix viewMatrix;
-    matrix projectionMatrix;
-};
+#include "MatrixBuffer.hlsli"
 
 struct VertexInputType
 {

@@ -3,8 +3,9 @@
 
 #include <rapidxml/rapidxml.hpp>
 #include <rapidxml/rapidxml_utils.hpp>
-#include <Source/Helpers.h>
+#include <Common/Helpers.h>
 
+using namespace Common;
 using namespace GraphicsEngine;
 using namespace std;
 using namespace rapidxml;

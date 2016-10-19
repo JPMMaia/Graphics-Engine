@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Source\stdafx.cpp" />
     <ClCompile Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.cpp">
       <Filter>Libraries\DirectXTex\DDSTextureLoader</Filter>
     </ClCompile>
@@ -77,9 +76,9 @@
     <ClCompile Include="GraphicsEngine\FrameResource.cpp">
       <Filter>GraphicsEngine\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\stdafx.h" />
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
       <Filter>Libraries\DirectXTex\DDSTextureLoader</Filter>
     </ClInclude>
@@ -200,6 +199,7 @@
     <ClInclude Include="GraphicsEngine\FrameResource.h">
       <Filter>GraphicsEngine\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -277,6 +277,9 @@
     <Filter Include="GraphicsEngine\Scenes">
       <UniqueIdentifier>{62d9f80f-bba7-4e4b-96f9-8ba93834a7a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Common">
+      <UniqueIdentifier>{86d2ac93-db29-4637-9845-c48bb2ea3aa9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shaders\Common\Material.hlsli">
@@ -334,6 +337,9 @@
     </FxCompile>
     <FxCompile Include="GraphicsEngine\Shaders\StandardPixelShader.hlsl">
       <Filter>Shaders\Standard</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\MatrixBuffer.hlsli">
+      <Filter>Shaders\Common</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

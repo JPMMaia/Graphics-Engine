@@ -191,9 +191,7 @@
     <ClCompile Include="GraphicsEngine\X3DParser\RapidXMLHelper.cpp" />
     <ClCompile Include="GraphicsEngine\X3DParser\X3DParser.cpp" />
     <ClCompile Include="GraphicsEngine\X3DParser\X3DShapeParser.cpp" />
-    <ClCompile Include="Source\stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h" />
@@ -236,7 +234,7 @@
     <ClInclude Include="GraphicsEngine\X3DParser\RapidXMLHelper.h" />
     <ClInclude Include="GraphicsEngine\X3DParser\X3DParser.h" />
     <ClInclude Include="GraphicsEngine\X3DParser\X3DShapeParser.h" />
-    <ClInclude Include="Source\stdafx.h" />
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Libraries\rapidxml\manual.html" />
@@ -249,6 +247,12 @@
     <None Include="Source\Shaders\Common\SpotLight.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="GraphicsEngine\Shaders\MatrixBuffer.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="GraphicsEngine\Shaders\StandardPixelShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

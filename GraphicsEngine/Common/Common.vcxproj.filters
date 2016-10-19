@@ -22,6 +22,9 @@
     <ClCompile Include="Common\MathHelper.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="Common\IncludeReplacer.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\EngineException.h">
@@ -34,6 +37,9 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Common\MathHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\IncludeReplacer.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>

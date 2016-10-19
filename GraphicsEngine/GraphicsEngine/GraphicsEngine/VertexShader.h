@@ -2,6 +2,8 @@
 
 #include "IShader.h"
 
+#include <vector>
+
 namespace GraphicsEngine
 {
 	class VertexShader : public IShader

@@ -111,7 +111,7 @@ Application::Application() :
 	m_window(MainWindowProc),
 	m_timer(c_millisecondsPerUpdate),
 	m_input(m_window.GetHInstance(), m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight()),
-	m_graphics(m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight()),
+	m_graphics(m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight(), m_window.IsFullscreen()),
 	m_soundManager(m_window.GetWindowHandle())
 {
 	m_soundManager.Create2DSoundFromWaveFile("TestSound", L"Sounds/Sound01.wav");

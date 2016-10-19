@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "RenderItem.h"
-#include "ShaderBufferTypes.h"
+#include "BufferTypes.h"
 
 #include <memory>
 
@@ -14,6 +14,6 @@ namespace GraphicsEngine
 		FrameResource(ID3D11Device* device, const std::vector<std::unique_ptr<RenderItem>>& renderItems);
 
 	public:
-		std::vector<ShaderBufferTypes::MatrixBuffer> MatrixBufferArray;
+		std::vector<DynamicConstantBuffer> MatrixBufferArray;
 	};
 }

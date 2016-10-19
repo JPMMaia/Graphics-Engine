@@ -65,9 +65,6 @@
     <ClCompile Include="GraphicsEngine\IShader.cpp">
       <Filter>GraphicsEngine\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="StandardPixelShader.hlsl">
-      <Filter>Shaders\Standard</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsEngine\GeometryGenerator.cpp">
       <Filter>GraphicsEngine\Model</Filter>
     </ClCompile>
@@ -333,6 +330,9 @@
       <Filter>Shaders\Terrain</Filter>
     </FxCompile>
     <FxCompile Include="GraphicsEngine\Shaders\StandardVertexShader.hlsl">
+      <Filter>Shaders\Standard</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\StandardPixelShader.hlsl">
       <Filter>Shaders\Standard</Filter>
     </FxCompile>
   </ItemGroup>

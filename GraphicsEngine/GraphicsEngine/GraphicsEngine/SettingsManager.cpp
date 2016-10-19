@@ -5,7 +5,6 @@
 #include <fstream>
 #include <rapidxml/rapidxml_print.hpp>
 #include <rapidxml/rapidxml_utils.hpp>
-#include <dxgi1_2.h>
 
 using namespace Common;
 using namespace GraphicsEngine;
@@ -111,16 +110,19 @@ void SettingsManager::AddAdaptersInfo(rapidxml::xml_document<wchar_t>* document,
 	xml_node<wchar_t>* videoCardsNode = document->allocate_node(node_type::node_element, TAG_VIDEO_CARDS);
 	parent->append_node(videoCardsNode);
 
-	// Creates a DXGI 1.2 factory that can be used to generate other DXGI objects:
+	// Creates a DXGI factory that can be used to generate other DXGI objects:
 	ComPtr<IDXGIFactory2> factory;
 	ThrowIfFailed(CreateDXGIFactory2(0, __uuidof(IDXGIFactory2), reinterpret_cast<void**>(factory.GetAddressOf())));
 
 	// Enumerate through all the adapters, output info to file and select best adapter based on the Dedicated Video Memory:
-	IDXGIAdapter1* adapter;
-	for (auto adapterIndex = 0; factory->EnumAdapters1(adapterIndex, &adapter) != DXGI_ERROR_NOT_FOUND; adapterIndex++)
+	ComPtr<IDXGIAdapter1> adapter;
+	for (auto adapterIndex = 0; factory->EnumAdapters1(adapterIndex, adapter.GetAddressOf()) != DXGI_ERROR_NOT_FOUND; adapterIndex++)
 	{
-		DXGI_ADAPTER_DESC1 adapterDesc;
-		adapter->GetDesc1(&adapterDesc);
+		ComPtr<IDXGIAdapter2> adapter2;
+		adapter.As(&adapter2);
+
+		DXGI_ADAPTER_DESC2 adapterDesc;
+		adapter2->GetDesc2(&adapterDesc);
 
 		// Select best adapter based on the Dedicated Video Memory:
 		if(adapterDesc.DedicatedVideoMemory > m_adapterDedicatedVideoMemory)
@@ -132,8 +134,6 @@ void SettingsManager::AddAdaptersInfo(rapidxml::xml_document<wchar_t>* document,
 
 		// Write adapter info to file:
 		AddAdapterInfo(document, videoCardsNode, adapterIndex, adapterDesc);
-
-		adapter->Release();
 	}
 
 	// Create default video card index node and add it to the video cards node:
@@ -141,7 +141,7 @@ void SettingsManager::AddAdaptersInfo(rapidxml::xml_document<wchar_t>* document,
 	videoCardsNode->append_node(defaultVideoCardIndexNode);
 }
 
-void SettingsManager::AddAdapterInfo(xml_document<wchar_t>* document, rapidxml::xml_node<wchar_t>* parent, UINT adapterIndex, const DXGI_ADAPTER_DESC1& adapterDesc) const
+void SettingsManager::AddAdapterInfo(xml_document<wchar_t>* document, rapidxml::xml_node<wchar_t>* parent, UINT adapterIndex, const DXGI_ADAPTER_DESC2& adapterDesc) const
 {
 	// Create nodes to describe a video card:
 	xml_node<wchar_t>* videoCardNode = document->allocate_node(node_type::node_element, TAG_VIDEO_CARD);

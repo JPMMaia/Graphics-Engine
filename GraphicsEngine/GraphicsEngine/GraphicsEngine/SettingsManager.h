@@ -22,7 +22,7 @@ namespace GraphicsEngine
 
 		void CreateFile(const std::wstring& filename);
 		void AddAdaptersInfo(rapidxml::xml_document<wchar_t>* document, rapidxml::xml_node<wchar_t>* parent);
-		void AddAdapterInfo(rapidxml::xml_document<wchar_t>* document, rapidxml::xml_node<wchar_t>* parent, UINT adapterIndex, const DXGI_ADAPTER_DESC1& adapterDesc) const;
+		void AddAdapterInfo(rapidxml::xml_document<wchar_t>* document, rapidxml::xml_node<wchar_t>* parent, UINT adapterIndex, const DXGI_ADAPTER_DESC2& adapterDesc) const;
 
 		template<typename T>
 		wchar_t* AllocateValue(rapidxml::xml_document<wchar_t>* document, T value) const;

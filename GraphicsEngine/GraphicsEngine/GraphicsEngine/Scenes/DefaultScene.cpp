@@ -8,6 +8,11 @@
 using namespace DirectX;
 using namespace GraphicsEngine;
 
+DefaultScene::DefaultScene(Graphics* graphics, const D3DBase& d3dBase)
+{
+	Initialize(graphics, d3dBase);
+}
+
 void DefaultScene::Initialize(Graphics* graphics, const D3DBase& d3dBase)
 {
 	InitializeGeometry(d3dBase);
@@ -77,25 +82,25 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 		for (SIZE_T i = 0; i < box.Vertices.size(); ++i, ++k)
 		{
 			vertices[k].Position = box.Vertices[i].Position;
-			vertices[k].Color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+			vertices[k].Color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 		}
 
 		for (SIZE_T i = 0; i < grid.Vertices.size(); ++i, ++k)
 		{
 			vertices[k].Position = grid.Vertices[i].Position;
-			vertices[k].Color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+			vertices[k].Color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 		}
 
 		for (SIZE_T i = 0; i < sphere.Vertices.size(); ++i, ++k)
 		{
 			vertices[k].Position = sphere.Vertices[i].Position;
-			vertices[k].Color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+			vertices[k].Color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 		}
 
 		for (SIZE_T i = 0; i < cylinder.Vertices.size(); ++i, ++k)
 		{
 			vertices[k].Position = cylinder.Vertices[i].Position;
-			vertices[k].Color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+			vertices[k].Color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 		}
 
 		std::vector<std::uint16_t> indices;

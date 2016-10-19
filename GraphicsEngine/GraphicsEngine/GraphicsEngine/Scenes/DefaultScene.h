@@ -16,10 +16,10 @@ namespace GraphicsEngine
 	{
 	public:
 		DefaultScene() = default;
-
-		void Initialize(Graphics* graphics, const D3DBase& d3dBase);
+		DefaultScene(Graphics* graphics, const D3DBase& d3dBase);
 
 	private:
+		void Initialize(Graphics* graphics, const D3DBase& d3dBase);
 		void InitializeGeometry(const D3DBase& d3dBase);
 		void InitializeRenderItems(Graphics* graphics);
 

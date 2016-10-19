@@ -2,7 +2,8 @@
 
 using namespace Win32Application;
 
-Window::Window(WNDPROC mainWindowProc)
+Window::Window(WNDPROC mainWindowProc) :
+	m_fullscreen(false)
 {
 	if (!Initialize(mainWindowProc))
 		throw std::exception("Failed to create window.");
@@ -27,6 +28,10 @@ uint32_t Window::GetClientWidth() const
 uint32_t Window::GetClientHeight() const
 {
 	return m_clientHeight;
+}
+bool Window::IsFullscreen() const
+{
+	return m_fullscreen;
 }
 
 void Window::SetWindowExtraCaption(const std::wstring& extraCaption) const
@@ -94,11 +99,15 @@ bool Window::Initialize(WNDPROC mainWindowProc)
 	}
 
 	// Create the window with the screen settings and get the handle to it:
+	auto windowStyleFlags = WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP;
+	if (!m_fullscreen)
+		windowStyleFlags |= WS_CAPTION;
+
 	m_windowHandle = CreateWindowEx(
-		WS_EX_APPWINDOW, 
+		WS_EX_APPWINDOW,
 		m_applicationName.c_str(), 
 		m_windowCaption.c_str(),
-		WS_CAPTION | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
+		windowStyleFlags,
 		positionX, positionY, m_clientWidth, m_clientHeight,
 		nullptr, 
 		nullptr, 

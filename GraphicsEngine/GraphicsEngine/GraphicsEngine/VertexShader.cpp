@@ -34,7 +34,7 @@ void VertexShader::Initialize(ID3D11Device* d3dDevice, const void* shaderByteCod
 	ThrowIfFailed(
 		d3dDevice->CreateInputLayout(
 			vertexDesc.data(),
-			vertexDesc.size(),
+			static_cast<UINT>(vertexDesc.size()),
 			shaderByteCode,
 			byteCodeLength,
 			m_inputLayout.GetAddressOf()

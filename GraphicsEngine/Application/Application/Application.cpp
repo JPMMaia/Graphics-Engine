@@ -47,7 +47,7 @@ int Application::Run()
 		if (m_input.IsKeyDown(DIK_D))
 			camera->MoveRight(scalar);
 
-		static const auto mouseSensibility = 0.005f;
+		static const auto mouseSensibility = 0.008f;
 		int mouseDeltaX, mouseDeltaY;
 		m_input.GetMouseVelocity(mouseDeltaX, mouseDeltaY);
 		camera->RotateWorldY(mouseDeltaX * mouseSensibility);

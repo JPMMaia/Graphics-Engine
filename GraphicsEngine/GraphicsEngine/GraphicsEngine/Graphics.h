@@ -27,14 +27,9 @@ namespace GraphicsEngine
 		void AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
 
 	private:
-		//void InitializeRootSignature();
-		//void InitializeFrameResources();
-
-		void UpdateMatrixBuffers();
-		//void UpdateCamera();
-		//void UpdateInstancesBuffer();
-		//void UpdateMaterialsBuffer() const;
-		//void UpdateMainPassBuffer(const Timer& timer);
+		void UpdateObjectsData();
+		void UpdateMaterialData() const;
+		void UpdatePassData(const Common::Timer& timer) const;
 
 		void DrawRenderItems(RenderLayer renderItems) const;
 

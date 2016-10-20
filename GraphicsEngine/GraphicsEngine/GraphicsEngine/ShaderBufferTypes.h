@@ -7,21 +7,9 @@ namespace GraphicsEngine
 {
 	namespace ShaderBufferTypes
 	{
-		struct MatrixBuffer
+		struct ObjectData
 		{
 			DirectX::XMFLOAT4X4 WorldMatrix = MathHelper::Identity4x4();
-			DirectX::XMFLOAT4X4 ViewMatrix = MathHelper::Identity4x4();
-			DirectX::XMFLOAT4X4 ProjectionMatrix = MathHelper::Identity4x4();
-		};
-
-		struct InstanceData
-		{
-			DirectX::XMFLOAT4X4 WorldMatrix = MathHelper::Identity4x4();
-			DirectX::XMFLOAT4X4 TextureTransform = MathHelper::Identity4x4();
-			int32_t MaterialIndex = 0;
-			int32_t Pad0;
-			int32_t Pad1;
-			int32_t Pad2;
 		};
 
 		struct MaterialData
@@ -57,7 +45,9 @@ namespace GraphicsEngine
 			float FogRange = 20.0f;
 			DirectX::XMFLOAT2 Padding2;
 			DirectX::XMFLOAT4 AmbientLight = { 0.0f, 0.0f, 0.0f, 1.0f };
-			Light Lights[16];
+
+			static constexpr auto MaxNumLights = 16;
+			Light Lights[MaxNumLights];
 		};
 	}
 }

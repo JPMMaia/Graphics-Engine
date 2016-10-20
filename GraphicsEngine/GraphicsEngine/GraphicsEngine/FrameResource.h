@@ -11,9 +11,11 @@ namespace GraphicsEngine
 	{
 	public:
 		FrameResource() = default;
-		FrameResource(ID3D11Device* device, const std::vector<std::unique_ptr<RenderItem>>& renderItems);
+		FrameResource(ID3D11Device* device, const std::vector<std::unique_ptr<RenderItem>>& renderItems, SIZE_T materialCount);
 
 	public:
-		std::vector<DynamicConstantBuffer> MatrixBufferArray;
+		std::vector<DynamicConstantBuffer> ObjectDataArray;
+		std::vector<DynamicConstantBuffer> MaterialDataArray;
+		DynamicConstantBuffer PassData;
 	};
 }

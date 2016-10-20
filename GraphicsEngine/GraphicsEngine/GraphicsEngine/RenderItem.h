@@ -20,6 +20,7 @@ namespace GraphicsEngine
 		uint32_t StartIndexLocation = 0;
 		int BaseVertexLocation = 0;
 		DirectX::XMFLOAT4X4 WorldMatrix = MathHelper::Identity4x4();
-		int MatrixBufferIndex = 0;
+		int ObjectBufferIndex = 0;
+		int MaterialBufferIndex = 0;
 	};
 }

@@ -13,8 +13,8 @@ using namespace std;
 
 ComPtr<ID3DBlob> IShader::CompileFromFile(const wstring& filename, const D3D_SHADER_MACRO* defines, const string& entrypoint, const string& target)
 {
-	const wstring* shaderFilename;
-
+	const wstring* shaderFilename = &filename;
+/*
 #if defined(DEBUG) || defined(_DEBUG)
 	CreateDirectory(L"Generated", nullptr);
 	auto generatedFilename = L"Generated/" + Helpers::GetFilename(filename) + L".hlsl";
@@ -22,7 +22,7 @@ ComPtr<ID3DBlob> IShader::CompileFromFile(const wstring& filename, const D3D_SHA
 	shaderFilename = &generatedFilename;
 #else
 	shaderFilename = &filename;
-#endif
+#endif*/
 
 	UINT compileFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 #if defined(DEBUG) || defined(_DEBUG)  

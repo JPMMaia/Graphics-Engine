@@ -13,9 +13,15 @@ DefaultScene::DefaultScene(Graphics* graphics, const D3DBase& d3dBase)
 	Initialize(graphics, d3dBase);
 }
 
+const std::unordered_map<std::string, std::unique_ptr<Material>>& DefaultScene::GetMaterials() const
+{
+	return m_materials;
+}
+
 void DefaultScene::Initialize(Graphics* graphics, const D3DBase& d3dBase)
 {
 	InitializeGeometry(d3dBase);
+	InitializeMaterials();
 	InitializeRenderItems(graphics);
 }
 
@@ -82,25 +88,25 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 		for (SIZE_T i = 0; i < box.Vertices.size(); ++i, ++k)
 		{
 			vertices[k].Position = box.Vertices[i].Position;
-			vertices[k].Color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+			vertices[k].Normal = box.Vertices[i].Normal;
 		}
 
 		for (SIZE_T i = 0; i < grid.Vertices.size(); ++i, ++k)
 		{
 			vertices[k].Position = grid.Vertices[i].Position;
-			vertices[k].Color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+			vertices[k].Normal = grid.Vertices[i].Normal;
 		}
 
 		for (SIZE_T i = 0; i < sphere.Vertices.size(); ++i, ++k)
 		{
 			vertices[k].Position = sphere.Vertices[i].Position;
-			vertices[k].Color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+			vertices[k].Normal = sphere.Vertices[i].Normal;
 		}
 
 		for (SIZE_T i = 0; i < cylinder.Vertices.size(); ++i, ++k)
 		{
 			vertices[k].Position = cylinder.Vertices[i].Position;
-			vertices[k].Color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+			vertices[k].Normal = cylinder.Vertices[i].Normal;
 		}
 
 		std::vector<std::uint16_t> indices;
@@ -123,6 +129,18 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 		m_geometries[geo->Name] = std::move(geo);
 	}
 }
+void DefaultScene::InitializeMaterials()
+{
+	auto bricks = std::make_unique<Material>();
+	bricks->Name = "Bricks";
+	bricks->MaterialIndex = 0;
+	bricks->DiffuseSrvHeapIndex = -1; // TODO
+	bricks->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	bricks->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+	bricks->Roughness = 0.25f;
+	m_materials[bricks->Name] = std::move(bricks);
+}
+
 void DefaultScene::InitializeRenderItems(Graphics* graphics)
 {
 	// Box:
@@ -134,7 +152,24 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 		boxRenderItem->IndexCount = boxRenderItem->Mesh->Submeshes.at("Box").IndexCount;
 		boxRenderItem->StartIndexLocation = boxRenderItem->Mesh->Submeshes.at("Box").StartIndexLocation;
 		boxRenderItem->BaseVertexLocation = boxRenderItem->Mesh->Submeshes.at("Box").BaseVertexLocation;
+		boxRenderItem->ObjectBufferIndex = 0;
+		boxRenderItem->MaterialBufferIndex = m_materials["Bricks"]->MaterialIndex;
 
 		graphics->AddRenderItem(std::move(boxRenderItem), { RenderLayer::Opaque });
+	}
+
+	// Sphere:
+	{
+		auto sphereRenderItem = std::make_unique<RenderItem>();
+		sphereRenderItem->Mesh = m_geometries["ShapeGeo"].get();
+		sphereRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		sphereRenderItem->IndexCount = sphereRenderItem->Mesh->Submeshes.at("Sphere").IndexCount;
+		sphereRenderItem->StartIndexLocation = sphereRenderItem->Mesh->Submeshes.at("Sphere").StartIndexLocation;
+		sphereRenderItem->BaseVertexLocation = sphereRenderItem->Mesh->Submeshes.at("Sphere").BaseVertexLocation;
+		sphereRenderItem->ObjectBufferIndex = 1;
+		sphereRenderItem->MaterialBufferIndex = m_materials["Bricks"]->MaterialIndex;
+		XMStoreFloat4x4(&sphereRenderItem->WorldMatrix, XMMatrixTranslation(0.0f, 5.0f, 0.0f));
+
+		graphics->AddRenderItem(std::move(sphereRenderItem), { RenderLayer::Opaque });
 	}
 }

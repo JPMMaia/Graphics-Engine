@@ -10,7 +10,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_pipelineStateManager(m_d3dBase),
 	m_camera(m_d3dBase.GetAspectRatio(), 0.25f * XM_PI, 1.0f, 1000.0f, XMMatrixIdentity()),
 	m_scene(this, m_d3dBase),
-	m_frameResources(1, FrameResource(m_d3dBase.GetDevice(), m_allRenderItems)),
+	m_frameResources(1, FrameResource(m_d3dBase.GetDevice(), m_allRenderItems, m_scene.GetMaterials().size())),
 	m_currentFrameResource(&m_frameResources[0])
 {
 	m_d3dBase.SetClearColor(XMFLOAT3(0.2f, 0.2f, 0.2f));
@@ -25,7 +25,9 @@ void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
 void Graphics::Update(const Common::Timer& timer)
 {
 	m_camera.Update();
-	UpdateMatrixBuffers();
+	UpdatePassData(timer);
+	UpdateMaterialData();
+	UpdateObjectsData();
 }
 
 void Graphics::Render(const Common::Timer& timer) const
@@ -33,6 +35,10 @@ void Graphics::Render(const Common::Timer& timer) const
 	auto deviceContext = m_d3dBase.GetDeviceContext();
 
 	m_d3dBase.BeginScene();
+
+	// Set pass data:
+	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
+	deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
 
 	m_pipelineStateManager.SetPipelineState(deviceContext, "Standard");
 	DrawRenderItems(RenderLayer::Opaque);
@@ -55,26 +61,85 @@ void Graphics::AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::init
 	m_allRenderItems.push_back(std::move(renderItem));
 }
 
-void Graphics::UpdateMatrixBuffers()
+void Graphics::UpdateObjectsData()
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
 
-	ShaderBufferTypes::MatrixBuffer matrixBuffer;
-
 	// Transpose and store view and projection matrices:
-	XMStoreFloat4x4(&matrixBuffer.ViewMatrix, XMMatrixTranspose(m_camera.GetViewMatrix()));
-	XMStoreFloat4x4(&matrixBuffer.ProjectionMatrix, XMMatrixTranspose(m_camera.GetProjectionMatrix()));
+	//XMStoreFloat4x4(&objectBuffer.ViewMatrix, XMMatrixTranspose(m_camera.GetViewMatrix()));
+	//XMStoreFloat4x4(&objectBuffer.ProjectionMatrix, XMMatrixTranspose(m_camera.GetProjectionMatrix()));
 
 	for(auto& renderItem : m_allRenderItems)
 	{
 		// TODO optimize
 	
+		ShaderBufferTypes::ObjectData objectBuffer;
+
 		// Transpose and store world matrix:
-		XMStoreFloat4x4(&matrixBuffer.WorldMatrix, XMMatrixTranspose(XMLoadFloat4x4(&renderItem->WorldMatrix)));
+		XMStoreFloat4x4(&objectBuffer.WorldMatrix, XMMatrixTranspose(XMLoadFloat4x4(&renderItem->WorldMatrix)));
 
 		// Update buffer:
-		m_currentFrameResource->MatrixBufferArray[renderItem->MatrixBufferIndex].Map(deviceContext, &matrixBuffer, sizeof(ShaderBufferTypes::MatrixBuffer));
+		m_currentFrameResource->ObjectDataArray[renderItem->ObjectBufferIndex].Map(deviceContext, &objectBuffer, sizeof(ShaderBufferTypes::ObjectData));
 	}
+}
+void Graphics::UpdateMaterialData() const
+{
+	auto deviceContext = m_d3dBase.GetDeviceContext();
+
+	for(auto& e : m_scene.GetMaterials())
+	{
+		auto material = e.second.get();
+
+		auto materialTransform = XMLoadFloat4x4(&material->MaterialTransform);
+
+		ShaderBufferTypes::MaterialData materialData;
+		materialData.DiffuseAlbedo = material->DiffuseAlbedo;
+		materialData.FresnelR0 = material->FresnelR0;
+		materialData.Roughness = material->Roughness;
+		XMStoreFloat4x4(&materialData.MaterialTransform, XMMatrixTranspose(materialTransform));
+		materialData.DiffuseMapIndex = material->DiffuseSrvHeapIndex;
+
+		m_currentFrameResource->MaterialDataArray[material->MaterialIndex].Map(deviceContext, &materialData, sizeof(ShaderBufferTypes::MaterialData));
+	}
+}
+void Graphics::UpdatePassData(const Common::Timer& timer) const
+{
+	ShaderBufferTypes::PassData passData;
+
+	auto viewMatrix = m_camera.GetViewMatrix();
+	auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
+	auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
+
+	auto projectionMatrix = m_camera.GetProjectionMatrix();
+	auto projectionMatrixDeterminant = XMMatrixDeterminant(projectionMatrix);
+	auto inverseProjectionMatrix = XMMatrixInverse(&projectionMatrixDeterminant, projectionMatrix);
+
+	auto viewProjectionMatrix = XMMatrixMultiply(viewMatrix, projectionMatrix);
+	auto viewProjectionMatrixDeterminant = XMMatrixDeterminant(viewProjectionMatrix);
+	auto inverseViewProjectionMatrix = XMMatrixInverse(&viewProjectionMatrixDeterminant, viewProjectionMatrix);
+
+	XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
+	XMStoreFloat4x4(&passData.InverseViewMatrix, XMMatrixTranspose(inverseViewMatrix));
+	XMStoreFloat4x4(&passData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
+	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseProjectionMatrix));
+	XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
+	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
+	XMStoreFloat3(&passData.EyePositionW, m_camera.GetPosition());
+	passData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));
+	passData.InverseRenderTargetSize = XMFLOAT2(1.0f / static_cast<float>(m_d3dBase.GetClientWidth()), 1.0f / static_cast<float>(m_d3dBase.GetClientHeight()));
+	passData.NearZ = 1.0f;
+	passData.FarZ = 1000.0f;
+	passData.TotalTime = static_cast<float>(timer.GetTotalMilliseconds());
+	passData.DeltaTime = static_cast<float>(timer.GetDeltaMilliseconds());
+	passData.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
+	passData.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
+	passData.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
+	passData.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
+	passData.Lights[1].Strength = { 0.3f, 0.3f, 0.3f };
+	passData.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
+	passData.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
+
+	m_currentFrameResource->PassData.Map(m_d3dBase.GetDeviceContext(), &passData, sizeof(ShaderBufferTypes::PassData));
 }
 
 void Graphics::DrawRenderItems(RenderLayer renderLayer) const
@@ -85,9 +150,10 @@ void Graphics::DrawRenderItems(RenderLayer renderLayer) const
 	for(auto& renderItem : m_renderItemLayers[static_cast<SIZE_T>(renderLayer)])
 	{
 		// Set matrix buffer:
-		const auto& matrixBuffer = m_currentFrameResource->MatrixBufferArray[renderItem->MatrixBufferIndex];
-		deviceContext->VSSetConstantBuffers(0, 1, matrixBuffer.GetAddressOf());
-		
+		const auto& objectBuffer = m_currentFrameResource->ObjectDataArray[renderItem->ObjectBufferIndex];
+		deviceContext->VSSetConstantBuffers(0, 1, objectBuffer.GetAddressOf());
+		deviceContext->PSSetConstantBuffers(1, 1, m_currentFrameResource->MaterialDataArray[renderItem->MaterialBufferIndex].GetAddressOf());
+
 		// Render:
 		renderItem->Render(deviceContext);
 	}

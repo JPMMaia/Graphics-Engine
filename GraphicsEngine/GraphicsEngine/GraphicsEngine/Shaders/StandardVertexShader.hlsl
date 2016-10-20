@@ -1,31 +1,35 @@
-#include "MatrixBuffer.hlsli"
+#include "LightingUtils.hlsli"
 
-struct VertexInputType
+#include "ObjectData.hlsli"
+#include "MaterialData.hlsli"
+#include "PassData.hlsli"
+
+struct VertexInput
 {
-    float4 position : POSITION;
-    float4 color : COLOR;
+    float3 PositionL : POSITION;
+    float3 NormalL : NORMAL;
 };
 
-struct PixelInputType
+struct VertexOutput
 {
-    float4 position : SV_POSITION;
-    float4 color : COLOR;
+    float4 PositionH : SV_POSITION;
+    float3 PositionW : POSITION;
+    float3 NormalW : NORMAL;
 };
 
-PixelInputType main(VertexInputType input)
+VertexOutput main(VertexInput input)
 {
-    PixelInputType output;
+    VertexOutput output;
 
-    // Change the position vector to be 4 units for proper matrix calculations.
-    input.position.w = 1.0f;
+    // Transform from local space to world space:
+    float4 positionW = mul(float4(input.PositionL, 1.0f), WorldMatrix);
+    output.PositionW = positionW.xyz;
 
-    // Calculate the position of the vertex against the world, view, and projection matrices.
-    output.position = mul(input.position, worldMatrix);
-    output.position = mul(output.position, viewMatrix);
-    output.position = mul(output.position, projectionMatrix);
-    
-    // Store the input color for the pixel shader to use.
-    output.color = input.color;
+    // Assuming non-uniform scaling:
+    output.NormalW = mul(input.NormalL, (float3x3) WorldMatrix);
+
+    // Transform to homogeneous clip space:
+    output.PositionH = mul(positionW, ViewProjectionMatrix);
     
     return output;
 }

@@ -33,6 +33,6 @@ namespace GraphicsEngine
 			}
 		};
 
-		using DefaultVertexType = ColorVertexType;
+		using DefaultVertexType = NormalVertexType;
 	}
 }

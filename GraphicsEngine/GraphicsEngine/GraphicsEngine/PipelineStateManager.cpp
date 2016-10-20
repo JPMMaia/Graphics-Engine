@@ -3,8 +3,12 @@
 #include "D3DBase.h"
 #include "RasterizerStateDescConstants.h"
 
+#include <array>
+#include "ShaderBufferTypes.h"
+
 using namespace Common;
 using namespace GraphicsEngine;
+using namespace std;
 
 PipelineStateManager::PipelineStateManager(const D3DBase& d3dBase)
 {
@@ -29,9 +33,14 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 	m_inputLayout =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
+	auto maxNumLights = std::to_string(ShaderBufferTypes::PassData::MaxNumLights);
+	std::array<D3D_SHADER_MACRO, 1> standardDefines = 
+	{
+		"MAX_NUM_LIGHTS", maxNumLights.c_str()
+	};
 	m_vertexShaders["Standard"] = VertexShader(device, L"../GraphicsEngine/GraphicsEngine/Shaders/StandardVertexShader.hlsl", nullptr, "main", "vs_5_0", m_inputLayout);
 	m_pixelShaders["Standard"] = PixelShader(device, L"../GraphicsEngine/GraphicsEngine/Shaders/StandardPixelShader.hlsl", nullptr, "main", "ps_5_0");
 }

@@ -58,6 +58,14 @@ float D3DBase::GetAspectRatio() const
 {
 	return static_cast<float>(m_clientWidth) / m_clientHeight;
 }
+uint32_t D3DBase::GetClientWidth() const
+{
+	return m_clientWidth;
+}
+uint32_t D3DBase::GetClientHeight() const
+{
+	return m_clientHeight;
+}
 
 void D3DBase::SetClearColor(const DirectX::XMFLOAT3 clearColor)
 {

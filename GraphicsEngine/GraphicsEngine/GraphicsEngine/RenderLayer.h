@@ -5,6 +5,7 @@ namespace GraphicsEngine
 	enum class RenderLayer
 	{
 		Opaque,
+		Transparent,
 		Count
 	};
 }

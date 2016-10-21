@@ -11,4 +11,7 @@ void PipelineState::Set(ID3D11DeviceContext* deviceContext) const
 
 	// Set rasterizer state:
 	this->RasterizerState->Set(deviceContext);
+
+	// Set blend state:
+	this->BlendState->Set(deviceContext);
 }

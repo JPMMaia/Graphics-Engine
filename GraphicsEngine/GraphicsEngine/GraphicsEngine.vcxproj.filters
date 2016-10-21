@@ -86,6 +86,12 @@
     <ClCompile Include="GraphicsEngine\SamplerState.cpp">
       <Filter>GraphicsEngine\Textures\SamplerStates</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\BlendState.cpp">
+      <Filter>GraphicsEngine\Textures\BlendStates</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\BlendStateDescConstants.cpp">
+      <Filter>GraphicsEngine\Textures\BlendStates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -221,6 +227,12 @@
     <ClInclude Include="GraphicsEngine\SamplerStateDescConstants.h">
       <Filter>GraphicsEngine\Textures\SamplerStates</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsEngine\BlendState.h">
+      <Filter>GraphicsEngine\Textures\BlendStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\BlendStateDescConstants.h">
+      <Filter>GraphicsEngine\Textures\BlendStates</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -288,6 +300,9 @@
     </Filter>
     <Filter Include="GraphicsEngine\Textures\SamplerStates">
       <UniqueIdentifier>{5445e76f-0de9-4f48-a2af-beff57c31095}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\Textures\BlendStates">
+      <UniqueIdentifier>{a99b425d-a397-4ad6-93e7-5e13510419ca}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

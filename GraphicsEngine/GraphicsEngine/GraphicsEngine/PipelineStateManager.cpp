@@ -5,6 +5,7 @@
 
 #include <array>
 #include "ShaderBufferTypes.h"
+#include "BlendStateDescConstants.h"
 
 using namespace Common;
 using namespace GraphicsEngine;
@@ -14,6 +15,7 @@ PipelineStateManager::PipelineStateManager(const D3DBase& d3dBase)
 {
 	InitializeShadersAndInputLayout(d3dBase);
 	InitializeRasterizerStates(d3dBase);
+	InitializeBlendStates(d3dBase);
 	InitializePipelineStateObjects();
 }
 
@@ -38,7 +40,7 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 	};
 
 	auto maxNumLights = std::to_string(ShaderBufferTypes::PassData::MaxNumLights);
-	std::array<D3D_SHADER_MACRO, 1> standardDefines = 
+	std::array<D3D_SHADER_MACRO, 1> standardDefines =
 	{
 		"MAX_NUM_LIGHTS", maxNumLights.c_str()
 	};
@@ -49,17 +51,36 @@ void PipelineStateManager::InitializeRasterizerStates(const D3DBase& d3dBase)
 {
 	auto device = d3dBase.GetDevice();
 
-	m_rasterizerStates["Standard"] = RasterizerState(device, RasterizerStateDescConstants::Default);
+	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("Default"), std::forward_as_tuple(device, RasterizerStateDescConstants::Default));
+}
+void PipelineStateManager::InitializeBlendStates(const D3DBase& d3dBase)
+{
+	auto device = d3dBase.GetDevice();
+
+	auto defaultBlendFactor = std::array<FLOAT, 4>{ 1.0f, 1.0f, 1.0f, 1.0f };
+	auto defaultSampleMask = 0xffffffff;
+
+	m_blendStates.emplace(std::piecewise_construct, std::forward_as_tuple("Default"), std::forward_as_tuple(device, BlendStateDescConstants::Default(), defaultBlendFactor, defaultSampleMask));
+	m_blendStates.emplace(std::piecewise_construct, std::forward_as_tuple("Transparent"), std::forward_as_tuple(device, BlendStateDescConstants::Transparent(), defaultBlendFactor, defaultSampleMask));
 }
 void PipelineStateManager::InitializePipelineStateObjects()
 {
 	// Opaque:
+	PipelineState opaqueState;
 	{
-		PipelineState standardState;
-		standardState.VertexShader = &m_vertexShaders.at("Standard");
-		standardState.PixelShader = &m_pixelShaders.at("Standard");
-		standardState.RasterizerState = &m_rasterizerStates.at("Standard");
+		opaqueState.VertexShader = &m_vertexShaders.at("Standard");
+		opaqueState.PixelShader = &m_pixelShaders.at("Standard");
+		opaqueState.RasterizerState = &m_rasterizerStates.at("Default");
+		opaqueState.BlendState = &m_blendStates.at("Default");
 
-		m_pipelineStateObjects["Standard"] = standardState;
+		m_pipelineStateObjects.emplace("Opaque", opaqueState);
+	}
+
+	// Transparent:
+	{
+		auto transparentState = opaqueState;
+		transparentState.BlendState = &m_blendStates.at("Transparent");
+
+		m_pipelineStateObjects.emplace("Transparent", transparentState);
 	}
 }

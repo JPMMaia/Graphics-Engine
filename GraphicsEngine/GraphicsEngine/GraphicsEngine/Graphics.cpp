@@ -45,8 +45,13 @@ void Graphics::Render(const Common::Timer& timer) const
 	// Set samplers:
 	deviceContext->PSSetSamplers(5, 1, m_anisotropicSamplerState.GetAddressOf());
 
-	m_pipelineStateManager.SetPipelineState(deviceContext, "Standard");
+	// Draw opaque:
+	m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
 	DrawRenderItems(RenderLayer::Opaque);
+
+	// Draw transparent:
+	m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
+	DrawRenderItems(RenderLayer::Transparent);
 
 	m_d3dBase.EndScene();
 }
@@ -153,6 +158,7 @@ void Graphics::DrawRenderItems(RenderLayer renderLayer) const
 
 		// Set material data:
 		const auto& materialData = m_currentFrameResource->MaterialDataArray[renderItem->Material->MaterialIndex];
+		deviceContext->VSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 		deviceContext->PSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 
 		// Set textures:

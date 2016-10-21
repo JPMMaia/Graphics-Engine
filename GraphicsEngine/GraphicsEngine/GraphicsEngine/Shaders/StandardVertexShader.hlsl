@@ -1,5 +1,4 @@
 #include "LightingUtils.hlsli"
-
 #include "ObjectData.hlsli"
 #include "MaterialData.hlsli"
 #include "PassData.hlsli"
@@ -34,8 +33,7 @@ VertexOutput main(VertexInput input)
     output.PositionH = mul(positionW, ViewProjectionMatrix);
 
     // Output texture coordinates:
-    //output.TextureCoordinates = mul(float4(input.TextureCoordinates, 0.0f, 1.0f), MaterialTransform).xy;
-    output.TextureCoordinates = input.TextureCoordinates;
+    output.TextureCoordinates = mul(float4(input.TextureCoordinates, 0.0f, 1.0f), MaterialTransform).xy;
 
     return output;
 }

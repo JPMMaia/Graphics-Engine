@@ -145,7 +145,7 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 	bricks->Name = "Bricks";
 	bricks->DiffuseMap = &textureManager["BricksTexture"];
 	bricks->MaterialIndex = 0;
-	bricks->DiffuseAlbedo = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+	bricks->DiffuseAlbedo = XMFLOAT4(0.7f, 0.7f, 0.7f, 0.2f);
 	bricks->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 	bricks->Roughness = 0.25f;
 	bricks->MaterialTransform = MathHelper::Identity4x4();
@@ -164,9 +164,9 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 		boxRenderItem->StartIndexLocation = boxRenderItem->Mesh->Submeshes.at("Box").StartIndexLocation;
 		boxRenderItem->BaseVertexLocation = boxRenderItem->Mesh->Submeshes.at("Box").BaseVertexLocation;
 		boxRenderItem->ObjectBufferIndex = 0;
-		XMStoreFloat4x4(&boxRenderItem->WorldMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f)*XMMatrixTranslation(0.0f, 0.5f, 0.0f));
+		XMStoreFloat4x4(&boxRenderItem->WorldMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f)*XMMatrixTranslation(0.0f, 0.0f, 0.0f));
 
-		graphics->AddRenderItem(std::move(boxRenderItem), { RenderLayer::Opaque });
+		graphics->AddRenderItem(std::move(boxRenderItem), { RenderLayer::Transparent });
 	}
 
 	// Sphere:
@@ -179,8 +179,8 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 		sphereRenderItem->StartIndexLocation = sphereRenderItem->Mesh->Submeshes.at("Sphere").StartIndexLocation;
 		sphereRenderItem->BaseVertexLocation = sphereRenderItem->Mesh->Submeshes.at("Sphere").BaseVertexLocation;
 		sphereRenderItem->ObjectBufferIndex = 1;
-		XMStoreFloat4x4(&sphereRenderItem->WorldMatrix, XMMatrixTranslation(0.0f, 5.0f, 0.0f));
+		XMStoreFloat4x4(&sphereRenderItem->WorldMatrix, XMMatrixTranslation(0.0f, 0.0f, -5.0f));
 
-		graphics->AddRenderItem(std::move(sphereRenderItem), { RenderLayer::Opaque });
+		graphics->AddRenderItem(std::move(sphereRenderItem), { RenderLayer::Transparent });
 	}
 }

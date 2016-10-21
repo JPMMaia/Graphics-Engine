@@ -167,6 +167,8 @@
     <ClCompile Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\BlendState.cpp" />
+    <ClCompile Include="GraphicsEngine\BlendStateDescConstants.cpp" />
     <ClCompile Include="GraphicsEngine\Camera.cpp" />
     <ClCompile Include="GraphicsEngine\D3DBase.cpp" />
     <ClCompile Include="GraphicsEngine\DomainShader.cpp" />
@@ -207,6 +209,8 @@
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_iterators.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_print.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_utils.hpp" />
+    <ClInclude Include="GraphicsEngine\BlendState.h" />
+    <ClInclude Include="GraphicsEngine\BlendStateDescConstants.h" />
     <ClInclude Include="GraphicsEngine\Buffer.h" />
     <ClInclude Include="GraphicsEngine\BufferTypes.h" />
     <ClInclude Include="GraphicsEngine\Camera.h" />

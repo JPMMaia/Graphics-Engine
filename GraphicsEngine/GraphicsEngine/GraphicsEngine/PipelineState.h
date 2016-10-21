@@ -3,6 +3,7 @@
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "RasterizerState.h"
+#include "BlendState.h"
 
 #include <d3d11_2.h>
 
@@ -14,8 +15,8 @@ namespace GraphicsEngine
 		VertexShader* VertexShader;
 		PixelShader* PixelShader;
 		RasterizerState* RasterizerState;
+		BlendState* BlendState;
 		
-		// ID3D11BlendState* BlendState;
 		// ID3D11DepthStencilState* DepthStencilState;
 		// UINT SampleMask;
 		// UINT NumRenderTargets;

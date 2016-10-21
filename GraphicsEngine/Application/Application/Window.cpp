@@ -3,7 +3,7 @@
 using namespace Win32Application;
 
 Window::Window(WNDPROC mainWindowProc) :
-	m_fullscreen(true)
+	m_fullscreen(false)
 {
 	if (!Initialize(mainWindowProc))
 		throw std::exception("Failed to create window.");

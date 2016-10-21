@@ -11,18 +11,19 @@ void TextureManager::Reset()
 	m_textures.clear();
 }
 
-bool TextureManager::Create(ID3D11Device* d3dDevice, const std::wstring& textureID, const std::wstring& textureUrl)
+bool TextureManager::Create(ID3D11Device* d3dDevice, const std::string& name, const std::wstring& textureUrl)
 {
-	// If there textureID already exists, return false:
-	if (m_textures.find(textureID) != m_textures.end())
+	// If it already exists, return false:
+	if (m_textures.find(name) != m_textures.end())
 		return false;
 
-	m_textures[textureID] = Texture(d3dDevice, textureUrl);
+	// Create a new texture:
+	m_textures.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple(d3dDevice, name, textureUrl));
 
 	return true;
 }
 
-const Texture& TextureManager::operator[](const std::wstring& textureID) const
+const Texture& TextureManager::operator[](const std::string& name) const
 {
-	return m_textures.at(textureID);
+	return m_textures.at(name);
 }

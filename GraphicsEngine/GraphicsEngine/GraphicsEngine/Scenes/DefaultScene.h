@@ -17,14 +17,14 @@ namespace GraphicsEngine
 	{
 	public:
 		DefaultScene() = default;
-		DefaultScene(Graphics* graphics, const D3DBase& d3dBase);
+		DefaultScene(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager);
 
 		const std::unordered_map<std::string, std::unique_ptr<Material>>& GetMaterials() const override;
 
 	private:
-		void Initialize(Graphics* graphics, const D3DBase& d3dBase);
 		void InitializeGeometry(const D3DBase& d3dBase);
-		void InitializeMaterials();
+		static void InitializeTextures(const D3DBase& d3dBase, TextureManager& textureManager);
+		void InitializeMaterials(TextureManager& textureManager);
 		void InitializeRenderItems(Graphics* graphics);
 
 	private:

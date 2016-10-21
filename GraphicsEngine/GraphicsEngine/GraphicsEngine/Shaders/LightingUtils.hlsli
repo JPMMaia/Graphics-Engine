@@ -24,7 +24,7 @@ struct Material
 };
 
 /// <sumary>
-/// Calculates the linear attenuation which applies to point and spot lights
+/// Calculates the linear attenuation which applies to point and spot lights.
 /// </sumary>
 float CalculateAttenuation(float distance, float falloffStart, float falloffEnd)
 {
@@ -32,14 +32,15 @@ float CalculateAttenuation(float distance, float falloffStart, float falloffEnd)
 }
 
 /// <sumary>
-/// Schlick gives an approximation to the Fresnel reflectance effect
+/// Schlick gives an approximation to the Fresnel reflectance effect.
+/// R(0) + (1 - R(0)) * (1 - cos(angle))^5
 /// </sumary>
 float3 ShlickFresnel(float3 r0, float3 normal, float3 lightDirection)
 {
     float cosIncidentAngle = saturate(dot(normal, lightDirection));
-
     float f0 = 1.0f - cosIncidentAngle;
-    return r0 + (1.0f - r0) * (f0 * f0 * f0 * f0 * f0); // 5 times
+
+    return r0 + (1.0f - r0) * (f0 * f0 * f0 * f0 * f0);
 }
 
 float3 BlinnPhong(float3 lightStrength, float3 lightDirection, float3 normal, float3 toEyeDirection, Material material)

@@ -21,7 +21,7 @@ VertexShader::VertexShader(ID3D11Device* d3dDevice, const std::wstring& filename
 void VertexShader::Initialize(ID3D11Device* d3dDevice, const void* shaderByteCode, SIZE_T byteCodeLength, const std::vector<D3D11_INPUT_ELEMENT_DESC>& vertexDesc)
 {
 	// Create vertex shader:
-	ThrowIfFailed(
+	Common::ThrowIfFailed(
 		d3dDevice->CreateVertexShader(
 			shaderByteCode,
 			byteCodeLength,
@@ -31,7 +31,7 @@ void VertexShader::Initialize(ID3D11Device* d3dDevice, const void* shaderByteCod
 	);
 
 	// Create input layout:
-	ThrowIfFailed(
+	Common::ThrowIfFailed(
 		d3dDevice->CreateInputLayout(
 			vertexDesc.data(),
 			static_cast<UINT>(vertexDesc.size()),

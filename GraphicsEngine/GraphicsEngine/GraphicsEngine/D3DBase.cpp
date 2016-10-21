@@ -11,7 +11,8 @@ D3DBase::D3DBase(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight,
 	m_outputWindow(outputWindow),
 	m_clientWidth(clientWidth),
 	m_clientHeight(clientHeight),
-	m_fullscreen(fullscreen)
+	m_fullscreen(fullscreen),
+	m_verticalSync(true)
 {
 	Initialize();
 }
@@ -39,7 +40,7 @@ void D3DBase::BeginScene() const
 void D3DBase::EndScene() const
 {
 	// Present as fast as possible:
-	ThrowIfFailed(m_swapChain->Present(0, 0));
+	Common::ThrowIfFailed(m_swapChain->Present(m_verticalSync ? 1 : 0, 0));
 
 	// Discard the contents of the render target and depth stencil:
 	m_immediateContext->DiscardView(m_renderTargetView.Get());
@@ -86,7 +87,7 @@ void D3DBase::InitializeDeviceResources()
 {
 	// Create a DirectX graphics interface factory:
 	ComPtr<IDXGIFactory2> factory;
-	ThrowIfFailed(CreateDXGIFactory(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(factory.GetAddressOf())));
+	Common::ThrowIfFailed(CreateDXGIFactory(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(factory.GetAddressOf())));
 
 	// Create a settings manager object which will select the adapter:
 	auto settingsManager = SettingsManager::Build(L"Settings.conf");
@@ -95,7 +96,7 @@ void D3DBase::InitializeDeviceResources()
 	ComPtr<IDXGIAdapter2> adapter;
 	{
 		ComPtr<IDXGIAdapter1> adapterTmp;
-		ThrowIfFailed(factory->EnumAdapters1(settingsManager.GetAdapterIndex(), adapterTmp.GetAddressOf()));
+		Common::ThrowIfFailed(factory->EnumAdapters1(settingsManager.GetAdapterIndex(), adapterTmp.GetAddressOf()));
 		adapterTmp.As(&adapter);
 	}
 
@@ -115,7 +116,7 @@ void D3DBase::InitializeDeviceResources()
 
 		ComPtr<ID3D11Device> device;
 		ComPtr<ID3D11DeviceContext> immediateContext;
-		ThrowIfFailed(
+		Common::ThrowIfFailed(
 			D3D11CreateDevice(
 				adapter.Get(),
 				D3D_DRIVER_TYPE_UNKNOWN,
@@ -158,7 +159,7 @@ void D3DBase::InitializeDeviceResources()
 		fullscreenSwapChainDesc.Windowed = !m_fullscreen;
 		
 		ComPtr<IDXGISwapChain1> swapChain;
-		ThrowIfFailed(
+		Common::ThrowIfFailed(
 			factory->CreateSwapChainForHwnd(
 				m_device.Get(),
 				m_outputWindow,
@@ -173,10 +174,10 @@ void D3DBase::InitializeDeviceResources()
 
 	// Get the pointer to the back buffer.
 	ComPtr<ID3D11Texture2D> backBuffer;
-	ThrowIfFailed(m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<LPVOID*>(backBuffer.GetAddressOf())));
+	Common::ThrowIfFailed(m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<LPVOID*>(backBuffer.GetAddressOf())));
 
 	// Create the render target view with the back buffer pointer.
-	ThrowIfFailed(m_device->CreateRenderTargetView(backBuffer.Get(), nullptr, m_renderTargetView.GetAddressOf()));
+	Common::ThrowIfFailed(m_device->CreateRenderTargetView(backBuffer.Get(), nullptr, m_renderTargetView.GetAddressOf()));
 }
 void D3DBase::InitializeDepthStencilResources()
 {
@@ -196,7 +197,7 @@ void D3DBase::InitializeDepthStencilResources()
 		depthStencilBufferDesc.MiscFlags = 0;
 
 		// Create the texture for the depth buffer using the filled out description:
-		ThrowIfFailed(m_device->CreateTexture2D(&depthStencilBufferDesc, nullptr, m_depthStencilBuffer.GetAddressOf()));
+		Common::ThrowIfFailed(m_device->CreateTexture2D(&depthStencilBufferDesc, nullptr, m_depthStencilBuffer.GetAddressOf()));
 	}
 
 	// Create the depth stencil state:
@@ -226,7 +227,7 @@ void D3DBase::InitializeDepthStencilResources()
 		depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 		// Create the depth stencil state:
-		ThrowIfFailed(m_device->CreateDepthStencilState(&depthStencilDesc, m_depthStencilState.GetAddressOf()));
+		Common::ThrowIfFailed(m_device->CreateDepthStencilState(&depthStencilDesc, m_depthStencilState.GetAddressOf()));
 
 		// Set the depth stencil state:
 		m_immediateContext->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
@@ -239,7 +240,7 @@ void D3DBase::InitializeDepthStencilResources()
 		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		depthStencilViewDesc.Texture2D.MipSlice = 0;
 
-		ThrowIfFailed(m_device->CreateDepthStencilView(m_depthStencilBuffer.Get(), &depthStencilViewDesc, m_depthStencilView.GetAddressOf()));
+		Common::ThrowIfFailed(m_device->CreateDepthStencilView(m_depthStencilBuffer.Get(), &depthStencilViewDesc, m_depthStencilView.GetAddressOf()));
 	}
 }
 void D3DBase::InitializeRasterizerState()
@@ -258,7 +259,7 @@ void D3DBase::InitializeRasterizerState()
 	rasterizerDesc.SlopeScaledDepthBias = 0.0f;
 
 	// Create the rasterizer state from the description we just filled out.
-	ThrowIfFailed(m_device->CreateRasterizerState(&rasterizerDesc, m_rasterizerState.GetAddressOf()));
+	Common::ThrowIfFailed(m_device->CreateRasterizerState(&rasterizerDesc, m_rasterizerState.GetAddressOf()));
 
 	// Set the rasterizer state:
 	m_immediateContext->RSSetState(m_rasterizerState.Get());

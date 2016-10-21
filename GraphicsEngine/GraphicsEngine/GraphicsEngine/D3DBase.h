@@ -41,6 +41,7 @@ namespace GraphicsEngine
 		uint32_t m_clientWidth;
 		uint32_t m_clientHeight;
 		bool m_fullscreen;
+		bool m_verticalSync;
 		
 		Microsoft::WRL::ComPtr<IDXGISwapChain2> m_swapChain;
 		Microsoft::WRL::ComPtr<ID3D11Device2> m_device;

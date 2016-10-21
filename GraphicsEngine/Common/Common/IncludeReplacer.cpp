@@ -13,7 +13,7 @@ void IncludeReplacer::ReplaceIncludes(const std::wstring& inputFilename, const s
 
 	vector<char>::iterator location;
 	wstring includedFile;
-	while(FindAndEraseIncludeTag(content, includedFile, location))
+	while (FindAndEraseIncludeTag(content, includedFile, location))
 	{
 		vector<char> includedContent;
 		Helpers::ReadData(filePath + includedFile, includedContent);
@@ -26,13 +26,20 @@ void IncludeReplacer::ReplaceIncludes(const std::wstring& inputFilename, const s
 
 bool IncludeReplacer::FindAndEraseIncludeTag(std::vector<char>& content, std::wstring& includedFile, std::vector<char>::iterator& location)
 {
-	auto iterator = std::find(content.begin(), content.end(), '#');
-	if (iterator == content.end())
-		return false;
+	auto iterator = content.begin();
 
-	auto begin = std::vector<char>::iterator(iterator);
+	std::vector<char>::iterator begin;
+	do
+	{
+		iterator = std::find(iterator, content.end(), '#');
+		if (iterator == content.end())
+			return false;
 
-	if (*(++iterator) != 'i' ||
+		// Create iterator to the begin of the line:
+		begin = std::vector<char>::iterator(iterator);
+
+	} while (
+		*(++iterator) != 'i' ||
 		*(++iterator) != 'n' ||
 		*(++iterator) != 'c' ||
 		*(++iterator) != 'l' ||
@@ -41,15 +48,14 @@ bool IncludeReplacer::FindAndEraseIncludeTag(std::vector<char>& content, std::ws
 		*(++iterator) != 'e' ||
 		*(++iterator) != ' ' ||
 		*(++iterator) != '"'
-		)
-		return false;
+		);
 
 	string includedFileTmp;
 	includedFileTmp.reserve(48);
-	while(*(++iterator) != '"')
+	while (*(++iterator) != '"')
 		includedFileTmp.push_back(*iterator);
 	includedFile = Helpers::StringToWString(includedFileTmp);
-	
+
 	// Skip end of line:
 	do { ++iterator; } while (*iterator == ' ' || *iterator == '\r');
 	do { ++iterator; } while (*iterator == '\n');

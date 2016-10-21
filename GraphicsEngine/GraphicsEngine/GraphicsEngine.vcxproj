@@ -183,6 +183,7 @@
     <ClCompile Include="GraphicsEngine\PixelShader.cpp" />
     <ClCompile Include="GraphicsEngine\RasterizerState.cpp" />
     <ClCompile Include="GraphicsEngine\RenderItem.cpp" />
+    <ClCompile Include="GraphicsEngine\SamplerState.cpp" />
     <ClCompile Include="GraphicsEngine\Scenes\DefaultScene.cpp" />
     <ClCompile Include="GraphicsEngine\SettingsManager.cpp" />
     <ClCompile Include="GraphicsEngine\Shaders\PassData.hlsli">
@@ -230,6 +231,8 @@
     <ClInclude Include="GraphicsEngine\RasterizerStateDescConstants.h" />
     <ClInclude Include="GraphicsEngine\RenderItem.h" />
     <ClInclude Include="GraphicsEngine\RenderLayer.h" />
+    <ClInclude Include="GraphicsEngine\SamplerState.h" />
+    <ClInclude Include="GraphicsEngine\SamplerStateDescConstants.h" />
     <ClInclude Include="GraphicsEngine\Scenes\DefaultScene.h" />
     <ClInclude Include="GraphicsEngine\SettingsManager.h" />
     <ClInclude Include="GraphicsEngine\ShaderBufferTypes.h" />
@@ -247,14 +250,30 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Libraries\rapidxml\manual.html" />
-    <None Include="GraphicsEngine\Shaders\LightingUtils.hlsli" />
+    <None Include="GraphicsEngine\Shaders\LightingUtils.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="GraphicsEngine\Shaders\MaterialData.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="GraphicsEngine\Shaders\ObjectData.hlsli" />
+    <None Include="GraphicsEngine\Shaders\ObjectData.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="GraphicsEngine\Shaders\Samplers.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="GraphicsEngine\Shaders\StandardPixelShader.hlsl">

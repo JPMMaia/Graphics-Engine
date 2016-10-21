@@ -10,6 +10,7 @@
 #include "RenderLayer.h"
 #include "Scenes/DefaultScene.h"
 #include "FrameResource.h"
+#include "SamplerState.h"
 
 namespace GraphicsEngine
 {
@@ -47,6 +48,8 @@ namespace GraphicsEngine
 		std::vector<FrameResource> m_frameResources;
 		FrameResource* m_currentFrameResource = nullptr;
 		int m_currentFrameResourceIndex = 0;
+
+		SamplerState m_anisotropicSamplerState;
 
 //		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
 //		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_postProcessRootSignature;

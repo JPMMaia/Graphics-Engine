@@ -6,20 +6,16 @@
 using namespace Common;
 using namespace GraphicsEngine;
 
-Texture::Texture()
+Texture::Texture(ID3D11Device* device, const std::string& name, const std::wstring& filename) :
+	m_name(name)
 {
-}
-Texture::Texture(ID3D11Device* device, const std::wstring& filename)
-{
-	Initialize(device, filename);
+	CreateTextureFromFile(device, filename);
 }
 
-void Texture::Initialize(ID3D11Device* device, const std::wstring& filename)
+void Texture::Initialize(ID3D11Device* device, const std::string& name, const std::wstring& filename)
 {
-	// Create shader resource view fromt a DDS Texture file:
-	ThrowIfFailed(
-		DirectX::CreateDDSTextureFromFile(device, filename.data(), nullptr, m_textureView.GetAddressOf())
-		);
+	m_name = name;
+	CreateTextureFromFile(device, filename);
 }
 void Texture::Reset()
 {
@@ -33,4 +29,12 @@ ID3D11ShaderResourceView* Texture::Get() const
 ID3D11ShaderResourceView* const* Texture::GetAddressOf() const
 {
 	return m_textureView.GetAddressOf();
+}
+
+void Texture::CreateTextureFromFile(ID3D11Device* device, const std::wstring& filename)
+{
+	// Create shader resource view from a DDS Texture file:
+	ThrowIfFailed(
+		DirectX::CreateDDSTextureFromFile(device, filename.data(), nullptr, m_textureView.GetAddressOf())
+	);
 }

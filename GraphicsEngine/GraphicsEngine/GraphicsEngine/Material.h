@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common/MathHelper.h"
+#include "Texture.h"
 
 #include <DirectXMath.h>
 #include <string>
@@ -11,8 +12,7 @@ namespace GraphicsEngine
 	{
 		std::string Name;
 		int MaterialIndex = -1;
-		int DiffuseSrvHeapIndex = -1;
-		int NormalSrvHeapIndex = -1;
+		const Texture* DiffuseMap = nullptr;
 
 		// Material constant buffer data used for shading:
 		DirectX::XMFLOAT4 DiffuseAlbedo = { 1.0f, 1.0f, 1.0f, 1.0f };

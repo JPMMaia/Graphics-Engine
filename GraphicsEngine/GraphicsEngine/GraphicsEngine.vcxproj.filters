@@ -19,9 +19,6 @@
     <ClCompile Include="GraphicsEngine\X3DParser\X3DShapeParser.cpp">
       <Filter>GraphicsEngine\X3DParser</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsEngine\Texture.cpp">
-      <Filter>GraphicsEngine\Textures</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsEngine\TextureManager.cpp">
       <Filter>GraphicsEngine\Textures</Filter>
     </ClCompile>
@@ -83,6 +80,12 @@
     <ClCompile Include="GraphicsEngine\Shaders\PassData.hlsli">
       <Filter>Shaders\Common</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\Texture.cpp">
+      <Filter>GraphicsEngine\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\SamplerState.cpp">
+      <Filter>GraphicsEngine\Textures\SamplerStates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -114,9 +117,6 @@
     </ClInclude>
     <ClInclude Include="GraphicsEngine\X3DParser\X3DShapeParser.h">
       <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsEngine\Texture.h">
-      <Filter>GraphicsEngine\Textures</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\TextureManager.h">
       <Filter>GraphicsEngine\Textures</Filter>
@@ -212,6 +212,15 @@
     <ClInclude Include="GraphicsEngine\Material.h">
       <Filter>GraphicsEngine\Light</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsEngine\Texture.h">
+      <Filter>GraphicsEngine\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\SamplerState.h">
+      <Filter>GraphicsEngine\Textures\SamplerStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\SamplerStateDescConstants.h">
+      <Filter>GraphicsEngine\Textures\SamplerStates</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -277,6 +286,9 @@
     <Filter Include="Shaders\Common">
       <UniqueIdentifier>{86d2ac93-db29-4637-9845-c48bb2ea3aa9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GraphicsEngine\Textures\SamplerStates">
+      <UniqueIdentifier>{5445e76f-0de9-4f48-a2af-beff57c31095}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Libraries\rapidxml\manual.html">
@@ -289,6 +301,9 @@
       <Filter>Shaders\Common</Filter>
     </None>
     <None Include="GraphicsEngine\Shaders\MaterialData.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </None>
+    <None Include="GraphicsEngine\Shaders\Samplers.hlsli">
       <Filter>Shaders\Common</Filter>
     </None>
   </ItemGroup>

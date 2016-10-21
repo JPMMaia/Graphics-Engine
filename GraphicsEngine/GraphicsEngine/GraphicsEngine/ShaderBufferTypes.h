@@ -18,10 +18,6 @@ namespace GraphicsEngine
 			DirectX::XMFLOAT3 FresnelR0 = { 0.01f, 0.01f, 0.01f };
 			float Roughness = 0.25f;
 			DirectX::XMFLOAT4X4 MaterialTransform = MathHelper::Identity4x4();
-			int32_t DiffuseMapIndex = 0;
-			int32_t Pad0;
-			int32_t Pad1;
-			int32_t Pad2;
 		};
 
 		struct PassData

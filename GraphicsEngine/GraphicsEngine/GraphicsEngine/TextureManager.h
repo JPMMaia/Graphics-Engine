@@ -2,7 +2,7 @@
 
 #include "Texture.h"
 
-#include <map>
+#include <unordered_map>
 
 namespace GraphicsEngine
 {
@@ -11,11 +11,11 @@ namespace GraphicsEngine
 	public:
 		void Reset();
 
-		bool Create(ID3D11Device* d3dDevice, const std::wstring& textureID, const std::wstring& textureUrl);
+		bool Create(ID3D11Device* d3dDevice, const std::string& name, const std::wstring& textureUrl);
 
-		const Texture& operator[](const std::wstring& textureID) const;
+		const Texture& operator[](const std::string& name) const;
 
 	private:
-		std::map<std::wstring, Texture> m_textures;
+		std::unordered_map<std::string, Texture> m_textures;
 	};
 }

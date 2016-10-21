@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "Graphics.h"
 #include "ShaderBufferTypes.h"
+#include "SamplerStateDescConstants.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -9,9 +10,10 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_d3dBase(outputWindow, clientWidth, clientHeight, fullscreen),
 	m_pipelineStateManager(m_d3dBase),
 	m_camera(m_d3dBase.GetAspectRatio(), 0.25f * XM_PI, 1.0f, 1000.0f, XMMatrixIdentity()),
-	m_scene(this, m_d3dBase),
+	m_scene(this, m_d3dBase, m_textureManager),
 	m_frameResources(1, FrameResource(m_d3dBase.GetDevice(), m_allRenderItems, m_scene.GetMaterials().size())),
-	m_currentFrameResource(&m_frameResources[0])
+	m_currentFrameResource(&m_frameResources[0]),
+	m_anisotropicSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp)
 {
 	m_d3dBase.SetClearColor(XMFLOAT3(0.2f, 0.2f, 0.2f));
 	m_camera.SetPosition(0.0f, 2.5f, -15.0f);
@@ -40,6 +42,9 @@ void Graphics::Render(const Common::Timer& timer) const
 	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
 	deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
 
+	// Set sampler:
+	deviceContext->PSSetSamplers(5, 1, m_anisotropicSamplerState.GetAddressOf());
+
 	m_pipelineStateManager.SetPipelineState(deviceContext, "Standard");
 	DrawRenderItems(RenderLayer::Opaque);
 
@@ -64,10 +69,6 @@ void Graphics::AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::init
 void Graphics::UpdateObjectsData()
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
-
-	// Transpose and store view and projection matrices:
-	//XMStoreFloat4x4(&objectBuffer.ViewMatrix, XMMatrixTranspose(m_camera.GetViewMatrix()));
-	//XMStoreFloat4x4(&objectBuffer.ProjectionMatrix, XMMatrixTranspose(m_camera.GetProjectionMatrix()));
 
 	for(auto& renderItem : m_allRenderItems)
 	{
@@ -97,7 +98,6 @@ void Graphics::UpdateMaterialData() const
 		materialData.FresnelR0 = material->FresnelR0;
 		materialData.Roughness = material->Roughness;
 		XMStoreFloat4x4(&materialData.MaterialTransform, XMMatrixTranspose(materialTransform));
-		materialData.DiffuseMapIndex = material->DiffuseSrvHeapIndex;
 
 		m_currentFrameResource->MaterialDataArray[material->MaterialIndex].Map(deviceContext, &materialData, sizeof(ShaderBufferTypes::MaterialData));
 	}
@@ -149,10 +149,16 @@ void Graphics::DrawRenderItems(RenderLayer renderLayer) const
 	// For each render item:
 	for(auto& renderItem : m_renderItemLayers[static_cast<SIZE_T>(renderLayer)])
 	{
-		// Set matrix buffer:
-		const auto& objectBuffer = m_currentFrameResource->ObjectDataArray[renderItem->ObjectBufferIndex];
-		deviceContext->VSSetConstantBuffers(0, 1, objectBuffer.GetAddressOf());
-		deviceContext->PSSetConstantBuffers(1, 1, m_currentFrameResource->MaterialDataArray[renderItem->MaterialBufferIndex].GetAddressOf());
+		// Set object data:
+		const auto& objectData = m_currentFrameResource->ObjectDataArray[renderItem->ObjectBufferIndex];
+		deviceContext->VSSetConstantBuffers(0, 1, objectData.GetAddressOf());
+
+		// Set material data:
+		const auto& materialData = m_currentFrameResource->MaterialDataArray[renderItem->Material->MaterialIndex];
+		deviceContext->PSSetConstantBuffers(1, 1, materialData.GetAddressOf());
+
+		// Set textures:
+		deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
 
 		// Render:
 		renderItem->Render(deviceContext);

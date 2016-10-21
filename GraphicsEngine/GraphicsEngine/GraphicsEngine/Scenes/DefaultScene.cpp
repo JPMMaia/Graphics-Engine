@@ -148,6 +148,7 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 	bricks->DiffuseAlbedo = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
 	bricks->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 	bricks->Roughness = 0.25f;
+	bricks->MaterialTransform = MathHelper::Identity4x4();
 	m_materials[bricks->Name] = std::move(bricks);
 }
 

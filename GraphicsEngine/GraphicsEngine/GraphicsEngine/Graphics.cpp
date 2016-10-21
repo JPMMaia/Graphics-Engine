@@ -91,13 +91,11 @@ void Graphics::UpdateMaterialData() const
 	{
 		auto material = e.second.get();
 
-		auto materialTransform = XMLoadFloat4x4(&material->MaterialTransform);
-
 		ShaderBufferTypes::MaterialData materialData;
 		materialData.DiffuseAlbedo = material->DiffuseAlbedo;
 		materialData.FresnelR0 = material->FresnelR0;
 		materialData.Roughness = material->Roughness;
-		XMStoreFloat4x4(&materialData.MaterialTransform, XMMatrixTranspose(materialTransform));
+		XMStoreFloat4x4(&materialData.MaterialTransform, XMMatrixTranspose(XMLoadFloat4x4(&material->MaterialTransform)));
 
 		m_currentFrameResource->MaterialDataArray[material->MaterialIndex].Map(deviceContext, &materialData, sizeof(ShaderBufferTypes::MaterialData));
 	}

@@ -42,7 +42,7 @@ void Graphics::Render(const Common::Timer& timer) const
 	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
 	deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
 
-	// Set sampler:
+	// Set samplers:
 	deviceContext->PSSetSamplers(5, 1, m_anisotropicSamplerState.GetAddressOf());
 
 	m_pipelineStateManager.SetPipelineState(deviceContext, "Standard");

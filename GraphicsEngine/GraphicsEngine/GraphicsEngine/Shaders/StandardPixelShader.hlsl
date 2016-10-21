@@ -45,5 +45,5 @@ float4 main(VertexOutput input) : SV_TARGET
     // Common convention to take alpha from diffuse albedo:
     color.a = diffuseAlbedo.a;
 
-    return DiffuseMap.Sample(SamplerAnisotropicClamp, input.TextureCoordinates);
+    return color;
 }

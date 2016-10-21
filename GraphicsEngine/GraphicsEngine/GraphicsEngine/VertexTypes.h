@@ -33,6 +33,23 @@ namespace GraphicsEngine
 			}
 		};
 
-		using DefaultVertexType = NormalTextureVertexType;
+		struct NormalTextureTangentVertexType
+		{
+			DirectX::XMFLOAT3 Position;
+			DirectX::XMFLOAT3 Normal;
+			DirectX::XMFLOAT2 TextureCoordinates;
+			DirectX::XMFLOAT3 TangentU;
+
+			NormalTextureTangentVertexType() = default;
+			NormalTextureTangentVertexType(float positionX, float positionY, float positionZ, float normalX, float normalY, float normalZ, float textureCoordinatesU, float textureCoordinatesV, float tangentUx, float tangentUy, float tangentUz) :
+				Position(positionX, positionY, positionZ),
+				Normal(normalX, normalY, normalZ),
+				TextureCoordinates(textureCoordinatesU, textureCoordinatesV),
+				TangentU(tangentUx, tangentUy, tangentUz)
+			{
+			}
+		};
+
+		using DefaultVertexType = NormalTextureTangentVertexType;
 	}
 }

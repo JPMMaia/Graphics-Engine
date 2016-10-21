@@ -27,7 +27,13 @@ namespace GraphicsEngine
 		void Reset();
 
 		template<typename = std::enable_if_t<USAGE_FLAG == D3D11_USAGE_DYNAMIC && CPU_ACCESS_FLAG == D3D11_CPU_ACCESS_WRITE>>
-		void Map(ID3D11DeviceContext* d3dDeviceContext, const void* bufferData, uint32_t bufferSize) const;
+		void CopyData(ID3D11DeviceContext* d3dDeviceContext, const void* bufferData, uint32_t bufferSize) const;
+
+		template<typename = std::enable_if_t<USAGE_FLAG == D3D11_USAGE_DYNAMIC && CPU_ACCESS_FLAG == D3D11_CPU_ACCESS_WRITE>>
+		void Map(ID3D11DeviceContext* d3dDeviceContext, D3D11_MAPPED_SUBRESOURCE* mappedResource) const;
+		
+		template<typename = std::enable_if_t<USAGE_FLAG == D3D11_USAGE_DYNAMIC && CPU_ACCESS_FLAG == D3D11_CPU_ACCESS_WRITE>>
+		void Unmap(ID3D11DeviceContext* d3dDeviceContext) const;
 
 		template<typename = std::enable_if_t<USAGE_FLAG == D3D11_USAGE_DEFAULT>>
 		void Update(ID3D11DeviceContext1* d3dDeviceContext, const void* bufferData, uint32_t bufferSize) const;
@@ -88,7 +94,7 @@ namespace GraphicsEngine
 
 	template <D3D11_BIND_FLAG BIND_FLAG, D3D11_USAGE USAGE_FLAG, uint32_t CPU_ACCESS_FLAG>
 	template <typename>
-	void Buffer<BIND_FLAG, USAGE_FLAG, CPU_ACCESS_FLAG>::Map(ID3D11DeviceContext* d3dDeviceContext, const void* bufferData, uint32_t bufferSize) const
+	void Buffer<BIND_FLAG, USAGE_FLAG, CPU_ACCESS_FLAG>::CopyData(ID3D11DeviceContext* d3dDeviceContext, const void* bufferData, uint32_t bufferSize) const
 	{
 		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
 
@@ -99,6 +105,20 @@ namespace GraphicsEngine
 		memcpy_s(mappedResource.pData, bufferSize, bufferData, bufferSize);
 
 		// Reenable GPU access to the buffer data:
+		d3dDeviceContext->Unmap(m_buffer.Get(), 0);
+	}
+
+	template <D3D11_BIND_FLAG BIND_FLAG, D3D11_USAGE USAGE_FLAG, uint32_t CPU_ACCESS_FLAG>
+	template <typename>
+	void Buffer<BIND_FLAG, USAGE_FLAG, CPU_ACCESS_FLAG>::Map(ID3D11DeviceContext* d3dDeviceContext, D3D11_MAPPED_SUBRESOURCE* mappedResource) const
+	{
+		d3dDeviceContext->Map(m_buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, mappedResource);
+	}
+
+	template <D3D11_BIND_FLAG BIND_FLAG, D3D11_USAGE USAGE_FLAG, uint32_t CPU_ACCESS_FLAG>
+	template <typename>
+	void Buffer<BIND_FLAG, USAGE_FLAG, CPU_ACCESS_FLAG>::Unmap(ID3D11DeviceContext* d3dDeviceContext) const
+	{
 		d3dDeviceContext->Unmap(m_buffer.Get(), 0);
 	}
 

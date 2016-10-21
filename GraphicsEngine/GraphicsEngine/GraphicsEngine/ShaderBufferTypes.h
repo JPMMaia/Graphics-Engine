@@ -7,7 +7,7 @@ namespace GraphicsEngine
 {
 	namespace ShaderBufferTypes
 	{
-		struct ObjectData
+		struct InstanceData
 		{
 			DirectX::XMFLOAT4X4 WorldMatrix = MathHelper::Identity4x4();
 		};

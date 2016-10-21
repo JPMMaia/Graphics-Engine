@@ -29,7 +29,7 @@ void Graphics::Update(const Common::Timer& timer)
 	m_camera.Update();
 	UpdatePassData(timer);
 	UpdateMaterialData();
-	UpdateObjectsData();
+	UpdateInstancesData();
 }
 
 void Graphics::Render(const Common::Timer& timer) const
@@ -71,21 +71,36 @@ void Graphics::AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::init
 	m_allRenderItems.push_back(std::move(renderItem));
 }
 
-void Graphics::UpdateObjectsData()
+void Graphics::UpdateInstancesData()
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
 
-	for(auto& renderItem : m_allRenderItems)
+	for(const auto& renderItem : m_allRenderItems)
 	{
 		// TODO optimize
 	
-		ShaderBufferTypes::ObjectData objectBuffer;
+		// Get instances buffer for the current render item:
+		auto instancesBuffer = m_currentFrameResource->InstancesBuffers.at(renderItem->Name);
 
-		// Transpose and store world matrix:
-		XMStoreFloat4x4(&objectBuffer.WorldMatrix, XMMatrixTranspose(XMLoadFloat4x4(&renderItem->WorldMatrix)));
+		// Map resource:
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		instancesBuffer.Map(deviceContext, &mappedResource);
+		auto instacesBufferView = reinterpret_cast<ShaderBufferTypes::InstanceData*>(mappedResource.pData);
 
-		// Update buffer:
-		m_currentFrameResource->ObjectDataArray[renderItem->ObjectBufferIndex].Map(deviceContext, &objectBuffer, sizeof(ShaderBufferTypes::ObjectData));
+		// For each instance:
+		for(SIZE_T i = 0; i < renderItem->InstancesData.size(); ++i)
+		{
+			const auto& instance = renderItem->InstancesData[i];
+
+			// Get view to the instance data:
+			auto& instanceData = instacesBufferView[i];
+
+			// Transpose and store world matrix:
+			XMStoreFloat4x4(&instanceData.WorldMatrix, XMLoadFloat4x4(&instance.WorldMatrix));
+		}
+
+		// Unmap resource:
+		instancesBuffer.Unmap(deviceContext);
 	}
 }
 void Graphics::UpdateMaterialData() const
@@ -102,7 +117,7 @@ void Graphics::UpdateMaterialData() const
 		materialData.Roughness = material->Roughness;
 		XMStoreFloat4x4(&materialData.MaterialTransform, XMMatrixTranspose(XMLoadFloat4x4(&material->MaterialTransform)));
 
-		m_currentFrameResource->MaterialDataArray[material->MaterialIndex].Map(deviceContext, &materialData, sizeof(ShaderBufferTypes::MaterialData));
+		m_currentFrameResource->MaterialDataArray[material->MaterialIndex].CopyData(deviceContext, &materialData, sizeof(ShaderBufferTypes::MaterialData));
 	}
 }
 void Graphics::UpdatePassData(const Common::Timer& timer) const
@@ -142,19 +157,21 @@ void Graphics::UpdatePassData(const Common::Timer& timer) const
 	passData.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
 	passData.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
 
-	m_currentFrameResource->PassData.Map(m_d3dBase.GetDeviceContext(), &passData, sizeof(ShaderBufferTypes::PassData));
+	m_currentFrameResource->PassData.CopyData(m_d3dBase.GetDeviceContext(), &passData, sizeof(ShaderBufferTypes::PassData));
 }
 
 void Graphics::DrawRenderItems(RenderLayer renderLayer) const
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
 
+	UINT stride = sizeof(ShaderBufferTypes::InstanceData);
+	UINT offset = 0;
+
 	// For each render item:
 	for(auto& renderItem : m_renderItemLayers[static_cast<SIZE_T>(renderLayer)])
 	{
-		// Set object data:
-		const auto& objectData = m_currentFrameResource->ObjectDataArray[renderItem->ObjectBufferIndex];
-		deviceContext->VSSetConstantBuffers(0, 1, objectData.GetAddressOf());
+		// Set instances data:
+		deviceContext->IASetVertexBuffers(1, 1, m_currentFrameResource->InstancesBuffers[renderItem->Name].GetAddressOf(), &stride, &offset);
 
 		// Set material data:
 		const auto& materialData = m_currentFrameResource->MaterialDataArray[renderItem->Material->MaterialIndex];

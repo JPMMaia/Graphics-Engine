@@ -51,21 +51,25 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 		boxSubmesh.IndexCount = static_cast<UINT>(box.Indices32.size());
 		boxSubmesh.StartIndexLocation = boxIndexOffset;
 		boxSubmesh.BaseVertexLocation = boxVertexOffset;
+		boxSubmesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(box);
 
 		SubmeshGeometry gridSubmesh;
 		gridSubmesh.IndexCount = static_cast<UINT>(grid.Indices32.size());
 		gridSubmesh.StartIndexLocation = gridIndexOffset;
 		gridSubmesh.BaseVertexLocation = gridVertexOffset;
+		gridSubmesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(grid);
 
 		SubmeshGeometry sphereSubmesh;
 		sphereSubmesh.IndexCount = static_cast<UINT>(sphere.Indices32.size());
 		sphereSubmesh.StartIndexLocation = sphereIndexOffset;
 		sphereSubmesh.BaseVertexLocation = sphereVertexOffset;
+		sphereSubmesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(sphere);
 
 		SubmeshGeometry cylinderSubmesh;
 		cylinderSubmesh.IndexCount = static_cast<UINT>(cylinder.Indices32.size());
 		cylinderSubmesh.StartIndexLocation = cylinderIndexOffset;
 		cylinderSubmesh.BaseVertexLocation = cylinderVertexOffset;
+		cylinderSubmesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(cylinder);
 
 		//
 		// Extract the vertex elements we are interested in and pack the
@@ -161,16 +165,18 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 		boxRenderItem->Mesh = m_geometries["ShapeGeo"].get();
 		boxRenderItem->Material = m_materials.at("Bricks").get();
 		boxRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		boxRenderItem->IndexCount = boxRenderItem->Mesh->Submeshes.at("Box").IndexCount;
-		boxRenderItem->StartIndexLocation = boxRenderItem->Mesh->Submeshes.at("Box").StartIndexLocation;
-		boxRenderItem->BaseVertexLocation = boxRenderItem->Mesh->Submeshes.at("Box").BaseVertexLocation;
+		const auto& boxSubmesh = boxRenderItem->Mesh->Submeshes.at("Box");
+		boxRenderItem->IndexCount = boxSubmesh.IndexCount;
+		boxRenderItem->StartIndexLocation = boxSubmesh.StartIndexLocation;
+		boxRenderItem->BaseVertexLocation = boxSubmesh.BaseVertexLocation;
+		boxRenderItem->Bounds = boxSubmesh.Bounds;
 
 		// Instances:
 		{
-			const auto size = 10;
+			const auto size = 3;
 			const auto offset = 2.0f;
 			const auto start = -size  * offset / 2.0f;
-			boxRenderItem->InstancesData.resize(size * size * size);
+			boxRenderItem->InstancesData.reserve(size * size * size);
 			for (SIZE_T i = 0; i < size; ++i)
 			{
 				for (SIZE_T j = 0; j < size; ++j)

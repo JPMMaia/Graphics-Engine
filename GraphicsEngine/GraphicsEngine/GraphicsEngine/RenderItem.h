@@ -2,9 +2,10 @@
 
 #include "MeshGeometry.h"
 #include "Material.h"
+#include "ShaderBufferTypes.h"
 
 #include <DirectXMath.h>
-#include "ShaderBufferTypes.h"
+#include <DirectXCollision.h>
 
 namespace GraphicsEngine
 {
@@ -24,6 +25,8 @@ namespace GraphicsEngine
 		uint32_t IndexCount = 0;
 		uint32_t StartIndexLocation = 0;
 		int BaseVertexLocation = 0;
+		DirectX::BoundingBox Bounds;
+		SIZE_T VisibleInstanceCount = 0;
 
 		std::vector<ShaderBufferTypes::InstanceData> InstancesData;
 	};

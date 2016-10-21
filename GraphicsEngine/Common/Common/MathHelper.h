@@ -18,5 +18,7 @@ namespace GraphicsEngine
 
 			return I;
 		}
+
+		const auto Infinity = FLT_MAX;
 	}
 }

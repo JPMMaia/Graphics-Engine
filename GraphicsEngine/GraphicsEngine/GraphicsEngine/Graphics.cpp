@@ -75,10 +75,16 @@ void Graphics::UpdateInstancesData()
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
 
+	// Get view matrix and calculate its inverse:
+	auto viewMatrix = m_camera.GetViewMatrix();
+	auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
+	auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
+
+	// Build the view space camera frustum:
+	auto viewSpaceCameraFrustum = m_camera.BuildViewSpaceBoundingFrustum();
+
 	for(const auto& renderItem : m_allRenderItems)
 	{
-		// TODO optimize
-	
 		// Get instances buffer for the current render item:
 		auto instancesBuffer = m_currentFrameResource->InstancesBuffers.at(renderItem->Name);
 
@@ -88,16 +94,30 @@ void Graphics::UpdateInstancesData()
 		auto instacesBufferView = reinterpret_cast<ShaderBufferTypes::InstanceData*>(mappedResource.pData);
 
 		// For each instance:
-		for(SIZE_T i = 0; i < renderItem->InstancesData.size(); ++i)
+		auto visibleInstanceCount = 0;
+		for(const auto& instanceData : renderItem->InstancesData)
 		{
-			const auto& instance = renderItem->InstancesData[i];
+			// Get the world matrix of the instance and calculate its inverse:
+			auto worldMatrix = XMLoadFloat4x4(&instanceData.WorldMatrix);
+			auto worldMatrixDeterminant = XMMatrixDeterminant(worldMatrix);
+			auto inverseWorldMatrix = XMMatrixInverse(&worldMatrixDeterminant, worldMatrix);
 
-			// Get view to the instance data:
-			auto& instanceData = instacesBufferView[i];
+			// Calculate the matrix which transforms from view space to the instance's local space:
+			auto viewToLocalMatrix = XMMatrixMultiply(inverseViewMatrix, inverseWorldMatrix);
 
-			// Transpose and store world matrix:
-			XMStoreFloat4x4(&instanceData.WorldMatrix, XMLoadFloat4x4(&instance.WorldMatrix));
+			// Transform camera frustum from view space to local space:
+			BoundingFrustum localSpaceCameraFrustum;
+			viewSpaceCameraFrustum.Transform(localSpaceCameraFrustum, viewToLocalMatrix);
+
+			// If the camera frustum intersects the instance bounds:
+			if(localSpaceCameraFrustum.Contains(renderItem->Bounds) != ContainmentType::DISJOINT)
+			{
+				// Update instance data:
+				auto& instanceDataView = instacesBufferView[visibleInstanceCount++];
+				instanceDataView.WorldMatrix = instanceData.WorldMatrix;
+			}
 		}
+		renderItem->VisibleInstanceCount = visibleInstanceCount;
 
 		// Unmap resource:
 		instancesBuffer.Unmap(deviceContext);

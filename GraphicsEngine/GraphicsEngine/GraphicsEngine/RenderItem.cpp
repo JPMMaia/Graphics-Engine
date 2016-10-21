@@ -5,9 +5,9 @@
 
 using namespace GraphicsEngine;
 
-RenderItem::RenderItem(SIZE_T maxInstanceCount) :
-	InstancesData(maxInstanceCount)
+RenderItem::RenderItem(SIZE_T maxInstanceCount)
 {
+	InstancesData.reserve(maxInstanceCount);
 }
 
 void RenderItem::Render(ID3D11DeviceContext* deviceContext) const

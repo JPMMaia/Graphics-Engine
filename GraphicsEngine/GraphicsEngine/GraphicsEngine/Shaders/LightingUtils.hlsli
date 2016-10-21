@@ -6,6 +6,16 @@
 #define NUM_DIR_LIGHTS 3
 #endif
 
+#ifndef NUM_POINT_LIGHTS
+#define NUM_POINT_LIGHTS 1
+#endif
+
+#ifndef NUM_SPOT_LIGHTS
+#define NUM_SPOT_LIGHTS 1
+#endif
+
+
+
 struct Light
 {
     float3 Strength; // Light color
@@ -72,6 +82,55 @@ float3 ComputeDirectionalLight(Light light, Material material, float3 normal, fl
     return BlinnPhong(lightStrength, lightDirection, normal, toEyeDirection, material);
 }
 
+float3 ComputePointLight(Light light, Material material, float3 position, float3 normal, float3 toEyeDirection) {
+	float3 lightDirection = light.Position - position;
+
+	float distance = length(lightDirection);
+
+	if (distance > light.FalloffEnd)
+		return 0.0f;
+
+	// Normalize the vector
+	lightDirection /= distance;
+
+	// Scale light by Lambert's cosine law
+	float ndotl = max(dot(lightDirection, normal), 0.0f);
+	float3 lightStrength = light.Strength * ndotl;
+
+	// Apply attenuation
+	float attenuation = CalculateAttenuation(distance, light.FalloffStart, light.FalloffEnd);
+	lightStrength *= attenuation;
+
+	return BlinnPhong(lightStrength, lightDirection, normal, toEyeDirection, material);
+}
+
+float3 ComputeSpotLight(Light light, Material material, float3 position, float3 normal, float3 toEyeDirection)
+{
+	float3 lightDirection = light.Position - position;
+
+	float distance = length(lightDirection);
+
+	if (distance > light.FalloffEnd)
+		return 0.0f;
+
+	lightDirection /= distance;
+	
+	// Scale light by Lambert's cosine law
+	float3 ndotl = max(dot(lightDirection, normal), 0.0f);
+	float3 lightStrength = light.Strength * ndotl;
+
+	// Attenuate light
+	float attenuation = CalculateAttenuation(distance, light.FalloffStart, light.FalloffEnd);
+	lightStrength *= attenuation;
+
+	// Scale by spot light
+	float spotFactor = pow(max(dot(-lightDirection, light.Direction), 0.0f), light.SpotPower);
+	lightStrength *= spotFactor;
+
+	return BlinnPhong(lightStrength, lightDirection, normal, toEyeDirection, material);
+
+}
+
 float4 ComputeLighting(Light lights[MAX_NUM_LIGHTS], Material material, float3 position, float3 normal, float3 toEyeDirection)
 {
     float3 result = 0.0f;
@@ -84,6 +143,23 @@ float4 ComputeLighting(Light lights[MAX_NUM_LIGHTS], Material material, float3 p
     }    
 
 #endif 
+	
+#if (NUM_POINT_LIGHTS > 0)
+	for (i = NUM_DIR_LIGHTS; i < NUM_DIR_LIGHTS + NUM_POINT_LIGHTS; ++i)
+	{
+		result += ComputePointLight(lights[i], material, position, normal, toEyeDirection);
+	}
 
-    return float4(result, 0.0f);
+	#endif
+
+	#if (NUM_SPOT_LIGHTS > 0)
+	
+	for (i = NUM_DIR_LIGHTS + NUM_POINT_LIGHTS; i < NUM_DIR_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS; ++i)
+	{
+		result += ComputeSpotLight(lights[i], material, position, normal, toEyeDirection);
+	}
+
+	#endif
+
+		return float4(result, 0.0f);
 }

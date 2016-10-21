@@ -135,12 +135,25 @@ void Graphics::UpdatePassData(const Common::Timer& timer) const
 	passData.TotalTime = static_cast<float>(timer.GetTotalMilliseconds());
 	passData.DeltaTime = static_cast<float>(timer.GetDeltaMilliseconds());
 	passData.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
+	// Directional Lights
 	passData.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
 	passData.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
 	passData.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
 	passData.Lights[1].Strength = { 0.3f, 0.3f, 0.3f };
 	passData.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
 	passData.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
+	// Point Lights
+	passData.Lights[3].Strength = { .1f, 0.0f,0.0f };
+	passData.Lights[3].FalloffStart = 2.0f;
+	passData.Lights[3].FalloffEnd = 20.0f;
+	passData.Lights[3].Position = { 0.0f, 3.0f, 0.0f };
+	// Spot Lights
+	passData.Lights[4].Strength = { 0.0f, 0.0f,0.9f };
+	passData.Lights[4].FalloffStart = 2.0f;
+	passData.Lights[4].FalloffEnd = 20.0f;
+	passData.Lights[4].Position = { 0.0f, 3.0f, 0.0f };
+	passData.Lights[4].Direction = { 0.0f,-1.0f,0.0f };
+	passData.Lights[4].SpotPower = 8.0f;
 
 	m_currentFrameResource->PassData.Map(m_d3dBase.GetDeviceContext(), &passData, sizeof(ShaderBufferTypes::PassData));
 }

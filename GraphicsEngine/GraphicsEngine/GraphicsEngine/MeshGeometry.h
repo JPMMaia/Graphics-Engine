@@ -8,6 +8,7 @@
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
 #include <unordered_map>
+#include "VertexTypes.h"
 
 namespace GraphicsEngine
 {
@@ -22,17 +23,21 @@ namespace GraphicsEngine
 		IndexBuffer Indices;
 
 	public:
+		template<typename VertexType>
+		static DirectX::BoundingBox CreateBoundingBoxFromMesh(const std::vector<VertexType>& vertices);
+
 		static DirectX::BoundingBox CreateBoundingBoxFromMesh(const GeometryGenerator::MeshData& meshData);
 	};
 
-	inline DirectX::BoundingBox MeshGeometry::CreateBoundingBoxFromMesh(const GeometryGenerator::MeshData& meshData)
+	template <typename VertexType>
+	DirectX::BoundingBox MeshGeometry::CreateBoundingBoxFromMesh(const std::vector<VertexType>& vertices)
 	{
 		using namespace Common;
 		using namespace DirectX;
 
 		auto positionMin = XMVectorSet(+MathHelper::Infinity, +MathHelper::Infinity, +MathHelper::Infinity, 0.0f);
 		auto positionMax = XMVectorSet(-MathHelper::Infinity, -MathHelper::Infinity, -MathHelper::Infinity, 0.0f);
-		for (auto& vertex : meshData.Vertices)
+		for (auto& vertex : vertices)
 		{
 			auto position = XMLoadFloat3(&vertex.Position);
 			positionMin = XMVectorMin(positionMin, position);
@@ -44,5 +49,10 @@ namespace GraphicsEngine
 		XMStoreFloat3(&bounds.Extents, 0.5f * (positionMax - positionMin));
 
 		return bounds;
+	}
+
+	inline DirectX::BoundingBox MeshGeometry::CreateBoundingBoxFromMesh(const GeometryGenerator::MeshData& meshData)
+	{
+		return CreateBoundingBoxFromMesh(meshData.Vertices);
 	}
 }

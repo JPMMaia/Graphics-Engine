@@ -4,8 +4,11 @@
 #include "GraphicsEngine/GeometryGenerator.h"
 #include "GraphicsEngine/VertexTypes.h"
 #include "GraphicsEngine/RenderItem.h"
+#include "GraphicsEngine/AssimpImporter/AssimpImporter.h"
+#include "Common/Helpers.h"
 
 using namespace DirectX;
+using namespace Common;
 using namespace GraphicsEngine;
 
 DefaultScene::DefaultScene(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
@@ -14,8 +17,63 @@ DefaultScene::DefaultScene(Graphics* graphics, const D3DBase& d3dBase, TextureMa
 	InitializeTextures(d3dBase, textureManager);
 	InitializeMaterials(textureManager);
 	InitializeRenderItems(graphics);
+
+	AssimpImporter importer;
+	AssimpImporter::ImportInfo importInfo;
+	std::wstring filename(L"Models/Cube.fbx");
+	importer.Import(graphics, d3dBase, textureManager, this, filename, importInfo);
+
+	auto importedGeometry = m_geometries.at(Helpers::WStringToString(filename)).get();
+	const auto& submesh = importedGeometry->Submeshes.at("Cube");
+	const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "Cube"));
+
+	auto cubeRenderItem = std::make_unique<RenderItem>();
+	cubeRenderItem->Name = "Cube";
+	cubeRenderItem->Mesh = importedGeometry;
+	cubeRenderItem->Material = m_materials.at(materialName).get();
+	cubeRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	cubeRenderItem->IndexCount = submesh.IndexCount;
+	cubeRenderItem->StartIndexLocation = submesh.StartIndexLocation;
+	cubeRenderItem->BaseVertexLocation = submesh.BaseVertexLocation;
+	cubeRenderItem->Bounds = submesh.Bounds;
+
+	// Instances:
+	const auto size = 10;
+	const auto offset = 4.0f;
+	const auto start = -size  * offset / 2.0f;
+	cubeRenderItem->InstancesData.reserve(size * size * size);
+	for (SIZE_T i = 0; i < size; ++i)
+	{
+		for (SIZE_T j = 0; j < size; ++j)
+		{
+			for (SIZE_T k = 0; k < size; ++k)
+			{
+				ShaderBufferTypes::InstanceData instanceData;
+
+				XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixTranslation(start + i * offset, start + j * offset, start + k * offset));
+
+				cubeRenderItem->InstancesData.push_back(instanceData);
+			}
+		}
+	}
+
+	graphics->AddRenderItem(std::move(cubeRenderItem), { RenderLayer::Opaque });
 }
 
+void DefaultScene::AddGeometry(std::unique_ptr<MeshGeometry>&& geometry)
+{
+	m_geometries.emplace(geometry->Name, std::move(geometry));
+}
+void DefaultScene::AddMaterial(std::unique_ptr<Material>&& material)
+{
+	material->MaterialIndex = static_cast<int>(m_materials.size());
+	m_materials.emplace(material->Name, std::move(material));
+}
+
+const std::unordered_map<std::string, std::unique_ptr<MeshGeometry>>& DefaultScene::GetGeometries() const
+{
+	return m_geometries;
+}
 const std::unordered_map<std::string, std::unique_ptr<Material>>& DefaultScene::GetMaterials() const
 {
 	return m_materials;
@@ -153,7 +211,7 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 	bricks->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 	bricks->Roughness = 0.25f;
 	bricks->MaterialTransform = MathHelper::Identity4x4();
-	m_materials[bricks->Name] = std::move(bricks);
+	AddMaterial(std::move(bricks));
 }
 
 void DefaultScene::InitializeRenderItems(Graphics* graphics)
@@ -172,7 +230,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 		boxRenderItem->Bounds = boxSubmesh.Bounds;
 
 		// Instances:
-		{
+		/*{
 			const auto size = 3;
 			const auto offset = 2.0f;
 			const auto start = -size  * offset / 2.0f;
@@ -193,7 +251,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 			}
 		}
 
-		graphics->AddRenderItem(std::move(boxRenderItem), { RenderLayer::Opaque });
+		graphics->AddRenderItem(std::move(boxRenderItem), { RenderLayer::Opaque });*/
 	}
 
 	// Sphere:

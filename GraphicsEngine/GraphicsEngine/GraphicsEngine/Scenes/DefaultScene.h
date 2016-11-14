@@ -19,6 +19,10 @@ namespace GraphicsEngine
 		DefaultScene() = default;
 		DefaultScene(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager);
 
+		void AddGeometry(std::unique_ptr<MeshGeometry>&& geometry) override;
+		void AddMaterial(std::unique_ptr<Material>&& material) override;
+
+		const std::unordered_map<std::string, std::unique_ptr<MeshGeometry>>& GetGeometries() const override;
 		const std::unordered_map<std::string, std::unique_ptr<Material>>& GetMaterials() const override;
 
 	private:

@@ -6,6 +6,7 @@ namespace GraphicsEngine
 	{
 		Opaque,
 		Transparent,
+		Terrain,
 		Count
 	};
 }

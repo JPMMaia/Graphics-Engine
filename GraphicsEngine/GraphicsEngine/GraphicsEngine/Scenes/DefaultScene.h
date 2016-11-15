@@ -31,6 +31,9 @@ namespace GraphicsEngine
 		void InitializeMaterials(TextureManager& textureManager);
 		void InitializeRenderItems(Graphics* graphics);
 
+		void InitializeExternalModels(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager);
+		void InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager);
+
 	private:
 		std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> m_geometries;
 		std::unordered_map<std::string, std::unique_ptr<Material>> m_materials;

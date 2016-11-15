@@ -5,6 +5,7 @@
 #include "GraphicsEngine/VertexTypes.h"
 #include "GraphicsEngine/RenderItem.h"
 #include "GraphicsEngine/AssimpImporter/AssimpImporter.h"
+#include "GraphicsEngine/TerrainBuilder.h"
 #include "Common/Helpers.h"
 
 using namespace DirectX;
@@ -18,46 +19,8 @@ DefaultScene::DefaultScene(Graphics* graphics, const D3DBase& d3dBase, TextureMa
 	InitializeMaterials(textureManager);
 	InitializeRenderItems(graphics);
 
-	AssimpImporter importer;
-	AssimpImporter::ImportInfo importInfo;
-	std::wstring filename(L"Models/Cube.fbx");
-	importer.Import(graphics, d3dBase, textureManager, this, filename, importInfo);
-
-	auto importedGeometry = m_geometries.at(Helpers::WStringToString(filename)).get();
-	const auto& submesh = importedGeometry->Submeshes.at("Cube");
-	const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "Cube"));
-
-	auto cubeRenderItem = std::make_unique<RenderItem>();
-	cubeRenderItem->Name = "Cube";
-	cubeRenderItem->Mesh = importedGeometry;
-	cubeRenderItem->Material = m_materials.at(materialName).get();
-	cubeRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	cubeRenderItem->IndexCount = submesh.IndexCount;
-	cubeRenderItem->StartIndexLocation = submesh.StartIndexLocation;
-	cubeRenderItem->BaseVertexLocation = submesh.BaseVertexLocation;
-	cubeRenderItem->Bounds = submesh.Bounds;
-
-	// Instances:
-	const auto size = 10;
-	const auto offset = 4.0f;
-	const auto start = -size  * offset / 2.0f;
-	cubeRenderItem->InstancesData.reserve(size * size * size);
-	for (SIZE_T i = 0; i < size; ++i)
-	{
-		for (SIZE_T j = 0; j < size; ++j)
-		{
-			for (SIZE_T k = 0; k < size; ++k)
-			{
-				ShaderBufferTypes::InstanceData instanceData;
-
-				XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixTranslation(start + i * offset, start + j * offset, start + k * offset));
-
-				cubeRenderItem->InstancesData.push_back(instanceData);
-			}
-		}
-	}
-
-	graphics->AddRenderItem(std::move(cubeRenderItem), { RenderLayer::Opaque });
+	InitializeExternalModels(graphics, d3dBase, textureManager);
+	InitializeTerrain(graphics, d3dBase, textureManager);
 }
 
 void DefaultScene::AddGeometry(std::unique_ptr<MeshGeometry>&& geometry)
@@ -269,4 +232,112 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 
 		graphics->AddRenderItem(std::move(sphereRenderItem), { RenderLayer::Transparent });
 	}*/
+}
+
+void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
+{
+	AssimpImporter importer;
+	AssimpImporter::ImportInfo importInfo;
+	std::wstring filename(L"Models/Cube.fbx");
+	importer.Import(graphics, d3dBase, textureManager, this, filename, importInfo);
+
+	auto importedGeometry = m_geometries.at(Helpers::WStringToString(filename)).get();
+	const auto& submesh = importedGeometry->Submeshes.at("Cube");
+	const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "Cube"));
+
+	auto cubeRenderItem = std::make_unique<RenderItem>();
+	cubeRenderItem->Name = "Cube";
+	cubeRenderItem->Mesh = importedGeometry;
+	cubeRenderItem->Material = m_materials.at(materialName).get();
+	cubeRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	cubeRenderItem->IndexCount = submesh.IndexCount;
+	cubeRenderItem->StartIndexLocation = submesh.StartIndexLocation;
+	cubeRenderItem->BaseVertexLocation = submesh.BaseVertexLocation;
+	cubeRenderItem->Bounds = submesh.Bounds;
+
+	// Instances:
+	const auto size = 10;
+	const auto offset = 4.0f;
+	const auto start = -size  * offset / 2.0f;
+	cubeRenderItem->InstancesData.reserve(size * size * size);
+	for (SIZE_T i = 0; i < size; ++i)
+	{
+		for (SIZE_T j = 0; j < size; ++j)
+		{
+			for (SIZE_T k = 0; k < size; ++k)
+			{
+				ShaderBufferTypes::InstanceData instanceData;
+
+				XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixTranslation(start + i * offset, start + j * offset, start + k * offset));
+
+				cubeRenderItem->InstancesData.push_back(instanceData);
+			}
+		}
+	}
+
+	graphics->AddRenderItem(std::move(cubeRenderItem), { RenderLayer::Opaque });
+}
+
+void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
+{
+	auto device = d3dBase.GetDevice();
+
+	auto meshData = TerrainBuilder::CreateTerrain(d3dBase, 512.0f, 512.0f, 32, 32);
+
+	// Create geometry:
+	{
+		auto terrainGeometry = std::make_unique<MeshGeometry>();
+		terrainGeometry->Name = "TerrainGeometry";
+		terrainGeometry->Vertices = VertexBuffer(device, meshData.Vertices);
+		terrainGeometry->Indices = IndexBuffer(device, meshData.Indices);
+
+		// Submesh:
+		SubmeshGeometry terrainSubmesh;
+		terrainSubmesh.IndexCount = meshData.Indices.size();
+		terrainSubmesh.StartIndexLocation = 0;
+		terrainSubmesh.BaseVertexLocation = 0;
+		terrainSubmesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(meshData.Vertices);
+		terrainGeometry->Submeshes["TerrainSubmesh"] = std::move(terrainSubmesh);
+
+		AddGeometry(std::move(terrainGeometry));
+	}
+
+	// Create material:
+	{
+		auto terrainMaterial = std::make_unique<Material>();
+		terrainMaterial->Name = "TerrainMaterial";
+		
+		// Add textures:
+		textureManager.Create(device, "TerrainDiffuseMap", L"Textures/TerrainDiffuseMap.dds");
+		terrainMaterial->DiffuseMap = &textureManager["TerrainDiffuseMap"];
+
+		// Material parameters:
+		terrainMaterial->DiffuseAlbedo = { 0.8f, 0.8f, 0.8f, 1.0f };
+		terrainMaterial->FresnelR0 = { 0.01f, 0.01f, 0.01f };
+		terrainMaterial->Roughness = 0.25f;
+		terrainMaterial->MaterialTransform = MathHelper::Identity4x4();
+
+		AddMaterial(std::move(terrainMaterial));
+	}
+
+	auto renderItem = std::make_unique<RenderItem>();
+	renderItem->Name = "Terrain";
+	renderItem->Mesh = m_geometries.at("TerrainGeometry").get();
+	renderItem->Material = m_materials.at("TerrainMaterial").get();
+	renderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST;
+
+	const auto& terrainSubmesh = renderItem->Mesh->Submeshes.at("TerrainSubmesh");
+	renderItem->IndexCount = terrainSubmesh.IndexCount;
+	renderItem->StartIndexLocation = terrainSubmesh.StartIndexLocation;
+	renderItem->BaseVertexLocation = terrainSubmesh.BaseVertexLocation;
+	renderItem->Bounds = terrainSubmesh.Bounds;
+
+	// Add instance:
+	{
+		ShaderBufferTypes::InstanceData instanceData;
+		instanceData.WorldMatrix = MathHelper::Identity4x4();
+		renderItem->InstancesData.push_back(std::move(instanceData));
+	}
+
+	graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Terrain });
 }

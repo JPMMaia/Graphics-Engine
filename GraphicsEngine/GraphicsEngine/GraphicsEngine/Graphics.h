@@ -44,17 +44,10 @@ namespace GraphicsEngine
 		Camera m_camera;
 		DefaultScene m_scene;
 
-//		static const int s_frameResourcesCount = 3;
 		std::vector<FrameResource> m_frameResources;
 		FrameResource* m_currentFrameResource = nullptr;
 		int m_currentFrameResourceIndex = 0;
 
 		SamplerState m_anisotropicSamplerState;
-
-//		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
-//		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_postProcessRootSignature;
-
-//		BufferTypes::PassData m_passConstants;
-//		std::unique_ptr<UploadBuffer<BufferTypes::InstanceData>> m_perObjectCB;
 	};
 }

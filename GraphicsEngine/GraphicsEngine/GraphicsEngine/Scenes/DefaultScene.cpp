@@ -282,7 +282,7 @@ void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase,
 {
 	auto device = d3dBase.GetDevice();
 
-	auto meshData = TerrainBuilder::CreateTerrain(d3dBase, 512.0f, 512.0f, 32, 32);
+	auto meshData = TerrainBuilder::CreateTerrain(d3dBase, 1024.0f, 1024.0f, 16, 16);
 
 	// Create geometry:
 	{
@@ -293,7 +293,7 @@ void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase,
 
 		// Submesh:
 		SubmeshGeometry terrainSubmesh;
-		terrainSubmesh.IndexCount = meshData.Indices.size();
+		terrainSubmesh.IndexCount = static_cast<uint32_t>(meshData.Indices.size());
 		terrainSubmesh.StartIndexLocation = 0;
 		terrainSubmesh.BaseVertexLocation = 0;
 		terrainSubmesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(meshData.Vertices);
@@ -308,8 +308,16 @@ void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase,
 		terrainMaterial->Name = "TerrainMaterial";
 		
 		// Add textures:
-		textureManager.Create(device, "TerrainDiffuseMap", L"Textures/TerrainDiffuseMap.dds");
-		terrainMaterial->DiffuseMap = &textureManager["TerrainDiffuseMap"];
+		{
+			textureManager.Create(device, "TerrainDiffuseMap", L"Textures/TerrainDiffuseMap.dds");
+			terrainMaterial->DiffuseMap = &textureManager["TerrainDiffuseMap"];
+
+			textureManager.Create(device, "TerrainNormalMap", L"Textures/porto_normal_map.dds");
+			terrainMaterial->NormalMap = &textureManager["TerrainNormalMap"];
+
+			textureManager.Create(device, "TerrainHeightMap", L"Textures/porto_height_map.dds");
+			terrainMaterial->HeightMap = &textureManager["TerrainHeightMap"];
+		}
 
 		// Material parameters:
 		terrainMaterial->DiffuseAlbedo = { 0.8f, 0.8f, 0.8f, 1.0f };

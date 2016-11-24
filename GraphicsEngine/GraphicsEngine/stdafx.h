@@ -7,6 +7,7 @@
 #include <d3d11_2.h>
 #include <wrl/client.h>
 #include <DirectXMath.h>
+#include <array>
 
 #include "Common/Helpers.h"
 #include "Common/EngineException.h"

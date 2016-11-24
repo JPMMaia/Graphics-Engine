@@ -27,6 +27,8 @@ namespace GraphicsEngine
 	private:
 		std::vector<D3D11_INPUT_ELEMENT_DESC> m_inputLayout;
 		std::unordered_map<std::string, VertexShader> m_vertexShaders;
+		std::unordered_map<std::string, HullShader> m_hullShaders;
+		std::unordered_map<std::string, DomainShader> m_domainShaders;
 		std::unordered_map<std::string, PixelShader> m_pixelShaders;
 		std::unordered_map<std::string, RasterizerState> m_rasterizerStates;
 		std::unordered_map<std::string, BlendState> m_blendStates;

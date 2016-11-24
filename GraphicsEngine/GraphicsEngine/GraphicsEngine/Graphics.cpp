@@ -9,7 +9,7 @@ using namespace GraphicsEngine;
 Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight, bool fullscreen) :
 	m_d3dBase(outputWindow, clientWidth, clientHeight, fullscreen),
 	m_pipelineStateManager(m_d3dBase),
-	m_camera(m_d3dBase.GetAspectRatio(), 0.25f * XM_PI, 1.0f, 1000.0f, XMMatrixIdentity()),
+	m_camera(m_d3dBase.GetAspectRatio(), 0.25f * XM_PI, 1.0f, 10000.0f, XMMatrixIdentity()),
 	m_scene(this, m_d3dBase, m_textureManager),
 	m_frameResources(1, FrameResource(m_d3dBase.GetDevice(), m_allRenderItems, m_scene.GetMaterials().size())),
 	m_currentFrameResource(&m_frameResources[0]),
@@ -40,18 +40,25 @@ void Graphics::Render(const Common::Timer& timer) const
 
 	// Set pass data:
 	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
+	deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
+	deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
 	deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
 
 	// Set samplers:
+	deviceContext->DSSetSamplers(5, 1, m_anisotropicSamplerState.GetAddressOf());
 	deviceContext->PSSetSamplers(5, 1, m_anisotropicSamplerState.GetAddressOf());
 
 	// Draw opaque:
-	m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
+	/*m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
 	DrawRenderItems(RenderLayer::Opaque);
 
 	// Draw transparent:
 	m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
-	DrawRenderItems(RenderLayer::Transparent);
+	DrawRenderItems(RenderLayer::Transparent);*/
+
+	// Draw terrain:
+	m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
+	DrawTerrain();
 
 	m_d3dBase.EndScene();
 }
@@ -165,10 +172,14 @@ void Graphics::UpdatePassData(const Common::Timer& timer) const
 	XMStoreFloat3(&passData.EyePositionW, m_camera.GetPosition());
 	passData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));
 	passData.InverseRenderTargetSize = XMFLOAT2(1.0f / static_cast<float>(m_d3dBase.GetClientWidth()), 1.0f / static_cast<float>(m_d3dBase.GetClientHeight()));
-	passData.NearZ = 1.0f;
-	passData.FarZ = 1000.0f;
+	passData.NearZ = m_camera.GetNearZ();
+	passData.FarZ = m_camera.GetFarZ();
 	passData.TotalTime = static_cast<float>(timer.GetTotalMilliseconds());
 	passData.DeltaTime = static_cast<float>(timer.GetDeltaMilliseconds());
+	passData.MaxTesselationDistance = 100.0f;
+	passData.MaxTesselationFactor = 6.0f;
+	passData.MinTesselationDistance = 500.0f;
+	passData.MinTesselationFactor = 1.0f;
 	passData.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
 	// Directional Lights
 	passData.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
@@ -213,6 +224,34 @@ void Graphics::DrawRenderItems(RenderLayer renderLayer) const
 
 		// Set textures:
 		deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
+
+		// Render:
+		renderItem->Render(deviceContext);
+	}
+}
+
+void Graphics::DrawTerrain() const
+{
+	auto deviceContext = m_d3dBase.GetDeviceContext();
+
+	UINT stride = sizeof(ShaderBufferTypes::InstanceData);
+	UINT offset = 0;
+
+	// For each render item:
+	for (auto& renderItem : m_renderItemLayers[static_cast<SIZE_T>(RenderLayer::Terrain)])
+	{
+		// Set instances data:
+		deviceContext->IASetVertexBuffers(1, 1, m_currentFrameResource->InstancesBuffers[renderItem->Name].GetAddressOf(), &stride, &offset);
+
+		// Set material data:
+		const auto& materialData = m_currentFrameResource->MaterialDataArray[renderItem->Material->MaterialIndex];
+		deviceContext->VSSetConstantBuffers(1, 1, materialData.GetAddressOf());
+		deviceContext->PSSetConstantBuffers(1, 1, materialData.GetAddressOf());
+
+		// Set textures:
+		deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
+		deviceContext->PSSetShaderResources(1, 1, renderItem->Material->NormalMap->GetAddressOf());
+		deviceContext->DSSetShaderResources(2, 1, renderItem->Material->HeightMap->GetAddressOf());
 
 		// Render:
 		renderItem->Render(deviceContext);

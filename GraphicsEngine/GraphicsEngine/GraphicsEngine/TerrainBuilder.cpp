@@ -54,10 +54,10 @@ GeometryGenerator2::MeshData TerrainBuilder::CreateTerrain(const D3DBase& d3dBas
 			auto index2 = index0 + 1;
 			auto index3 = index1 + 1;
 
-			output.Indices[faceIndex++] = index0;
-			output.Indices[faceIndex++] = index1;
-			output.Indices[faceIndex++] = index2;
-			output.Indices[faceIndex++] = index3;
+			output.Indices[faceIndex++] = static_cast<unsigned int>(index0);
+			output.Indices[faceIndex++] = static_cast<unsigned int>(index1);
+			output.Indices[faceIndex++] = static_cast<unsigned int>(index2);
+			output.Indices[faceIndex++] = static_cast<unsigned int>(index3);
 		}
 	}
 

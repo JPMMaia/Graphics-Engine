@@ -40,6 +40,10 @@ namespace GraphicsEngine
 			float FogStart = 5.0f;
 			float FogRange = 20.0f;
 			DirectX::XMFLOAT2 Padding2;
+			float MaxTesselationDistance = 100.0f;
+			float MaxTesselationFactor = 5.0f;
+			float MinTesselationDistance = 1000.0f;
+			float MinTesselationFactor = 1.0f;
 			DirectX::XMFLOAT4 AmbientLight = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 			static constexpr auto MaxNumLights = 16;

@@ -95,6 +95,9 @@
     <ClCompile Include="GraphicsEngine\AssimpImporter\AssimpImporter.cpp">
       <Filter>GraphicsEngine\AssimpImporter</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\TerrainBuilder.cpp">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -239,6 +242,9 @@
     <ClInclude Include="GraphicsEngine\AssimpImporter\AssimpImporter.h">
       <Filter>GraphicsEngine\AssimpImporter</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsEngine\TerrainBuilder.h">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -313,6 +319,9 @@
     <Filter Include="GraphicsEngine\AssimpImporter">
       <UniqueIdentifier>{e559f998-cefb-4ccf-983a-f24545061a73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Terrain">
+      <UniqueIdentifier>{fedc451a-6a2c-4459-9a44-39d17e50a937}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Libraries\rapidxml\manual.html">
@@ -330,6 +339,12 @@
     <None Include="GraphicsEngine\Shaders\Samplers.hlsli">
       <Filter>Shaders\Common</Filter>
     </None>
+    <None Include="GraphicsEngine\Shaders\CommonDefines.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </None>
+    <None Include="GraphicsEngine\Shaders\MathUtils.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="GraphicsEngine\Shaders\StandardVertexShader.hlsl">
@@ -337,6 +352,18 @@
     </FxCompile>
     <FxCompile Include="GraphicsEngine\Shaders\StandardPixelShader.hlsl">
       <Filter>Shaders\Standard</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\TerrainVertexShader.hlsl">
+      <Filter>Shaders\Terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\TerrainPixelShader.hlsl">
+      <Filter>Shaders\Terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\TerrainDomainShader.hlsl">
+      <Filter>Shaders\Terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\TerrainHullShader.hlsl">
+      <Filter>Shaders\Terrain</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

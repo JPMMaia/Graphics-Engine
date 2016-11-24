@@ -13,8 +13,8 @@ namespace GraphicsEngine
 
 			DirectX::XMFLOAT3 Position;
 			DirectX::XMFLOAT3 Normal;
-			DirectX::XMFLOAT3 TangentU;
 			DirectX::XMFLOAT2 TextureCoordinates;
+			DirectX::XMFLOAT3 TangentU;
 		};
 
 		struct MeshData

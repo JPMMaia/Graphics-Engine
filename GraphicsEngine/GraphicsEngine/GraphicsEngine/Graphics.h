@@ -33,6 +33,7 @@ namespace GraphicsEngine
 		void UpdatePassData(const Common::Timer& timer) const;
 
 		void DrawRenderItems(RenderLayer renderItems) const;
+		void DrawTerrain() const;
 
 	private:
 		D3DBase m_d3dBase;

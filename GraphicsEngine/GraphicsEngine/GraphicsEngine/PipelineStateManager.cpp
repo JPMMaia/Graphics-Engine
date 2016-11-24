@@ -52,14 +52,25 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 	{
 		"MAX_NUM_LIGHTS", maxNumLights.c_str()
 	};
-	m_vertexShaders["Standard"] = VertexShader(device, L"../GraphicsEngine/GraphicsEngine/Shaders/StandardVertexShader.hlsl", nullptr, "main", "vs_5_0", m_inputLayout);
-	m_pixelShaders["Standard"] = PixelShader(device, L"../GraphicsEngine/GraphicsEngine/Shaders/StandardPixelShader.hlsl", nullptr, "main", "ps_5_0");
+
+	auto shadersFolderPath = wstring(L"../GraphicsEngine/GraphicsEngine/Shaders/");
+
+	// Standard shaders:
+	m_vertexShaders["Standard"] = VertexShader(device, shadersFolderPath + L"StandardVertexShader.hlsl", nullptr, "main", "vs_5_0", m_inputLayout);
+	m_pixelShaders["Standard"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", nullptr, "main", "ps_5_0");
+
+	// Terrain shaders:
+	m_vertexShaders["Terrain"] = VertexShader(device, shadersFolderPath + L"TerrainVertexShader.hlsl", nullptr, "main", "vs_5_0", m_inputLayout);
+	m_hullShaders["Terrain"] = HullShader(device, shadersFolderPath + L"TerrainHullShader.hlsl", nullptr, "main", "hs_5_0");
+	m_domainShaders["Terrain"] = DomainShader(device, shadersFolderPath + L"TerrainDomainShader.hlsl", nullptr, "main", "ds_5_0");
+	m_pixelShaders["Terrain"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", nullptr, "main", "ps_5_0");
 }
 void PipelineStateManager::InitializeRasterizerStates(const D3DBase& d3dBase)
 {
 	auto device = d3dBase.GetDevice();
 
 	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("Default"), std::forward_as_tuple(device, RasterizerStateDescConstants::Default));
+	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("Wireframe"), std::forward_as_tuple(device, RasterizerStateDescConstants::Wireframe));
 }
 void PipelineStateManager::InitializeBlendStates(const D3DBase& d3dBase)
 {
@@ -90,5 +101,18 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		transparentState.BlendState = &m_blendStates.at("Transparent");
 
 		m_pipelineStateObjects.emplace("Transparent", transparentState);
+	}
+
+	// Terrain:
+	{
+		PipelineState terrainState;
+		terrainState.VertexShader = &m_vertexShaders.at("Terrain");
+		terrainState.HullShader = &m_hullShaders.at("Terrain");
+		terrainState.DomainShader = &m_domainShaders.at("Terrain");
+		terrainState.PixelShader = &m_pixelShaders.at("Terrain");
+		terrainState.RasterizerState = &m_rasterizerStates.at("Wireframe");
+		terrainState.BlendState = &m_blendStates.at("Default");
+
+		m_pipelineStateObjects.emplace("Terrain", terrainState);
 	}
 }

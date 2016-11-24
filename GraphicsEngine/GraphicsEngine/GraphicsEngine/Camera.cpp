@@ -12,7 +12,7 @@ Camera::Camera() :
 	m_aspectRatio(2.0f),
 	m_fovAngleY(70.0f * XM_PI / 180.0f),
 	m_nearZ(0.01f),
-	m_farZ(100.0f)
+	m_farZ(10000.0f)
 {
 	// Initialize projection matrix, given orientation matrix equals to the identity matrix:
 	InitializeProjectionMatrix(XMMatrixIdentity());
@@ -109,6 +109,16 @@ const XMMATRIX& Camera::GetProjectionMatrix() const
 {
 	return m_projectionMatrix;
 }
+
+float Camera::GetNearZ() const
+{
+	return m_nearZ;
+}
+float Camera::GetFarZ() const
+{
+	return m_farZ;
+}
+
 const XMMATRIX& Camera::GetViewMatrix() const
 {
 	return m_viewMatrix;

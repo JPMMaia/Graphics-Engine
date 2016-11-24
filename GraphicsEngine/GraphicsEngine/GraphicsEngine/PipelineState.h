@@ -1,6 +1,8 @@
 #pragma once
 
 #include "VertexShader.h"
+#include "HullShader.h"
+#include "DomainShader.h"
 #include "PixelShader.h"
 #include "RasterizerState.h"
 #include "BlendState.h"
@@ -12,10 +14,12 @@ namespace GraphicsEngine
 	struct PipelineState
 	{
 	public:
-		VertexShader* VertexShader;
-		PixelShader* PixelShader;
-		RasterizerState* RasterizerState;
-		BlendState* BlendState;
+		VertexShader* VertexShader = nullptr;
+		HullShader* HullShader = nullptr;
+		DomainShader* DomainShader = nullptr;
+		PixelShader* PixelShader = nullptr;
+		RasterizerState* RasterizerState = nullptr;
+		BlendState* BlendState = nullptr;
 		
 		// ID3D11DepthStencilState* DepthStencilState;
 		// UINT SampleMask;

@@ -28,6 +28,9 @@ namespace GraphicsEngine
 		const DirectX::XMMATRIX& GetViewMatrix() const;
 		const DirectX::XMMATRIX& GetProjectionMatrix() const;
 
+		float GetNearZ() const;
+		float GetFarZ() const;
+
 		void SetPosition(float x, float y, float z);
 		void SetAspectRatio(float aspectRatio);
 

@@ -17,7 +17,11 @@ cbuffer PassData : register(b2)
 	float4 FogColor;
 	float FogStart;
 	float FogRange;
-	float2 Padding2;
+    float2 Padding2;
+    float MaxTesselationDistance;
+    float MaxTesselationFactor;
+    float MinTesselationDistance;
+    float MinTesselationFactor;
 	float4 AmbientLight;
 	Light Lights[MAX_NUM_LIGHTS];
 };

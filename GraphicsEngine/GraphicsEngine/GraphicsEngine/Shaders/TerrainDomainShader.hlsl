@@ -17,7 +17,8 @@ struct DomainOutput
 {
     float4 PositionH : SV_POSITION;
     float3 PositionW : POSITION;
-    float2 TextureCoordinates : TEXCOORD;
+    float2 TextureCoordinates : TEXCOORD0;
+    float2 TiledTextureCoordinates : TEXCOORD1;
 };
 
 struct TesselationPatch
@@ -36,9 +37,12 @@ DomainOutput main(TesselationPatch input, float2 uv : SV_DomainLocation, const O
 	// Interpolate values:
     output.PositionW = BilinearInterpolate(patch[0].PositionW, patch[1].PositionW, patch[2].PositionW, patch[3].PositionW, uv);
     output.TextureCoordinates = BilinearInterpolate(patch[0].TextureCoordinates, patch[1].TextureCoordinates, patch[2].TextureCoordinates, patch[3].TextureCoordinates, uv);
+    
+    // Calculate the tiled texture coordinates:
+    output.TiledTextureCoordinates = output.TextureCoordinates * TiledTexelScale;
 
 	// Sample height map:
-    output.PositionW.y = 512.0f * HeightMap.SampleLevel(SamplerAnisotropicClamp, output.TextureCoordinates, 0).r;
+    output.PositionW.y = TerrainDisplacementScalarY * HeightMap.SampleLevel(SamplerAnisotropicClamp, output.TextureCoordinates, 0).r;
 
 	// Transform to homogeneous clip space:
     output.PositionH = mul(float4(output.PositionW, 1.0f), ViewProjectionMatrix);

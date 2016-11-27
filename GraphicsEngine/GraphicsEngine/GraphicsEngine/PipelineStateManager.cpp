@@ -110,7 +110,7 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		terrainState.HullShader = &m_hullShaders.at("Terrain");
 		terrainState.DomainShader = &m_domainShaders.at("Terrain");
 		terrainState.PixelShader = &m_pixelShaders.at("Terrain");
-		terrainState.RasterizerState = &m_rasterizerStates.at("Wireframe");
+		terrainState.RasterizerState = &m_rasterizerStates.at("Default");
 		terrainState.BlendState = &m_blendStates.at("Default");
 
 		m_pipelineStateObjects.emplace("Terrain", terrainState);

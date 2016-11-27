@@ -9,6 +9,12 @@ namespace GraphicsEngine
 	class TerrainBuilder
 	{
 	public:
-		static GeometryGenerator2::MeshData TerrainBuilder::CreateTerrain(const D3DBase& d3dBase, float width, float depth, uint32_t xCellCount, uint32_t zCellCount);
+		static GeometryGenerator2::MeshData CreateTerrain(float width, float depth, uint32_t xCellCount, uint32_t zCellCount);
+
+	public:
+		static float s_defaultTerrainWidth;
+		static float s_defaultTerrainDepth;
+		static uint32_t s_defaultTerrainXCellCount;
+		static uint32_t s_defaultTerrainZCellCount;
 	};
 }

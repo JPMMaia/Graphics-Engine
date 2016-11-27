@@ -6,7 +6,12 @@ using namespace DirectX;
 using namespace GraphicsEngine;
 using namespace std;
 
-GeometryGenerator2::MeshData TerrainBuilder::CreateTerrain(const D3DBase& d3dBase, float width, float depth, uint32_t xCellCount, uint32_t zCellCount)
+float TerrainBuilder::s_defaultTerrainWidth = 8192.0f;
+float TerrainBuilder::s_defaultTerrainDepth = 8192.0f;
+uint32_t TerrainBuilder::s_defaultTerrainXCellCount = 128;
+uint32_t TerrainBuilder::s_defaultTerrainZCellCount = 128;
+
+GeometryGenerator2::MeshData TerrainBuilder::CreateTerrain(float width, float depth, uint32_t xCellCount, uint32_t zCellCount)
 {
 	GeometryGenerator2::MeshData output;
 

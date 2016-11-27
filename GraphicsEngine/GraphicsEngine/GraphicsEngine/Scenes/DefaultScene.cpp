@@ -282,7 +282,12 @@ void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase,
 {
 	auto device = d3dBase.GetDevice();
 
-	auto meshData = TerrainBuilder::CreateTerrain(d3dBase, 1024.0f, 1024.0f, 16, 16);
+	auto meshData = TerrainBuilder::CreateTerrain(
+		TerrainBuilder::s_defaultTerrainWidth,
+		TerrainBuilder::s_defaultTerrainDepth,
+		TerrainBuilder::s_defaultTerrainXCellCount,
+		TerrainBuilder::s_defaultTerrainZCellCount
+	);
 
 	// Create geometry:
 	{
@@ -306,16 +311,16 @@ void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase,
 	{
 		auto terrainMaterial = std::make_unique<Material>();
 		terrainMaterial->Name = "TerrainMaterial";
-		
+
 		// Add textures:
 		{
 			textureManager.Create(device, "TerrainDiffuseMap", L"Textures/TerrainDiffuseMap.dds");
 			terrainMaterial->DiffuseMap = &textureManager["TerrainDiffuseMap"];
 
-			textureManager.Create(device, "TerrainNormalMap", L"Textures/porto_normal_map.dds");
+			textureManager.Create(device, "TerrainNormalMap", L"Textures/TerrainNormalMap.dds");
 			terrainMaterial->NormalMap = &textureManager["TerrainNormalMap"];
 
-			textureManager.Create(device, "TerrainHeightMap", L"Textures/porto_height_map.dds");
+			textureManager.Create(device, "TerrainHeightMap", L"Textures/terrain_height_map.dds");
 			terrainMaterial->HeightMap = &textureManager["TerrainHeightMap"];
 		}
 

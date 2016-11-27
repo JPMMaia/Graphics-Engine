@@ -49,6 +49,8 @@ namespace GraphicsEngine
 		FrameResource* m_currentFrameResource = nullptr;
 		int m_currentFrameResourceIndex = 0;
 
-		SamplerState m_anisotropicSamplerState;
+		SamplerState m_linearClampSamplerState;
+		SamplerState m_anisotropicWrapSamplerState;
+		SamplerState m_anisotropicClampSamplerState;
 	};
 }

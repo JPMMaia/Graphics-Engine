@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include "ShaderBufferTypes.h"
 #include "SamplerStateDescConstants.h"
+#include "TerrainBuilder.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -13,10 +14,12 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_scene(this, m_d3dBase, m_textureManager),
 	m_frameResources(1, FrameResource(m_d3dBase.GetDevice(), m_allRenderItems, m_scene.GetMaterials().size())),
 	m_currentFrameResource(&m_frameResources[0]),
-	m_anisotropicSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp)
+	m_linearClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::LinearClamp),
+	m_anisotropicWrapSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicWrap),
+	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp)
 {
 	m_d3dBase.SetClearColor(XMFLOAT3(0.2f, 0.2f, 0.2f));
-	m_camera.SetPosition(0.0f, 2.5f, -15.0f);
+	m_camera.SetPosition(0.0f, 70.0f, -15.0f);
 }
 
 void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
@@ -45,8 +48,12 @@ void Graphics::Render(const Common::Timer& timer) const
 	deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
 
 	// Set samplers:
-	deviceContext->DSSetSamplers(5, 1, m_anisotropicSamplerState.GetAddressOf());
-	deviceContext->PSSetSamplers(5, 1, m_anisotropicSamplerState.GetAddressOf());
+	deviceContext->DSSetSamplers(3, 1, m_linearClampSamplerState.GetAddressOf());
+	deviceContext->PSSetSamplers(3, 1, m_linearClampSamplerState.GetAddressOf());
+	deviceContext->PSSetSamplers(4, 1, m_anisotropicWrapSamplerState.GetAddressOf());
+	deviceContext->PSSetSamplers(4, 1, m_anisotropicWrapSamplerState.GetAddressOf());
+	deviceContext->DSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
+	deviceContext->PSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
 
 	// Draw opaque:
 	/*m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
@@ -170,16 +177,22 @@ void Graphics::UpdatePassData(const Common::Timer& timer) const
 	XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
 	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
 	XMStoreFloat3(&passData.EyePositionW, m_camera.GetPosition());
+	passData.TerrainDisplacementScalarY = 256.0f;
 	passData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));
 	passData.InverseRenderTargetSize = XMFLOAT2(1.0f / static_cast<float>(m_d3dBase.GetClientWidth()), 1.0f / static_cast<float>(m_d3dBase.GetClientHeight()));
 	passData.NearZ = m_camera.GetNearZ();
 	passData.FarZ = m_camera.GetFarZ();
 	passData.TotalTime = static_cast<float>(timer.GetTotalMilliseconds());
 	passData.DeltaTime = static_cast<float>(timer.GetDeltaMilliseconds());
+	passData.FogColor = { 0.5f, 0.5f, 0.5f, 1.0f };
+	passData.FogStart = 5.0f;
+	passData.FogRange = 50.0f;
 	passData.MaxTesselationDistance = 100.0f;
 	passData.MaxTesselationFactor = 6.0f;
 	passData.MinTesselationDistance = 500.0f;
 	passData.MinTesselationFactor = 1.0f;
+	passData.TexelSize = XMFLOAT2(1.0f / 1024.0f, 1.0f / 1024.0f);
+	passData.TiledTexelScale = 128.0f;
 	passData.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
 	// Directional Lights
 	passData.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
@@ -251,6 +264,7 @@ void Graphics::DrawTerrain() const
 		// Set textures:
 		deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
 		deviceContext->PSSetShaderResources(1, 1, renderItem->Material->NormalMap->GetAddressOf());
+		deviceContext->PSSetShaderResources(2, 1, renderItem->Material->HeightMap->GetAddressOf());
 		deviceContext->DSSetShaderResources(2, 1, renderItem->Material->HeightMap->GetAddressOf());
 
 		// Render:

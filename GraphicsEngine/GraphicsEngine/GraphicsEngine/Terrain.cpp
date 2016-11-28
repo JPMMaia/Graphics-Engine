@@ -1,12 +1,14 @@
 #include "stdafx.h"
 #include "Terrain.h"
-#include "VertexTypes.h"
 #include "Common/Helpers.h"
 #include "IScene.h"
 #include "TextureManager.h"
 #include "Graphics.h"
 
 #include <DirectXPackedVector.h>
+#include <algorithm>
+#include <random>
+#include <cmath>
 
 using namespace Common;
 using namespace DirectX;
@@ -20,6 +22,80 @@ Terrain::Terrain(const D3DBase& d3dBase, Graphics& graphics, TextureManager& tex
 	CreateGeometry(d3dBase, scene);
 	CreateMaterial(d3dBase, textureManager, scene);
 	CreateRenderItem(d3dBase, graphics, scene);
+}
+
+std::vector<DirectX::XMFLOAT3> Terrain::GenerateRandomPositions(SIZE_T count) const
+{
+	auto halfTerrainWidth = 0.5f * m_description.TerrainWidth;
+	auto halfTerrainDepth = 0.5f * m_description.TerrainDepth;
+
+	// Create a uniform distribution [-halfTerrain{Width|Height}, halfTerrain{Width|Height}]:
+	std::random_device randomDevice;
+	std::default_random_engine randomEngine(randomDevice());
+	std::uniform_real_distribution<float> xDistribution(-halfTerrainWidth, halfTerrainWidth);
+	std::uniform_real_distribution<float> zDistribution(-halfTerrainDepth, halfTerrainDepth);
+
+	std::vector<DirectX::XMFLOAT3> randomPositions(count);
+	for(SIZE_T i = 0; i < count; ++i)
+	{
+		auto x = xDistribution(randomEngine);
+		auto z = zDistribution(randomEngine);
+		auto y = GetTerrainHeight(x, z);
+
+		randomPositions[i] = XMFLOAT3(x, y, z);
+	}
+		
+	return randomPositions;
+}
+
+float Terrain::GetTerrainHeight(float x, float z) const
+{
+	// Clamp out of bounds values:
+	auto halfTerrainWidth = 0.5f * m_description.TerrainWidth;
+	auto halfTerrainDepth = 0.5f * m_description.TerrainDepth;
+	x = min(max(x, -halfTerrainWidth), halfTerrainWidth);
+	z = min(max(z, -halfTerrainDepth), halfTerrainDepth);
+
+	// Calculate texture coordinates in the range [0, height_map_{width|height}]:
+	auto textureCoordinatesS = static_cast<uint32_t>((x / m_description.TerrainWidth + 0.5f) * m_description.HeightMapWidth);
+	auto textureCoordinatesT = static_cast<uint32_t>((-z / m_description.TerrainDepth + 0.5f) * m_description.HeightMapHeight);
+
+	// Get the heights of the cell:
+	auto topLeftHeight = m_heightMap[textureCoordinatesT * m_description.HeightMapWidth + textureCoordinatesS];
+	auto topRightHeight = m_heightMap[textureCoordinatesT * m_description.HeightMapWidth + textureCoordinatesS + 1];
+	auto lowerLeftHeight = m_heightMap[(textureCoordinatesT + 1) * m_description.HeightMapWidth + textureCoordinatesS];
+	auto lowerRightHeight = m_heightMap[(textureCoordinatesT + 1) * m_description.HeightMapWidth + textureCoordinatesS + 1];
+
+	// Map from 0.5f * [-terrain_width, terrain_width] to [0, cell_x_count]:
+	auto cellRowFloat = (-z / m_description.TerrainDepth + 0.5f) * m_description.CellZCount;
+	auto cellColumnFloat = (x / m_description.TerrainWidth + 0.5f) * m_description.CellXCount;
+
+	// Calculate the row and column as integers:
+	auto cellRow = static_cast<uint32_t>(floorf(cellRowFloat));
+	auto cellColumn = static_cast<uint32_t>(floorf(cellColumnFloat));
+
+	// Calculate position in the range [0, 1] inside the cell:
+	auto s = cellColumnFloat - static_cast<float>(cellColumn);
+	auto t = cellRowFloat - static_cast<float>(cellRow);
+
+	float height;
+
+	// If the position belongs to the upper triangle:
+	if(s + t <= 1.0f)
+	{
+		auto fromTopLeftToTopRight = topRightHeight - topLeftHeight;
+		auto fromTopLeftToLowerLeft = lowerLeftHeight - topLeftHeight;
+		height = topLeftHeight + s * fromTopLeftToTopRight + t * fromTopLeftToLowerLeft;
+	}
+	// If the position belongs to the lower triangle:
+	else
+	{
+		auto fromLowerRightToTopRight = topRightHeight - lowerRightHeight;
+		auto fromLowerRightToLowerLeft = lowerLeftHeight - lowerRightHeight;
+		height = lowerRightHeight + (1.0f - s) * fromLowerRightToTopRight + (1.0f - t) * fromLowerRightToLowerLeft;
+	}
+
+	return height;
 }
 
 const Terrain::Description& Terrain::GetDescription() const

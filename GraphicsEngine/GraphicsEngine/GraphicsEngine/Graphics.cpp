@@ -19,7 +19,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp)
 {
 	m_d3dBase.SetClearColor(XMFLOAT3(0.2f, 0.2f, 0.2f));
-	m_camera.SetPosition(0.0f, 70.0f, -15.0f);
+	m_camera.SetPosition(0.0f, 1000.0f, 0.0f);
 }
 
 void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
@@ -56,12 +56,12 @@ void Graphics::Render(const Common::Timer& timer) const
 	deviceContext->PSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
 
 	// Draw opaque:
-	/*m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
+	m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
 	DrawRenderItems(RenderLayer::Opaque);
 
 	// Draw transparent:
 	m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
-	DrawRenderItems(RenderLayer::Transparent);*/
+	DrawRenderItems(RenderLayer::Transparent);
 
 	// Draw terrain:
 	m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
@@ -73,6 +73,10 @@ void Graphics::Render(const Common::Timer& timer) const
 Camera* Graphics::GetCamera()
 {
 	return &m_camera;
+}
+IScene* Graphics::GetScene()
+{
+	return &m_scene;
 }
 
 void Graphics::AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers)
@@ -239,7 +243,8 @@ void Graphics::DrawRenderItems(RenderLayer renderLayer) const
 		deviceContext->PSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 
 		// Set textures:
-		deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
+		if(renderItem->Material->DiffuseMap != nullptr)
+			deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
 
 		// Render:
 		renderItem->Render(deviceContext);

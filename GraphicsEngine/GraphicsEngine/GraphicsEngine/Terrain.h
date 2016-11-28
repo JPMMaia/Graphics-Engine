@@ -32,6 +32,9 @@ namespace GraphicsEngine
 		Terrain() = default;
 		Terrain(const D3DBase& d3dBase, Graphics& graphics, TextureManager& textureManager, IScene& scene, const Description& description);
 
+		std::vector<DirectX::XMFLOAT3> GenerateRandomPositions(SIZE_T count) const;
+
+		float GetTerrainHeight(float x, float z) const;
 		const Description& GetDescription() const;
 		DirectX::XMFLOAT2 GetTexelSize() const;
 

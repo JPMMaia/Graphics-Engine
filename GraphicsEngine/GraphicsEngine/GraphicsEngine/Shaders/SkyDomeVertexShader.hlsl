@@ -34,7 +34,7 @@ VertexOutput main(VertexInput vertexInput, InstanceInput instanceInput)
 
     // Transform position to homogeneous clip space:
     float4 positionW = mul(float4(vertexInput.PositionL, 1.0f), instanceInput.WorldMatrix);
-    output.PositionH = mul(positionW, ViewProjectionMatrix);
+    output.PositionH = mul(positionW + float4(EyePositionW,0.0f), ViewProjectionMatrix);
 
     return output;
 }

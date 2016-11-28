@@ -302,7 +302,7 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 	domeRenderItem->Bounds = domeSubmesh.Bounds;
 
 	ShaderBufferTypes::InstanceData instanceData;
-	XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixScaling(100,100,100));
 	domeRenderItem->InstancesData.push_back(instanceData);
 
 	graphics->AddRenderItem(std::move(domeRenderItem), { RenderLayer::SkyDome});

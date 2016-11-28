@@ -11,6 +11,7 @@ namespace GraphicsEngine
 	public:
 		Texture() = default;
 		Texture(ID3D11Device* device, const std::string& name, const std::wstring& filename);
+		Texture(ID3D11Device* device, const std::string& name, ID3D11Resource* texture,  const D3D11_SHADER_RESOURCE_VIEW_DESC& srvDescription);
 
 		void Initialize(ID3D11Device* device, const std::string& name, const std::wstring& filename);
 		void Reset();

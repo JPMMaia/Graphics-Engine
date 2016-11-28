@@ -42,18 +42,25 @@ float3 ShlickFresnel(float3 r0, float3 normal, float3 lightDirection)
 /// </sumary>
 float3 BlinnPhong(float3 lightStrength, float3 lightDirection, float3 normal, float3 toEyeDirection, Material material)
 {
+    // Calculate m which is the shiness in the range [0, 256]:
     const float m = material.Shininess * 256.0f;
+
+    // Calculate the half vector:
     float3 halfVector = normalize(toEyeDirection + lightDirection);
 
+    // Calculate the roughness.
+    // (m + 8) * (halfVector . normal)^m
+    // ---------------------------------
+    //               8
     float roughnessFactor = (m + 8.0f) * pow(max(dot(halfVector, normal), 0.0f), m) / 8.0f;
 
+    // Calculate the fresnel factor using the Shlick approximation:
+    float3 fresnelFactor = ShlickFresnel(material.FresnelR0, normal, lightDirection);
 
-    // TODO Change HalfVector to Normal and spot differences
-    float3 fresnelFactor = ShlickFresnel(material.FresnelR0, halfVector, lightDirection);
-
+    // Calculate the specular albedo:
     float3 specularAlbedo = fresnelFactor * roughnessFactor;
 
-    // TODO Spot differences after commenting this line
+    // Scale specular albedo a bit to reduce exessive brightness:
     specularAlbedo = specularAlbedo / (specularAlbedo + 1.0f);
 
     return (material.DiffuseAlbedo.rgb + specularAlbedo) * lightStrength;

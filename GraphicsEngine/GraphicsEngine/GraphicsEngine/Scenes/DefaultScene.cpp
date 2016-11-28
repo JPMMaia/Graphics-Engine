@@ -5,7 +5,7 @@
 #include "GraphicsEngine/VertexTypes.h"
 #include "GraphicsEngine/RenderItem.h"
 #include "GraphicsEngine/AssimpImporter/AssimpImporter.h"
-#include "GraphicsEngine/TerrainBuilder.h"
+#include "GraphicsEngine/Terrain.h"
 #include "Common/Helpers.h"
 
 using namespace DirectX;
@@ -31,6 +31,11 @@ void DefaultScene::AddMaterial(std::unique_ptr<Material>&& material)
 {
 	material->MaterialIndex = static_cast<int>(m_materials.size());
 	m_materials.emplace(material->Name, std::move(material));
+}
+
+const Terrain& DefaultScene::GetTerrain() const
+{
+	return m_terrain;
 }
 
 const std::unordered_map<std::string, std::unique_ptr<MeshGeometry>>& DefaultScene::GetGeometries() const
@@ -280,77 +285,17 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 
 void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
 {
-	auto device = d3dBase.GetDevice();
-
-	auto meshData = TerrainBuilder::CreateTerrain(
-		TerrainBuilder::s_defaultTerrainWidth,
-		TerrainBuilder::s_defaultTerrainDepth,
-		TerrainBuilder::s_defaultTerrainXCellCount,
-		TerrainBuilder::s_defaultTerrainZCellCount
-	);
-
-	// Create geometry:
-	{
-		auto terrainGeometry = std::make_unique<MeshGeometry>();
-		terrainGeometry->Name = "TerrainGeometry";
-		terrainGeometry->Vertices = VertexBuffer(device, meshData.Vertices);
-		terrainGeometry->Indices = IndexBuffer(device, meshData.Indices);
-
-		// Submesh:
-		SubmeshGeometry terrainSubmesh;
-		terrainSubmesh.IndexCount = static_cast<uint32_t>(meshData.Indices.size());
-		terrainSubmesh.StartIndexLocation = 0;
-		terrainSubmesh.BaseVertexLocation = 0;
-		terrainSubmesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(meshData.Vertices);
-		terrainGeometry->Submeshes["TerrainSubmesh"] = std::move(terrainSubmesh);
-
-		AddGeometry(std::move(terrainGeometry));
-	}
-
-	// Create material:
-	{
-		auto terrainMaterial = std::make_unique<Material>();
-		terrainMaterial->Name = "TerrainMaterial";
-
-		// Add textures:
-		{
-			textureManager.Create(device, "TerrainDiffuseMap", L"Textures/TerrainDiffuseMap.dds");
-			terrainMaterial->DiffuseMap = &textureManager["TerrainDiffuseMap"];
-
-			textureManager.Create(device, "TerrainNormalMap", L"Textures/TerrainNormalMap.dds");
-			terrainMaterial->NormalMap = &textureManager["TerrainNormalMap"];
-
-			textureManager.Create(device, "TerrainHeightMap", L"Textures/terrain_height_map.dds");
-			terrainMaterial->HeightMap = &textureManager["TerrainHeightMap"];
-		}
-
-		// Material parameters:
-		terrainMaterial->DiffuseAlbedo = { 0.8f, 0.8f, 0.8f, 1.0f };
-		terrainMaterial->FresnelR0 = { 0.01f, 0.01f, 0.01f };
-		terrainMaterial->Roughness = 0.25f;
-		terrainMaterial->MaterialTransform = MathHelper::Identity4x4();
-
-		AddMaterial(std::move(terrainMaterial));
-	}
-
-	auto renderItem = std::make_unique<RenderItem>();
-	renderItem->Name = "Terrain";
-	renderItem->Mesh = m_geometries.at("TerrainGeometry").get();
-	renderItem->Material = m_materials.at("TerrainMaterial").get();
-	renderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST;
-
-	const auto& terrainSubmesh = renderItem->Mesh->Submeshes.at("TerrainSubmesh");
-	renderItem->IndexCount = terrainSubmesh.IndexCount;
-	renderItem->StartIndexLocation = terrainSubmesh.StartIndexLocation;
-	renderItem->BaseVertexLocation = terrainSubmesh.BaseVertexLocation;
-	renderItem->Bounds = terrainSubmesh.Bounds;
-
-	// Add instance:
-	{
-		ShaderBufferTypes::InstanceData instanceData;
-		instanceData.WorldMatrix = MathHelper::Identity4x4();
-		renderItem->InstancesData.push_back(std::move(instanceData));
-	}
-
-	graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Terrain });
+	Terrain::Description terrainDescription;
+	terrainDescription.TerrainWidth = 1024.0f;
+	terrainDescription.TerrainDepth = 1024.0f;
+	terrainDescription.CellXCount = 16;
+	terrainDescription.CellZCount = 16;
+	terrainDescription.TiledDiffuseMapFilename = L"Textures/TerrainTiledDiffuseMap.dds";
+	terrainDescription.TiledNormalMapFilename = L"Textures/TerrainTiledNormalMap.dds";
+	terrainDescription.HeightMapFilename = L"Textures/TerrainHeightMap.r16";
+	terrainDescription.HeightMapWidth = 1025;
+	terrainDescription.HeightMapHeight = 1025;
+	terrainDescription.HeightMapFactor = 255.0f;
+	terrainDescription.TiledTexelScale = 16.0f;
+	m_terrain = Terrain(d3dBase, *graphics, textureManager, *this, terrainDescription);
 }

@@ -211,7 +211,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="GraphicsEngine\TerrainBuilder.cpp" />
+    <ClCompile Include="GraphicsEngine\Terrain.cpp" />
     <ClCompile Include="GraphicsEngine\Texture.cpp" />
     <ClCompile Include="GraphicsEngine\TextureManager.cpp" />
     <ClCompile Include="GraphicsEngine\VertexShader.cpp" />
@@ -260,7 +260,7 @@
     <ClInclude Include="GraphicsEngine\SettingsManager.h" />
     <ClInclude Include="GraphicsEngine\ShaderBufferTypes.h" />
     <ClInclude Include="GraphicsEngine\SubmeshGeometry.h" />
-    <ClInclude Include="GraphicsEngine\TerrainBuilder.h" />
+    <ClInclude Include="GraphicsEngine\Terrain.h" />
     <ClInclude Include="GraphicsEngine\Texture.h" />
     <ClInclude Include="GraphicsEngine\TextureManager.h" />
     <ClInclude Include="GraphicsEngine\VertexShader.h" />

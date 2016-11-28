@@ -2,6 +2,7 @@
 
 #include "GraphicsEngine/IScene.h"
 #include "GraphicsEngine/MeshGeometry.h"
+#include "GraphicsEngine/Terrain.h"
 
 #include <memory>
 #include <unordered_map>
@@ -21,6 +22,7 @@ namespace GraphicsEngine
 
 		void AddGeometry(std::unique_ptr<MeshGeometry>&& geometry) override;
 		void AddMaterial(std::unique_ptr<Material>&& material) override;
+		const Terrain& GetTerrain() const override;
 
 		const std::unordered_map<std::string, std::unique_ptr<MeshGeometry>>& GetGeometries() const override;
 		const std::unordered_map<std::string, std::unique_ptr<Material>>& GetMaterials() const override;
@@ -37,5 +39,6 @@ namespace GraphicsEngine
 	private:
 		std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> m_geometries;
 		std::unordered_map<std::string, std::unique_ptr<Material>> m_materials;
+		Terrain m_terrain;
 	};
 }

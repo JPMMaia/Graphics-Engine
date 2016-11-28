@@ -2,7 +2,7 @@
 #include "Graphics.h"
 #include "ShaderBufferTypes.h"
 #include "SamplerStateDescConstants.h"
-#include "TerrainBuilder.h"
+#include "Terrain.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -177,7 +177,7 @@ void Graphics::UpdatePassData(const Common::Timer& timer) const
 	XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
 	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
 	XMStoreFloat3(&passData.EyePositionW, m_camera.GetPosition());
-	passData.TerrainDisplacementScalarY = 256.0f;
+	passData.TerrainDisplacementScalarY = 1.0f;
 	passData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));
 	passData.InverseRenderTargetSize = XMFLOAT2(1.0f / static_cast<float>(m_d3dBase.GetClientWidth()), 1.0f / static_cast<float>(m_d3dBase.GetClientHeight()));
 	passData.NearZ = m_camera.GetNearZ();
@@ -191,8 +191,11 @@ void Graphics::UpdatePassData(const Common::Timer& timer) const
 	passData.MaxTesselationFactor = 6.0f;
 	passData.MinTesselationDistance = 500.0f;
 	passData.MinTesselationFactor = 1.0f;
-	passData.TexelSize = XMFLOAT2(1.0f / 1024.0f, 1.0f / 1024.0f);
-	passData.TiledTexelScale = 128.0f;
+	
+	const auto& terrain = m_scene.GetTerrain();
+	passData.TexelSize = terrain.GetTexelSize();
+	passData.TiledTexelScale = terrain.GetDescription().TiledTexelScale;
+	
 	passData.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
 	// Directional Lights
 	passData.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };

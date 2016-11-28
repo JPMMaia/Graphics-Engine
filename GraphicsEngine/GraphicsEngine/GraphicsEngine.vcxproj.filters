@@ -95,7 +95,7 @@
     <ClCompile Include="GraphicsEngine\AssimpImporter\AssimpImporter.cpp">
       <Filter>GraphicsEngine\AssimpImporter</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsEngine\TerrainBuilder.cpp">
+    <ClCompile Include="GraphicsEngine\Terrain.cpp">
       <Filter>GraphicsEngine\Model</Filter>
     </ClCompile>
   </ItemGroup>
@@ -242,7 +242,7 @@
     <ClInclude Include="GraphicsEngine\AssimpImporter\AssimpImporter.h">
       <Filter>GraphicsEngine\AssimpImporter</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsEngine\TerrainBuilder.h">
+    <ClInclude Include="GraphicsEngine\Terrain.h">
       <Filter>GraphicsEngine\Model</Filter>
     </ClInclude>
   </ItemGroup>

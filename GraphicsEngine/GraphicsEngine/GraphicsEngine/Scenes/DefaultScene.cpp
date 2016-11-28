@@ -236,6 +236,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 
 void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
 {
+
 	AssimpImporter importer;
 	AssimpImporter::ImportInfo importInfo;
 	std::wstring filename(L"Models/Cube.fbx");
@@ -254,6 +255,8 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 	cubeRenderItem->StartIndexLocation = submesh.StartIndexLocation;
 	cubeRenderItem->BaseVertexLocation = submesh.BaseVertexLocation;
 	cubeRenderItem->Bounds = submesh.Bounds;
+
+
 
 	// Instances:
 	const auto size = 10;
@@ -276,6 +279,34 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 	}
 
 	graphics->AddRenderItem(std::move(cubeRenderItem), { RenderLayer::Opaque });
+
+	// Sky Dome model init
+	std::wstring domefilename(L"Models/SkyDome.fbx");
+	importer.Import(graphics, d3dBase, textureManager, this, domefilename, importInfo);
+
+	auto domeGeometry = m_geometries.at(Helpers::WStringToString(domefilename)).get();
+	const auto& domeSubmesh = domeGeometry->Submeshes.at("Sphere");
+	
+	auto domeMaterial = std::make_unique<Material>();
+	domeMaterial->Name = "DomeMaterial";
+	AddMaterial(std::move(domeMaterial));
+
+	auto domeRenderItem = std::make_unique<RenderItem>();
+	domeRenderItem->Name = "SkyDome";
+	domeRenderItem->Mesh = domeGeometry;
+	domeRenderItem->Material = m_materials.at("DomeMaterial").get();
+	domeRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	domeRenderItem->IndexCount = domeSubmesh.IndexCount;
+	domeRenderItem->StartIndexLocation = domeSubmesh.StartIndexLocation;
+	domeRenderItem->BaseVertexLocation = domeSubmesh.BaseVertexLocation;
+	domeRenderItem->Bounds = domeSubmesh.Bounds;
+
+	ShaderBufferTypes::InstanceData instanceData;
+	XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixIdentity());
+	domeRenderItem->InstancesData.push_back(instanceData);
+
+	graphics->AddRenderItem(std::move(domeRenderItem), { RenderLayer::SkyDome});
+
 }
 
 void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)

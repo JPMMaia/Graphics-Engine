@@ -32,13 +32,24 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 {
 	auto device = d3dBase.GetDevice();
 
-	m_inputLayout =
+	m_inputLayouts["Default"] =
 	{
 		// Vertex data:
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+
+		// Instance data:
+		{ "WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+	};
+
+	m_inputLayouts["SkyDome"] = {
+		// Vertex data:
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 
 		// Instance data:
 		{ "WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
@@ -56,14 +67,18 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 	auto shadersFolderPath = wstring(L"../GraphicsEngine/GraphicsEngine/Shaders/");
 
 	// Standard shaders:
-	m_vertexShaders["Standard"] = VertexShader(device, shadersFolderPath + L"StandardVertexShader.hlsl", nullptr, "main", "vs_5_0", m_inputLayout);
+	m_vertexShaders["Standard"] = VertexShader(device, shadersFolderPath + L"StandardVertexShader.hlsl", nullptr, "main", "vs_5_0", m_inputLayouts["Default"]);
 	m_pixelShaders["Standard"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", nullptr, "main", "ps_5_0");
 
 	// Terrain shaders:
-	m_vertexShaders["Terrain"] = VertexShader(device, shadersFolderPath + L"TerrainVertexShader.hlsl", nullptr, "main", "vs_5_0", m_inputLayout);
+	m_vertexShaders["Terrain"] = VertexShader(device, shadersFolderPath + L"TerrainVertexShader.hlsl", nullptr, "main", "vs_5_0", m_inputLayouts["Default"]);
 	m_hullShaders["Terrain"] = HullShader(device, shadersFolderPath + L"TerrainHullShader.hlsl", nullptr, "main", "hs_5_0");
 	m_domainShaders["Terrain"] = DomainShader(device, shadersFolderPath + L"TerrainDomainShader.hlsl", nullptr, "main", "ds_5_0");
 	m_pixelShaders["Terrain"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", nullptr, "main", "ps_5_0");
+
+	// SkyDome shaders
+	m_vertexShaders["SkyDome"] = VertexShader(device, shadersFolderPath + L"SkyDomeVertexShader.hlsl", nullptr, "main", "vs_5_0", m_inputLayouts["Default"]);
+	m_pixelShaders["SkyDome"] = PixelShader(device, shadersFolderPath + L"SkyDomePixelShader.hlsl", nullptr, "main", "ps_5_0");
 }
 void PipelineStateManager::InitializeRasterizerStates(const D3DBase& d3dBase)
 {
@@ -71,6 +86,8 @@ void PipelineStateManager::InitializeRasterizerStates(const D3DBase& d3dBase)
 
 	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("Default"), std::forward_as_tuple(device, RasterizerStateDescConstants::Default));
 	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("Wireframe"), std::forward_as_tuple(device, RasterizerStateDescConstants::Wireframe));
+	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("NoCulling"), std::forward_as_tuple(device, RasterizerStateDescConstants::NoCulling));
+	
 }
 void PipelineStateManager::InitializeBlendStates(const D3DBase& d3dBase)
 {
@@ -114,5 +131,15 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		terrainState.BlendState = &m_blendStates.at("Default");
 
 		m_pipelineStateObjects.emplace("Terrain", terrainState);
+	}
+
+	// SkyDome:
+	{
+		PipelineState skydomeState;
+		skydomeState.VertexShader = &m_vertexShaders.at("SkyDome");
+		skydomeState.PixelShader = &m_pixelShaders.at("SkyDome");
+		skydomeState.RasterizerState = &m_rasterizerStates.at("NoCulling");
+		skydomeState.BlendState = &m_blendStates.at("Default");
+		m_pipelineStateObjects.emplace("SkyDome", skydomeState);
 	}
 }

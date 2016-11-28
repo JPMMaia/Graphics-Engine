@@ -47,6 +47,7 @@ namespace GraphicsEngine
 			DirectX::XMFLOAT2 TexelSize;
 			float TiledTexelScale;
 			float Padding2;
+			DirectX::XMFLOAT4 SkyDomeColors[2];
 			DirectX::XMFLOAT4 AmbientLight = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 			static constexpr auto MaxNumLights = 16;

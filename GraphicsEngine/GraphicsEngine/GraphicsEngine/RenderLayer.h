@@ -7,6 +7,7 @@ namespace GraphicsEngine
 		Opaque,
 		Transparent,
 		Terrain,
+		SkyDome,
 		Count
 	};
 }

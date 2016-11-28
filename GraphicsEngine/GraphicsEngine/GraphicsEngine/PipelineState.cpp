@@ -25,4 +25,7 @@ void PipelineState::Set(ID3D11DeviceContext* deviceContext) const
 
 	// Set blend state:
 	this->BlendState->Set(deviceContext);
+
+	// TODO DepthStencil Creation
+	// deviceContext->OMSetDepthStencilState(this->DepthStencilState, 0);
 }

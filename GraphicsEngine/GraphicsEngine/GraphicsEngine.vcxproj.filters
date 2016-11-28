@@ -365,5 +365,7 @@
     <FxCompile Include="GraphicsEngine\Shaders\TerrainHullShader.hlsl">
       <Filter>Shaders\Terrain</Filter>
     </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\SkyDomePixelShader.hlsl" />
+    <FxCompile Include="GraphicsEngine\Shaders\SkyDomeVertexShader.hlsl" />
   </ItemGroup>
 </Project>

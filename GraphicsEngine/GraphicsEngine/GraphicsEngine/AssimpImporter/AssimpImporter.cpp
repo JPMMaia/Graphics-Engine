@@ -92,13 +92,16 @@ void AssimpImporter::AddGeometry(const D3DBase& d3dBase, const std::string& name
 
 				const auto& normals = mesh->mNormals[i];
 				vertex.Normal = XMFLOAT3(normals.x, normals.y, normals.z);
-
-				const auto& textureCoordinates = mesh->mTextureCoords[0][i];
-				vertex.TextureCoordinates = XMFLOAT2(textureCoordinates.x, textureCoordinates.y);
-
-				const auto& tangentU = mesh->mTangents[i];
-				vertex.TangentU = XMFLOAT3(tangentU.x, tangentU.y, tangentU.z);
-
+				if (mesh->mTextureCoords[0] == nullptr)
+					OutputDebugString(std::wstring(L"Model " + Helpers::StringToWString(name) + L" loaded with no textures").c_str());
+				else
+				{
+					const auto& textureCoordinates = mesh->mTextureCoords[0][i];
+					vertex.TextureCoordinates = XMFLOAT2(textureCoordinates.x, textureCoordinates.y);
+				
+					const auto& tangentU = mesh->mTangents[i];
+					vertex.TangentU = XMFLOAT3(tangentU.x, tangentU.y, tangentU.z);
+				}
 				vertices.push_back(vertex);
 			}
 		}
@@ -155,9 +158,12 @@ void AssimpImporter::AddMaterials(const D3DBase& d3dBase, TextureManager& textur
 		// Set diffuse map:
 		aiString texturePath;
 		importedMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
-		auto texturePathStr = "Models/" + std::string(texturePath.C_Str());
-		textureManager.Create(d3dBase.GetDevice(), texturePathStr, Helpers::StringToWString(texturePathStr));
-		renderMaterial->DiffuseMap = &textureManager[texturePathStr];
+		if(texturePath.length != 0)
+		{
+			auto texturePathStr = "Models/" + std::string(texturePath.C_Str());
+			textureManager.Create(d3dBase.GetDevice(), texturePathStr, Helpers::StringToWString(texturePathStr));
+			renderMaterial->DiffuseMap = &textureManager[texturePathStr];
+		}
 
 		// Set diffuse albedo:
 		aiColor4D diffuseColor;

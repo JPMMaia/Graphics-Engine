@@ -20,8 +20,8 @@ namespace GraphicsEngine
 		PixelShader* PixelShader = nullptr;
 		RasterizerState* RasterizerState = nullptr;
 		BlendState* BlendState = nullptr;
-		
-		// ID3D11DepthStencilState* DepthStencilState;
+		ID3D11DepthStencilState* DepthStencilState = nullptr;
+
 		// UINT SampleMask;
 		// UINT NumRenderTargets;
 		// DXGI_SAMPLE_DESC SampleDesc;

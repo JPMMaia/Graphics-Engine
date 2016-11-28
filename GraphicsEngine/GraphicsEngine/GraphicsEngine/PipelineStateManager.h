@@ -25,7 +25,7 @@ namespace GraphicsEngine
 		void InitializePipelineStateObjects();
 
 	private:
-		std::vector<D3D11_INPUT_ELEMENT_DESC> m_inputLayout;
+		std::unordered_map<std::string, std::vector<D3D11_INPUT_ELEMENT_DESC>> m_inputLayouts;
 		std::unordered_map<std::string, VertexShader> m_vertexShaders;
 		std::unordered_map<std::string, HullShader> m_hullShaders;
 		std::unordered_map<std::string, DomainShader> m_domainShaders;

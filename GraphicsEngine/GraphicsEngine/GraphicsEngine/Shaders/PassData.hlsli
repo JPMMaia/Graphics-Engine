@@ -25,6 +25,7 @@ cbuffer PassData : register(b2)
     float2 TexelSize;
     float TiledTexelScale;
     float Padding2;
+    float4 SkyDomeColors[2];
 	float4 AmbientLight;
 	Light Lights[MAX_NUM_LIGHTS];
 };

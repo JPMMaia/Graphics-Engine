@@ -19,7 +19,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp)
 {
 	m_d3dBase.SetClearColor(XMFLOAT3(0.2f, 0.2f, 0.2f));
-	m_camera.SetPosition(0.0f, 70.0f, -15.0f);
+	m_camera.SetPosition(0.0f, 0.0f, 0.0f);
 }
 
 void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
@@ -55,13 +55,18 @@ void Graphics::Render(const Common::Timer& timer) const
 	deviceContext->DSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
 	deviceContext->PSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
 
+	/*
 	// Draw opaque:
-	/*m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
+	m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
 	DrawRenderItems(RenderLayer::Opaque);
 
 	// Draw transparent:
 	m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
-	DrawRenderItems(RenderLayer::Transparent);*/
+	DrawRenderItems(RenderLayer::Transparent);
+	*/
+	// Draw Skydome
+	m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
+	DrawRenderItems(RenderLayer::SkyDome);
 
 	// Draw terrain:
 	m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
@@ -136,6 +141,8 @@ void Graphics::UpdateInstancesData()
 		// Unmap resource:
 		instancesBuffer.Unmap(deviceContext);
 	}
+
+
 }
 void Graphics::UpdateMaterialData() const
 {
@@ -193,6 +200,8 @@ void Graphics::UpdatePassData(const Common::Timer& timer) const
 	passData.MinTesselationFactor = 1.0f;
 	passData.TexelSize = XMFLOAT2(1.0f / 1024.0f, 1.0f / 1024.0f);
 	passData.TiledTexelScale = 128.0f;
+	passData.SkyDomeColors[0] = { 0.5f, 0.1f, 0.1f, 1.0f };
+	passData.SkyDomeColors[1] = { 0.1f, 0.1f, 0.8f, 1.0f };
 	passData.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
 	// Directional Lights
 	passData.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
@@ -236,7 +245,8 @@ void Graphics::DrawRenderItems(RenderLayer renderLayer) const
 		deviceContext->PSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 
 		// Set textures:
-		deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
+		if(renderItem->Material->DiffuseMap != nullptr)
+			deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
 
 		// Render:
 		renderItem->Render(deviceContext);

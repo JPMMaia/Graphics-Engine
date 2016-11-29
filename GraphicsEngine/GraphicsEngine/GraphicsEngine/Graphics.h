@@ -24,6 +24,7 @@ namespace GraphicsEngine
 		void Render(const Common::Timer& timer) const;
 
 		Camera* GetCamera();
+		IScene* GetScene();
 
 		void AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
 

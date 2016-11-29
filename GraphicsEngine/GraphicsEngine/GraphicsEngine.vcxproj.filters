@@ -95,7 +95,7 @@
     <ClCompile Include="GraphicsEngine\AssimpImporter\AssimpImporter.cpp">
       <Filter>GraphicsEngine\AssimpImporter</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsEngine\TerrainBuilder.cpp">
+    <ClCompile Include="GraphicsEngine\Terrain.cpp">
       <Filter>GraphicsEngine\Model</Filter>
     </ClCompile>
   </ItemGroup>
@@ -242,7 +242,7 @@
     <ClInclude Include="GraphicsEngine\AssimpImporter\AssimpImporter.h">
       <Filter>GraphicsEngine\AssimpImporter</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsEngine\TerrainBuilder.h">
+    <ClInclude Include="GraphicsEngine\Terrain.h">
       <Filter>GraphicsEngine\Model</Filter>
     </ClInclude>
   </ItemGroup>
@@ -319,6 +319,9 @@
     <Filter Include="GraphicsEngine\AssimpImporter">
       <UniqueIdentifier>{e559f998-cefb-4ccf-983a-f24545061a73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Skydome">
+      <UniqueIdentifier>{e3f81619-cdb3-4e30-b0b9-1488b9961ff6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Shaders\Terrain">
       <UniqueIdentifier>{fedc451a-6a2c-4459-9a44-39d17e50a937}</UniqueIdentifier>
     </Filter>
@@ -365,7 +368,11 @@
     <FxCompile Include="GraphicsEngine\Shaders\TerrainHullShader.hlsl">
       <Filter>Shaders\Terrain</Filter>
     </FxCompile>
-    <FxCompile Include="GraphicsEngine\Shaders\SkyDomePixelShader.hlsl" />
-    <FxCompile Include="GraphicsEngine\Shaders\SkyDomeVertexShader.hlsl" />
+    <FxCompile Include="GraphicsEngine\Shaders\SkyDomePixelShader.hlsl">
+      <Filter>Shaders\Skydome</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\SkyDomeVertexShader.hlsl">
+      <Filter>Shaders\Skydome</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

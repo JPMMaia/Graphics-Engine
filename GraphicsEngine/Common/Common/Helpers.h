@@ -18,7 +18,26 @@ namespace Common
 		std::wstring StringToWString(const std::string& str);
 		std::string WStringToString(const std::wstring& wstr);
 
-		void ReadData(const std::wstring& filename, std::vector<char>& buffer);
+		template<typename DataType>
+		void ReadData(const std::wstring& filename, std::vector<DataType>& buffer)
+		{
+			using namespace std;
+
+			// Open file for reading in binary mode, and seek to the end of file immediately:
+			ifstream file(filename, ios::in | ios::binary | ios::ate);
+			if (!file.good())
+				throw runtime_error("Couldn't open file " + Helpers::WStringToString(filename));
+
+			// Get size of file and seek to the begin of file:
+			auto size = file.tellg();
+			file.seekg(0, ios::beg);
+
+			// Read content of file:
+			buffer.resize(static_cast<uint32_t>(size) / sizeof(DataType));
+			file.read(reinterpret_cast<char*>(buffer.data()), size);
+			if (!file.good())
+				throw runtime_error("Error while reading file " + Helpers::WStringToString(filename));
+		}
 		void WriteData(const std::wstring& filename, const std::vector<char>& buffer);
 
 		template<typename FunctionType, typename... ArgumentsType>

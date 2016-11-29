@@ -25,7 +25,8 @@ float4 main(DomainOutput input) : SV_TARGET
     float3 normalW, tangentW, bitangentW;
     CalculateNormalTangentBitangentFromHeightMap(input.TextureCoordinates, TexelSize, HeightMap, SamplerLinearClamp, normalW, tangentW, bitangentW);
 
-    float3 normalSample = NormalMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates);
+    // Sample value from the normal map and compute the bumped normal in world space:
+    float3 normalSample = NormalMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
     float3 bumpedNormalW = NormalSampleToBumpedNormalW(normalSample, normalW, tangentW);
 
     // Calculate direction from point to camera:

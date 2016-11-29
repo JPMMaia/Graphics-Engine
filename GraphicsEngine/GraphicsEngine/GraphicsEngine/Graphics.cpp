@@ -2,7 +2,7 @@
 #include "Graphics.h"
 #include "ShaderBufferTypes.h"
 #include "SamplerStateDescConstants.h"
-#include "TerrainBuilder.h"
+#include "Terrain.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -19,8 +19,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp)
 {
 	m_d3dBase.SetClearColor(XMFLOAT3(0.2f, 0.2f, 0.2f));
-	m_camera.SetPosition(0.0f, 0.0f, 0.0f);
-}
+	m_camera.SetPosition(0.0f, 70.0f, -15.0f);}
 
 void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
 {
@@ -62,12 +61,10 @@ void Graphics::Render(const Common::Timer& timer) const
 
 	// Draw transparent:
 	m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
-	DrawRenderItems(RenderLayer::Transparent);
-	*/
+
 	// Draw Skydome
 	m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
 	DrawRenderItems(RenderLayer::SkyDome);
-
 	// Draw terrain:
 	m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
 	DrawTerrain();
@@ -78,6 +75,10 @@ void Graphics::Render(const Common::Timer& timer) const
 Camera* Graphics::GetCamera()
 {
 	return &m_camera;
+}
+IScene* Graphics::GetScene()
+{
+	return &m_scene;
 }
 
 void Graphics::AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers)
@@ -184,7 +185,7 @@ void Graphics::UpdatePassData(const Common::Timer& timer) const
 	XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
 	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
 	XMStoreFloat3(&passData.EyePositionW, m_camera.GetPosition());
-	passData.TerrainDisplacementScalarY = 256.0f;
+	passData.TerrainDisplacementScalarY = 1.0f;
 	passData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));
 	passData.InverseRenderTargetSize = XMFLOAT2(1.0f / static_cast<float>(m_d3dBase.GetClientWidth()), 1.0f / static_cast<float>(m_d3dBase.GetClientHeight()));
 	passData.NearZ = m_camera.GetNearZ();
@@ -198,8 +199,11 @@ void Graphics::UpdatePassData(const Common::Timer& timer) const
 	passData.MaxTesselationFactor = 6.0f;
 	passData.MinTesselationDistance = 500.0f;
 	passData.MinTesselationFactor = 1.0f;
-	passData.TexelSize = XMFLOAT2(1.0f / 1024.0f, 1.0f / 1024.0f);
-	passData.TiledTexelScale = 128.0f;
+	
+	const auto& terrain = m_scene.GetTerrain();
+	passData.TexelSize = terrain.GetTexelSize();
+	passData.TiledTexelScale = terrain.GetDescription().TiledTexelScale;
+	
 	passData.SkyDomeColors[0] = { 0.5f, 0.1f, 0.1f, 1.0f };
 	passData.SkyDomeColors[1] = { 0.1f, 0.1f, 0.8f, 1.0f };
 	passData.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };

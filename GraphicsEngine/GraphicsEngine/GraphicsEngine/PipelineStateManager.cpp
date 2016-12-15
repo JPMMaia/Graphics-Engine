@@ -61,16 +61,30 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 	};
 
 	auto maxNumLights = std::to_string(ShaderBufferTypes::PassData::MaxNumLights);
-	std::array<D3D_SHADER_MACRO, 1> standardDefines =
-	{
-		"MAX_NUM_LIGHTS", maxNumLights.c_str()
-	};
-
 	auto shadersFolderPath = wstring(L"../GraphicsEngine/GraphicsEngine/Shaders/");
 
 	// Standard shaders:
-	m_vertexShaders["Standard"] = VertexShader(device, shadersFolderPath + L"StandardVertexShader.hlsl", nullptr, "main", "vs_5_0", m_inputLayouts["Default"]);
-	m_pixelShaders["Standard"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", nullptr, "main", "ps_5_0");
+	{
+		std::array<D3D_SHADER_MACRO, 2> defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			nullptr, nullptr
+		};
+		m_vertexShaders["Standard"] = VertexShader(device, shadersFolderPath + L"StandardVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
+		m_pixelShaders["Standard"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+	}
+	
+	// Standard alpha-clipped shaders:
+	{
+		std::array<D3D_SHADER_MACRO, 3> defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"ENABLE_ALPHA_CLIPPING", "1",
+			nullptr, nullptr
+		};
+		m_vertexShaders["StandardAlphaClipped"] = VertexShader(device, shadersFolderPath + L"StandardVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
+		m_pixelShaders["StandardAlphaClipped"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+	}
 
 	// Terrain shaders:
 	m_vertexShaders["Terrain"] = VertexShader(device, shadersFolderPath + L"TerrainVertexShader.hlsl", nullptr, "main", "vs_5_0", m_inputLayouts["Default"]);
@@ -128,6 +142,25 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		transparentState.BlendState = &m_blendStates.at("Transparent");
 
 		m_pipelineStateObjects.emplace("Transparent", transparentState);
+	}
+
+	// Transparent:
+	{
+		auto transparentState = opaqueState;
+		transparentState.BlendState = &m_blendStates.at("Transparent");
+
+		m_pipelineStateObjects.emplace("Transparent", transparentState);
+	}
+
+	// Alpha-clipped:
+	{
+		auto alphaClippedState = opaqueState;
+		alphaClippedState.VertexShader = &m_vertexShaders.at("StandardAlphaClipped");
+		alphaClippedState.PixelShader = &m_pixelShaders.at("StandardAlphaClipped");
+		alphaClippedState.BlendState = &m_blendStates.at("Transparent");
+		alphaClippedState.RasterizerState = &m_rasterizerStates.at("NoCulling");
+
+		m_pipelineStateObjects.emplace("AlphaClipped", alphaClippedState);
 	}
 
 	// Terrain:

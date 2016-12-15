@@ -34,11 +34,6 @@ void Graphics::Update(const Common::Timer& timer)
 	UpdatePassData(timer);
 	UpdateMaterialData();
 	UpdateInstancesData();
-	
-	auto skyDome = m_renderItemLayers[static_cast<SIZE_T>(RenderLayer::SkyDome)][0];
-	XMFLOAT3 cameraPosition;
-	XMStoreFloat3(&cameraPosition, m_camera.GetPosition());
-	XMStoreFloat4x4(&skyDome->InstancesData[0].WorldMatrix, XMMatrixTranslation(cameraPosition.x, cameraPosition.y, cameraPosition.z));
 }
 
 void Graphics::Render(const Common::Timer& timer) const
@@ -60,7 +55,7 @@ void Graphics::Render(const Common::Timer& timer) const
 	deviceContext->PSSetSamplers(4, 1, m_anisotropicWrapSamplerState.GetAddressOf());
 	deviceContext->DSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
 	deviceContext->PSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
-	
+
 	// Draw Skydome
 	m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
 	DrawRenderItems(RenderLayer::SkyDome);
@@ -69,12 +64,17 @@ void Graphics::Render(const Common::Timer& timer) const
 	m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
 	DrawRenderItems(RenderLayer::Opaque);
 
-	// Draw transparent:
-	//m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
-
 	// Draw terrain:
 	m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
 	DrawTerrain();
+
+	// Draw transparent:
+	m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
+	DrawRenderItems(RenderLayer::Transparent);
+
+	// Draw alpha-clipped:
+	m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClipped");
+	DrawRenderItems(RenderLayer::AlphaClipped);
 
 	m_d3dBase.EndScene();
 }

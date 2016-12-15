@@ -18,6 +18,13 @@ float4 main(VertexOutput input) : SV_TARGET
     // Compute diffuse albedo by multiplying the sample from the texture and the diffuse albedo of the material:
     float4 diffuseAlbedo = DiffuseMap.Sample(SamplerAnisotropicClamp, input.TextureCoordinates) * DiffuseAlbedo;
 
+#if defined(ALPHA_CLIPPING)
+	
+	// Clip if alpha is near 0:
+	clip(diffuseAlbedo.a - 0.1f);
+
+#endif
+
     // Interpolating rasterization process can change the magnitude of the normal vector:
     input.NormalW = normalize(input.NormalW);
 

@@ -6,6 +6,7 @@ namespace GraphicsEngine
 	{
 		Opaque,
 		Transparent,
+		AlphaClipped,
 		Terrain,
 		SkyDome,
 		Count

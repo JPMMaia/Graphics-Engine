@@ -361,29 +361,29 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 		}
 
 		// Leaves:
-		/*{
-		const auto& submesh = importedGeometry->Submeshes.at("Leaves");
-		const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "Leaves"));
-		auto renderItem = std::make_unique<RenderItem>();
-		renderItem->Name = "Leaves";
-		renderItem->Mesh = importedGeometry;
-		renderItem->Material = m_materials.at(materialName).get();
-		renderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		renderItem->IndexCount = submesh.IndexCount;
-		renderItem->StartIndexLocation = submesh.StartIndexLocation;
-		renderItem->BaseVertexLocation = submesh.BaseVertexLocation;
-		renderItem->Bounds = submesh.Bounds;
-		// Instances:
-		renderItem->InstancesData.reserve(randomPositions.size());
-		for (SIZE_T i = 0; i < randomPositions.size(); ++i)
 		{
-		ShaderBufferTypes::InstanceData instanceData;
-		const auto& position = randomPositions[i];
-		XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixRotationX(XM_PI / 2.0f) * XMMatrixTranslation(position.x, position.y, position.z));
-		renderItem->InstancesData.push_back(instanceData);
+			const auto& submesh = importedGeometry->Submeshes.at("LeavesMeshData");
+			const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "LeavesMeshData"));
+			auto renderItem = std::make_unique<RenderItem>();
+			renderItem->Name = "Leaves";
+			renderItem->Mesh = importedGeometry;
+			renderItem->Material = m_materials.at(materialName).get();
+			renderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+			renderItem->IndexCount = submesh.IndexCount;
+			renderItem->StartIndexLocation = submesh.StartIndexLocation;
+			renderItem->BaseVertexLocation = submesh.BaseVertexLocation;
+			renderItem->Bounds = submesh.Bounds;
+			// Instances:
+			renderItem->InstancesData.reserve(randomPositions.size());
+			for (SIZE_T i = 0; i < randomPositions.size(); ++i)
+			{
+				ShaderBufferTypes::InstanceData instanceData;
+				const auto& position = randomPositions[i];
+				XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixRotationX(XM_PI / 2.0f) * XMMatrixTranslation(position.x, position.y, position.z));
+				renderItem->InstancesData.push_back(instanceData);
+			}
+			graphics->AddRenderItem(std::move(renderItem), { RenderLayer::AlphaClipped });
 		}
-		graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Transparent });
-		}*/
 	}
 }
 

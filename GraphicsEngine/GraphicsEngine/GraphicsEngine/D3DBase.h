@@ -23,11 +23,13 @@ namespace GraphicsEngine
 
 		ID3D11Device2* GetDevice() const;
 		ID3D11DeviceContext2* GetDeviceContext() const;
+		IDXGISwapChain2* GetSwapChain() const;
 		float GetAspectRatio() const;
 		uint32_t GetClientWidth() const;
 		uint32_t GetClientHeight() const;
 
 		void SetClearColor(const DirectX::XMFLOAT3 clearColor);
+		void SetDefaultRenderTargets() const;
 
 	private:
 		void Initialize();

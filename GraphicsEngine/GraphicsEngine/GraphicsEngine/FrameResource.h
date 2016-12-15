@@ -16,6 +16,7 @@ namespace GraphicsEngine
 	public:
 		std::unordered_map<std::string, InstanceBuffer> InstancesBuffers;
 		std::vector<DynamicConstantBuffer> MaterialDataArray;
-		DynamicConstantBuffer PassData;
+		DynamicConstantBuffer MainPassData;
+		DynamicConstantBuffer ShadowPassData;
 	};
 }

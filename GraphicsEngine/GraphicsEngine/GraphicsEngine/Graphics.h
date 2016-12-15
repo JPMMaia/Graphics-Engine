@@ -11,6 +11,7 @@
 #include "Scenes/DefaultScene.h"
 #include "FrameResource.h"
 #include "SamplerState.h"
+#include "ShadowTexture.h"
 
 namespace GraphicsEngine
 {
@@ -31,7 +32,8 @@ namespace GraphicsEngine
 	private:
 		void UpdateInstancesData();
 		void UpdateMaterialData() const;
-		void UpdatePassData(const Common::Timer& timer) const;
+		void UpdateMainPassData(const Common::Timer& timer) const;
+		void UpdateShadowPassData(const Common::Timer& timer) const;
 
 		void DrawRenderItems(RenderLayer renderItems) const;
 		void DrawTerrain() const;
@@ -55,5 +57,6 @@ namespace GraphicsEngine
 		SamplerState m_anisotropicClampSamplerState;
 		bool m_fog;
 		DirectX::XMFLOAT3 m_fogColor;
+		ShadowTexture m_shadowMap;
 	};
 }

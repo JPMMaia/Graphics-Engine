@@ -18,7 +18,8 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_anisotropicWrapSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicWrap),
 	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp),
 	m_fog(false),
-	m_fogColor(0.5f, 0.5f, 0.5f)
+	m_fogColor(0.5f, 0.5f, 0.5f),
+	m_shadowMap(m_d3dBase.GetDevice(), clientWidth, clientHeight)
 {
 	m_d3dBase.SetClearColor(m_fogColor);
 	m_camera.SetPosition(0.0f, 0.0f, 0.0f);
@@ -32,7 +33,7 @@ void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
 void Graphics::Update(const Common::Timer& timer)
 {
 	m_camera.Update();
-	UpdatePassData(timer);
+	UpdateMainPassData(timer);
 	UpdateMaterialData();
 	UpdateInstancesData();
 }
@@ -44,10 +45,10 @@ void Graphics::Render(const Common::Timer& timer) const
 	m_d3dBase.BeginScene();
 
 	// Set pass data:
-	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
-	deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
-	deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
-	deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->PassData.GetAddressOf());
+	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
 
 	// Set samplers:
 	deviceContext->DSSetSamplers(3, 1, m_linearClampSamplerState.GetAddressOf());
@@ -56,6 +57,31 @@ void Graphics::Render(const Common::Timer& timer) const
 	deviceContext->PSSetSamplers(4, 1, m_anisotropicWrapSamplerState.GetAddressOf());
 	deviceContext->DSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
 	deviceContext->PSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
+
+	// Create shadow map:
+	{
+		// TODO set light matrix
+
+		m_shadowMap.SetDepthStencilView(deviceContext);
+
+		// Draw opaque:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueShadow");
+		DrawRenderItems(RenderLayer::Opaque);
+
+		// Draw terrain:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainShadow");
+		DrawTerrain();
+
+		m_d3dBase.SetDefaultRenderTargets();
+
+		// Draw transparent:
+		/*m_pipelineStateManager.SetPipelineState(deviceContext, "TransparentShadow");
+		DrawRenderItems(RenderLayer::Transparent);
+
+		// Draw alpha-clipped:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedShadow");
+		DrawRenderItems(RenderLayer::AlphaClipped);*/
+	}
 
 	if(!m_fog)
 	{
@@ -97,6 +123,8 @@ void Graphics::Render(const Common::Timer& timer) const
 		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedFog");
 		DrawRenderItems(RenderLayer::AlphaClipped);
 	}
+	
+	m_shadowMap.ClearDepthStencilView(deviceContext);
 
 	m_d3dBase.EndScene();
 }
@@ -191,7 +219,7 @@ void Graphics::UpdateMaterialData() const
 		m_currentFrameResource->MaterialDataArray[material->MaterialIndex].CopyData(deviceContext, &materialData, sizeof(ShaderBufferTypes::MaterialData));
 	}
 }
-void Graphics::UpdatePassData(const Common::Timer& timer) const
+void Graphics::UpdateMainPassData(const Common::Timer& timer) const
 {
 	ShaderBufferTypes::PassData passData;
 
@@ -256,7 +284,74 @@ void Graphics::UpdatePassData(const Common::Timer& timer) const
 	passData.Lights[4].Direction = { 0.0f,-1.0f,0.0f };
 	passData.Lights[4].SpotPower = 8.0f;
 
-	m_currentFrameResource->PassData.CopyData(m_d3dBase.GetDeviceContext(), &passData, sizeof(ShaderBufferTypes::PassData));
+	m_currentFrameResource->MainPassData.CopyData(m_d3dBase.GetDeviceContext(), &passData, sizeof(ShaderBufferTypes::PassData));
+}
+void Graphics::UpdateShadowPassData(const Common::Timer& timer) const
+{
+	ShaderBufferTypes::PassData passData;
+
+	auto viewMatrix = m_camera.GetViewMatrix();
+	auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
+	auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
+
+	auto projectionMatrix = m_camera.GetProjectionMatrix();
+	auto projectionMatrixDeterminant = XMMatrixDeterminant(projectionMatrix);
+	auto inverseProjectionMatrix = XMMatrixInverse(&projectionMatrixDeterminant, projectionMatrix);
+
+	auto viewProjectionMatrix = XMMatrixMultiply(viewMatrix, projectionMatrix);
+	auto viewProjectionMatrixDeterminant = XMMatrixDeterminant(viewProjectionMatrix);
+	auto inverseViewProjectionMatrix = XMMatrixInverse(&viewProjectionMatrixDeterminant, viewProjectionMatrix);
+
+	XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
+	XMStoreFloat4x4(&passData.InverseViewMatrix, XMMatrixTranspose(inverseViewMatrix));
+	XMStoreFloat4x4(&passData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
+	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseProjectionMatrix));
+	XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
+	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
+	XMStoreFloat3(&passData.EyePositionW, m_camera.GetPosition());
+	passData.TerrainDisplacementScalarY = 1.0f;
+	passData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));
+	passData.InverseRenderTargetSize = XMFLOAT2(1.0f / static_cast<float>(m_d3dBase.GetClientWidth()), 1.0f / static_cast<float>(m_d3dBase.GetClientHeight()));
+	passData.NearZ = m_camera.GetNearZ();
+	passData.FarZ = m_camera.GetFarZ();
+	passData.TotalTime = static_cast<float>(timer.GetTotalMilliseconds());
+	passData.DeltaTime = static_cast<float>(timer.GetDeltaMilliseconds());
+	passData.FogColor = XMFLOAT4(m_fogColor.x, m_fogColor.y, m_fogColor.z, 1.0f);
+	passData.FogStart = 20.0f;
+	passData.FogRange = 100.0f;
+	passData.MaxTesselationDistance = 100.0f;
+	passData.MaxTesselationFactor = 6.0f;
+	passData.MinTesselationDistance = 500.0f;
+	passData.MinTesselationFactor = 1.0f;
+
+	const auto& terrain = m_scene.GetTerrain();
+	passData.TexelSize = terrain.GetTexelSize();
+	passData.TiledTexelScale = terrain.GetDescription().TiledTexelScale;
+
+	passData.SkyDomeColors[0] = { 0.5f, 0.1f, 0.1f, 1.0f };
+	passData.SkyDomeColors[1] = { 0.1f, 0.1f, 0.8f, 1.0f };
+	passData.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
+	// Directional Lights
+	passData.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
+	passData.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
+	passData.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
+	passData.Lights[1].Strength = { 0.3f, 0.3f, 0.3f };
+	passData.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
+	passData.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
+	// Point Lights
+	passData.Lights[3].Strength = { .1f, 0.0f,0.0f };
+	passData.Lights[3].FalloffStart = 2.0f;
+	passData.Lights[3].FalloffEnd = 20.0f;
+	passData.Lights[3].Position = { 0.0f, 3.0f, 0.0f };
+	// Spot Lights
+	passData.Lights[4].Strength = { 0.0f, 0.0f,0.9f };
+	passData.Lights[4].FalloffStart = 2.0f;
+	passData.Lights[4].FalloffEnd = 20.0f;
+	passData.Lights[4].Position = { 0.0f, 3.0f, 0.0f };
+	passData.Lights[4].Direction = { 0.0f,-1.0f,0.0f };
+	passData.Lights[4].SpotPower = 8.0f;
+
+	m_currentFrameResource->MainPassData.CopyData(m_d3dBase.GetDeviceContext(), &passData, sizeof(ShaderBufferTypes::PassData));
 }
 
 void Graphics::DrawRenderItems(RenderLayer renderLayer) const

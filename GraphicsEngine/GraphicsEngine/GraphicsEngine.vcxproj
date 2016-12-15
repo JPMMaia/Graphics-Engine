@@ -203,6 +203,7 @@
     <ClCompile Include="GraphicsEngine\PixelShader.cpp" />
     <ClCompile Include="GraphicsEngine\RasterizerState.cpp" />
     <ClCompile Include="GraphicsEngine\RenderItem.cpp" />
+    <ClCompile Include="GraphicsEngine\RenderTexture.cpp" />
     <ClCompile Include="GraphicsEngine\SamplerState.cpp" />
     <ClCompile Include="GraphicsEngine\Scenes\DefaultScene.cpp" />
     <ClCompile Include="GraphicsEngine\SettingsManager.cpp" />
@@ -212,6 +213,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\ShadowTexture.cpp" />
     <ClCompile Include="GraphicsEngine\Terrain.cpp" />
     <ClCompile Include="GraphicsEngine\Texture.cpp" />
     <ClCompile Include="GraphicsEngine\TextureManager.cpp" />
@@ -257,11 +259,13 @@
     <ClInclude Include="GraphicsEngine\RasterizerStateDescConstants.h" />
     <ClInclude Include="GraphicsEngine\RenderItem.h" />
     <ClInclude Include="GraphicsEngine\RenderLayer.h" />
+    <ClInclude Include="GraphicsEngine\RenderTexture.h" />
     <ClInclude Include="GraphicsEngine\SamplerState.h" />
     <ClInclude Include="GraphicsEngine\SamplerStateDescConstants.h" />
     <ClInclude Include="GraphicsEngine\Scenes\DefaultScene.h" />
     <ClInclude Include="GraphicsEngine\SettingsManager.h" />
     <ClInclude Include="GraphicsEngine\ShaderBufferTypes.h" />
+    <ClInclude Include="GraphicsEngine\ShadowTexture.h" />
     <ClInclude Include="GraphicsEngine\SubmeshGeometry.h" />
     <ClInclude Include="GraphicsEngine\Terrain.h" />
     <ClInclude Include="GraphicsEngine\Texture.h" />

@@ -1,24 +1,27 @@
 ﻿#include "stdafx.h"
 #include "RenderTexture.h"
 
+using namespace Common;
 using namespace GraphicsEngine;
 
-RenderTexture::RenderTexture(ID3D11Device* d3dDevice, size_t width, size_t height, DXGI_FORMAT format)
+RenderTexture::RenderTexture(ID3D11Device* d3dDevice, UINT width, UINT height, DXGI_FORMAT format)
 {
 	// Create texture:
 	{
 		D3D11_TEXTURE2D_DESC description;
 		description.Width = width;
 		description.Height = height;
-		description.MipLevels = 0;
+		description.MipLevels = 1;
 		description.ArraySize = 1;
 		description.Format = format;
+		description.SampleDesc.Count = 1;
+		description.SampleDesc.Quality = 0;
 		description.Usage = D3D11_USAGE_DEFAULT;
 		description.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 		description.CPUAccessFlags = 0;
 		description.MiscFlags = 0;
 
-		d3dDevice->CreateTexture2D(&description, nullptr, m_texture.GetAddressOf());
+		ThrowIfFailed(d3dDevice->CreateTexture2D(&description, nullptr, m_texture.GetAddressOf()));
 	}
 
 	// Create shader resource view:
@@ -26,10 +29,10 @@ RenderTexture::RenderTexture(ID3D11Device* d3dDevice, size_t width, size_t heigh
 		D3D11_SHADER_RESOURCE_VIEW_DESC description;
 		description.Format = format;
 		description.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		description.Texture2D.MipLevels = 0;
+		description.Texture2D.MipLevels = 1;
 		description.Texture2D.MostDetailedMip = 0;
 
-		d3dDevice->CreateShaderResourceView(m_texture.Get(), &description, m_shaderResourceView.GetAddressOf());
+		ThrowIfFailed(d3dDevice->CreateShaderResourceView(m_texture.Get(), &description, m_shaderResourceView.GetAddressOf()));
 	}
 
 	// Create render target view:
@@ -39,7 +42,7 @@ RenderTexture::RenderTexture(ID3D11Device* d3dDevice, size_t width, size_t heigh
 		description.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 		description.Texture2D.MipSlice = 0;
 
-		d3dDevice->CreateRenderTargetView(m_texture.Get(), &description, m_renderTargetView.GetAddressOf());
+		ThrowIfFailed(d3dDevice->CreateRenderTargetView(m_texture.Get(), &description, m_renderTargetView.GetAddressOf()));
 	}
 }
 

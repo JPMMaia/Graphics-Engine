@@ -16,6 +16,7 @@ FrameResource::FrameResource(ID3D11Device* device, const std::vector<std::unique
 	for (SIZE_T i = 0; i < materialCount; ++i)
 		MaterialDataArray[i].Initialize<ShaderBufferTypes::MaterialData>(device, sizeof(ShaderBufferTypes::MaterialData));
 
-	// Initialize pass data buffer:
-	PassData.Initialize<ShaderBufferTypes::PassData>(device, sizeof(ShaderBufferTypes::PassData));
+	// Initialize pass data buffers:
+	MainPassData.Initialize<ShaderBufferTypes::PassData>(device, sizeof(ShaderBufferTypes::PassData));
+	ShadowPassData.Initialize<ShaderBufferTypes::PassData>(device, sizeof(ShaderBufferTypes::PassData));
 }

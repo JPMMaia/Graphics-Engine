@@ -41,7 +41,7 @@ void D3DBase::EndScene() const
 {
 	// Present as fast as possible:
 	Common::ThrowIfFailed(m_swapChain->Present(m_verticalSync ? 1 : 0, 0));
-
+	
 	// Discard the contents of the render target and depth stencil:
 	m_immediateContext->DiscardView(m_renderTargetView.Get());
 	m_immediateContext->DiscardView(m_depthStencilView.Get());
@@ -55,6 +55,11 @@ ID3D11DeviceContext2* D3DBase::GetDeviceContext() const
 {
 	return m_immediateContext.Get();
 }
+IDXGISwapChain2* D3DBase::GetSwapChain() const
+{
+	return m_swapChain.Get();
+}
+
 float D3DBase::GetAspectRatio() const
 {
 	return static_cast<float>(m_clientWidth) / m_clientHeight;
@@ -74,6 +79,11 @@ void D3DBase::SetClearColor(const DirectX::XMFLOAT3 clearColor)
 	m_clearColor[1] = clearColor.y;
 	m_clearColor[2] = clearColor.z;
 	m_clearColor[3] = 1.0f;
+}
+
+void D3DBase::SetDefaultRenderTargets() const
+{
+	m_immediateContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
 }
 
 void D3DBase::Initialize()

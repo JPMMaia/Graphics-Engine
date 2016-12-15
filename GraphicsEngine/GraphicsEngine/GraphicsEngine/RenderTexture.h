@@ -6,7 +6,7 @@ namespace GraphicsEngine
 	{
 	public:
 		RenderTexture() = default;
-		RenderTexture(ID3D11Device* d3dDevice, size_t width, size_t height, DXGI_FORMAT format);
+		RenderTexture(ID3D11Device* d3dDevice, UINT width, UINT height, DXGI_FORMAT format);
 
 		void SetRenderTargetView(ID3D11DeviceContext* deviceContext, ID3D11DepthStencilView* depthStencilView) const;
 		void ClearRenderTargetView(ID3D11DeviceContext* deviceContext, ID3D11DepthStencilView* depthStencilView, const DirectX::XMFLOAT4& color) const;

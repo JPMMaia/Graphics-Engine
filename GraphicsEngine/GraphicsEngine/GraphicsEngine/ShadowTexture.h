@@ -6,10 +6,12 @@ namespace GraphicsEngine
 	{
 	public:
 		ShadowTexture() = default;
-		ShadowTexture(ID3D11Device* d3dDevice, size_t width, size_t height, DXGI_FORMAT format);
+		ShadowTexture(ID3D11Device* d3dDevice, UINT width, UINT height);
 
 		void SetDepthStencilView(ID3D11DeviceContext* deviceContext) const;
 		void ClearDepthStencilView(ID3D11DeviceContext* deviceContext) const;
+
+		ID3D11Texture2D* GetTexture() const;
 		ID3D11ShaderResourceView* GetShaderResourceView() const;
 
 	private:

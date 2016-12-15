@@ -119,7 +119,7 @@ void AssimpImporter::AddGeometry(const D3DBase& d3dBase, const std::string& name
 
 		// Create submesh:
 		SubmeshGeometry submesh;
-		submesh.IndexCount = static_cast<UINT>(indices.size());
+		submesh.IndexCount = static_cast<UINT>(indices.size()) - startIndexLocation;
 		submesh.StartIndexLocation = startIndexLocation;
 		submesh.BaseVertexLocation = baseVertexLocation;
 		submesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(vertices);

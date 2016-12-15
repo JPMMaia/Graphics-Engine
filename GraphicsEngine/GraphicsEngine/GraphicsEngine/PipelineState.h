@@ -15,13 +15,13 @@ namespace GraphicsEngine
 	struct PipelineState
 	{
 	public:
-		VertexShader* VertexShader = nullptr;
-		HullShader* HullShader = nullptr;
-		DomainShader* DomainShader = nullptr;
-		PixelShader* PixelShader = nullptr;
-		RasterizerState* RasterizerState = nullptr;
-		BlendState* BlendState = nullptr;
-		DepthStencilState* DepthStencilState = nullptr;
+		const VertexShader* VertexShader = nullptr;
+		const HullShader* HullShader = nullptr;
+		const DomainShader* DomainShader = nullptr;
+		const PixelShader* PixelShader = nullptr;
+		const RasterizerState* RasterizerState = nullptr;
+		const BlendState* BlendState = nullptr;
+		const DepthStencilState* DepthStencilState = nullptr;
 
 		// UINT SampleMask;
 		// UINT NumRenderTargets;

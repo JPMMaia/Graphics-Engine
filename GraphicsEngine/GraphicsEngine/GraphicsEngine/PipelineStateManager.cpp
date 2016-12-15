@@ -174,6 +174,10 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		opaqueFogState.VertexShader = &m_vertexShaders.at("StandardFog");
 		opaqueFogState.PixelShader = &m_pixelShaders.at("StandardFog");
 		m_pipelineStateObjects.emplace("OpaqueFog", opaqueFogState);
+
+		auto opaqueShadowState = opaqueState;
+		opaqueShadowState.PixelShader = &PixelShader::s_null;
+		m_pipelineStateObjects.emplace("OpaqueShadow", opaqueShadowState);
 	}
 
 	// Transparent:
@@ -186,6 +190,10 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		transparentFogState.VertexShader = &m_vertexShaders.at("StandardFog");
 		transparentFogState.PixelShader = &m_pixelShaders.at("StandardFog");
 		m_pipelineStateObjects.emplace("TransparentFog", transparentFogState);
+
+		auto transparentShadowState = transparentState;
+		transparentShadowState.PixelShader = &PixelShader::s_null;
+		m_pipelineStateObjects.emplace("TransparentShadow", transparentShadowState);
 	}
 
 	// Alpha-clipped:
@@ -201,6 +209,10 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		alphaClippedFogState.VertexShader = &m_vertexShaders.at("StandardAlphaClippedFog");
 		alphaClippedFogState.PixelShader = &m_pixelShaders.at("StandardAlphaClippedFog");
 		m_pipelineStateObjects.emplace("AlphaClippedFog", alphaClippedFogState);
+
+		auto alphaClippedShadowState = alphaClippedState;
+		alphaClippedShadowState.PixelShader = &PixelShader::s_null; // TODO set shadow pixel shader
+		m_pipelineStateObjects.emplace("AlphaClippedShadow", alphaClippedShadowState);
 	}
 
 	// Terrain:
@@ -221,6 +233,10 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		terrainFogState.DomainShader = &m_domainShaders.at("TerrainFog");
 		terrainFogState.PixelShader = &m_pixelShaders.at("TerrainFog");
 		m_pipelineStateObjects.emplace("TerrainFog", terrainFogState);
+
+		auto terrainShadowState = terrainState;
+		terrainShadowState.PixelShader = &PixelShader::s_null;
+		m_pipelineStateObjects.emplace("TerrainShadow", terrainShadowState);
 	}
 
 	// SkyDome:

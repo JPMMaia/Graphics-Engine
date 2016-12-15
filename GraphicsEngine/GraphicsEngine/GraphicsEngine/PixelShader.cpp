@@ -5,6 +5,8 @@ using namespace Common;
 using namespace GraphicsEngine;
 using namespace std;
 
+const PixelShader PixelShader::s_null = PixelShader();
+
 PixelShader::PixelShader(ID3D11Device* d3dDevice, const std::wstring& filename)
 {
 	// Read data from pixel shader file:

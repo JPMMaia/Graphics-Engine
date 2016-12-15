@@ -80,7 +80,6 @@ void D3DBase::Initialize()
 {
 	InitializeDeviceResources();
 	InitializeDepthStencilResources();
-	InitializeRasterizerState();
 	InitializeViewport();
 }
 void D3DBase::InitializeDeviceResources()
@@ -200,39 +199,6 @@ void D3DBase::InitializeDepthStencilResources()
 		Common::ThrowIfFailed(m_device->CreateTexture2D(&depthStencilBufferDesc, nullptr, m_depthStencilBuffer.GetAddressOf()));
 	}
 
-	// Create the depth stencil state:
-	{
-		D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
-
-		// Depth state:
-		depthStencilDesc.DepthEnable = true;
-		depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-
-		// Stencil state:
-		depthStencilDesc.StencilEnable = true;
-		depthStencilDesc.StencilReadMask = 0xFF;
-		depthStencilDesc.StencilWriteMask = 0xFF;
-
-		// Stencil operations if pixel is front-facing:
-		depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-		depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		// Stencil operations if pixel is back-facing:
-		depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-		depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		// Create the depth stencil state:
-		Common::ThrowIfFailed(m_device->CreateDepthStencilState(&depthStencilDesc, m_depthStencilState.GetAddressOf()));
-
-		// Set the depth stencil state:
-		m_immediateContext->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
-	}
-
 	// Create depth stencil view:
 	{
 		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
@@ -242,27 +208,6 @@ void D3DBase::InitializeDepthStencilResources()
 
 		Common::ThrowIfFailed(m_device->CreateDepthStencilView(m_depthStencilBuffer.Get(), &depthStencilViewDesc, m_depthStencilView.GetAddressOf()));
 	}
-}
-void D3DBase::InitializeRasterizerState()
-{
-	// Setup the raster description which will determine how and what polygons will be drawn:
-	D3D11_RASTERIZER_DESC rasterizerDesc;
-	rasterizerDesc.AntialiasedLineEnable = false;
-	rasterizerDesc.CullMode = D3D11_CULL_BACK;
-	rasterizerDesc.DepthBias = 0;
-	rasterizerDesc.DepthBiasClamp = 0.0f;
-	rasterizerDesc.DepthClipEnable = true;
-	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-	rasterizerDesc.FrontCounterClockwise = false;
-	rasterizerDesc.MultisampleEnable = false;
-	rasterizerDesc.ScissorEnable = false;
-	rasterizerDesc.SlopeScaledDepthBias = 0.0f;
-
-	// Create the rasterizer state from the description we just filled out.
-	Common::ThrowIfFailed(m_device->CreateRasterizerState(&rasterizerDesc, m_rasterizerState.GetAddressOf()));
-
-	// Set the rasterizer state:
-	m_immediateContext->RSSetState(m_rasterizerState.Get());
 }
 void D3DBase::InitializeViewport()
 {

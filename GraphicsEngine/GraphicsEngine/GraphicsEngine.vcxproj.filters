@@ -98,6 +98,9 @@
     <ClCompile Include="GraphicsEngine\Terrain.cpp">
       <Filter>GraphicsEngine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\DepthStencilState.cpp">
+      <Filter>GraphicsEngine\DepthStencil</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -245,6 +248,12 @@
     <ClInclude Include="GraphicsEngine\Terrain.h">
       <Filter>GraphicsEngine\Model</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsEngine\DepthStencilState.h">
+      <Filter>GraphicsEngine\DepthStencil</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\DepthStencilStateDescConstants.h">
+      <Filter>GraphicsEngine\DepthStencil</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -324,6 +333,9 @@
     </Filter>
     <Filter Include="Shaders\Terrain">
       <UniqueIdentifier>{fedc451a-6a2c-4459-9a44-39d17e50a937}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\DepthStencil">
+      <UniqueIdentifier>{a36f06fc-bd56-4487-875d-f77b408a9c09}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

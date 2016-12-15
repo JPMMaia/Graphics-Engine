@@ -3,7 +3,6 @@
 #include "MaterialData.hlsli"
 #include "PassData.hlsli"
 
-
 struct VertexInput
 {
     float3 PositionL : POSITION;
@@ -21,7 +20,7 @@ struct InstanceInput
 struct VertexOutput
 {
     float4 PositionH : SV_POSITION;
-    float3 PositionW : POSITION;
+    float TextureCoordinates : TEXCOORD0;
 };
 
 VertexOutput main(VertexInput vertexInput, InstanceInput instanceInput)
@@ -29,12 +28,9 @@ VertexOutput main(VertexInput vertexInput, InstanceInput instanceInput)
 
     VertexOutput output;
 
-    
-    output.PositionW = vertexInput.PositionL.xyz;
-
-    // Transform position to homogeneous clip space:
-    float4 positionW = mul(float4(vertexInput.PositionL, 1.0f), instanceInput.WorldMatrix);
-    output.PositionH = mul(positionW + float4(EyePositionW,0.0f), ViewProjectionMatrix);
+    float3 positionW = EyePositionW + vertexInput.PositionL;
+    output.PositionH = mul(float4(positionW, 1.0f), ViewProjectionMatrix);
+    output.TextureCoordinates = (vertexInput.PositionL.y + 1.0f) / 2.0f;
 
     return output;
 }

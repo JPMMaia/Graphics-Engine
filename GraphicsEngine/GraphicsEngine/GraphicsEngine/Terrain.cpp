@@ -30,10 +30,12 @@ std::vector<DirectX::XMFLOAT3> Terrain::GenerateRandomPositions(SIZE_T count) co
 	auto halfTerrainDepth = 0.5f * m_description.TerrainDepth;
 
 	// Create a uniform distribution [-halfTerrain{Width|Height}, halfTerrain{Width|Height}]:
+	auto offsetWidth = halfTerrainWidth * 0.05f;
+	auto offsetDepth = halfTerrainDepth * 0.05f;
 	std::random_device randomDevice;
 	std::default_random_engine randomEngine(randomDevice());
-	std::uniform_real_distribution<float> xDistribution(-halfTerrainWidth, halfTerrainWidth);
-	std::uniform_real_distribution<float> zDistribution(-halfTerrainDepth, halfTerrainDepth);
+	std::uniform_real_distribution<float> xDistribution(-halfTerrainWidth + offsetWidth, halfTerrainWidth - offsetWidth);
+	std::uniform_real_distribution<float> zDistribution(-halfTerrainDepth + offsetDepth, halfTerrainDepth - offsetDepth);
 
 	std::vector<DirectX::XMFLOAT3> randomPositions(count);
 	for(SIZE_T i = 0; i < count; ++i)

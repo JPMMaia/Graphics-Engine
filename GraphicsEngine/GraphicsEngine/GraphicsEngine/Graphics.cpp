@@ -10,7 +10,7 @@ using namespace GraphicsEngine;
 Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight, bool fullscreen) :
 	m_d3dBase(outputWindow, clientWidth, clientHeight, fullscreen),
 	m_pipelineStateManager(m_d3dBase),
-	m_camera(m_d3dBase.GetAspectRatio(), 0.25f * XM_PI, 1.0f, 10000.0f, XMMatrixIdentity()),
+	m_camera(m_d3dBase.GetAspectRatio(), 0.25f * XM_PI, 0.01f, 10000.0f, XMMatrixIdentity()),
 	m_scene(this, m_d3dBase, m_textureManager),
 	m_frameResources(1, FrameResource(m_d3dBase.GetDevice(), m_allRenderItems, m_scene.GetMaterials().size())),
 	m_currentFrameResource(&m_frameResources[0]),
@@ -19,7 +19,9 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp)
 {
 	m_d3dBase.SetClearColor(XMFLOAT3(0.2f, 0.2f, 0.2f));
-	m_camera.SetPosition(0.0f, 70.0f, -15.0f);}
+	m_camera.SetPosition(0.0f, 70.0f, -500.0f);
+	m_camera.RotateWorldY(DirectX::XM_PI);
+}
 
 void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
 {
@@ -32,6 +34,11 @@ void Graphics::Update(const Common::Timer& timer)
 	UpdatePassData(timer);
 	UpdateMaterialData();
 	UpdateInstancesData();
+	
+	auto skyDome = m_renderItemLayers[static_cast<SIZE_T>(RenderLayer::SkyDome)][0];
+	XMFLOAT3 cameraPosition;
+	XMStoreFloat3(&cameraPosition, m_camera.GetPosition());
+	XMStoreFloat4x4(&skyDome->InstancesData[0].WorldMatrix, XMMatrixTranslation(cameraPosition.x, cameraPosition.y, cameraPosition.z));
 }
 
 void Graphics::Render(const Common::Timer& timer) const
@@ -49,23 +56,21 @@ void Graphics::Render(const Common::Timer& timer) const
 	// Set samplers:
 	deviceContext->DSSetSamplers(3, 1, m_linearClampSamplerState.GetAddressOf());
 	deviceContext->PSSetSamplers(3, 1, m_linearClampSamplerState.GetAddressOf());
-	deviceContext->PSSetSamplers(4, 1, m_anisotropicWrapSamplerState.GetAddressOf());
+	deviceContext->DSSetSamplers(4, 1, m_anisotropicWrapSamplerState.GetAddressOf());
 	deviceContext->PSSetSamplers(4, 1, m_anisotropicWrapSamplerState.GetAddressOf());
 	deviceContext->DSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
 	deviceContext->PSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
-
 	
+	// Draw Skydome
+	m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
+	DrawRenderItems(RenderLayer::SkyDome);
+
 	// Draw opaque:
 	m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
 	DrawRenderItems(RenderLayer::Opaque);
 
-	/*// Draw transparent:
-	m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
-
-	// Draw Skydome
-	m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
-	DrawRenderItems(RenderLayer::SkyDome);
-	*/
+	// Draw transparent:
+	//m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
 
 	// Draw terrain:
 	m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");

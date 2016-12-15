@@ -6,6 +6,7 @@
 #include "PixelShader.h"
 #include "RasterizerState.h"
 #include "BlendState.h"
+#include "DepthStencilState.h"
 
 #include <d3d11_2.h>
 
@@ -20,7 +21,7 @@ namespace GraphicsEngine
 		PixelShader* PixelShader = nullptr;
 		RasterizerState* RasterizerState = nullptr;
 		BlendState* BlendState = nullptr;
-		ID3D11DepthStencilState* DepthStencilState = nullptr;
+		DepthStencilState* DepthStencilState = nullptr;
 
 		// UINT SampleMask;
 		// UINT NumRenderTargets;

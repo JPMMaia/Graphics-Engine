@@ -6,6 +6,7 @@
 #include <array>
 #include "ShaderBufferTypes.h"
 #include "BlendStateDescConstants.h"
+#include "DepthStencilStateDescConstants.h"
 
 using namespace Common;
 using namespace GraphicsEngine;
@@ -16,6 +17,7 @@ PipelineStateManager::PipelineStateManager(const D3DBase& d3dBase)
 	InitializeShadersAndInputLayout(d3dBase);
 	InitializeRasterizerStates(d3dBase);
 	InitializeBlendStates(d3dBase);
+	InitializeDepthStencilStates(d3dBase);
 	InitializePipelineStateObjects();
 }
 
@@ -83,7 +85,7 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 void PipelineStateManager::InitializeRasterizerStates(const D3DBase& d3dBase)
 {
 	auto device = d3dBase.GetDevice();
-
+	
 	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("Default"), std::forward_as_tuple(device, RasterizerStateDescConstants::Default));
 	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("Wireframe"), std::forward_as_tuple(device, RasterizerStateDescConstants::Wireframe));
 	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("NoCulling"), std::forward_as_tuple(device, RasterizerStateDescConstants::NoCulling));
@@ -99,6 +101,13 @@ void PipelineStateManager::InitializeBlendStates(const D3DBase& d3dBase)
 	m_blendStates.emplace(std::piecewise_construct, std::forward_as_tuple("Default"), std::forward_as_tuple(device, BlendStateDescConstants::Default(), defaultBlendFactor, defaultSampleMask));
 	m_blendStates.emplace(std::piecewise_construct, std::forward_as_tuple("Transparent"), std::forward_as_tuple(device, BlendStateDescConstants::Transparent(), defaultBlendFactor, defaultSampleMask));
 }
+void PipelineStateManager::InitializeDepthStencilStates(const D3DBase& d3dBase)
+{
+	auto device = d3dBase.GetDevice();
+
+	m_depthStencilStates.emplace(std::piecewise_construct, std::forward_as_tuple("Default"), std::forward_as_tuple(device, DepthStencilStateDescConstants::Default()));
+	m_depthStencilStates.emplace(std::piecewise_construct, std::forward_as_tuple("DepthDisabled"), std::forward_as_tuple(device, DepthStencilStateDescConstants::DepthDisabled()));
+}
 void PipelineStateManager::InitializePipelineStateObjects()
 {
 	// Opaque:
@@ -108,6 +117,7 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		opaqueState.PixelShader = &m_pixelShaders.at("Standard");
 		opaqueState.RasterizerState = &m_rasterizerStates.at("Default");
 		opaqueState.BlendState = &m_blendStates.at("Default");
+		opaqueState.DepthStencilState = &m_depthStencilStates.at("Default");
 
 		m_pipelineStateObjects.emplace("Opaque", opaqueState);
 	}
@@ -129,6 +139,7 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		terrainState.PixelShader = &m_pixelShaders.at("Terrain");
 		terrainState.RasterizerState = &m_rasterizerStates.at("Default");
 		terrainState.BlendState = &m_blendStates.at("Default");
+		terrainState.DepthStencilState = &m_depthStencilStates.at("Default");
 
 		m_pipelineStateObjects.emplace("Terrain", terrainState);
 	}
@@ -140,6 +151,7 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		skydomeState.PixelShader = &m_pixelShaders.at("SkyDome");
 		skydomeState.RasterizerState = &m_rasterizerStates.at("NoCulling");
 		skydomeState.BlendState = &m_blendStates.at("Default");
+		skydomeState.DepthStencilState = &m_depthStencilStates.at("DepthDisabled");
 		m_pipelineStateObjects.emplace("SkyDome", skydomeState);
 	}
 }

@@ -33,7 +33,6 @@ namespace GraphicsEngine
 		void Initialize();
 		void InitializeDeviceResources();
 		void InitializeDepthStencilResources();
-		void InitializeRasterizerState();
 		void InitializeViewport();
 
 	private:
@@ -48,9 +47,7 @@ namespace GraphicsEngine
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext2> m_immediateContext;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_renderTargetView;
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_depthStencilBuffer;
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStencilState;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_depthStencilView;
-		Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
 		D3D11_VIEWPORT m_viewport;
 
 		std::array<float, 4> m_clearColor;

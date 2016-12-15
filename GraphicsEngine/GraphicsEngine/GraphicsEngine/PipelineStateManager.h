@@ -22,6 +22,7 @@ namespace GraphicsEngine
 		void InitializeShadersAndInputLayout(const D3DBase& d3dBase);
 		void InitializeRasterizerStates(const D3DBase& d3dBase);
 		void InitializeBlendStates(const D3DBase& d3dBase);
+		void InitializeDepthStencilStates(const D3DBase& d3dBase);
 		void InitializePipelineStateObjects();
 
 	private:
@@ -32,6 +33,7 @@ namespace GraphicsEngine
 		std::unordered_map<std::string, PixelShader> m_pixelShaders;
 		std::unordered_map<std::string, RasterizerState> m_rasterizerStates;
 		std::unordered_map<std::string, BlendState> m_blendStates;
+		std::unordered_map<std::string, DepthStencilState> m_depthStencilStates;
 		std::unordered_map<std::string, PipelineState> m_pipelineStateObjects;
 	};
 }

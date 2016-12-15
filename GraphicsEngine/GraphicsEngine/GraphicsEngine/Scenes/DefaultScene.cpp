@@ -242,7 +242,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
 {
 	// Simple cube:
-	{
+	/*{
 		AssimpImporter importer;
 		AssimpImporter::ImportInfo importInfo;
 		std::wstring filename(L"Models/Cube.fbx");
@@ -285,7 +285,7 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 		}
 
 		graphics->AddRenderItem(std::move(cubeRenderItem), { RenderLayer::Opaque });
-	}
+	}*/
 
 	// Skydome:
 	{
@@ -312,7 +312,7 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 		domeRenderItem->Bounds = domeSubmesh.Bounds;
 
 		ShaderBufferTypes::InstanceData instanceData;
-		XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixScaling(100, 100, 100));
+		XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f));
 		domeRenderItem->InstancesData.push_back(instanceData);
 
 		graphics->AddRenderItem(std::move(domeRenderItem), { RenderLayer::SkyDome });

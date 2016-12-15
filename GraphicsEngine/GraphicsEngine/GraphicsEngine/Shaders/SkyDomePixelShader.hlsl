@@ -3,24 +3,16 @@
 #include "PassData.hlsli"
 #include "Samplers.hlsli"
 
-
 struct VertexOutput
 {
     float4 PositionH : SV_POSITION;
-    float3 PositionW : POSITION;
+    float TextureCoordinates : TEXCOORD0;
 };
 
 float4 main(VertexOutput input) : SV_TARGET
 {
-    float height;
-    float4 outputColor;
-
-    height = input.PositionW.y;
-
-    if (height < 0.0)
-        height = 0.0f;
-
-    outputColor = lerp(SkyDomeColors[0], SkyDomeColors[1], height);
+    float s = saturate(input.TextureCoordinates);
+    float4 outputColor = lerp(SkyDomeColors[0], SkyDomeColors[1], s);
     
     return outputColor;
 }

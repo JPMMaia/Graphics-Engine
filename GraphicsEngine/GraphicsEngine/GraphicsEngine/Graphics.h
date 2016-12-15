@@ -53,5 +53,7 @@ namespace GraphicsEngine
 		SamplerState m_linearClampSamplerState;
 		SamplerState m_anisotropicWrapSamplerState;
 		SamplerState m_anisotropicClampSamplerState;
+		bool m_fog;
+		DirectX::XMFLOAT3 m_fogColor;
 	};
 }

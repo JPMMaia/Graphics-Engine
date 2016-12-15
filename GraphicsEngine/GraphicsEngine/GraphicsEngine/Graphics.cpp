@@ -16,11 +16,12 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_currentFrameResource(&m_frameResources[0]),
 	m_linearClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::LinearClamp),
 	m_anisotropicWrapSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicWrap),
-	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp)
+	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp),
+	m_fog(true),
+	m_fogColor(0.5f, 0.5f, 0.5f)
 {
-	m_d3dBase.SetClearColor(XMFLOAT3(0.2f, 0.2f, 0.2f));
-	m_camera.SetPosition(0.0f, 70.0f, -500.0f);
-	m_camera.RotateWorldY(DirectX::XM_PI);
+	m_d3dBase.SetClearColor(m_fogColor);
+	m_camera.SetPosition(0.0f, 0.0f, 0.0f);
 }
 
 void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
@@ -56,25 +57,46 @@ void Graphics::Render(const Common::Timer& timer) const
 	deviceContext->DSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
 	deviceContext->PSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
 
-	// Draw Skydome
-	m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
-	DrawRenderItems(RenderLayer::SkyDome);
+	if(!m_fog)
+	{
+		// Draw Skydome
+		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
+		DrawRenderItems(RenderLayer::SkyDome);
 
-	// Draw opaque:
-	m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
-	DrawRenderItems(RenderLayer::Opaque);
+		// Draw opaque:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
+		DrawRenderItems(RenderLayer::Opaque);
 
-	// Draw terrain:
-	m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
-	DrawTerrain();
+		// Draw terrain:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
+		DrawTerrain();
 
-	// Draw transparent:
-	m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
-	DrawRenderItems(RenderLayer::Transparent);
+		// Draw transparent:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
+		DrawRenderItems(RenderLayer::Transparent);
 
-	// Draw alpha-clipped:
-	m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClipped");
-	DrawRenderItems(RenderLayer::AlphaClipped);
+		// Draw alpha-clipped:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClipped");
+		DrawRenderItems(RenderLayer::AlphaClipped);
+	}
+	else
+	{
+		// Draw opaque:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueFog");
+		DrawRenderItems(RenderLayer::Opaque);
+
+		// Draw terrain:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainFog");
+		DrawTerrain();
+
+		// Draw transparent:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "TransparentFog");
+		DrawRenderItems(RenderLayer::Transparent);
+
+		// Draw alpha-clipped:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedFog");
+		DrawRenderItems(RenderLayer::AlphaClipped);
+	}
 
 	m_d3dBase.EndScene();
 }
@@ -199,9 +221,9 @@ void Graphics::UpdatePassData(const Common::Timer& timer) const
 	passData.FarZ = m_camera.GetFarZ();
 	passData.TotalTime = static_cast<float>(timer.GetTotalMilliseconds());
 	passData.DeltaTime = static_cast<float>(timer.GetDeltaMilliseconds());
-	passData.FogColor = { 0.5f, 0.5f, 0.5f, 1.0f };
-	passData.FogStart = 5.0f;
-	passData.FogRange = 50.0f;
+	passData.FogColor = XMFLOAT4(m_fogColor.x, m_fogColor.y, m_fogColor.z, 1.0f);
+	passData.FogStart = 20.0f;
+	passData.FogRange = 100.0f;
 	passData.MaxTesselationDistance = 100.0f;
 	passData.MaxTesselationFactor = 6.0f;
 	passData.MinTesselationDistance = 500.0f;

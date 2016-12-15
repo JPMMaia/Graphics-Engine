@@ -49,34 +49,33 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 		{ "WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 	};
 
-	m_inputLayouts["SkyDome"] = {
-		// Vertex data:
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-
-		// Instance data:
-		{ "WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-		{ "WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-		{ "WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-		{ "WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-	};
-
 	auto maxNumLights = std::to_string(ShaderBufferTypes::PassData::MaxNumLights);
 	auto shadersFolderPath = wstring(L"../GraphicsEngine/GraphicsEngine/Shaders/");
+	std::array<D3D_SHADER_MACRO, 4> defines;
 
 	// Standard shaders:
 	{
-		std::array<D3D_SHADER_MACRO, 2> defines =
+		defines =
 		{
 			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
 			nullptr, nullptr
 		};
 		m_vertexShaders["Standard"] = VertexShader(device, shadersFolderPath + L"StandardVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
 		m_pixelShaders["Standard"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"FOG", "1",
+			nullptr, nullptr
+		};
+		m_vertexShaders["StandardFog"] = VertexShader(device, shadersFolderPath + L"StandardVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
+		m_pixelShaders["StandardFog"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 	}
 	
 	// Standard alpha-clipped shaders:
 	{
-		std::array<D3D_SHADER_MACRO, 3> defines =
+		defines =
 		{
 			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
 			"ENABLE_ALPHA_CLIPPING", "1",
@@ -84,17 +83,53 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 		};
 		m_vertexShaders["StandardAlphaClipped"] = VertexShader(device, shadersFolderPath + L"StandardVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
 		m_pixelShaders["StandardAlphaClipped"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"FOG", "1",
+			"ENABLE_ALPHA_CLIPPING", "1",
+			nullptr, nullptr
+		};
+		m_vertexShaders["StandardAlphaClippedFog"] = VertexShader(device, shadersFolderPath + L"StandardVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
+		m_pixelShaders["StandardAlphaClippedFog"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 	}
 
 	// Terrain shaders:
-	m_vertexShaders["Terrain"] = VertexShader(device, shadersFolderPath + L"TerrainVertexShader.hlsl", nullptr, "main", "vs_5_0", m_inputLayouts["Default"]);
-	m_hullShaders["Terrain"] = HullShader(device, shadersFolderPath + L"TerrainHullShader.hlsl", nullptr, "main", "hs_5_0");
-	m_domainShaders["Terrain"] = DomainShader(device, shadersFolderPath + L"TerrainDomainShader.hlsl", nullptr, "main", "ds_5_0");
-	m_pixelShaders["Terrain"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", nullptr, "main", "ps_5_0");
+	{
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			nullptr, nullptr
+		};
+		m_vertexShaders["Terrain"] = VertexShader(device, shadersFolderPath + L"TerrainVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
+		m_hullShaders["Terrain"] = HullShader(device, shadersFolderPath + L"TerrainHullShader.hlsl", defines.data(), "main", "hs_5_0");
+		m_domainShaders["Terrain"] = DomainShader(device, shadersFolderPath + L"TerrainDomainShader.hlsl", defines.data(), "main", "ds_5_0");
+		m_pixelShaders["Terrain"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"FOG", "1",
+			nullptr, nullptr
+		};
+		m_vertexShaders["TerrainFog"] = VertexShader(device, shadersFolderPath + L"TerrainVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
+		m_hullShaders["TerrainFog"] = HullShader(device, shadersFolderPath + L"TerrainHullShader.hlsl", defines.data(), "main", "hs_5_0");
+		m_domainShaders["TerrainFog"] = DomainShader(device, shadersFolderPath + L"TerrainDomainShader.hlsl", defines.data(), "main", "ds_5_0");
+		m_pixelShaders["TerrainFog"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+	}
 
 	// SkyDome shaders
-	m_vertexShaders["SkyDome"] = VertexShader(device, shadersFolderPath + L"SkyDomeVertexShader.hlsl", nullptr, "main", "vs_5_0", m_inputLayouts["Default"]);
-	m_pixelShaders["SkyDome"] = PixelShader(device, shadersFolderPath + L"SkyDomePixelShader.hlsl", nullptr, "main", "ps_5_0");
+	{
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			nullptr, nullptr
+		};
+
+		m_vertexShaders["SkyDome"] = VertexShader(device, shadersFolderPath + L"SkyDomeVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
+		m_pixelShaders["SkyDome"] = PixelShader(device, shadersFolderPath + L"SkyDomePixelShader.hlsl", defines.data(), "main", "ps_5_0");
+	}
 }
 void PipelineStateManager::InitializeRasterizerStates(const D3DBase& d3dBase)
 {
@@ -126,30 +161,31 @@ void PipelineStateManager::InitializePipelineStateObjects()
 {
 	// Opaque:
 	PipelineState opaqueState;
+	PipelineState opaqueFogState;
 	{
 		opaqueState.VertexShader = &m_vertexShaders.at("Standard");
 		opaqueState.PixelShader = &m_pixelShaders.at("Standard");
 		opaqueState.RasterizerState = &m_rasterizerStates.at("Default");
 		opaqueState.BlendState = &m_blendStates.at("Default");
 		opaqueState.DepthStencilState = &m_depthStencilStates.at("Default");
-
 		m_pipelineStateObjects.emplace("Opaque", opaqueState);
+
+		opaqueFogState = opaqueState;
+		opaqueFogState.VertexShader = &m_vertexShaders.at("StandardFog");
+		opaqueFogState.PixelShader = &m_pixelShaders.at("StandardFog");
+		m_pipelineStateObjects.emplace("OpaqueFog", opaqueFogState);
 	}
 
 	// Transparent:
 	{
 		auto transparentState = opaqueState;
 		transparentState.BlendState = &m_blendStates.at("Transparent");
-
 		m_pipelineStateObjects.emplace("Transparent", transparentState);
-	}
 
-	// Transparent:
-	{
-		auto transparentState = opaqueState;
-		transparentState.BlendState = &m_blendStates.at("Transparent");
-
-		m_pipelineStateObjects.emplace("Transparent", transparentState);
+		auto transparentFogState = transparentState;
+		transparentFogState.VertexShader = &m_vertexShaders.at("StandardFog");
+		transparentFogState.PixelShader = &m_pixelShaders.at("StandardFog");
+		m_pipelineStateObjects.emplace("TransparentFog", transparentFogState);
 	}
 
 	// Alpha-clipped:
@@ -159,8 +195,12 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		alphaClippedState.PixelShader = &m_pixelShaders.at("StandardAlphaClipped");
 		alphaClippedState.BlendState = &m_blendStates.at("Transparent");
 		alphaClippedState.RasterizerState = &m_rasterizerStates.at("NoCulling");
-
 		m_pipelineStateObjects.emplace("AlphaClipped", alphaClippedState);
+
+		auto alphaClippedFogState = alphaClippedState;
+		alphaClippedFogState.VertexShader = &m_vertexShaders.at("StandardAlphaClippedFog");
+		alphaClippedFogState.PixelShader = &m_pixelShaders.at("StandardAlphaClippedFog");
+		m_pipelineStateObjects.emplace("AlphaClippedFog", alphaClippedFogState);
 	}
 
 	// Terrain:
@@ -173,8 +213,14 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		terrainState.RasterizerState = &m_rasterizerStates.at("Default");
 		terrainState.BlendState = &m_blendStates.at("Default");
 		terrainState.DepthStencilState = &m_depthStencilStates.at("Default");
-
 		m_pipelineStateObjects.emplace("Terrain", terrainState);
+
+		auto terrainFogState = terrainState;
+		terrainFogState.VertexShader = &m_vertexShaders.at("TerrainFog");
+		terrainFogState.HullShader = &m_hullShaders.at("TerrainFog");
+		terrainFogState.DomainShader = &m_domainShaders.at("TerrainFog");
+		terrainFogState.PixelShader = &m_pixelShaders.at("TerrainFog");
+		m_pipelineStateObjects.emplace("TerrainFog", terrainFogState);
 	}
 
 	// SkyDome:

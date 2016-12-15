@@ -30,7 +30,9 @@ float4 main(DomainOutput input) : SV_TARGET
     float3 bumpedNormalW = NormalSampleToBumpedNormalW(normalSample, normalW, tangentW);
 
     // Calculate direction from point to camera:
-    float3 toEyeDirection = normalize(EyePositionW - input.PositionW);
+    float3 toEyeDirection = EyePositionW - input.PositionW;
+    float distanceToEye = length(toEyeDirection);
+    toEyeDirection /= distanceToEye;
 
     // Calculate indirect lighting:
     float4 ambientIntensity = AmbientLight * diffuseAlbedo;
@@ -49,6 +51,10 @@ float4 main(DomainOutput input) : SV_TARGET
     
     // The final color results from the sum of the indirect and direct light:
     float4 color = ambientIntensity + lightIntensity;
+
+#if defined(FOG)
+    color = AddFog(color, distanceToEye, FogStart, FogRange, FogColor);
+#endif
 
     // Common convention to take alpha from diffuse albedo:
     color.a = diffuseAlbedo.a;

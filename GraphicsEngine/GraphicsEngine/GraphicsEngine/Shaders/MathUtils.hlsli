@@ -59,3 +59,9 @@ float3 NormalSampleToBumpedNormalW(float3 normalSample, float3 normalW, float3 t
     return bumpedNormalW;
 
 }
+
+float4 AddFog(float4 color, float distanceToEye, float fogStart, float fogRange, float4 fogColor)
+{
+    float fogIntensity = saturate((distanceToEye - fogStart) / fogRange);
+    return lerp(color, fogColor, fogIntensity);
+}

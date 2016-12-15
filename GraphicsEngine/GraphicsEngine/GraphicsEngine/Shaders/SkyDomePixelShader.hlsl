@@ -12,7 +12,7 @@ struct VertexOutput
 float4 main(VertexOutput input) : SV_TARGET
 {
     float s = saturate(input.TextureCoordinates);
-    float4 outputColor = lerp(SkyDomeColors[0], SkyDomeColors[1], s);
-    
-    return outputColor;
+    float4 color = lerp(SkyDomeColors[0], SkyDomeColors[1], s);
+
+    return color;
 }

@@ -20,6 +20,16 @@ namespace GraphicsEngine
 			DirectX::XMFLOAT4X4 MaterialTransform = MathHelper::Identity4x4();
 		};
 
+		struct LightData
+		{
+			DirectX::XMFLOAT3 Strength = { 0.5f, 0.5f, 0.5f };		// Light color
+			float FalloffStart = 1.0f;								// Point/Spot light only
+			DirectX::XMFLOAT3 Direction = { 0.0f, -1.0f, 0.0f };	// Directional/Spot light only
+			float FalloffEnd = 10.0f;								// Point/Spot light only
+			DirectX::XMFLOAT3 Position = { 0.0f, 0.0f, 0.0f };		// Point/Spot light only
+			float SpotPower = 64.0f;								// Spot light only
+		};
+
 		struct PassData
 		{
 			DirectX::XMFLOAT4X4 ViewMatrix = MathHelper::Identity4x4();
@@ -51,7 +61,7 @@ namespace GraphicsEngine
 			DirectX::XMFLOAT4 AmbientLight = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 			static constexpr auto MaxNumLights = 16;
-			Light Lights[MaxNumLights];
+			std::array<LightData, MaxNumLights> Lights;
 		};
 	}
 }

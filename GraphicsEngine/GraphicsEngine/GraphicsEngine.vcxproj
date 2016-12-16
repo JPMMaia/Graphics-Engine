@@ -198,6 +198,8 @@
     <ClCompile Include="GraphicsEngine\HullShader.cpp" />
     <ClCompile Include="GraphicsEngine\InputHandler.cpp" />
     <ClCompile Include="GraphicsEngine\IShader.cpp" />
+    <ClCompile Include="GraphicsEngine\Light.cpp" />
+    <ClCompile Include="GraphicsEngine\LightManager.cpp" />
     <ClCompile Include="GraphicsEngine\PipelineState.cpp" />
     <ClCompile Include="GraphicsEngine\PipelineStateManager.cpp" />
     <ClCompile Include="GraphicsEngine\PixelShader.cpp" />
@@ -250,6 +252,7 @@
     <ClInclude Include="GraphicsEngine\IScene.h" />
     <ClInclude Include="GraphicsEngine\IShader.h" />
     <ClInclude Include="GraphicsEngine\Light.h" />
+    <ClInclude Include="GraphicsEngine\LightManager.h" />
     <ClInclude Include="GraphicsEngine\Material.h" />
     <ClInclude Include="GraphicsEngine\MeshGeometry.h" />
     <ClInclude Include="GraphicsEngine\PipelineState.h" />

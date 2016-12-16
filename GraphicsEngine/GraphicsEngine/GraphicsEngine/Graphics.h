@@ -12,6 +12,7 @@
 #include "FrameResource.h"
 #include "SamplerState.h"
 #include "ShadowTexture.h"
+#include "LightManager.h"
 
 namespace GraphicsEngine
 {
@@ -58,5 +59,6 @@ namespace GraphicsEngine
 		bool m_fog;
 		DirectX::XMFLOAT3 m_fogColor;
 		ShadowTexture m_shadowMap;
+		LightManager m_lightManager;
 	};
 }

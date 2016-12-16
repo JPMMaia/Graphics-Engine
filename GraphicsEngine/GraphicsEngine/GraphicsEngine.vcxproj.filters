@@ -107,6 +107,12 @@
     <ClCompile Include="GraphicsEngine\ShadowTexture.cpp">
       <Filter>GraphicsEngine\Shadows</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\LightManager.cpp">
+      <Filter>GraphicsEngine\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\Light.cpp">
+      <Filter>GraphicsEngine\Light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -265,6 +271,9 @@
     </ClInclude>
     <ClInclude Include="GraphicsEngine\ShadowTexture.h">
       <Filter>GraphicsEngine\Shadows</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\LightManager.h">
+      <Filter>GraphicsEngine\Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

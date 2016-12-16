@@ -10,6 +10,7 @@
 
 namespace GraphicsEngine
 {
+	class LightManager;
 	class TextureManager;
 	class D3DBase;
 	class Graphics;
@@ -18,7 +19,7 @@ namespace GraphicsEngine
 	{
 	public:
 		DefaultScene() = default;
-		DefaultScene(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager);
+		DefaultScene(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager, LightManager& lightManager);
 
 		void AddGeometry(std::unique_ptr<MeshGeometry>&& geometry) override;
 		void AddMaterial(std::unique_ptr<Material>&& material) override;
@@ -32,6 +33,7 @@ namespace GraphicsEngine
 		static void InitializeTextures(const D3DBase& d3dBase, TextureManager& textureManager);
 		void InitializeMaterials(TextureManager& textureManager);
 		void InitializeRenderItems(Graphics* graphics);
+		void InitializeLights(LightManager& lightManager);
 
 		void InitializeExternalModels(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager);
 		void InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager);

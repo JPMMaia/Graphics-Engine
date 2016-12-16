@@ -11,7 +11,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_d3dBase(outputWindow, clientWidth, clientHeight, fullscreen),
 	m_pipelineStateManager(m_d3dBase),
 	m_camera(m_d3dBase.GetAspectRatio(), 0.25f * XM_PI, 0.01f, 10000.0f, XMMatrixIdentity()),
-	m_scene(this, m_d3dBase, m_textureManager),
+	m_scene(this, m_d3dBase, m_textureManager, m_lightManager),
 	m_frameResources(1, FrameResource(m_d3dBase.GetDevice(), m_allRenderItems, m_scene.GetMaterials().size())),
 	m_currentFrameResource(&m_frameResources[0]),
 	m_linearClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::LinearClamp),
@@ -263,26 +263,8 @@ void Graphics::UpdateMainPassData(const Common::Timer& timer) const
 	
 	passData.SkyDomeColors[0] = { 0.5f, 0.1f, 0.1f, 1.0f };
 	passData.SkyDomeColors[1] = { 0.1f, 0.1f, 0.8f, 1.0f };
-	passData.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
-	// Directional Lights
-	passData.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
-	passData.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
-	passData.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
-	passData.Lights[1].Strength = { 0.3f, 0.3f, 0.3f };
-	passData.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
-	passData.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
-	// Point Lights
-	passData.Lights[3].Strength = { .1f, 0.0f,0.0f };
-	passData.Lights[3].FalloffStart = 2.0f;
-	passData.Lights[3].FalloffEnd = 20.0f;
-	passData.Lights[3].Position = { 0.0f, 3.0f, 0.0f };
-	// Spot Lights
-	passData.Lights[4].Strength = { 0.0f, 0.0f,0.9f };
-	passData.Lights[4].FalloffStart = 2.0f;
-	passData.Lights[4].FalloffEnd = 20.0f;
-	passData.Lights[4].Position = { 0.0f, 3.0f, 0.0f };
-	passData.Lights[4].Direction = { 0.0f,-1.0f,0.0f };
-	passData.Lights[4].SpotPower = 8.0f;
+	passData.AmbientLight = m_lightManager.GetAmbientLight();
+	m_lightManager.Fill(passData.Lights.begin(), passData.Lights.end());
 
 	m_currentFrameResource->MainPassData.CopyData(m_d3dBase.GetDeviceContext(), &passData, sizeof(ShaderBufferTypes::PassData));
 }
@@ -330,28 +312,10 @@ void Graphics::UpdateShadowPassData(const Common::Timer& timer) const
 
 	passData.SkyDomeColors[0] = { 0.5f, 0.1f, 0.1f, 1.0f };
 	passData.SkyDomeColors[1] = { 0.1f, 0.1f, 0.8f, 1.0f };
-	passData.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
-	// Directional Lights
-	passData.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
-	passData.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
-	passData.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
-	passData.Lights[1].Strength = { 0.3f, 0.3f, 0.3f };
-	passData.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
-	passData.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
-	// Point Lights
-	passData.Lights[3].Strength = { .1f, 0.0f,0.0f };
-	passData.Lights[3].FalloffStart = 2.0f;
-	passData.Lights[3].FalloffEnd = 20.0f;
-	passData.Lights[3].Position = { 0.0f, 3.0f, 0.0f };
-	// Spot Lights
-	passData.Lights[4].Strength = { 0.0f, 0.0f,0.9f };
-	passData.Lights[4].FalloffStart = 2.0f;
-	passData.Lights[4].FalloffEnd = 20.0f;
-	passData.Lights[4].Position = { 0.0f, 3.0f, 0.0f };
-	passData.Lights[4].Direction = { 0.0f,-1.0f,0.0f };
-	passData.Lights[4].SpotPower = 8.0f;
+	passData.AmbientLight = m_lightManager.GetAmbientLight();
+	m_lightManager.Fill(passData.Lights.begin(), passData.Lights.end());
 
-	m_currentFrameResource->MainPassData.CopyData(m_d3dBase.GetDeviceContext(), &passData, sizeof(ShaderBufferTypes::PassData));
+	m_currentFrameResource->ShadowPassData.CopyData(m_d3dBase.GetDeviceContext(), &passData, sizeof(ShaderBufferTypes::PassData));
 }
 
 void Graphics::DrawRenderItems(RenderLayer renderLayer) const

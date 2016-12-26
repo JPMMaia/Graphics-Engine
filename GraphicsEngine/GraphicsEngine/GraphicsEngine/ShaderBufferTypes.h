@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Common/MathHelper.h"
-#include "Light.h"
 
 namespace GraphicsEngine
 {

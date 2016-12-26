@@ -14,12 +14,12 @@ using namespace GraphicsEngine;
 
 DefaultScene::DefaultScene(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager, LightManager& lightManager)
 {
+	InitializeTerrain(graphics, d3dBase, textureManager);
 	InitializeGeometry(d3dBase);
 	InitializeTextures(d3dBase, textureManager);
 	InitializeMaterials(textureManager);
 	InitializeRenderItems(graphics);
 	InitializeLights(lightManager);
-	InitializeTerrain(graphics, d3dBase, textureManager);
 	InitializeExternalModels(graphics, d3dBase, textureManager);
 }
 
@@ -242,13 +242,11 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 void DefaultScene::InitializeLights(LightManager& lightManager)
 {
 	lightManager.SetAmbientLight({ 0.25f, 0.25f, 0.35f, 1.0f });
-	lightManager.AddDirectionalLight({ 0.6f, 0.6f, 0.6f }, { 0.57735f, -0.57735f, 0.57735f });
-	lightManager.AddDirectionalLight({ 0.3f, 0.3f, 0.3f }, { 0.57735f, -0.57735f, 0.57735f });
-	lightManager.AddDirectionalLight({ 0.15f, 0.15f, 0.15f }, { 0.0f, -0.707f, -0.707f });
-
-	lightManager.AddPointLight({ 0.1f, 0.0f, 0.0f }, 2.0f, 20.0f, { 0.0f, 3.0f, 0.0f });
-
-	lightManager.AddSpotLight({ 0.0f, 0.0f, 0.9f }, 2.0f, { 0.0f,-1.0f, 0.0f }, 20.0f, { 0.0f, 3.0f, 0.0f }, 8.0f);
+	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalCastShadowsLight({ 0.6f, 0.6f, 0.6f }, { 0.57735f, -0.57735f, 0.57735f }, )));
+	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.3f, 0.3f, 0.3f }, { 0.57735f, -0.57735f, 0.57735f })));
+	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.15f, 0.15f, 0.15f }, { 0.0f, -0.707f, -0.707f })));
+	lightManager.AddLight(std::make_unique<Light>(Light::CreatePointLight({ 0.1f, 0.0f, 0.0f }, 2.0f, 20.0f, { 0.0f, 3.0f, 0.0f })));
+	lightManager.AddLight(std::make_unique<Light>(Light::CreateSpotLight({ 0.0f, 0.0f, 0.9f }, 2.0f, { 0.0f,-1.0f, 0.0f }, 20.0f, { 0.0f, 3.0f, 0.0f }, 8.0f)));
 }
 
 void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)

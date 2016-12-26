@@ -3,35 +3,30 @@
 
 using namespace GraphicsEngine;
 
-void LightManager::AddDirectionalLight(const DirectX::XMFLOAT3& strength, const DirectX::XMFLOAT3& direction)
+void LightManager::AddLight(std::unique_ptr<Light>&& light)
 {
-	ShaderBufferTypes::LightData light = {};
-	light.Strength = strength;
-	light.Direction = direction;
+	switch (light->GetType())
+	{
+	case Light::Type::Directional:
+		m_directionalLights.push_back(light.get());
+		break;
 
-	m_directionalLights.emplace_back(std::move(light));
-}
-void LightManager::AddPointLight(const DirectX::XMFLOAT3& strength, float falloffStart, float falloffEnd, const DirectX::XMFLOAT3& position)
-{
-	ShaderBufferTypes::LightData light = {};
-	light.Strength = strength;
-	light.FalloffStart = falloffStart;
-	light.FalloffEnd = falloffEnd;
-	light.Position = position;
+	case Light::Type::Point:
+		m_pointLights.push_back(light.get());
+		break;
 
-	m_pointLights.emplace_back(std::move(light));
-}
-void LightManager::AddSpotLight(const DirectX::XMFLOAT3& strength, float falloffStart, const DirectX::XMFLOAT3& direction, float falloffEnd, const DirectX::XMFLOAT3& position, float spotPower)
-{
-	ShaderBufferTypes::LightData light = {};
-	light.Strength = strength;
-	light.FalloffStart = falloffStart;
-	light.Direction = direction;
-	light.FalloffEnd = falloffEnd;
-	light.Position = position;
-	light.SpotPower = spotPower;
+	case Light::Type::Spot:
+		m_spotLights.push_back(light.get());
+		break;
 
-	m_spotLights.emplace_back(std::move(light));
+	default:
+		break;
+	}
+
+	if (light->CastShadows())
+		m_castShadowsLights.push_back(light.get());
+
+	m_lights.push_back(std::move(light));
 }
 
 const DirectX::XMFLOAT4& LightManager::GetAmbientLight() const
@@ -41,4 +36,9 @@ const DirectX::XMFLOAT4& LightManager::GetAmbientLight() const
 void LightManager::SetAmbientLight(const DirectX::XMFLOAT4& ambientLight)
 {
 	m_ambientLight = ambientLight;
+}
+
+const std::vector<Light*>& LightManager::GetCastShadowsLights() const
+{
+	return m_castShadowsLights;
 }

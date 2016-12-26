@@ -34,6 +34,7 @@ void Graphics::Update(const Common::Timer& timer)
 {
 	m_camera.Update();
 	UpdateMainPassData(timer);
+	UpdateShadowPassData(timer);
 	UpdateMaterialData();
 	UpdateInstancesData();
 }
@@ -43,12 +44,6 @@ void Graphics::Render(const Common::Timer& timer) const
 	auto deviceContext = m_d3dBase.GetDeviceContext();
 
 	m_d3dBase.BeginScene();
-
-	// Set pass data:
-	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
-	deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
-	deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
-	deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
 
 	// Set samplers:
 	deviceContext->DSSetSamplers(3, 1, m_linearClampSamplerState.GetAddressOf());
@@ -60,8 +55,13 @@ void Graphics::Render(const Common::Timer& timer) const
 
 	// Create shadow map:
 	{
-		// TODO set light matrix
+		// Set main pass data:
+		deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
+		deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
+		deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
+		deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
 
+		// Set a new depth stencil:
 		m_shadowMap.SetDepthStencilView(deviceContext);
 
 		// Draw opaque:
@@ -82,6 +82,12 @@ void Graphics::Render(const Common::Timer& timer) const
 		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedShadow");
 		DrawRenderItems(RenderLayer::AlphaClipped);*/
 	}
+
+	// Set main pass data:
+	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
 
 	if(!m_fog)
 	{
@@ -272,11 +278,16 @@ void Graphics::UpdateShadowPassData(const Common::Timer& timer) const
 {
 	ShaderBufferTypes::PassData passData;
 
-	auto viewMatrix = m_camera.GetViewMatrix();
+	auto castShadowsLights = m_lightManager.GetCastShadowsLights();
+	auto castShadowsLight = castShadowsLights[0];
+
+	auto viewMatrixFloat = castShadowsLight->GetViewMatrix();
+	auto viewMatrix = XMLoadFloat4x4(&viewMatrixFloat);
 	auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
 	auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
 
-	auto projectionMatrix = m_camera.GetProjectionMatrix();
+	auto projectionMatrixFloat = castShadowsLight->GetOrthographicMatrix(m_d3dBase.GetClientWidth(), m_d3dBase.GetClientHeight(), m_camera.GetNearZ(), m_camera.GetFarZ());
+	auto projectionMatrix = XMLoadFloat4x4(&projectionMatrixFloat);
 	auto projectionMatrixDeterminant = XMMatrixDeterminant(projectionMatrix);
 	auto inverseProjectionMatrix = XMMatrixInverse(&projectionMatrixDeterminant, projectionMatrix);
 

@@ -8,6 +8,8 @@
 #include "GraphicsEngine/Terrain.h"
 #include "Common/Helpers.h"
 
+#include <numeric>
+
 using namespace DirectX;
 using namespace Common;
 using namespace GraphicsEngine;
@@ -49,6 +51,8 @@ const std::unordered_map<std::string, std::unique_ptr<Material>>& DefaultScene::
 
 void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 {
+	auto device = d3dBase.GetDevice();
+
 	// ShapeGeo:
 	{
 		auto box = GeometryGenerator::CreateBox(1.0f, 1.0f, 1.0f, 3);
@@ -149,8 +153,6 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 		indices.insert(indices.end(), std::begin(sphere.GetIndices16()), std::end(sphere.GetIndices16()));
 		indices.insert(indices.end(), std::begin(cylinder.GetIndices16()), std::end(cylinder.GetIndices16()));
 
-		auto device = d3dBase.GetDevice();
-
 		auto geo = std::make_unique<MeshGeometry>();
 		geo->Name = "ShapeGeo";
 		geo->Vertices = VertexBuffer(device, vertices);
@@ -162,24 +164,55 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 
 		m_geometries[geo->Name] = std::move(geo);
 	}
+
+	// Billboards:
+	{
+		std::vector<VertexTypes::BillboardVertexType> vertices =
+		{
+			{ { 0.0f, 0.0f, 0.0f },{ 10.0f, 10.0f } }
+		};
+		std::vector<UINT> indices(vertices.size());
+		std::iota(indices.begin(), indices.end(), 0);
+
+		auto geometry = std::make_unique<MeshGeometry>();
+		geometry->Name = "Billboard";
+		geometry->Vertices = VertexBuffer(device, vertices);
+		geometry->Indices = IndexBuffer(device, indices);
+		m_geometries[geometry->Name] = std::move(geometry);
+	}
 }
 void DefaultScene::InitializeTextures(const D3DBase& d3dBase, TextureManager& textureManager)
 {
 	auto device = d3dBase.GetDevice();
 
 	textureManager.Create(device, "BricksTexture", L"Textures/Started01.dds");
+	textureManager.Create(device, "Test", L"Textures/test_diffuse_map.dds");
 }
 void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 {
-	auto bricks = std::make_unique<Material>();
-	bricks->Name = "Bricks";
-	bricks->DiffuseMap = &textureManager["BricksTexture"];
-	bricks->MaterialIndex = 0;
-	bricks->DiffuseAlbedo = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-	bricks->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
-	bricks->Roughness = 0.25f;
-	bricks->MaterialTransform = MathHelper::Identity4x4();
-	AddMaterial(std::move(bricks));
+	{
+		auto bricks = std::make_unique<Material>();
+		bricks->Name = "Bricks";
+		bricks->DiffuseMap = &textureManager["BricksTexture"];
+		bricks->MaterialIndex = 0;
+		bricks->DiffuseAlbedo = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+		bricks->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+		bricks->Roughness = 0.25f;
+		bricks->MaterialTransform = MathHelper::Identity4x4();
+		AddMaterial(std::move(bricks));
+	}
+
+	{
+		auto test = std::make_unique<Material>();
+		test->Name = "Test";
+		test->DiffuseMap = &textureManager["Test"];
+		test->MaterialIndex = 0;
+		test->DiffuseAlbedo = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+		test->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+		test->Roughness = 0.25f;
+		test->MaterialTransform = MathHelper::Identity4x4();
+		AddMaterial(std::move(test));
+	}
 }
 
 void DefaultScene::InitializeRenderItems(Graphics* graphics)
@@ -237,12 +270,27 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 
 		graphics->AddRenderItem(std::move(sphereRenderItem), { RenderLayer::Transparent });
 	}*/
+
+	// Billboards:
+	{
+		auto renderItem = std::make_unique<RenderItem>();
+		renderItem->Name = "Billboard";
+		renderItem->Mesh = m_geometries.at("Billboard").get();
+		renderItem->Material = m_materials["Test"].get();
+		renderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
+		renderItem->IndexCount = 1;
+		renderItem->StartIndexLocation = 0;
+		renderItem->BaseVertexLocation = 0;
+		renderItem->Bounds = BoundingBox({0.0f, 0.0f, 0.0f}, { 10.0f, 10.0f, 0.1f });
+		renderItem->Stride = sizeof(VertexTypes::BillboardVertexType);
+		graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Billboard });
+	}
 }
 
 void DefaultScene::InitializeLights(LightManager& lightManager)
 {
 	lightManager.SetAmbientLight({ 0.25f, 0.25f, 0.35f, 1.0f });
-	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalCastShadowsLight({ 0.6f, 0.6f, 0.6f }, { 0.57735f, -0.57735f, 0.57735f }, )));
+	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalCastShadowsLight({ 0.6f, 0.6f, 0.6f }, { 0.57735f, -0.57735f, 0.57735f }, {0.0f, 0.0f, 0.0f})));
 	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.3f, 0.3f, 0.3f }, { 0.57735f, -0.57735f, 0.57735f })));
 	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.15f, 0.15f, 0.15f }, { 0.0f, -0.707f, -0.707f })));
 	lightManager.AddLight(std::make_unique<Light>(Light::CreatePointLight({ 0.1f, 0.0f, 0.0f }, 2.0f, 20.0f, { 0.0f, 3.0f, 0.0f })));

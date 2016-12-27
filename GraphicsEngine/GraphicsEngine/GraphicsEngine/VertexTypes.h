@@ -12,6 +12,12 @@ namespace GraphicsEngine
 			DirectX::XMFLOAT4 Color;
 		};
 
+		struct BillboardVertexType
+		{
+			DirectX::XMFLOAT3 Center;
+			DirectX::XMFLOAT2 Extents;
+		};
+
 		struct NormalVertexType
 		{
 			DirectX::XMFLOAT3 Position;

@@ -7,6 +7,9 @@ namespace GraphicsEngine
 	class DomainShader : public IShader
 	{
 	public:
+		static const DomainShader s_null;
+
+	public:
 		DomainShader() = default;
 		DomainShader(ID3D11Device* d3dDevice, const std::wstring& filename);
 		DomainShader(ID3D11Device* d3dDevice, const std::wstring& filename, const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target);

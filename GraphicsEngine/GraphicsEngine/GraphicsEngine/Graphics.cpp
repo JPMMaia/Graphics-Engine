@@ -11,6 +11,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_d3dBase(outputWindow, clientWidth, clientHeight, fullscreen),
 	m_pipelineStateManager(m_d3dBase),
 	m_camera(m_d3dBase.GetAspectRatio(), 0.25f * XM_PI, 0.01f, 10000.0f, XMMatrixIdentity()),
+	m_lightManager(),
 	m_scene(this, m_d3dBase, m_textureManager, m_lightManager),
 	m_frameResources(1, FrameResource(m_d3dBase.GetDevice(), m_allRenderItems, m_scene.GetMaterials().size())),
 	m_currentFrameResource(&m_frameResources[0]),
@@ -22,7 +23,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_shadowMap(m_d3dBase.GetDevice(), clientWidth, clientHeight)
 {
 	m_d3dBase.SetClearColor(m_fogColor);
-	m_camera.SetPosition(0.0f, 0.0f, 0.0f);
+	m_camera.SetPosition(0.0f, 0.0f, -10.0f);
 }
 
 void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
@@ -55,10 +56,11 @@ void Graphics::Render(const Common::Timer& timer) const
 
 	// Create shadow map:
 	{
-		// Set main pass data:
+		/*// Set main pass data:
 		deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
 		deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
 		deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
+		deviceContext->GSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
 		deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
 
 		// Set a new depth stencil:
@@ -87,6 +89,7 @@ void Graphics::Render(const Common::Timer& timer) const
 	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
 	deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
 	deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	deviceContext->GSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
 	deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
 
 	if(!m_fog)
@@ -100,16 +103,20 @@ void Graphics::Render(const Common::Timer& timer) const
 		DrawRenderItems(RenderLayer::Opaque);
 
 		// Draw terrain:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
-		DrawTerrain();
+		/*m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
+		DrawTerrain();*/
 
 		// Draw transparent:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
-		DrawRenderItems(RenderLayer::Transparent);
+		//m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
+		//DrawRenderItems(RenderLayer::Transparent);
 
 		// Draw alpha-clipped:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClipped");
 		DrawRenderItems(RenderLayer::AlphaClipped);
+
+		// Draw billboards:
+		//m_pipelineStateManager.SetPipelineState(deviceContext, "Billboard");
+		//DrawNonInstancedRenderItems(RenderLayer::Billboard);
 	}
 	else
 	{
@@ -128,6 +135,10 @@ void Graphics::Render(const Common::Timer& timer) const
 		// Draw alpha-clipped:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedFog");
 		DrawRenderItems(RenderLayer::AlphaClipped);
+
+		// Draw billboards:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "BillboardFog");
+		DrawNonInstancedRenderItems(RenderLayer::Billboard);
 	}
 	
 	m_shadowMap.ClearDepthStencilView(deviceContext);
@@ -169,7 +180,11 @@ void Graphics::UpdateInstancesData()
 	for(const auto& renderItem : m_allRenderItems)
 	{
 		// Get instances buffer for the current render item:
-		auto instancesBuffer = m_currentFrameResource->InstancesBuffers.at(renderItem->Name);
+		auto location = m_currentFrameResource->InstancesBuffers.find(renderItem->Name);
+		if (location == m_currentFrameResource->InstancesBuffers.end())
+			continue;
+
+		const auto& instancesBuffer = location->second;
 
 		// Map resource:
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -286,7 +301,7 @@ void Graphics::UpdateShadowPassData(const Common::Timer& timer) const
 	auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
 	auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
 
-	auto projectionMatrixFloat = castShadowsLight->GetOrthographicMatrix(m_d3dBase.GetClientWidth(), m_d3dBase.GetClientHeight(), m_camera.GetNearZ(), m_camera.GetFarZ());
+	auto projectionMatrixFloat = castShadowsLight->GetOrthographicMatrix(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()), m_camera.GetNearZ(), m_camera.GetFarZ());
 	auto projectionMatrix = XMLoadFloat4x4(&projectionMatrixFloat);
 	auto projectionMatrixDeterminant = XMMatrixDeterminant(projectionMatrix);
 	auto inverseProjectionMatrix = XMMatrixInverse(&projectionMatrixDeterminant, projectionMatrix);
@@ -355,7 +370,26 @@ void Graphics::DrawRenderItems(RenderLayer renderLayer) const
 		renderItem->Render(deviceContext);
 	}
 }
+void Graphics::DrawNonInstancedRenderItems(RenderLayer renderLayer) const
+{
+	auto deviceContext = m_d3dBase.GetDeviceContext();
 
+	// For each render item:
+	for (auto& renderItem : m_renderItemLayers[static_cast<SIZE_T>(renderLayer)])
+	{
+		// Set material data:
+		const auto& materialData = m_currentFrameResource->MaterialDataArray[renderItem->Material->MaterialIndex];
+		deviceContext->VSSetConstantBuffers(1, 1, materialData.GetAddressOf());
+		deviceContext->PSSetConstantBuffers(1, 1, materialData.GetAddressOf());
+
+		// Set textures:
+		if (renderItem->Material->DiffuseMap != nullptr)
+			deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
+
+		// Render:
+		renderItem->RenderNonInstanced(deviceContext);
+	}
+}
 void Graphics::DrawTerrain() const
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();

@@ -9,6 +9,7 @@ namespace GraphicsEngine
 		AlphaClipped,
 		Terrain,
 		SkyDome,
+		Billboard,
 		Count
 	};
 }

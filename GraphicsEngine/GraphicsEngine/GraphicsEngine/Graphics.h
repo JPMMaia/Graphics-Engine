@@ -36,7 +36,8 @@ namespace GraphicsEngine
 		void UpdateMainPassData(const Common::Timer& timer) const;
 		void UpdateShadowPassData(const Common::Timer& timer) const;
 
-		void DrawRenderItems(RenderLayer renderItems) const;
+		void DrawRenderItems(RenderLayer renderLayer) const;
+		void DrawNonInstancedRenderItems(RenderLayer renderLayer) const;
 		void DrawTerrain() const;
 
 	private:
@@ -47,6 +48,7 @@ namespace GraphicsEngine
 		std::vector<RenderItem*> m_renderItemLayers[static_cast<SIZE_T>(RenderLayer::Count)];
 		TextureManager m_textureManager;
 		Camera m_camera;
+		LightManager m_lightManager;
 		DefaultScene m_scene;
 
 		std::vector<FrameResource> m_frameResources;
@@ -59,6 +61,5 @@ namespace GraphicsEngine
 		bool m_fog;
 		DirectX::XMFLOAT3 m_fogColor;
 		ShadowTexture m_shadowMap;
-		LightManager m_lightManager;
 	};
 }

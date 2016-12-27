@@ -49,6 +49,12 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 		{ "WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 	};
 
+	m_inputLayouts["Billboard"] = 
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
 	auto maxNumLights = std::to_string(ShaderBufferTypes::PassData::MaxNumLights);
 	auto shadersFolderPath = wstring(L"../GraphicsEngine/GraphicsEngine/Shaders/");
 	std::array<D3D_SHADER_MACRO, 4> defines;
@@ -69,7 +75,6 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 			"FOG", "1",
 			nullptr, nullptr
 		};
-		m_vertexShaders["StandardFog"] = VertexShader(device, shadersFolderPath + L"StandardVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
 		m_pixelShaders["StandardFog"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 	}
 	
@@ -91,7 +96,6 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 			"ENABLE_ALPHA_CLIPPING", "1",
 			nullptr, nullptr
 		};
-		m_vertexShaders["StandardAlphaClippedFog"] = VertexShader(device, shadersFolderPath + L"StandardVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
 		m_pixelShaders["StandardAlphaClippedFog"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 	}
 
@@ -113,9 +117,6 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 			"FOG", "1",
 			nullptr, nullptr
 		};
-		m_vertexShaders["TerrainFog"] = VertexShader(device, shadersFolderPath + L"TerrainVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
-		m_hullShaders["TerrainFog"] = HullShader(device, shadersFolderPath + L"TerrainHullShader.hlsl", defines.data(), "main", "hs_5_0");
-		m_domainShaders["TerrainFog"] = DomainShader(device, shadersFolderPath + L"TerrainDomainShader.hlsl", defines.data(), "main", "ds_5_0");
 		m_pixelShaders["TerrainFog"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 	}
 
@@ -129,6 +130,18 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 
 		m_vertexShaders["SkyDome"] = VertexShader(device, shadersFolderPath + L"SkyDomeVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
 		m_pixelShaders["SkyDome"] = PixelShader(device, shadersFolderPath + L"SkyDomePixelShader.hlsl", defines.data(), "main", "ps_5_0");
+	}
+
+	// Billboard shaders:
+	{
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			nullptr, nullptr
+		};
+
+		m_vertexShaders["Billboard"] = VertexShader(device, shadersFolderPath + L"BillboardVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Billboard"]);
+		m_geometryShaders["Billboard"] = GeometryShader(device, shadersFolderPath + L"BillboardGeometryShader.hlsl", defines.data(), "main", "gs_5_0");
 	}
 }
 void PipelineStateManager::InitializeRasterizerStates(const D3DBase& d3dBase)
@@ -171,7 +184,6 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		m_pipelineStateObjects.emplace("Opaque", opaqueState);
 
 		opaqueFogState = opaqueState;
-		opaqueFogState.VertexShader = &m_vertexShaders.at("StandardFog");
 		opaqueFogState.PixelShader = &m_pixelShaders.at("StandardFog");
 		m_pipelineStateObjects.emplace("OpaqueFog", opaqueFogState);
 
@@ -187,7 +199,6 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		m_pipelineStateObjects.emplace("Transparent", transparentState);
 
 		auto transparentFogState = transparentState;
-		transparentFogState.VertexShader = &m_vertexShaders.at("StandardFog");
 		transparentFogState.PixelShader = &m_pixelShaders.at("StandardFog");
 		m_pipelineStateObjects.emplace("TransparentFog", transparentFogState);
 
@@ -206,7 +217,6 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		m_pipelineStateObjects.emplace("AlphaClipped", alphaClippedState);
 
 		auto alphaClippedFogState = alphaClippedState;
-		alphaClippedFogState.VertexShader = &m_vertexShaders.at("StandardAlphaClippedFog");
 		alphaClippedFogState.PixelShader = &m_pixelShaders.at("StandardAlphaClippedFog");
 		m_pipelineStateObjects.emplace("AlphaClippedFog", alphaClippedFogState);
 
@@ -228,9 +238,6 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		m_pipelineStateObjects.emplace("Terrain", terrainState);
 
 		auto terrainFogState = terrainState;
-		terrainFogState.VertexShader = &m_vertexShaders.at("TerrainFog");
-		terrainFogState.HullShader = &m_hullShaders.at("TerrainFog");
-		terrainFogState.DomainShader = &m_domainShaders.at("TerrainFog");
 		terrainFogState.PixelShader = &m_pixelShaders.at("TerrainFog");
 		m_pipelineStateObjects.emplace("TerrainFog", terrainFogState);
 
@@ -248,5 +255,21 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		skydomeState.BlendState = &m_blendStates.at("Default");
 		skydomeState.DepthStencilState = &m_depthStencilStates.at("DepthDisabled");
 		m_pipelineStateObjects.emplace("SkyDome", skydomeState);
+	}
+
+	// Billboard:
+	{
+		PipelineState billboardState;
+		billboardState.VertexShader = &m_vertexShaders.at("Billboard");
+		billboardState.GeometryShader = &m_geometryShaders.at("Billboard");
+		billboardState.PixelShader = &m_pixelShaders.at("Standard");
+		billboardState.RasterizerState = &m_rasterizerStates.at("Default");
+		billboardState.BlendState = &m_blendStates.at("Default");
+		billboardState.DepthStencilState = &m_depthStencilStates.at("Default");
+		m_pipelineStateObjects.emplace("Billboard", billboardState);
+
+		auto billboardFogState = billboardState;
+		billboardFogState.PixelShader = &m_pixelShaders.at("StandardFog");
+		m_pipelineStateObjects.emplace("BillboardFog", billboardFogState);
 	}
 }

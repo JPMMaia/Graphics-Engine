@@ -54,10 +54,10 @@ int Application::Run()
 		camera->RotateLocalX(mouseDeltaY * mouseSensibility);
 
 		// Clamp camera to the ground:
-		XMFLOAT3 position; 
+		/*XMFLOAT3 position; 
 		XMStoreFloat3(&position, camera->GetPosition());
 		auto terrainHeight = m_graphics.GetScene()->GetTerrain().GetTerrainHeight(position.x, position.z);
-		camera->SetPosition(position.x, 5.0f + terrainHeight, position.z);
+		camera->SetPosition(position.x, 5.0f + terrainHeight, position.z);*/
 	};
 
 	auto render = [this](const Timer& timer)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "VertexShader.h"
+#include "GeometryShader.h"
 #include "HullShader.h"
 #include "DomainShader.h"
 #include "PixelShader.h"
@@ -15,10 +16,11 @@ namespace GraphicsEngine
 	struct PipelineState
 	{
 	public:
-		const VertexShader* VertexShader = nullptr;
-		const HullShader* HullShader = nullptr;
-		const DomainShader* DomainShader = nullptr;
-		const PixelShader* PixelShader = nullptr;
+		const VertexShader* VertexShader = &VertexShader::s_null;
+		const HullShader* HullShader = &HullShader::s_null;
+		const DomainShader* DomainShader = &DomainShader::s_null;
+		const GeometryShader* GeometryShader = &GeometryShader::s_null;
+		const PixelShader* PixelShader = &PixelShader::s_null;
 		const RasterizerState* RasterizerState = nullptr;
 		const BlendState* BlendState = nullptr;
 		const DepthStencilState* DepthStencilState = nullptr;

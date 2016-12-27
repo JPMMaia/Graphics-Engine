@@ -10,8 +10,11 @@ FrameResource::FrameResource(ID3D11Device* device, const std::vector<std::unique
 {
 	// Initialize instances buffers:
 	for(auto& renderItem : renderItems)
-		InstancesBuffers[renderItem->Name].Initialize<ShaderBufferTypes::InstanceData>(device, static_cast<UINT>(sizeof(ShaderBufferTypes::InstanceData) * renderItem->InstancesData.size()));
-
+	{
+		if(!renderItem->InstancesData.empty())
+			InstancesBuffers[renderItem->Name].Initialize<ShaderBufferTypes::InstanceData>(device, static_cast<UINT>(sizeof(ShaderBufferTypes::InstanceData) * renderItem->InstancesData.size()));
+	}
+		
 	// Initialize material data array:
 	for (SIZE_T i = 0; i < materialCount; ++i)
 		MaterialDataArray[i].Initialize<ShaderBufferTypes::MaterialData>(device, sizeof(ShaderBufferTypes::MaterialData));

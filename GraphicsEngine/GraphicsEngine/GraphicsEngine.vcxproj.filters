@@ -113,6 +113,9 @@
     <ClCompile Include="GraphicsEngine\Light.cpp">
       <Filter>GraphicsEngine\Light</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\GeometryShader.cpp">
+      <Filter>GraphicsEngine\Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -275,6 +278,9 @@
     <ClInclude Include="GraphicsEngine\LightManager.h">
       <Filter>GraphicsEngine\Light</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsEngine\GeometryShader.h">
+      <Filter>GraphicsEngine\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -361,6 +367,9 @@
     <Filter Include="GraphicsEngine\Shadows">
       <UniqueIdentifier>{113ed2fc-d08f-4340-8d94-593f2b2ad248}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Billboard">
+      <UniqueIdentifier>{89a90716-f51a-4af8-88b4-5c9d9d3e82e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Libraries\rapidxml\manual.html">
@@ -383,6 +392,12 @@
     </None>
     <None Include="GraphicsEngine\Shaders\MathUtils.hlsli">
       <Filter>Shaders\Common</Filter>
+    </None>
+    <None Include="GraphicsEngine\Shaders\BillboardGeometryShader.hlsl">
+      <Filter>Shaders\Billboard</Filter>
+    </None>
+    <None Include="GraphicsEngine\Shaders\BillboardVertexShader.hlsl">
+      <Filter>Shaders\Billboard</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

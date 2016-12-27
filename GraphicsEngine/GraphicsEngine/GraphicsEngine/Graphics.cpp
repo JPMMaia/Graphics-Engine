@@ -56,7 +56,7 @@ void Graphics::Render(const Common::Timer& timer) const
 
 	// Create shadow map:
 	{
-		/*// Set main pass data:
+		// Set shadow pass data:
 		deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
 		deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
 		deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
@@ -74,15 +74,15 @@ void Graphics::Render(const Common::Timer& timer) const
 		m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainShadow");
 		DrawTerrain();
 
-		m_d3dBase.SetDefaultRenderTargets();
-
 		// Draw transparent:
-		/*m_pipelineStateManager.SetPipelineState(deviceContext, "TransparentShadow");
+		m_pipelineStateManager.SetPipelineState(deviceContext, "TransparentShadow");
 		DrawRenderItems(RenderLayer::Transparent);
 
 		// Draw alpha-clipped:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedShadow");
-		DrawRenderItems(RenderLayer::AlphaClipped);*/
+		DrawRenderItems(RenderLayer::AlphaClipped);
+
+		m_d3dBase.SetDefaultRenderTargets();
 	}
 
 	// Set main pass data:
@@ -103,20 +103,20 @@ void Graphics::Render(const Common::Timer& timer) const
 		DrawRenderItems(RenderLayer::Opaque);
 
 		// Draw terrain:
-		/*m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
-		DrawTerrain();*/
+		m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
+		DrawTerrain();
 
 		// Draw transparent:
-		//m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
-		//DrawRenderItems(RenderLayer::Transparent);
+		m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
+		DrawRenderItems(RenderLayer::Transparent);
 
 		// Draw alpha-clipped:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClipped");
 		DrawRenderItems(RenderLayer::AlphaClipped);
 
 		// Draw billboards:
-		//m_pipelineStateManager.SetPipelineState(deviceContext, "Billboard");
-		//DrawNonInstancedRenderItems(RenderLayer::Billboard);
+		m_pipelineStateManager.SetPipelineState(deviceContext, "Billboard");
+		DrawNonInstancedRenderItems(RenderLayer::Billboard);
 	}
 	else
 	{
@@ -220,8 +220,6 @@ void Graphics::UpdateInstancesData()
 		// Unmap resource:
 		instancesBuffer.Unmap(deviceContext);
 	}
-
-
 }
 void Graphics::UpdateMaterialData() const
 {

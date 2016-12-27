@@ -290,7 +290,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 void DefaultScene::InitializeLights(LightManager& lightManager)
 {
 	lightManager.SetAmbientLight({ 0.25f, 0.25f, 0.35f, 1.0f });
-	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalCastShadowsLight({ 0.6f, 0.6f, 0.6f }, { 0.57735f, -0.57735f, 0.57735f }, {0.0f, 0.0f, 0.0f})));
+	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalCastShadowsLight({ 0.6f, 0.6f, 0.6f }, { 0.57735f, -0.57735f, 0.57735f }, {0.0f, m_terrain.GetDescription().HeightMapFactor, 0.0f})));
 	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.3f, 0.3f, 0.3f }, { 0.57735f, -0.57735f, 0.57735f })));
 	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.15f, 0.15f, 0.15f }, { 0.0f, -0.707f, -0.707f })));
 	lightManager.AddLight(std::make_unique<Light>(Light::CreatePointLight({ 0.1f, 0.0f, 0.0f }, 2.0f, 20.0f, { 0.0f, 3.0f, 0.0f })));
@@ -437,7 +437,7 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 			{
 				ShaderBufferTypes::InstanceData instanceData;
 				const auto& position = randomPositions[i];
-				XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixRotationX(XM_PI / 2.0f) * XMMatrixTranslation(position.x, position.y, position.z));
+				XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixRotationX(XM_PI / 2.0f) * XMMatrixTranslation(position.x, position.y - 2.0f, position.z));
 				renderItem->InstancesData.push_back(instanceData);
 			}
 			graphics->AddRenderItem(std::move(renderItem), { RenderLayer::AlphaClipped });

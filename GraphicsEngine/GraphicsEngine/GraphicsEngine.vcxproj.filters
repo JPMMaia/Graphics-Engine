@@ -77,9 +77,6 @@
     <ClCompile Include="GraphicsEngine\GeometryGenerator2.cpp">
       <Filter>GraphicsEngine\Model</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsEngine\Shaders\PassData.hlsli">
-      <Filter>Shaders\Common</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsEngine\Texture.cpp">
       <Filter>GraphicsEngine\Textures</Filter>
     </ClCompile>
@@ -375,30 +372,6 @@
     <None Include="..\Libraries\rapidxml\manual.html">
       <Filter>Libraries\RapidXml</Filter>
     </None>
-    <None Include="GraphicsEngine\Shaders\LightingUtils.hlsli">
-      <Filter>Shaders\Common</Filter>
-    </None>
-    <None Include="GraphicsEngine\Shaders\ObjectData.hlsli">
-      <Filter>Shaders\Common</Filter>
-    </None>
-    <None Include="GraphicsEngine\Shaders\MaterialData.hlsli">
-      <Filter>Shaders\Common</Filter>
-    </None>
-    <None Include="GraphicsEngine\Shaders\Samplers.hlsli">
-      <Filter>Shaders\Common</Filter>
-    </None>
-    <None Include="GraphicsEngine\Shaders\CommonDefines.hlsli">
-      <Filter>Shaders\Common</Filter>
-    </None>
-    <None Include="GraphicsEngine\Shaders\MathUtils.hlsli">
-      <Filter>Shaders\Common</Filter>
-    </None>
-    <None Include="GraphicsEngine\Shaders\BillboardGeometryShader.hlsl">
-      <Filter>Shaders\Billboard</Filter>
-    </None>
-    <None Include="GraphicsEngine\Shaders\BillboardVertexShader.hlsl">
-      <Filter>Shaders\Billboard</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="GraphicsEngine\Shaders\StandardVertexShader.hlsl">
@@ -424,6 +397,33 @@
     </FxCompile>
     <FxCompile Include="GraphicsEngine\Shaders\SkyDomeVertexShader.hlsl">
       <Filter>Shaders\Skydome</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\BillboardGeometryShader.hlsl">
+      <Filter>Shaders\Billboard</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\BillboardVertexShader.hlsl">
+      <Filter>Shaders\Billboard</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\CommonDefines.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\LightingUtils.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\MaterialData.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\MathUtils.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\ObjectData.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\PassData.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\Samplers.hlsli">
+      <Filter>Shaders\Common</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

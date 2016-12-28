@@ -6,13 +6,15 @@
 
 struct VertexOutput
 {
+    float3 PositionW : POSITION0;
     float4 PositionH : SV_POSITION;
-    float3 PositionW : POSITION;
+    float4 ShadowPositionH : POSITION1;
     float3 NormalW : NORMAL;
     float2 TextureCoordinates : TEXCOORD;
 };
 
 Texture2D DiffuseMap : register(t0);
+Texture2D ShadowMap : register(t3);
 
 float4 main(VertexOutput input) : SV_TARGET
 {
@@ -25,6 +27,8 @@ float4 main(VertexOutput input) : SV_TARGET
 	clip(diffuseAlbedo.a - 0.1f);
 
 #endif
+
+    float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerAnisotropicClamp, input.ShadowPositionH);
 
     // Interpolating rasterization process can change the magnitude of the normal vector:
     input.NormalW = normalize(input.NormalW);
@@ -50,7 +54,7 @@ float4 main(VertexOutput input) : SV_TARGET
     float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, input.NormalW, toEyeDirection);
     
     // The final color results from the sum of the indirect and direct light:
-    float4 color = ambientIntensity + lightIntensity;
+    float4 color = ambientIntensity + lightIntensity * shadowFactor;
 
 #if defined(FOG)
     color = AddFog(color, distanceToEye, FogStart, FogRange, FogColor);

@@ -51,11 +51,11 @@ Light Light::CreateSpotLight(const DirectX::XMFLOAT3& strength, float falloffSta
 XMFLOAT4X4 Light::GetViewMatrix() const
 {
 	auto eyePosition = XMLoadFloat3(&m_lightData.Position);
-	auto focusPosition = XMLoadFloat3(&m_lightData.Position) + XMLoadFloat3(&m_lightData.Direction);
+	auto eyeDirection = XMLoadFloat3(&m_lightData.Direction);
 	auto upDirection = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	
 	XMFLOAT4X4 viewMatrix;
-	XMStoreFloat4x4(&viewMatrix, XMMatrixLookAtLH(eyePosition, focusPosition, upDirection));
+	XMStoreFloat4x4(&viewMatrix, XMMatrixLookToLH(eyePosition, eyeDirection, upDirection));
 
 	return viewMatrix;
 }

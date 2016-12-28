@@ -24,8 +24,8 @@ namespace GraphicsEngine
 		};
 
 	public:
-
-		// TODO static MeshData LoadFromX3D(const std::wstring& filename);
+		
+		static MeshData CreateRectangle(float originX, float originY, float width, float height, float depth);
 
 	private:
 

@@ -17,6 +17,28 @@ struct Material
     float Shininess;
 };
 
+float CalculateShadowFactor(Texture2D shadowMap, SamplerState samplerState, float4 shadowPositionH)
+{
+    // Complete perspective divide (if perspective projection, w = 1.0f for orthographic):
+    shadowPositionH = shadowPositionH / shadowPositionH.w;
+
+    float shadowMapSample = shadowMap.SampleLevel(samplerState, shadowPositionH.xy, 0.0f).r;
+
+    float shadowFactor;
+    // In shadow:
+    if (shadowPositionH.z > shadowMapSample)
+    {
+        shadowFactor = 0.0f;
+    }
+    // Not in shadow:
+    else
+    {
+        shadowFactor = 1.0f;
+    }
+
+    return shadowFactor;
+}
+
 /// <sumary>
 /// Calculates the linear attenuation which applies to point and spot lights.
 /// </sumary>

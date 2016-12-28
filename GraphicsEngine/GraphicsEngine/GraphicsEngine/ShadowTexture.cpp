@@ -4,7 +4,9 @@
 using namespace Common;
 using namespace GraphicsEngine;
 
-ShadowTexture::ShadowTexture(ID3D11Device* d3dDevice, UINT width, UINT height)
+ShadowTexture::ShadowTexture(ID3D11Device* d3dDevice, UINT width, UINT height) :
+	m_width(width),
+	m_height(height)
 {
 	// Create texture:
 	{
@@ -54,6 +56,14 @@ void ShadowTexture::SetDepthStencilView(ID3D11DeviceContext* deviceContext) cons
 void ShadowTexture::ClearDepthStencilView(ID3D11DeviceContext* deviceContext) const
 {
 	deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+}
+UINT ShadowTexture::GetWidth() const
+{
+	return m_width;
+}
+UINT ShadowTexture::GetHeight() const
+{
+	return m_height;
 }
 
 ID3D11Texture2D* ShadowTexture::GetTexture() const

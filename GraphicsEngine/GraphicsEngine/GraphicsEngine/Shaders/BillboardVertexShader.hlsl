@@ -1,3 +1,6 @@
+#include "LightingUtils.hlsli"
+#include "PassData.hlsli"
+
 struct VertexInput
 {
     float3 CenterW : POSITION;

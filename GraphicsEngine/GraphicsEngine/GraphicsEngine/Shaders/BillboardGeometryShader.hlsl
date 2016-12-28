@@ -8,8 +8,9 @@ struct VertexOutput
 };
 struct GeometryOutput
 {
+    float3 PositionW : POSITION0;
     float4 PositionH : SV_POSITION;
-    float3 PositionW : POSITION;
+    float4 ShadowPositionH : POSITION1;
     float3 NormalW : NORMAL;
     float2 TextureCoordinates : TEXCOORD;
 };
@@ -29,31 +30,31 @@ void main(point VertexOutput input[1], inout TriangleStream<GeometryOutput> outp
     {
         GeometryOutput vertex;
 
+        // TODO shadow 
+        vertex.ShadowPositionH = float4(0.0f, 0.0f, 0.0f, 1.0f);
+        vertex.NormalW = normalW;
+
         // Left Up:
         vertex.PositionW = centerW + leftW * extentsW.x + upW * extentsW.y;
         vertex.PositionH = mul(float4(vertex.PositionW, 1.0f), ViewProjectionMatrix);
-        vertex.NormalW = normalW;
         vertex.TextureCoordinates = float2(0.0f, 0.0f);
         outputStream.Append(vertex);
 
         // Right Up:
         vertex.PositionW = centerW - leftW * extentsW.x + upW * extentsW.y;
         vertex.PositionH = mul(float4(vertex.PositionW, 1.0f), ViewProjectionMatrix);
-        vertex.NormalW = normalW;
         vertex.TextureCoordinates = float2(1.0f, 0.0f);
         outputStream.Append(vertex);
 
         // Left Down:
         vertex.PositionW = centerW + leftW * extentsW.x - upW * extentsW.y;
         vertex.PositionH = mul(float4(vertex.PositionW, 1.0f), ViewProjectionMatrix);
-        vertex.NormalW = normalW;
         vertex.TextureCoordinates = float2(0.0f, 1.0f);
         outputStream.Append(vertex);
 
         // Right Down:
         vertex.PositionW = centerW - leftW * extentsW.x - upW * extentsW.y;
         vertex.PositionH = mul(float4(vertex.PositionW, 1.0f), ViewProjectionMatrix);
-        vertex.NormalW = normalW;
         vertex.TextureCoordinates = float2(1.0f, 1.0f);
         outputStream.Append(vertex);
     }

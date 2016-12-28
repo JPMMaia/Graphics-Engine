@@ -6,6 +6,7 @@ cbuffer PassData : register(b2)
 	float4x4 InverseProjectionMatrix;
 	float4x4 ViewProjectionMatrix;
 	float4x4 InverseViewProjectionMatrix;
+    float4x4 ShadowMatrix;
 	float3 EyePositionW;
 	float TerrainDisplacementScalarY;
 	float2 RenderTargetSize;

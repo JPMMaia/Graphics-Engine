@@ -6,8 +6,9 @@
 
 struct DomainOutput
 {
+    float3 PositionW : POSITION0;
     float4 PositionH : SV_POSITION;
-    float3 PositionW : POSITION;
+    float4 ShadowPositionH : POSITION1;
     float2 TextureCoordinates : TEXCOORD0;
     float2 TiledTextureCoordinates : TEXCOORD1;
 };
@@ -15,6 +16,7 @@ struct DomainOutput
 Texture2D DiffuseMap : register(t0);
 Texture2D NormalMap : register(t1);
 Texture2D HeightMap : register(t2);
+Texture2D ShadowMap : register(t3);
 
 float4 main(DomainOutput input) : SV_TARGET
 {
@@ -46,8 +48,10 @@ float4 main(DomainOutput input) : SV_TARGET
         shininess
     };
 
+    float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerAnisotropicClamp, input.ShadowPositionH);
+
     // Compute contribution of lights:
-    float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, bumpedNormalW, toEyeDirection);
+    float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, bumpedNormalW, toEyeDirection) * shadowFactor;
     
     // The final color results from the sum of the indirect and direct light:
     float4 color = ambientIntensity + lightIntensity;

@@ -367,6 +367,9 @@
     <Filter Include="Shaders\Billboard">
       <UniqueIdentifier>{89a90716-f51a-4af8-88b4-5c9d9d3e82e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\DebugWindow">
+      <UniqueIdentifier>{5ab216ca-d7a1-44f4-a778-034043882ba8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Libraries\rapidxml\manual.html">
@@ -424,6 +427,12 @@
     </FxCompile>
     <FxCompile Include="GraphicsEngine\Shaders\Samplers.hlsli">
       <Filter>Shaders\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\DebugWindowPixelShader.hlsl">
+      <Filter>Shaders\DebugWindow</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\DebugWindowVertexShader.hlsl">
+      <Filter>Shaders\DebugWindow</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

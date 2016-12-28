@@ -37,6 +37,7 @@ namespace GraphicsEngine
 			DirectX::XMFLOAT4X4 InverseProjectionMatrix = MathHelper::Identity4x4();
 			DirectX::XMFLOAT4X4 ViewProjectionMatrix = MathHelper::Identity4x4();
 			DirectX::XMFLOAT4X4 InverseViewProjectionMatrix = MathHelper::Identity4x4();
+			DirectX::XMFLOAT4X4 ShadowMatrix = MathHelper::Identity4x4();
 			DirectX::XMFLOAT3 EyePositionW;
 			float TerrainDisplacementScalarY;
 			DirectX::XMFLOAT2 RenderTargetSize;

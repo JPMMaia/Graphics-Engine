@@ -210,6 +210,8 @@
     <ClCompile Include="GraphicsEngine\SamplerState.cpp" />
     <ClCompile Include="GraphicsEngine\Scenes\DefaultScene.cpp" />
     <ClCompile Include="GraphicsEngine\SettingsManager.cpp" />
+    <FxCompile Include="GraphicsEngine\Shaders\DebugWindowPixelShader.hlsl" />
+    <FxCompile Include="GraphicsEngine\Shaders\DebugWindowVertexShader.hlsl" />
     <FxCompile Include="GraphicsEngine\Shaders\PassData.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

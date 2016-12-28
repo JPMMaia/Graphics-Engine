@@ -23,7 +23,9 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_shadowMap(m_d3dBase.GetDevice(), clientWidth, clientHeight)
 {
 	m_d3dBase.SetClearColor(m_fogColor);
-	m_camera.SetPosition(0.0f, 0.0f, -10.0f);
+	m_camera.SetPosition(0.0f, 40.0f, -40.0f);
+	m_camera.Update();
+	m_camera.RotateLocalX(XM_PI / 4.0f);
 }
 
 void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
@@ -63,7 +65,7 @@ void Graphics::Render(const Common::Timer& timer) const
 		deviceContext->GSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
 		deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
 
-		// Set a new depth stencil:
+		// Bind a depth stencil view to record the depth of the scene from the light point of view:
 		m_shadowMap.SetDepthStencilView(deviceContext);
 
 		// Draw opaque:
@@ -82,6 +84,7 @@ void Graphics::Render(const Common::Timer& timer) const
 		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedShadow");
 		DrawRenderItems(RenderLayer::AlphaClipped);
 
+		// Set default render target and depth stencil:
 		m_d3dBase.SetDefaultRenderTargets();
 	}
 
@@ -92,9 +95,13 @@ void Graphics::Render(const Common::Timer& timer) const
 	deviceContext->GSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
 	deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
 
-	if(!m_fog)
+	// Bind shadow map for use in shaders:
+	auto shadowMapSRV = m_shadowMap.GetShaderResourceView();
+	deviceContext->PSSetShaderResources(3, 1, &shadowMapSRV);
+
+	if (!m_fog)
 	{
-		// Draw Skydome
+		// Draw Skydome:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
 		DrawRenderItems(RenderLayer::SkyDome);
 
@@ -140,9 +147,10 @@ void Graphics::Render(const Common::Timer& timer) const
 		m_pipelineStateManager.SetPipelineState(deviceContext, "BillboardFog");
 		DrawNonInstancedRenderItems(RenderLayer::Billboard);
 	}
-	
-	m_shadowMap.ClearDepthStencilView(deviceContext);
 
+	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+	deviceContext->PSSetShaderResources(3, 1, nullSRV);
+	m_shadowMap.ClearDepthStencilView(deviceContext);
 	m_d3dBase.EndScene();
 }
 
@@ -177,7 +185,7 @@ void Graphics::UpdateInstancesData()
 	// Build the view space camera frustum:
 	auto viewSpaceCameraFrustum = m_camera.BuildViewSpaceBoundingFrustum();
 
-	for(const auto& renderItem : m_allRenderItems)
+	for (const auto& renderItem : m_allRenderItems)
 	{
 		// Get instances buffer for the current render item:
 		auto location = m_currentFrameResource->InstancesBuffers.find(renderItem->Name);
@@ -193,7 +201,7 @@ void Graphics::UpdateInstancesData()
 
 		// For each instance:
 		auto visibleInstanceCount = 0;
-		for(const auto& instanceData : renderItem->InstancesData)
+		for (const auto& instanceData : renderItem->InstancesData)
 		{
 			// Get the world matrix of the instance and calculate its inverse:
 			auto worldMatrix = XMLoadFloat4x4(&instanceData.WorldMatrix);
@@ -208,7 +216,7 @@ void Graphics::UpdateInstancesData()
 			viewSpaceCameraFrustum.Transform(localSpaceCameraFrustum, viewToLocalMatrix);
 
 			// If the camera frustum intersects the instance bounds:
-			if(localSpaceCameraFrustum.Contains(renderItem->Bounds) != ContainmentType::DISJOINT)
+			if (localSpaceCameraFrustum.Contains(renderItem->Bounds) != ContainmentType::DISJOINT)
 			{
 				// Update instance data:
 				auto& instanceDataView = instacesBufferView[visibleInstanceCount++];
@@ -225,7 +233,7 @@ void Graphics::UpdateMaterialData() const
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
 
-	for(auto& e : m_scene.GetMaterials())
+	for (auto& e : m_scene.GetMaterials())
 	{
 		auto material = e.second.get();
 
@@ -242,11 +250,16 @@ void Graphics::UpdateMainPassData(const Common::Timer& timer) const
 {
 	ShaderBufferTypes::PassData passData;
 
+	const auto& castShadowsLights = m_lightManager.GetCastShadowsLights();
+	auto castShadowsLight = castShadowsLights[0];
+
 	auto viewMatrix = m_camera.GetViewMatrix();
+	//auto viewMatrix = XMLoadFloat4x4(&castShadowsLight->GetViewMatrix());
 	auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
 	auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
 
 	auto projectionMatrix = m_camera.GetProjectionMatrix();
+	//auto projectionMatrix = XMLoadFloat4x4(&castShadowsLight->GetOrthographicMatrix(20.0f, 20.0f, 0.01f, 1000.0f));
 	auto projectionMatrixDeterminant = XMMatrixDeterminant(projectionMatrix);
 	auto inverseProjectionMatrix = XMMatrixInverse(&projectionMatrixDeterminant, projectionMatrix);
 
@@ -254,12 +267,28 @@ void Graphics::UpdateMainPassData(const Common::Timer& timer) const
 	auto viewProjectionMatrixDeterminant = XMMatrixDeterminant(viewProjectionMatrix);
 	auto inverseViewProjectionMatrix = XMMatrixInverse(&viewProjectionMatrixDeterminant, viewProjectionMatrix);
 
+	XMMATRIX shadowMatrix;
+	{
+		//const auto& castShadowsLights = m_lightManager.GetCastShadowsLights();
+		//auto castShadowsLight = castShadowsLights[0];
+		auto lightViewMatrix = castShadowsLight->GetViewMatrix();
+		auto lightProjectionMatrix = castShadowsLight->GetOrthographicMatrix(20.0f, 20.0f, 0.01f, 1000.0f);
+		auto lightTextureMatrix = XMMatrixSet(
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, -0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.5f, 0.5f, 0.0f, 1.0f
+		);
+		shadowMatrix = XMLoadFloat4x4(&lightViewMatrix) * XMLoadFloat4x4(&lightProjectionMatrix) * lightTextureMatrix;
+	}
+
 	XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
 	XMStoreFloat4x4(&passData.InverseViewMatrix, XMMatrixTranspose(inverseViewMatrix));
 	XMStoreFloat4x4(&passData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
 	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseProjectionMatrix));
 	XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
 	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
+	XMStoreFloat4x4(&passData.ShadowMatrix, XMMatrixTranspose(shadowMatrix));
 	XMStoreFloat3(&passData.EyePositionW, m_camera.GetPosition());
 	passData.TerrainDisplacementScalarY = 1.0f;
 	passData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));
@@ -275,11 +304,11 @@ void Graphics::UpdateMainPassData(const Common::Timer& timer) const
 	passData.MaxTesselationFactor = 6.0f;
 	passData.MinTesselationDistance = 500.0f;
 	passData.MinTesselationFactor = 1.0f;
-	
+
 	const auto& terrain = m_scene.GetTerrain();
 	passData.TexelSize = terrain.GetTexelSize();
 	passData.TiledTexelScale = terrain.GetDescription().TiledTexelScale;
-	
+
 	passData.SkyDomeColors[0] = { 0.5f, 0.1f, 0.1f, 1.0f };
 	passData.SkyDomeColors[1] = { 0.1f, 0.1f, 0.8f, 1.0f };
 	passData.AmbientLight = m_lightManager.GetAmbientLight();
@@ -299,7 +328,7 @@ void Graphics::UpdateShadowPassData(const Common::Timer& timer) const
 	auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
 	auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
 
-	auto projectionMatrixFloat = castShadowsLight->GetOrthographicMatrix(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()), m_camera.GetNearZ(), m_camera.GetFarZ());
+	auto projectionMatrixFloat = castShadowsLight->GetOrthographicMatrix(20.0f, 20.0f, 0.01f, 1000.0f);
 	auto projectionMatrix = XMLoadFloat4x4(&projectionMatrixFloat);
 	auto projectionMatrixDeterminant = XMMatrixDeterminant(projectionMatrix);
 	auto inverseProjectionMatrix = XMMatrixInverse(&projectionMatrixDeterminant, projectionMatrix);
@@ -350,7 +379,7 @@ void Graphics::DrawRenderItems(RenderLayer renderLayer) const
 	UINT offset = 0;
 
 	// For each render item:
-	for(auto& renderItem : m_renderItemLayers[static_cast<SIZE_T>(renderLayer)])
+	for (auto& renderItem : m_renderItemLayers[static_cast<SIZE_T>(renderLayer)])
 	{
 		// Set instances data:
 		deviceContext->IASetVertexBuffers(1, 1, m_currentFrameResource->InstancesBuffers[renderItem->Name].GetAddressOf(), &stride, &offset);
@@ -361,7 +390,7 @@ void Graphics::DrawRenderItems(RenderLayer renderLayer) const
 		deviceContext->PSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 
 		// Set textures:
-		if(renderItem->Material->DiffuseMap != nullptr)
+		if (renderItem->Material->DiffuseMap != nullptr)
 			deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
 
 		// Render:

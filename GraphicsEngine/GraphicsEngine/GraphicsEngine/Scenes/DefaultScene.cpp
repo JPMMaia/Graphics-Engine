@@ -180,6 +180,33 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 		geometry->Indices = IndexBuffer(device, indices);
 		m_geometries[geometry->Name] = std::move(geometry);
 	}
+
+	// Rectangle for debug:
+	{
+		auto rectangleMeshData = GeometryGenerator2::CreateRectangle(0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
+
+		std::vector<VertexTypes::TextureVertexType> vertices(rectangleMeshData.Vertices.size());
+		for(SIZE_T i = 0; i < vertices.size(); ++i)
+		{
+			auto& vertex = vertices[i];
+			vertex.Position = rectangleMeshData.Vertices[i].Position;
+			vertex.TextureCoordinates = rectangleMeshData.Vertices[i].TextureCoordinates;
+		}
+
+		auto geometry = std::make_unique<MeshGeometry>();
+		geometry->Name = "Rectangle";
+		geometry->Vertices = VertexBuffer(device, vertices);
+		geometry->Indices = IndexBuffer(device, rectangleMeshData.Indices);
+		
+		SubmeshGeometry submesh;
+		submesh.StartIndexLocation = 0;
+		submesh.IndexCount = rectangleMeshData.Indices.size();
+		submesh.BaseVertexLocation = 0;
+		submesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(vertices);
+		geometry->Submeshes["Default"] = submesh;
+
+		AddGeometry(std::move(geometry));
+	}
 }
 void DefaultScene::InitializeTextures(const D3DBase& d3dBase, TextureManager& textureManager)
 {
@@ -218,7 +245,7 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 void DefaultScene::InitializeRenderItems(Graphics* graphics)
 {
 	// Box:
-	{
+	/*{
 		auto boxRenderItem = std::make_unique<RenderItem>();
 		boxRenderItem->Name = "Box";
 		boxRenderItem->Mesh = m_geometries["ShapeGeo"].get();
@@ -231,8 +258,8 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 		boxRenderItem->Bounds = boxSubmesh.Bounds;
 
 		// Instances:
-		/*{
-			const auto size = 3;
+		{
+			const auto size = 10;
 			const auto offset = 2.0f;
 			const auto start = -size  * offset / 2.0f;
 			boxRenderItem->InstancesData.reserve(size * size * size);
@@ -252,23 +279,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 			}
 		}
 
-		graphics->AddRenderItem(std::move(boxRenderItem), { RenderLayer::Opaque });*/
-	}
-
-	// Sphere:
-/*	{
-		auto sphereRenderItem = std::make_unique<RenderItem>();
-		sphereRenderItem->Mesh = m_geometries["ShapeGeo"].get();
-		sphereRenderItem->Material = m_materials["Bricks"].get();
-		sphereRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		sphereRenderItem->IndexCount = sphereRenderItem->Mesh->Submeshes.at("Sphere").IndexCount;
-		sphereRenderItem->StartIndexLocation = sphereRenderItem->Mesh->Submeshes.at("Sphere").StartIndexLocation;
-		sphereRenderItem->BaseVertexLocation = sphereRenderItem->Mesh->Submeshes.at("Sphere").BaseVertexLocation;
-
-		sphereRenderItem->ObjectBufferIndex = 1;
-		XMStoreFloat4x4(&sphereRenderItem->WorldMatrix, XMMatrixTranslation(0.0f, 0.0f, -5.0f));
-
-		graphics->AddRenderItem(std::move(sphereRenderItem), { RenderLayer::Transparent });
+		graphics->AddRenderItem(std::move(boxRenderItem), { RenderLayer::Opaque });
 	}*/
 
 	// Billboards:
@@ -285,22 +296,39 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 		renderItem->Stride = sizeof(VertexTypes::BillboardVertexType);
 		graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Billboard });
 	}
+
+	// Debug:
+	{
+		auto renderItem = std::make_unique<RenderItem>();
+		renderItem->Name = "Debug";
+		renderItem->Mesh = m_geometries.at("Rectangle").get();
+		renderItem->Material = m_materials["Test"].get();
+		renderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		const auto& submesh = renderItem->Mesh->Submeshes.at("Default");
+		renderItem->IndexCount = submesh.IndexCount;
+		renderItem->StartIndexLocation = submesh.StartIndexLocation;
+		renderItem->BaseVertexLocation = submesh.BaseVertexLocation;
+		renderItem->Bounds = submesh.Bounds;
+		renderItem->Stride = sizeof(VertexTypes::TextureVertexType);
+		graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Debug });
+	}
 }
 
 void DefaultScene::InitializeLights(LightManager& lightManager)
 {
 	lightManager.SetAmbientLight({ 0.25f, 0.25f, 0.35f, 1.0f });
-	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalCastShadowsLight({ 0.6f, 0.6f, 0.6f }, { 0.57735f, -0.57735f, 0.57735f }, {0.0f, m_terrain.GetDescription().HeightMapFactor, 0.0f})));
-	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.3f, 0.3f, 0.3f }, { 0.57735f, -0.57735f, 0.57735f })));
-	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.15f, 0.15f, 0.15f }, { 0.0f, -0.707f, -0.707f })));
-	lightManager.AddLight(std::make_unique<Light>(Light::CreatePointLight({ 0.1f, 0.0f, 0.0f }, 2.0f, 20.0f, { 0.0f, 3.0f, 0.0f })));
-	lightManager.AddLight(std::make_unique<Light>(Light::CreateSpotLight({ 0.0f, 0.0f, 0.9f }, 2.0f, { 0.0f,-1.0f, 0.0f }, 20.0f, { 0.0f, 3.0f, 0.0f }, 8.0f)));
+	//lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalCastShadowsLight({ 0.6f, 0.6f, 0.6f }, { 0.57735f, -0.57735f, 0.57735f }, {0.0f, m_terrain.GetDescription().HeightMapFactor, 0.0f})));
+	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalCastShadowsLight({ 0.6f, 0.6f, 0.6f }, { 0.0f, -0.5f, 0.5f }, { 0.0f, 40.0f, -40.0f })));
+	//lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.3f, 0.3f, 0.3f }, { 0.57735f, -0.57735f, 0.57735f })));
+	//lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.15f, 0.15f, 0.15f }, { 0.0f, -0.707f, -0.707f })));
+	//lightManager.AddLight(std::make_unique<Light>(Light::CreatePointLight({ 0.1f, 0.0f, 0.0f }, 2.0f, 20.0f, { 0.0f, 3.0f, 0.0f })));
+	//lightManager.AddLight(std::make_unique<Light>(Light::CreateSpotLight({ 0.0f, 0.0f, 0.9f }, 2.0f, { 0.0f,-1.0f, 0.0f }, 20.0f, { 0.0f, 3.0f, 0.0f }, 8.0f)));
 }
 
 void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
 {
 	// Simple cube:
-	/*{
+	{
 		AssimpImporter importer;
 		AssimpImporter::ImportInfo importInfo;
 		std::wstring filename(L"Models/Cube.fbx");
@@ -334,16 +362,14 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 					ShaderBufferTypes::InstanceData instanceData;
 
 					XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixTranslation(start + i * offset, start + j * offset, start + k * offset));
-					XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixTranslation(start + i * offset, start + j * offset, start + k * offset));
 
-					cubeRenderItem->InstancesData.push_back(instanceData);
 					cubeRenderItem->InstancesData.push_back(instanceData);
 				}
 			}
 		}
 
 		graphics->AddRenderItem(std::move(cubeRenderItem), { RenderLayer::Opaque });
-	}*/
+	}
 
 	// Skydome:
 	{
@@ -377,7 +403,7 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 	}
 
 	// AlanTree:
-	{
+	/*{
 		AssimpImporter importer;
 		AssimpImporter::ImportInfo importInfo;
 		std::wstring filename(L"Models/AlanTree.fbx");
@@ -442,7 +468,7 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 			}
 			graphics->AddRenderItem(std::move(renderItem), { RenderLayer::AlphaClipped });
 		}
-	}
+	}*/
 }
 
 void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)

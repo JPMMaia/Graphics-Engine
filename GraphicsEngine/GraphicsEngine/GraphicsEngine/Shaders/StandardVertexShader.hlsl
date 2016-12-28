@@ -18,8 +18,9 @@ struct InstanceInput
 
 struct VertexOutput
 {
+    float3 PositionW : POSITION0;
     float4 PositionH : SV_POSITION;
-    float3 PositionW : POSITION;
+    float4 ShadowPositionH : POSITION1;
     float3 NormalW : NORMAL;
     float2 TextureCoordinates : TEXCOORD;
 };
@@ -37,6 +38,9 @@ VertexOutput main(VertexInput vertexInput, InstanceInput instanceInput)
 
     // Transform position to homogeneous clip space:
     output.PositionH = mul(positionW, ViewProjectionMatrix);
+
+    // Transform position from world space to light-shadow texture space:
+    output.ShadowPositionH = mul(positionW, ShadowMatrix);
 
     // Output texture coordinates:
     output.TextureCoordinates = mul(float4(vertexInput.TextureCoordinates, 0.0f, 1.0f), MaterialTransform).xy;

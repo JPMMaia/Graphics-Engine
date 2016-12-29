@@ -109,7 +109,6 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 		auto bricks = std::make_unique<Material>();
 		bricks->Name = "Bricks";
 		bricks->DiffuseMap = &textureManager["BricksTexture"];
-		bricks->MaterialIndex = 0;
 		bricks->DiffuseAlbedo = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
 		bricks->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 		bricks->Roughness = 0.25f;
@@ -121,7 +120,6 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 		auto test = std::make_unique<Material>();
 		test->Name = "Test";
 		test->DiffuseMap = &textureManager["Test"];
-		test->MaterialIndex = 0;
 		test->DiffuseAlbedo = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
 		test->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 		test->Roughness = 0.25f;
@@ -133,7 +131,6 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 		auto test = std::make_unique<Material>();
 		test->Name = "NullTexture";
 		test->DiffuseMap = nullptr;
-		test->MaterialIndex = 0;
 		test->DiffuseAlbedo = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
 		test->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 		test->Roughness = 0.25f;
@@ -340,8 +337,9 @@ void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase,
 	terrainDescription.TerrainDepth = 1024.0f;
 	terrainDescription.CellXCount = 128;
 	terrainDescription.CellZCount = 128;
-	terrainDescription.TiledDiffuseMapFilename = L"Textures/TerrainTiledDiffuseMap.dds";
-	terrainDescription.TiledNormalMapFilename = L"Textures/TerrainTiledNormalMap.dds";
+	terrainDescription.TiledDiffuseMapFilename = L"Textures/rock01d.dds";
+	terrainDescription.TiledNormalMapFilename = L"Textures/rock01n.dds";
+	terrainDescription.TiledNormalMap2Filename = L"Textures/snow01n.dds";
 	terrainDescription.HeightMapFilename = L"Textures/TerrainHeightMap.r16";
 	terrainDescription.HeightMapWidth = 1025;
 	terrainDescription.HeightMapHeight = 1025;

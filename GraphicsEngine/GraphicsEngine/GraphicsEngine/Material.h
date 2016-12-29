@@ -18,6 +18,7 @@ namespace GraphicsEngine
 		const Texture* HeightMap = nullptr;
 		const Texture* TiledDiffuseMap = nullptr;
 		const Texture* TiledNormalMap = nullptr;
+		const Texture* TiledNormalMap2 = nullptr;
 
 		// Material constant buffer data used for shading:
 		DirectX::XMFLOAT4 DiffuseAlbedo = { 1.0f, 1.0f, 1.0f, 1.0f };

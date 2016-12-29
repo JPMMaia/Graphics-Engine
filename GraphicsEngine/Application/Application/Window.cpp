@@ -4,7 +4,7 @@ using namespace Win32Application;
 
 Window::Window(WNDPROC mainWindowProc) :
 	m_fullscreen(false),
-	m_clientWidth(600),
+	m_clientWidth(1000),
 	m_clientHeight(600)
 {
 	if (!Initialize(mainWindowProc))

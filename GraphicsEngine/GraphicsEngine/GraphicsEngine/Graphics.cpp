@@ -72,7 +72,7 @@ void Graphics::Render(const Common::Timer& timer) const
 	deviceContext->PSSetSamplers(6, 1, m_shadowsSamplerState.GetAddressOf());
 
 	// Create shadow map:
-	/*{
+	{
 		// Set shadow pass data:
 		deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
 		deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
@@ -84,25 +84,25 @@ void Graphics::Render(const Common::Timer& timer) const
 		m_shadowMap.SetDepthStencilView(deviceContext);
 
 		// Draw opaque:
-		/*m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueShadow");
+		m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueShadow");
 		DrawRenderItems(RenderLayer::Opaque);
-		DrawRenderItems(RenderLayer::NormalMapping);*/
+		DrawRenderItems(RenderLayer::NormalMapping);
 
 		// Draw terrain:
-		//m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainShadow");
-		//DrawTerrain();
+		m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainShadow");
+		DrawTerrain();
 
 		// Draw transparent:
-		/*m_pipelineStateManager.SetPipelineState(deviceContext, "TransparentShadow");
+		m_pipelineStateManager.SetPipelineState(deviceContext, "TransparentShadow");
 		DrawRenderItems(RenderLayer::Transparent);
 
 		// Draw alpha-clipped:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedShadow");
-		DrawRenderItems(RenderLayer::AlphaClipped);*/
+		DrawRenderItems(RenderLayer::AlphaClipped);
 
 		// Set default render target and depth stencil:
-		/*m_d3dBase.SetDefaultRenderTargets();
-	}*/
+		m_d3dBase.SetDefaultRenderTargets();
+	}
 
 	// Set main pass data:
 	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
@@ -122,19 +122,19 @@ void Graphics::Render(const Common::Timer& timer) const
 		DrawNonInstancedRenderItems(RenderLayer::SkyDome);
 
 		// Draw opaque:
-		/*m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
+		m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
 		DrawRenderItems(RenderLayer::Opaque);
 
 		// Draw normal mapped:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "NormalMapping");
-		DrawRenderItems(RenderLayer::NormalMapping);*/
+		DrawRenderItems(RenderLayer::NormalMapping);
 
 		// Draw terrain:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
 		DrawTerrain();
 
 		// Draw transparent:
-		/*m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
+		m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
 		DrawRenderItems(RenderLayer::Transparent);
 
 		// Draw alpha-clipped:
@@ -143,7 +143,7 @@ void Graphics::Render(const Common::Timer& timer) const
 
 		// Draw billboards:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "Billboard");
-		DrawNonInstancedRenderItems(RenderLayer::Billboard);*/
+		DrawNonInstancedRenderItems(RenderLayer::Billboard);
 	}
 	else
 	{
@@ -173,13 +173,13 @@ void Graphics::Render(const Common::Timer& timer) const
 	}
 
 	// Draw debug window:
-	m_pipelineStateManager.SetPipelineState(deviceContext, "DebugWindow");
-	deviceContext->PSSetShaderResources(0, 1, &shadowMapSRV);
+	//m_pipelineStateManager.SetPipelineState(deviceContext, "DebugWindow");
+	//deviceContext->PSSetShaderResources(0, 1, &shadowMapSRV);
 	//const auto& renderItem = m_renderItemLayers[static_cast<UINT>(RenderLayer::Terrain)][0];
 	//deviceContext->PSSetShaderResources(0, 1, renderItem->Material->TangentMap->GetAddressOf());
 	//auto renderTextureSRV = m_renderTexture.GetShaderResourceView();
 	//deviceContext->PSSetShaderResources(0, 1, &renderTextureSRV);
-	DrawNonInstancedRenderItems(RenderLayer::Debug);
+	//DrawNonInstancedRenderItems(RenderLayer::Debug);
 
 	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
 	deviceContext->PSSetShaderResources(3, 1, nullSRV);
@@ -467,6 +467,7 @@ void Graphics::DrawTerrain() const
 		deviceContext->PSSetShaderResources(4, 1, renderItem->Material->TangentMap->GetAddressOf());
 		deviceContext->PSSetShaderResources(5, 1, renderItem->Material->TiledDiffuseMap->GetAddressOf());
 		deviceContext->PSSetShaderResources(6, 1, renderItem->Material->TiledNormalMap->GetAddressOf());
+		deviceContext->PSSetShaderResources(7, 1, renderItem->Material->TiledNormalMap2->GetAddressOf());
 
 		// Render:
 		renderItem->Render(deviceContext);

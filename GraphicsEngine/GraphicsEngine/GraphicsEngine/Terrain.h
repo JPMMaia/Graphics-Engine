@@ -21,6 +21,7 @@ namespace GraphicsEngine
 			uint32_t CellZCount;
 			std::wstring TiledDiffuseMapFilename;
 			std::wstring TiledNormalMapFilename;
+			std::wstring TiledNormalMap2Filename;
 			std::wstring HeightMapFilename;
 			uint32_t HeightMapWidth;
 			uint32_t HeightMapHeight;

@@ -20,70 +20,80 @@ Texture2D ShadowMap : register(t3);
 Texture2D TangentMap : register(t4);
 Texture2D TiledDiffuseMap : register(t5);
 Texture2D TiledNormalMap : register(t6);
+Texture2D TiledNormalMap2 : register(t7);
 
 float4 main(DomainOutput input) : SV_TARGET
 {
     // Compute diffuse albedo by multiplying the sample from the texture and the diffuse albedo of the material:
-    float4 diffuseAlbedo = TiledDiffuseMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates) * DiffuseAlbedo;
+    float4 rockDiffuseAlbedo = TiledDiffuseMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates) * float4(0.26f, 0.30f, 0.38f, 1.0f);
+    float4 snowDiffuseAlbedo = float4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    // Create rock material:
+    Material rockMaterial =
+    {
+        rockDiffuseAlbedo,
+        float3(0.2f, 0.2f, 0.2f),
+        0.1f
+    };
+    
+    // Create snow material:
+    Material snowMaterial =
+    {
+        snowDiffuseAlbedo,
+        float3(0.8f, 0.8f, 0.8f),
+        0.7f
+    };
 
     // Sample normal and tangent:
     float3 normalW = NormalMap.Sample(SamplerAnisotropicWrap, input.TextureCoordinates).rgb;
     float3 tangentW = TangentMap.Sample(SamplerAnisotropicWrap, input.TextureCoordinates).rgb;
 
     // Sample value from the tiled normal map and compute the bumped normal in world space:
-    float3 tiledNormalSample = TiledNormalMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
-    float3 bumpedTiledNormalW = NormalSampleToBumpedNormalW(tiledNormalSample, normalW, tangentW);
-    bumpedTiledNormalW = normalize(bumpedTiledNormalW);
-    //float3 bumpedTiledNormalW = normalW;
-
-    /*float4 rockDiffuseAlbedo = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    float4 snowDiffuseAlbedo = float4(1.0f, 1.0f, 1.0f, 1.0f);
-
-    float4 diffuseAlbedo;
-    float slope = 1.0f - bumpedTiledNormalW.y;
-    if (slope < 0.2f)
-    {
-        float blendAmount = slope / 0.2f;
-        diffuseAlbedo = lerp(snowDiffuseAlbedo, rockDiffuseAlbedo, blendAmount);
-    }
-    if (slope >= 0.2f)
-    {
-        diffuseAlbedo = rockDiffuseAlbedo;
-    }
-    diffuseAlbedo *= DiffuseAlbedo;*/
+    float3 rockNormalSample = TiledNormalMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
+    float3 rockNormalW = NormalSampleToBumpedNormalW(rockNormalSample, normalW, tangentW);
+    //float3 bumpedTiledNormalW = normalize(normalW);
+    float3 snowNormalSample = TiledNormalMap2.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
+    float3 snowNormalW = NormalSampleToBumpedNormalW(snowNormalSample, normalW, tangentW);
 
     // Calculate direction from point to camera:
     float3 toEyeDirection = EyePositionW - input.PositionW;
     float distanceToEye = length(toEyeDirection);
     toEyeDirection /= distanceToEye;
 
-    // Calculate indirect lighting:
-    float4 ambientIntensity = AmbientLight * diffuseAlbedo;
-
-    // Create a material:
-    float shininess = 1.0f - Roughness;
-    Material material =
-    {
-        diffuseAlbedo,
-        FresnelR0,
-        shininess
-    };
-
     // Calculate the shadow factor:
     float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerShadows, input.ShadowPositionH);
 
     // Compute contribution of lights:
-    float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, bumpedTiledNormalW, toEyeDirection, shadowFactor);
+    float4 rockLightIntensity = ComputeLighting(Lights, rockMaterial, input.PositionW, rockNormalW, toEyeDirection, shadowFactor);
+    float4 snowLightIntensity = ComputeLighting(Lights, snowMaterial, input.PositionW, snowNormalW, toEyeDirection, shadowFactor);
     
+    // Compute indirect light:
+    float4 rockAmbientIntensity = AmbientLight * rockDiffuseAlbedo;
+    float4 snowAmbientIntensity = AmbientLight * snowDiffuseAlbedo;
+
     // The final color results from the sum of the indirect and direct light:
-    float4 color = ambientIntensity + lightIntensity;
+    float4 rockColor = rockAmbientIntensity + rockLightIntensity;
+    float4 snowColor = snowAmbientIntensity + snowLightIntensity;
+
+    // Interpolate materials depending on the slope:
+    float4 color;
+    float slope = 1.0f - normalW.y;
+    if (slope < 0.2f)
+    {
+        float blendAmount = slope / 0.2f;
+        color = lerp(snowColor, rockColor, blendAmount);
+    }
+    else
+    {
+        color = rockColor;
+    }
 
 #if defined(FOG)
     color = AddFog(color, distanceToEye, FogStart, FogRange, FogColor);
 #endif
 
-    // Common convention to take alpha from diffuse albedo:
-    color.a = diffuseAlbedo.a;
+    // Set alpha channel to 1:
+    color.a = 1.0f;
 
     return color;
 }

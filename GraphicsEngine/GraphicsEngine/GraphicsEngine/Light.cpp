@@ -4,24 +4,13 @@
 using namespace DirectX;
 using namespace GraphicsEngine;
 
-Light Light::CreateDirectionalLight(const DirectX::XMFLOAT3& strength, const DirectX::XMFLOAT3& direction)
+Light Light::CreateDirectionalLight(const DirectX::XMFLOAT3& strength, const DirectX::XMFLOAT3& direction, bool castShadows)
 {
 	Light light;
 	light.m_type = Type::Directional;
 	light.m_lightData.Strength = strength;
 	light.m_lightData.Direction = direction;
-	light.m_castShadows = false;
-
-	return light;
-}
-Light Light::CreateDirectionalCastShadowsLight(const DirectX::XMFLOAT3& strength, const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position)
-{
-	Light light;
-	light.m_type = Type::Directional;
-	light.m_lightData.Strength = strength;
-	light.m_lightData.Direction = direction;
-	light.m_lightData.Position = position;
-	light.m_castShadows = true;
+	light.m_castShadows = castShadows;
 
 	return light;
 }
@@ -48,23 +37,40 @@ Light Light::CreateSpotLight(const DirectX::XMFLOAT3& strength, float falloffSta
 	return light;
 }
 
-XMFLOAT4X4 Light::GetViewMatrix() const
+void Light::UpdateShadowMatrix(const BoundingBox& sceneBounds)
 {
-	auto eyePosition = XMLoadFloat3(&m_lightData.Position);
-	auto eyeDirection = XMLoadFloat3(&m_lightData.Direction);
+	// Calculate the light position based on the direction of the light and the scene bounds:
+	auto lightDirection = XMLoadFloat3(&m_lightData.Direction);
+	auto lightPosition = -2.0f * sceneBounds.Extents.x * lightDirection;
+	XMStoreFloat3(&m_lightData.Position, lightPosition);
+
+	// Calculate the light view matrix:
+	auto targetPosition = XMLoadFloat3(&sceneBounds.Center);
 	auto upDirection = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	
-	XMFLOAT4X4 viewMatrix;
-	XMStoreFloat4x4(&viewMatrix, XMMatrixLookToLH(eyePosition, eyeDirection, upDirection));
+	m_viewMatrix = XMMatrixLookAtLH(lightPosition, targetPosition, upDirection);
 
-	return viewMatrix;
-}
-DirectX::XMFLOAT4X4 Light::GetOrthographicMatrix(float viewWidth, float viewHeight, float nearZ, float farZ)
-{
-	XMFLOAT4X4 orthographicMatrix;
-	XMStoreFloat4x4(&orthographicMatrix, XMMatrixOrthographicLH(viewWidth, viewHeight, nearZ, farZ));
+	// Transform center of scene to light view space:
+	XMFLOAT3 sceneCenterLightSpace;
+	XMStoreFloat3(&sceneCenterLightSpace, XMVector3TransformCoord(targetPosition, m_viewMatrix));
 
-	return orthographicMatrix;
+	// Calculate the light orthographic projection matrix:
+	auto left = sceneCenterLightSpace.x - sceneBounds.Extents.x;
+	auto right = sceneCenterLightSpace.x + sceneBounds.Extents.x;
+	auto bottom = sceneCenterLightSpace.y - sceneBounds.Extents.z;
+	auto top = sceneCenterLightSpace.y + sceneBounds.Extents.z;
+	auto nearZ = sceneCenterLightSpace.z - sceneBounds.Extents.y;
+	auto farZ = sceneCenterLightSpace.z + sceneBounds.Extents.y;
+	m_projectionMatrix = XMMatrixOrthographicOffCenterLH(left, right, bottom, top, nearZ, farZ);
+
+	// Transform from NDC space to texture space:
+	auto lightTextureMatrix = XMMatrixSet(
+		0.5f, 0.0f, 0.0f, 0.0f,
+		0.0f, -0.5f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.0f, 1.0f
+	);
+
+	m_shadowMatrix = m_viewMatrix * m_projectionMatrix * lightTextureMatrix;
 }
 
 Light::Type Light::GetType() const
@@ -78,4 +84,29 @@ const ShaderBufferTypes::LightData& Light::GetLightData() const
 bool Light::CastShadows() const
 {
 	return m_castShadows;
+}
+
+const XMMATRIX& Light::GetViewMatrix() const
+{
+	return m_viewMatrix;
+}
+const XMMATRIX& Light::GetProjectionMatrix() const
+{
+	return m_projectionMatrix;
+}
+const XMMATRIX& Light::GetShadowMatrix() const
+{
+	return m_shadowMatrix;
+}
+void Light::SetStrength(const DirectX::XMFLOAT3& strength)
+{
+	m_lightData.Strength = strength;
+}
+void Light::SetDirection(const DirectX::XMFLOAT3& direction)
+{
+	m_lightData.Direction = direction;
+}
+void Light::SetPosition(const DirectX::XMFLOAT3& position)
+{
+	m_lightData.Position = position;
 }

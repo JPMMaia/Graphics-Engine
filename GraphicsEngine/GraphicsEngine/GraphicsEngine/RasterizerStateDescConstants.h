@@ -47,5 +47,19 @@ namespace GraphicsEngine
 			false,									// MultisampleEnable
 			false									// AntialiasedLineEnable
 		};
+
+		static constexpr D3D11_RASTERIZER_DESC Shadows =
+		{
+			D3D11_FILL_MODE::D3D11_FILL_SOLID,		// FillMode
+			D3D11_CULL_MODE::D3D11_CULL_BACK,		// CullMode
+			false,									// FrontCounterClockwise
+			100000,									// DepthBias
+			0.0f,									// DepthBiasClamp
+			1.0f,									// SlopeScaledDepthBias
+			true,									// DepthClipEnable
+			false,									// ScissorEnable
+			false,									// MultisampleEnable
+			false									// AntialiasedLineEnable
+		};
 	};
 };

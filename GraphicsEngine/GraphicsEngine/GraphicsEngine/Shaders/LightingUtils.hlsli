@@ -17,26 +17,38 @@ struct Material
     float Shininess;
 };
 
-float CalculateShadowFactor(Texture2D shadowMap, SamplerState samplerState, float4 shadowPositionH)
+float CalculateShadowFactor(Texture2D shadowMap, SamplerComparisonState samplerState, float4 shadowPositionH)
 {
-    // Complete perspective divide (if perspective projection, w = 1.0f for orthographic):
+    // Perform perspective divide (if perspective projection, w = 1.0f for orthographic):
     shadowPositionH = shadowPositionH / shadowPositionH.w;
 
-    float shadowMapSample = shadowMap.SampleLevel(samplerState, shadowPositionH.xy, 0.0f).r;
+    float depth = shadowPositionH.z;
 
-    float shadowFactor;
-    // In shadow:
-    if (shadowPositionH.z > shadowMapSample)
+    // Get the dimensions of the shadow map:
+    uint width, height, numberOfLevels;
+    shadowMap.GetDimensions(0, width, height, numberOfLevels);
+
+    // Calculate the size of a texel:
+    float dx = 1.0f / (float) width;
+
+    // Offsets for neighbors:
+    const uint numberOfOffsets = 9;
+    const float2 offsets[numberOfOffsets] =
     {
-        shadowFactor = 0.0f;
-    }
-    // Not in shadow:
-    else
+        float2(-dx, -dx), float2(0.0f, -dx), float2(+dx, -dx),
+        float2(-dx, 0.0), float2(0.0f, 0.0f), float2(+dx, 0.0f),
+        float2(-dx, +dx), float2(0.0f, +dx), float2(+dx, +dx),
+    };
+
+    float percentLit = 0.0f;
+    [unroll]
+    for (int i = 0; i < numberOfOffsets; ++i)
     {
-        shadowFactor = 1.0f;
+        // Sample texture from [position.x + dx, position.y + dy] and compare it againts the depth value:
+        percentLit += shadowMap.SampleCmpLevelZero(samplerState, shadowPositionH.xy + offsets[i], depth).r;
     }
 
-    return shadowFactor;
+    return percentLit /= 9.0f;
 }
 
 /// <sumary>
@@ -158,7 +170,7 @@ float3 ComputeSpotLight(Light light, Material material, float3 position, float3 
 /// <sumary>
 /// Evaluates the accumulated light intensity of all lights.
 /// </sumary>
-float4 ComputeLighting(Light lights[MAX_NUM_LIGHTS], Material material, float3 position, float3 normal, float3 toEyeDirection)
+float4 ComputeLighting(Light lights[MAX_NUM_LIGHTS], Material material, float3 position, float3 normal, float3 toEyeDirection, float shadowFactor)
 {
     float3 result = 0.0f;
 
@@ -167,7 +179,7 @@ float4 ComputeLighting(Light lights[MAX_NUM_LIGHTS], Material material, float3 p
     [unroll]
     for (int i = 0; i < NUM_DIR_LIGHTS; ++i)
     {
-        result += ComputeDirectionalLight(lights[i], material, normal, toEyeDirection);
+        result += shadowFactor * ComputeDirectionalLight(lights[i], material, normal, toEyeDirection);
     }
 
 #endif 

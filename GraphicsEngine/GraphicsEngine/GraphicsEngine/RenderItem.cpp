@@ -15,7 +15,7 @@ void RenderItem::Render(ID3D11DeviceContext* deviceContext) const
 	deviceContext->IASetIndexBuffer(this->Mesh->Indices.Get(), this->IndexFormat, 0);
 	deviceContext->IASetPrimitiveTopology(this->PrimitiveType);
 	
-	deviceContext->DrawIndexedInstanced(this->IndexCount, static_cast<UINT>(this->InstancesData.size()), this->StartIndexLocation, this->BaseVertexLocation, 0);
+	deviceContext->DrawIndexedInstanced(this->IndexCount, this->VisibleInstanceCount, this->StartIndexLocation, this->BaseVertexLocation, 0);
 }
 void RenderItem::RenderNonInstanced(ID3D11DeviceContext* deviceContext) const
 {

@@ -109,7 +109,10 @@ const XMMATRIX& Camera::GetProjectionMatrix() const
 {
 	return m_projectionMatrix;
 }
-
+const XMVECTOR& Camera::GetForward() const
+{
+	return m_rotationMatrix.r[2];
+}
 float Camera::GetNearZ() const
 {
 	return m_nearZ;

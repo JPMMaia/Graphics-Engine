@@ -28,8 +28,6 @@ float4 main(VertexOutput input) : SV_TARGET
 
 #endif
 
-    float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerAnisotropicClamp, input.ShadowPositionH);
-
     // Interpolating rasterization process can change the magnitude of the normal vector:
     input.NormalW = normalize(input.NormalW);
 
@@ -50,11 +48,14 @@ float4 main(VertexOutput input) : SV_TARGET
         shininess
     };
 
+    // Calculate the shadow factor:
+    float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerShadows, input.ShadowPositionH);
+
     // Compute contribution of lights:
-    float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, input.NormalW, toEyeDirection);
+    float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, input.NormalW, toEyeDirection, shadowFactor);
     
     // The final color results from the sum of the indirect and direct light:
-    float4 color = ambientIntensity + lightIntensity * shadowFactor;
+    float4 color = ambientIntensity + lightIntensity;
 
 #if defined(FOG)
     color = AddFog(color, distanceToEye, FogStart, FogRange, FogColor);

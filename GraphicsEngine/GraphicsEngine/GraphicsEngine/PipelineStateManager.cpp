@@ -49,7 +49,7 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 		{ "WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 	};
 
-	m_inputLayouts["Billboard"] = 
+	m_inputLayouts["Texture"] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -140,8 +140,20 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 			nullptr, nullptr
 		};
 
-		m_vertexShaders["Billboard"] = VertexShader(device, shadersFolderPath + L"BillboardVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Billboard"]);
+		m_vertexShaders["Billboard"] = VertexShader(device, shadersFolderPath + L"BillboardVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Texture"]);
 		m_geometryShaders["Billboard"] = GeometryShader(device, shadersFolderPath + L"BillboardGeometryShader.hlsl", defines.data(), "main", "gs_5_0");
+	}
+
+	// Debug Window shaders:
+	{
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			nullptr, nullptr
+		};
+
+		m_vertexShaders["DebugWindow"] = VertexShader(device, shadersFolderPath + L"DebugWindowVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Texture"]);
+		m_pixelShaders["DebugWindow"] = PixelShader(device, shadersFolderPath + L"DebugWindowPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 	}
 }
 void PipelineStateManager::InitializeRasterizerStates(const D3DBase& d3dBase)
@@ -151,7 +163,7 @@ void PipelineStateManager::InitializeRasterizerStates(const D3DBase& d3dBase)
 	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("Default"), std::forward_as_tuple(device, RasterizerStateDescConstants::Default));
 	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("Wireframe"), std::forward_as_tuple(device, RasterizerStateDescConstants::Wireframe));
 	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("NoCulling"), std::forward_as_tuple(device, RasterizerStateDescConstants::NoCulling));
-	
+	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("Shadows"), std::forward_as_tuple(device, RasterizerStateDescConstants::Shadows));
 }
 void PipelineStateManager::InitializeBlendStates(const D3DBase& d3dBase)
 {
@@ -189,6 +201,7 @@ void PipelineStateManager::InitializePipelineStateObjects()
 
 		auto opaqueShadowState = opaqueState;
 		opaqueShadowState.PixelShader = &PixelShader::s_null;
+		opaqueShadowState.RasterizerState = &m_rasterizerStates.at("Shadows");
 		m_pipelineStateObjects.emplace("OpaqueShadow", opaqueShadowState);
 	}
 
@@ -204,6 +217,7 @@ void PipelineStateManager::InitializePipelineStateObjects()
 
 		auto transparentShadowState = transparentState;
 		transparentShadowState.PixelShader = &PixelShader::s_null;
+		transparentShadowState.RasterizerState = &m_rasterizerStates.at("Shadows");
 		m_pipelineStateObjects.emplace("TransparentShadow", transparentShadowState);
 	}
 
@@ -222,6 +236,7 @@ void PipelineStateManager::InitializePipelineStateObjects()
 
 		auto alphaClippedShadowState = alphaClippedState;
 		alphaClippedShadowState.PixelShader = &PixelShader::s_null; // TODO set shadow pixel shader
+		alphaClippedShadowState.RasterizerState = &m_rasterizerStates.at("Shadows");
 		m_pipelineStateObjects.emplace("AlphaClippedShadow", alphaClippedShadowState);
 	}
 
@@ -243,6 +258,7 @@ void PipelineStateManager::InitializePipelineStateObjects()
 
 		auto terrainShadowState = terrainState;
 		terrainShadowState.PixelShader = &PixelShader::s_null;
+		terrainShadowState.RasterizerState = &m_rasterizerStates.at("Shadows");
 		m_pipelineStateObjects.emplace("TerrainShadow", terrainShadowState);
 	}
 
@@ -271,5 +287,16 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		auto billboardFogState = billboardState;
 		billboardFogState.PixelShader = &m_pixelShaders.at("StandardFog");
 		m_pipelineStateObjects.emplace("BillboardFog", billboardFogState);
+	}
+
+	// Debug Window:
+	{
+		PipelineState debugWindowState;
+		debugWindowState.VertexShader = &m_vertexShaders.at("DebugWindow");
+		debugWindowState.PixelShader = &m_pixelShaders.at("DebugWindow");
+		debugWindowState.RasterizerState = &m_rasterizerStates.at("Default");
+		debugWindowState.BlendState = &m_blendStates.at("Default");
+		debugWindowState.DepthStencilState = &m_depthStencilStates.at("Default");
+		m_pipelineStateObjects.emplace("DebugWindow", debugWindowState);
 	}
 }

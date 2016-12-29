@@ -85,5 +85,18 @@ namespace GraphicsEngine
 			0.0f,							// MinLOD
 			FLT_MAX							// MaxLOD
 		};
+		static constexpr D3D11_SAMPLER_DESC Shadows =
+		{
+			D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT,	// Filter
+			D3D11_TEXTURE_ADDRESS_BORDER,						// AddressU
+			D3D11_TEXTURE_ADDRESS_BORDER,						// AddressV
+			D3D11_TEXTURE_ADDRESS_BORDER,						// AddressW
+			0.0f,												// MipLODBias
+			16,													// MaxAnisotropy
+			D3D11_COMPARISON_LESS_EQUAL,						// ComparisonFunc
+			{ 1.0f, 1.0f, 1.0f, 1.0f },							// BorderColor
+			0.0f,												// MinLOD
+			FLT_MAX												// MaxLOD
+		};
 	};
 };

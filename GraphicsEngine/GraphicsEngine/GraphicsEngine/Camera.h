@@ -27,6 +27,7 @@ namespace GraphicsEngine
 		const DirectX::XMVECTOR& GetPosition() const;
 		const DirectX::XMMATRIX& GetViewMatrix() const;
 		const DirectX::XMMATRIX& GetProjectionMatrix() const;
+		const DirectX::XMVECTOR& GetForward() const;
 
 		float GetNearZ() const;
 		float GetFarZ() const;

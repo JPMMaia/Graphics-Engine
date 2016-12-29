@@ -26,7 +26,7 @@
       <Filter>GraphicsEngine\Settings</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\RasterizerState.cpp">
-      <Filter>GraphicsEngine\Rasterizer</Filter>
+      <Filter>GraphicsEngine\States\Rasterizer</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\DXInputHandler.cpp">
       <Filter>GraphicsEngine\Input</Filter>
@@ -41,7 +41,7 @@
       <Filter>GraphicsEngine</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\PipelineState.cpp">
-      <Filter>GraphicsEngine\PipelineState</Filter>
+      <Filter>GraphicsEngine\States\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\DomainShader.cpp">
       <Filter>GraphicsEngine\Shaders</Filter>
@@ -56,7 +56,7 @@
       <Filter>GraphicsEngine\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\PipelineStateManager.cpp">
-      <Filter>GraphicsEngine\PipelineState</Filter>
+      <Filter>GraphicsEngine\States\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\IShader.cpp">
       <Filter>GraphicsEngine\Shaders</Filter>
@@ -81,13 +81,13 @@
       <Filter>GraphicsEngine\Textures</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\SamplerState.cpp">
-      <Filter>GraphicsEngine\Textures\SamplerStates</Filter>
+      <Filter>GraphicsEngine\States\SamplerStates</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\BlendState.cpp">
-      <Filter>GraphicsEngine\Textures\BlendStates</Filter>
+      <Filter>GraphicsEngine\States\BlendStates</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\BlendStateDescConstants.cpp">
-      <Filter>GraphicsEngine\Textures\BlendStates</Filter>
+      <Filter>GraphicsEngine\States\BlendStates</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\AssimpImporter\AssimpImporter.cpp">
       <Filter>GraphicsEngine\AssimpImporter</Filter>
@@ -152,10 +152,10 @@
       <Filter>GraphicsEngine\Settings</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\RasterizerState.h">
-      <Filter>GraphicsEngine\Rasterizer</Filter>
+      <Filter>GraphicsEngine\States\Rasterizer</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\RasterizerStateDescConstants.h">
-      <Filter>GraphicsEngine\Rasterizer</Filter>
+      <Filter>GraphicsEngine\States\Rasterizer</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\Buffer.h">
       <Filter>GraphicsEngine\Buffers</Filter>
@@ -179,7 +179,7 @@
       <Filter>GraphicsEngine</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\PipelineState.h">
-      <Filter>GraphicsEngine\PipelineState</Filter>
+      <Filter>GraphicsEngine\States\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\DomainShader.h">
       <Filter>GraphicsEngine\Shaders</Filter>
@@ -194,7 +194,7 @@
       <Filter>GraphicsEngine\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\PipelineStateManager.h">
-      <Filter>GraphicsEngine\PipelineState</Filter>
+      <Filter>GraphicsEngine\States\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\IShader.h">
       <Filter>GraphicsEngine\Shaders</Filter>
@@ -243,16 +243,16 @@
       <Filter>GraphicsEngine\Textures</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\SamplerState.h">
-      <Filter>GraphicsEngine\Textures\SamplerStates</Filter>
+      <Filter>GraphicsEngine\States\SamplerStates</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\SamplerStateDescConstants.h">
-      <Filter>GraphicsEngine\Textures\SamplerStates</Filter>
+      <Filter>GraphicsEngine\States\SamplerStates</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\BlendState.h">
-      <Filter>GraphicsEngine\Textures\BlendStates</Filter>
+      <Filter>GraphicsEngine\States\BlendStates</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\BlendStateDescConstants.h">
-      <Filter>GraphicsEngine\Textures\BlendStates</Filter>
+      <Filter>GraphicsEngine\States\BlendStates</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\AssimpImporter\AssimpImporter.h">
       <Filter>GraphicsEngine\AssimpImporter</Filter>
@@ -310,17 +310,11 @@
     <Filter Include="GraphicsEngine\Settings">
       <UniqueIdentifier>{ef3916db-fad9-458a-aae4-0785980a4b2d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GraphicsEngine\Rasterizer">
-      <UniqueIdentifier>{12fd9736-1dc7-4b8a-ae7f-1413d47452a9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GraphicsEngine\Buffers">
       <UniqueIdentifier>{1f080897-ef95-43f2-91ee-9d0f9e124d1b}</UniqueIdentifier>
     </Filter>
     <Filter Include="GraphicsEngine\Input">
       <UniqueIdentifier>{e984538a-169e-4d6f-b513-7b6dc4277724}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GraphicsEngine\PipelineState">
-      <UniqueIdentifier>{d7aca9a2-8f5a-4083-8144-6e28918a11cf}</UniqueIdentifier>
     </Filter>
     <Filter Include="GraphicsEngine\Shaders">
       <UniqueIdentifier>{b5ab1a1c-01e3-4f50-a0e1-26b31df3ac7f}</UniqueIdentifier>
@@ -343,12 +337,6 @@
     <Filter Include="Shaders\Common">
       <UniqueIdentifier>{86d2ac93-db29-4637-9845-c48bb2ea3aa9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GraphicsEngine\Textures\SamplerStates">
-      <UniqueIdentifier>{5445e76f-0de9-4f48-a2af-beff57c31095}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GraphicsEngine\Textures\BlendStates">
-      <UniqueIdentifier>{a99b425d-a397-4ad6-93e7-5e13510419ca}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GraphicsEngine\AssimpImporter">
       <UniqueIdentifier>{e559f998-cefb-4ccf-983a-f24545061a73}</UniqueIdentifier>
     </Filter>
@@ -369,6 +357,21 @@
     </Filter>
     <Filter Include="Shaders\DebugWindow">
       <UniqueIdentifier>{5ab216ca-d7a1-44f4-a778-034043882ba8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\States">
+      <UniqueIdentifier>{9437a46b-097d-43e9-b7f4-5db11e04413c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\States\Rasterizer">
+      <UniqueIdentifier>{12fd9736-1dc7-4b8a-ae7f-1413d47452a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\States\BlendStates">
+      <UniqueIdentifier>{a99b425d-a397-4ad6-93e7-5e13510419ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\States\SamplerStates">
+      <UniqueIdentifier>{5445e76f-0de9-4f48-a2af-beff57c31095}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\States\PipelineState">
+      <UniqueIdentifier>{d7aca9a2-8f5a-4083-8144-6e28918a11cf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

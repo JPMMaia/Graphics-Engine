@@ -48,10 +48,11 @@ float4 main(DomainOutput input) : SV_TARGET
         shininess
     };
 
-    float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerAnisotropicClamp, input.ShadowPositionH);
+    // Calculate the shadow factor:
+    float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerShadows, input.ShadowPositionH);
 
     // Compute contribution of lights:
-    float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, bumpedNormalW, toEyeDirection) * shadowFactor;
+    float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, bumpedNormalW, toEyeDirection, shadowFactor);
     
     // The final color results from the sum of the indirect and direct light:
     float4 color = ambientIntensity + lightIntensity;

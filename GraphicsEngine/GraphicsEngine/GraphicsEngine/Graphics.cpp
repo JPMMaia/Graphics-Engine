@@ -18,9 +18,12 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_linearClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::LinearClamp),
 	m_anisotropicWrapSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicWrap),
 	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp),
+	m_shadowsSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::Shadows),
 	m_fog(false),
 	m_fogColor(0.5f, 0.5f, 0.5f),
-	m_shadowMap(m_d3dBase.GetDevice(), clientWidth, clientHeight)
+	m_shadowMap(m_d3dBase.GetDevice(), 2048.0f, 2048.0f),
+	m_renderTexture(m_d3dBase.GetDevice(), clientWidth, clientHeight, DXGI_FORMAT_R8G8B8A8_UNORM),
+	m_sceneBounds(XMFLOAT3(0.0f, 128.0f, 0.0f), XMFLOAT3(512.0f, 256.0f, 512.0f))
 {
 	m_d3dBase.SetClearColor(m_fogColor);
 	m_camera.SetPosition(0.0f, 40.0f, -40.0f);
@@ -36,6 +39,7 @@ void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
 void Graphics::Update(const Common::Timer& timer)
 {
 	m_camera.Update();
+	UpdateLights();
 	UpdateMainPassData(timer);
 	UpdateShadowPassData(timer);
 	UpdateMaterialData();
@@ -55,6 +59,7 @@ void Graphics::Render(const Common::Timer& timer) const
 	deviceContext->PSSetSamplers(4, 1, m_anisotropicWrapSamplerState.GetAddressOf());
 	deviceContext->DSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
 	deviceContext->PSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
+	deviceContext->PSSetSamplers(6, 1, m_shadowsSamplerState.GetAddressOf());
 
 	// Create shadow map:
 	{
@@ -88,6 +93,40 @@ void Graphics::Render(const Common::Timer& timer) const
 		m_d3dBase.SetDefaultRenderTargets();
 	}
 
+	/*{
+		m_renderTexture.SetRenderTargetView(deviceContext, m_d3dBase.GetDepthStencilView());
+
+		// Set shadow pass data:
+		deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
+		deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
+		deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
+		deviceContext->GSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
+		deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
+
+		// Draw opaque:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
+		DrawRenderItems(RenderLayer::Opaque);
+
+		// Draw terrain:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
+		DrawTerrain();
+
+		// Draw transparent:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
+		DrawRenderItems(RenderLayer::Transparent);
+
+		// Draw alpha-clipped:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClipped");
+		DrawRenderItems(RenderLayer::AlphaClipped);
+
+		// Draw billboards:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "Billboard");
+		DrawNonInstancedRenderItems(RenderLayer::Billboard);
+
+		deviceContext->ClearDepthStencilView(m_d3dBase.GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		m_d3dBase.SetDefaultRenderTargets();
+	}*/
+
 	// Set main pass data:
 	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
 	deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
@@ -103,7 +142,7 @@ void Graphics::Render(const Common::Timer& timer) const
 	{
 		// Draw Skydome:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
-		DrawRenderItems(RenderLayer::SkyDome);
+		DrawNonInstancedRenderItems(RenderLayer::SkyDome);
 
 		// Draw opaque:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
@@ -148,8 +187,16 @@ void Graphics::Render(const Common::Timer& timer) const
 		DrawNonInstancedRenderItems(RenderLayer::Billboard);
 	}
 
+	// Draw debug window:
+	m_pipelineStateManager.SetPipelineState(deviceContext, "DebugWindow");
+	deviceContext->PSSetShaderResources(0, 1, &shadowMapSRV);
+	//auto renderTextureSRV = m_renderTexture.GetShaderResourceView();
+	//deviceContext->PSSetShaderResources(0, 1, &renderTextureSRV);
+	DrawNonInstancedRenderItems(RenderLayer::Debug);
+
 	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
 	deviceContext->PSSetShaderResources(3, 1, nullSRV);
+	deviceContext->PSSetShaderResources(0, 1, nullSRV);
 	m_shadowMap.ClearDepthStencilView(deviceContext);
 	m_d3dBase.EndScene();
 }
@@ -246,20 +293,21 @@ void Graphics::UpdateMaterialData() const
 		m_currentFrameResource->MaterialDataArray[material->MaterialIndex].CopyData(deviceContext, &materialData, sizeof(ShaderBufferTypes::MaterialData));
 	}
 }
+void Graphics::UpdateLights() const
+{
+	const auto& castShadowsLights = m_lightManager.GetCastShadowsLights();
+	auto castShadowsLight = castShadowsLights[0];
+	castShadowsLight->UpdateShadowMatrix(m_sceneBounds);
+}
 void Graphics::UpdateMainPassData(const Common::Timer& timer) const
 {
 	ShaderBufferTypes::PassData passData;
 
-	const auto& castShadowsLights = m_lightManager.GetCastShadowsLights();
-	auto castShadowsLight = castShadowsLights[0];
-
 	auto viewMatrix = m_camera.GetViewMatrix();
-	//auto viewMatrix = XMLoadFloat4x4(&castShadowsLight->GetViewMatrix());
 	auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
 	auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
 
 	auto projectionMatrix = m_camera.GetProjectionMatrix();
-	//auto projectionMatrix = XMLoadFloat4x4(&castShadowsLight->GetOrthographicMatrix(20.0f, 20.0f, 0.01f, 1000.0f));
 	auto projectionMatrixDeterminant = XMMatrixDeterminant(projectionMatrix);
 	auto inverseProjectionMatrix = XMMatrixInverse(&projectionMatrixDeterminant, projectionMatrix);
 
@@ -267,28 +315,17 @@ void Graphics::UpdateMainPassData(const Common::Timer& timer) const
 	auto viewProjectionMatrixDeterminant = XMMatrixDeterminant(viewProjectionMatrix);
 	auto inverseViewProjectionMatrix = XMMatrixInverse(&viewProjectionMatrixDeterminant, viewProjectionMatrix);
 
-	XMMATRIX shadowMatrix;
-	{
-		//const auto& castShadowsLights = m_lightManager.GetCastShadowsLights();
-		//auto castShadowsLight = castShadowsLights[0];
-		auto lightViewMatrix = castShadowsLight->GetViewMatrix();
-		auto lightProjectionMatrix = castShadowsLight->GetOrthographicMatrix(20.0f, 20.0f, 0.01f, 1000.0f);
-		auto lightTextureMatrix = XMMatrixSet(
-			0.5f, 0.0f, 0.0f, 0.0f,
-			0.0f, -0.5f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.5f, 0.5f, 0.0f, 1.0f
-		);
-		shadowMatrix = XMLoadFloat4x4(&lightViewMatrix) * XMLoadFloat4x4(&lightProjectionMatrix) * lightTextureMatrix;
-	}
-
 	XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
 	XMStoreFloat4x4(&passData.InverseViewMatrix, XMMatrixTranspose(inverseViewMatrix));
 	XMStoreFloat4x4(&passData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
 	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseProjectionMatrix));
 	XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
 	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
-	XMStoreFloat4x4(&passData.ShadowMatrix, XMMatrixTranspose(shadowMatrix));
+	
+	const auto& castShadowsLights = m_lightManager.GetCastShadowsLights();
+	auto castShadowsLight = castShadowsLights[0];
+	XMStoreFloat4x4(&passData.ShadowMatrix, XMMatrixTranspose(castShadowsLight->GetShadowMatrix()));
+	
 	XMStoreFloat3(&passData.EyePositionW, m_camera.GetPosition());
 	passData.TerrainDisplacementScalarY = 1.0f;
 	passData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));
@@ -323,13 +360,11 @@ void Graphics::UpdateShadowPassData(const Common::Timer& timer) const
 	auto castShadowsLights = m_lightManager.GetCastShadowsLights();
 	auto castShadowsLight = castShadowsLights[0];
 
-	auto viewMatrixFloat = castShadowsLight->GetViewMatrix();
-	auto viewMatrix = XMLoadFloat4x4(&viewMatrixFloat);
+	auto viewMatrix = castShadowsLight->GetViewMatrix();
 	auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
 	auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
 
-	auto projectionMatrixFloat = castShadowsLight->GetOrthographicMatrix(20.0f, 20.0f, 0.01f, 1000.0f);
-	auto projectionMatrix = XMLoadFloat4x4(&projectionMatrixFloat);
+	auto projectionMatrix = castShadowsLight->GetProjectionMatrix();
 	auto projectionMatrixDeterminant = XMMatrixDeterminant(projectionMatrix);
 	auto inverseProjectionMatrix = XMMatrixInverse(&projectionMatrixDeterminant, projectionMatrix);
 

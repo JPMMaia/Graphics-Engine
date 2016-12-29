@@ -53,118 +53,6 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 {
 	auto device = d3dBase.GetDevice();
 
-	// ShapeGeo:
-	{
-		auto box = GeometryGenerator::CreateBox(1.0f, 1.0f, 1.0f, 3);
-		auto grid = GeometryGenerator::CreateGrid(20.0f, 30.0f, 60, 40);
-		auto sphere = GeometryGenerator::CreateSphere(0.5f, 20, 20);
-		auto cylinder = GeometryGenerator::CreateCylinder(0.5f, 0.3f, 3.0f, 20, 20);
-
-		//
-		// We are concatenating all the geometry into one big vertex/index buffer.  So
-		// define the regions in the buffer each submesh covers.
-		//
-
-		// Cache the vertex offsets to each object in the concatenated vertex buffer.
-		UINT boxVertexOffset = 0;
-		UINT gridVertexOffset = static_cast<UINT>(box.Vertices.size());
-		UINT sphereVertexOffset = gridVertexOffset + static_cast<UINT>(grid.Vertices.size());
-		UINT cylinderVertexOffset = sphereVertexOffset + static_cast<UINT>(sphere.Vertices.size());
-
-		// Cache the starting index for each object in the concatenated index buffer.
-		UINT boxIndexOffset = 0;
-		UINT gridIndexOffset = static_cast<UINT>(box.Indices32.size());
-		UINT sphereIndexOffset = gridIndexOffset + static_cast<UINT>(grid.Indices32.size());
-		UINT cylinderIndexOffset = sphereIndexOffset + static_cast<UINT>(sphere.Indices32.size());
-
-		SubmeshGeometry boxSubmesh;
-		boxSubmesh.IndexCount = static_cast<UINT>(box.Indices32.size());
-		boxSubmesh.StartIndexLocation = boxIndexOffset;
-		boxSubmesh.BaseVertexLocation = boxVertexOffset;
-		boxSubmesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(box);
-
-		SubmeshGeometry gridSubmesh;
-		gridSubmesh.IndexCount = static_cast<UINT>(grid.Indices32.size());
-		gridSubmesh.StartIndexLocation = gridIndexOffset;
-		gridSubmesh.BaseVertexLocation = gridVertexOffset;
-		gridSubmesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(grid);
-
-		SubmeshGeometry sphereSubmesh;
-		sphereSubmesh.IndexCount = static_cast<UINT>(sphere.Indices32.size());
-		sphereSubmesh.StartIndexLocation = sphereIndexOffset;
-		sphereSubmesh.BaseVertexLocation = sphereVertexOffset;
-		sphereSubmesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(sphere);
-
-		SubmeshGeometry cylinderSubmesh;
-		cylinderSubmesh.IndexCount = static_cast<UINT>(cylinder.Indices32.size());
-		cylinderSubmesh.StartIndexLocation = cylinderIndexOffset;
-		cylinderSubmesh.BaseVertexLocation = cylinderVertexOffset;
-		cylinderSubmesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(cylinder);
-
-		//
-		// Extract the vertex elements we are interested in and pack the
-		// vertices of all the meshes into one vertex buffer.
-		//
-
-		auto totalVertexCount =
-			box.Vertices.size() +
-			grid.Vertices.size() +
-			sphere.Vertices.size() +
-			cylinder.Vertices.size();
-
-		std::vector<VertexTypes::DefaultVertexType> vertices(totalVertexCount);
-
-		UINT k = 0;
-		for (SIZE_T i = 0; i < box.Vertices.size(); ++i, ++k)
-		{
-			const auto& vertex = box.Vertices[i];
-			vertices[k].Position = vertex.Position;
-			vertices[k].Normal = vertex.Normal;
-			vertices[k].TextureCoordinates = vertex.TextureCoordinates;
-		}
-
-		for (SIZE_T i = 0; i < grid.Vertices.size(); ++i, ++k)
-		{
-			const auto& vertex = grid.Vertices[i];
-			vertices[k].Position = vertex.Position;
-			vertices[k].Normal = vertex.Normal;
-			vertices[k].TextureCoordinates = vertex.TextureCoordinates;
-		}
-
-		for (SIZE_T i = 0; i < sphere.Vertices.size(); ++i, ++k)
-		{
-			const auto& vertex = sphere.Vertices[i];
-			vertices[k].Position = vertex.Position;
-			vertices[k].Normal = vertex.Normal;
-			vertices[k].TextureCoordinates = vertex.TextureCoordinates;
-		}
-
-		for (SIZE_T i = 0; i < cylinder.Vertices.size(); ++i, ++k)
-		{
-			const auto& vertex = cylinder.Vertices[i];
-			vertices[k].Position = vertex.Position;
-			vertices[k].Normal = vertex.Normal;
-			vertices[k].TextureCoordinates = vertex.TextureCoordinates;
-		}
-
-		std::vector<std::uint16_t> indices;
-		indices.insert(indices.end(), std::begin(box.GetIndices16()), std::end(box.GetIndices16()));
-		indices.insert(indices.end(), std::begin(grid.GetIndices16()), std::end(grid.GetIndices16()));
-		indices.insert(indices.end(), std::begin(sphere.GetIndices16()), std::end(sphere.GetIndices16()));
-		indices.insert(indices.end(), std::begin(cylinder.GetIndices16()), std::end(cylinder.GetIndices16()));
-
-		auto geo = std::make_unique<MeshGeometry>();
-		geo->Name = "ShapeGeo";
-		geo->Vertices = VertexBuffer(device, vertices);
-		geo->Indices = IndexBuffer(device, indices);
-		geo->Submeshes["Box"] = boxSubmesh;
-		geo->Submeshes["Grid"] = gridSubmesh;
-		geo->Submeshes["Sphere"] = sphereSubmesh;
-		geo->Submeshes["Cylinder"] = cylinderSubmesh;
-
-		m_geometries[geo->Name] = std::move(geo);
-	}
-
 	// Billboards:
 	{
 		std::vector<VertexTypes::BillboardVertexType> vertices =
@@ -200,7 +88,7 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 		
 		SubmeshGeometry submesh;
 		submesh.StartIndexLocation = 0;
-		submesh.IndexCount = rectangleMeshData.Indices.size();
+		submesh.IndexCount = static_cast<uint32_t>(rectangleMeshData.Indices.size());
 		submesh.BaseVertexLocation = 0;
 		submesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(vertices);
 		geometry->Submeshes["Default"] = submesh;
@@ -240,48 +128,22 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 		test->MaterialTransform = MathHelper::Identity4x4();
 		AddMaterial(std::move(test));
 	}
+
+	{
+		auto test = std::make_unique<Material>();
+		test->Name = "NullTexture";
+		test->DiffuseMap = nullptr;
+		test->MaterialIndex = 0;
+		test->DiffuseAlbedo = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+		test->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+		test->Roughness = 0.25f;
+		test->MaterialTransform = MathHelper::Identity4x4();
+		AddMaterial(std::move(test));
+	}
 }
 
 void DefaultScene::InitializeRenderItems(Graphics* graphics)
 {
-	// Box:
-	/*{
-		auto boxRenderItem = std::make_unique<RenderItem>();
-		boxRenderItem->Name = "Box";
-		boxRenderItem->Mesh = m_geometries["ShapeGeo"].get();
-		boxRenderItem->Material = m_materials.at("Bricks").get();
-		boxRenderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		const auto& boxSubmesh = boxRenderItem->Mesh->Submeshes.at("Box");
-		boxRenderItem->IndexCount = boxSubmesh.IndexCount;
-		boxRenderItem->StartIndexLocation = boxSubmesh.StartIndexLocation;
-		boxRenderItem->BaseVertexLocation = boxSubmesh.BaseVertexLocation;
-		boxRenderItem->Bounds = boxSubmesh.Bounds;
-
-		// Instances:
-		{
-			const auto size = 10;
-			const auto offset = 2.0f;
-			const auto start = -size  * offset / 2.0f;
-			boxRenderItem->InstancesData.reserve(size * size * size);
-			for (SIZE_T i = 0; i < size; ++i)
-			{
-				for (SIZE_T j = 0; j < size; ++j)
-				{
-					for (SIZE_T k = 0; k < size; ++k)
-					{
-						ShaderBufferTypes::InstanceData instanceData;
-
-						XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixTranslation(start + i * offset, start + j * offset, start + k * offset));
-
-						boxRenderItem->InstancesData.push_back(instanceData);
-					}
-				}
-			}
-		}
-
-		graphics->AddRenderItem(std::move(boxRenderItem), { RenderLayer::Opaque });
-	}*/
-
 	// Billboards:
 	{
 		auto renderItem = std::make_unique<RenderItem>();
@@ -302,7 +164,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 		auto renderItem = std::make_unique<RenderItem>();
 		renderItem->Name = "Debug";
 		renderItem->Mesh = m_geometries.at("Rectangle").get();
-		renderItem->Material = m_materials["Test"].get();
+		renderItem->Material = m_materials["NullTexture"].get();
 		renderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		const auto& submesh = renderItem->Mesh->Submeshes.at("Default");
 		renderItem->IndexCount = submesh.IndexCount;
@@ -318,7 +180,7 @@ void DefaultScene::InitializeLights(LightManager& lightManager)
 {
 	lightManager.SetAmbientLight({ 0.25f, 0.25f, 0.35f, 1.0f });
 	//lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalCastShadowsLight({ 0.6f, 0.6f, 0.6f }, { 0.57735f, -0.57735f, 0.57735f }, {0.0f, m_terrain.GetDescription().HeightMapFactor, 0.0f})));
-	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalCastShadowsLight({ 0.6f, 0.6f, 0.6f }, { 0.0f, -0.5f, 0.5f }, { 0.0f, 40.0f, -40.0f })));
+	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.6f, 0.6f, 0.6f }, { 0.0f, -1.0f, 0.1f }, true)));
 	//lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.3f, 0.3f, 0.3f }, { 0.57735f, -0.57735f, 0.57735f })));
 	//lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.15f, 0.15f, 0.15f }, { 0.0f, -0.707f, -0.707f })));
 	//lightManager.AddLight(std::make_unique<Light>(Light::CreatePointLight({ 0.1f, 0.0f, 0.0f }, 2.0f, 20.0f, { 0.0f, 3.0f, 0.0f })));
@@ -328,7 +190,7 @@ void DefaultScene::InitializeLights(LightManager& lightManager)
 void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
 {
 	// Simple cube:
-	{
+	/*{
 		AssimpImporter importer;
 		AssimpImporter::ImportInfo importInfo;
 		std::wstring filename(L"Models/Cube.fbx");
@@ -369,7 +231,7 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 		}
 
 		graphics->AddRenderItem(std::move(cubeRenderItem), { RenderLayer::Opaque });
-	}
+	}*/
 
 	// Skydome:
 	{
@@ -403,7 +265,7 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 	}
 
 	// AlanTree:
-	/*{
+	{
 		AssimpImporter importer;
 		AssimpImporter::ImportInfo importInfo;
 		std::wstring filename(L"Models/AlanTree.fbx");
@@ -468,7 +330,7 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 			}
 			graphics->AddRenderItem(std::move(renderItem), { RenderLayer::AlphaClipped });
 		}
-	}*/
+	}
 }
 
 void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)

@@ -59,7 +59,10 @@ IDXGISwapChain2* D3DBase::GetSwapChain() const
 {
 	return m_swapChain.Get();
 }
-
+ID3D11DepthStencilView* D3DBase::GetDepthStencilView() const
+{
+	return m_depthStencilView.Get();
+}
 float D3DBase::GetAspectRatio() const
 {
 	return static_cast<float>(m_clientWidth) / m_clientHeight;
@@ -83,6 +86,7 @@ void D3DBase::SetClearColor(const DirectX::XMFLOAT3 clearColor)
 
 void D3DBase::SetDefaultRenderTargets() const
 {
+	m_immediateContext->RSSetViewports(1, &m_viewport);
 	m_immediateContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
 }
 

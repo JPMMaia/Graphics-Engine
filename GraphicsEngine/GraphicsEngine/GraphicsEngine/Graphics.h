@@ -13,6 +13,7 @@
 #include "SamplerState.h"
 #include "ShadowTexture.h"
 #include "LightManager.h"
+#include "RenderTexture.h"
 
 namespace GraphicsEngine
 {
@@ -33,6 +34,7 @@ namespace GraphicsEngine
 	private:
 		void UpdateInstancesData();
 		void UpdateMaterialData() const;
+		void UpdateLights() const;
 		void UpdateMainPassData(const Common::Timer& timer) const;
 		void UpdateShadowPassData(const Common::Timer& timer) const;
 
@@ -58,8 +60,11 @@ namespace GraphicsEngine
 		SamplerState m_linearClampSamplerState;
 		SamplerState m_anisotropicWrapSamplerState;
 		SamplerState m_anisotropicClampSamplerState;
+		SamplerState m_shadowsSamplerState;
 		bool m_fog;
 		DirectX::XMFLOAT3 m_fogColor;
 		ShadowTexture m_shadowMap;
+		RenderTexture m_renderTexture;
+		DirectX::BoundingBox m_sceneBounds;
 	};
 }

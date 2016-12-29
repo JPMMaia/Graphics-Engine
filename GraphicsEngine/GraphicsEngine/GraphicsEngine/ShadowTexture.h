@@ -20,7 +20,6 @@ namespace GraphicsEngine
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_depthStencilView;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_shaderResourceView;
-		UINT m_width;
-		UINT m_height;
+		D3D11_VIEWPORT m_viewport;
 	};
 }

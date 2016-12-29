@@ -4,9 +4,7 @@
 using namespace Common;
 using namespace GraphicsEngine;
 
-ShadowTexture::ShadowTexture(ID3D11Device* d3dDevice, UINT width, UINT height) :
-	m_width(width),
-	m_height(height)
+ShadowTexture::ShadowTexture(ID3D11Device* d3dDevice, UINT width, UINT height)
 {
 	// Create texture:
 	{
@@ -15,7 +13,7 @@ ShadowTexture::ShadowTexture(ID3D11Device* d3dDevice, UINT width, UINT height) :
 		description.Height = height;
 		description.MipLevels = 1;
 		description.ArraySize = 1;
-		description.Format = DXGI_FORMAT_R32_TYPELESS;
+		description.Format = DXGI_FORMAT_R24G8_TYPELESS;
 		description.SampleDesc.Count = 1;
 		description.SampleDesc.Quality = 0;
 		description.Usage = D3D11_USAGE_DEFAULT;
@@ -29,7 +27,7 @@ ShadowTexture::ShadowTexture(ID3D11Device* d3dDevice, UINT width, UINT height) :
 	// Create shader resource view:
 	{
 		D3D11_SHADER_RESOURCE_VIEW_DESC description;
-		description.Format = DXGI_FORMAT_R32_FLOAT;
+		description.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 		description.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		description.Texture2D.MipLevels = 1;
 		description.Texture2D.MostDetailedMip = 0;
@@ -40,17 +38,28 @@ ShadowTexture::ShadowTexture(ID3D11Device* d3dDevice, UINT width, UINT height) :
 	// Create depth stencil view:
 	{
 		D3D11_DEPTH_STENCIL_VIEW_DESC description;
-		description.Format = DXGI_FORMAT_D32_FLOAT;
+		description.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		description.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		description.Flags = 0;
 		description.Texture2D.MipSlice = 0;
 
 		ThrowIfFailed(d3dDevice->CreateDepthStencilView(m_texture.Get(), &description, m_depthStencilView.GetAddressOf()));
 	}
+
+	// Create viewport:
+	{
+		m_viewport.Width = static_cast<float>(width);
+		m_viewport.Height = static_cast<float>(height);
+		m_viewport.TopLeftX = 0.0f;
+		m_viewport.TopLeftY = 0.0f;
+		m_viewport.MinDepth = 0.0f;
+		m_viewport.MaxDepth = 1.0f;
+	}
 }
 
 void ShadowTexture::SetDepthStencilView(ID3D11DeviceContext* deviceContext) const
 {
+	deviceContext->RSSetViewports(1, &m_viewport);
 	deviceContext->OMSetRenderTargets(0, nullptr, m_depthStencilView.Get());
 }
 void ShadowTexture::ClearDepthStencilView(ID3D11DeviceContext* deviceContext) const
@@ -59,11 +68,11 @@ void ShadowTexture::ClearDepthStencilView(ID3D11DeviceContext* deviceContext) co
 }
 UINT ShadowTexture::GetWidth() const
 {
-	return m_width;
+	return static_cast<UINT>(m_viewport.Width);
 }
 UINT ShadowTexture::GetHeight() const
 {
-	return m_height;
+	return static_cast<UINT>(m_viewport.Height);
 }
 
 ID3D11Texture2D* ShadowTexture::GetTexture() const

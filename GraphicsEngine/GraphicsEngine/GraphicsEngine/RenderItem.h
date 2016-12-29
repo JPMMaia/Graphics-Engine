@@ -3,6 +3,7 @@
 #include "MeshGeometry.h"
 #include "Material.h"
 #include "ShaderBufferTypes.h"
+#include "VertexTypes.h"
 
 #include <DirectXMath.h>
 #include <DirectXCollision.h>

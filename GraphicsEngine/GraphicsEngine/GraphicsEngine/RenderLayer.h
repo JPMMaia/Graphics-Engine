@@ -10,6 +10,7 @@ namespace GraphicsEngine
 		Terrain,
 		SkyDome,
 		Billboard,
+		NormalMapping,
 		Debug,
 		Count
 	};

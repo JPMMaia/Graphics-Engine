@@ -10,10 +10,12 @@ struct VertexOutput
     float4 PositionH : SV_POSITION;
     float4 ShadowPositionH : POSITION1;
     float3 NormalW : NORMAL;
+    float3 TangentW : TANGENT;
     float2 TextureCoordinates : TEXCOORD;
 };
 
 Texture2D DiffuseMap : register(t0);
+Texture2D NormalMap : register(t1);
 Texture2D ShadowMap : register(t3);
 
 float4 main(VertexOutput input) : SV_TARGET
@@ -29,7 +31,16 @@ float4 main(VertexOutput input) : SV_TARGET
 #endif
 
     // Interpolating rasterization process can change the magnitude of the normal vector:
-    input.NormalW = normalize(input.NormalW);
+    float3 normalW = normalize(input.NormalW);
+    float3 tangentW = normalize(input.TangentW);
+
+#if defined(NORMAL_MAPPING)
+
+    // Sample value from the normal map and compute the bumped normal in world space:
+    float3 normalSample = NormalMap.Sample(SamplerAnisotropicWrap, input.TextureCoordinates).rgb;
+    normalW = NormalSampleToBumpedNormalW(normalSample, normalW, tangentW);
+
+#endif
 
     // Calculate direction from point to camera:
     float3 toEyeDirection = EyePositionW - input.PositionW;
@@ -52,7 +63,7 @@ float4 main(VertexOutput input) : SV_TARGET
     float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerShadows, input.ShadowPositionH);
 
     // Compute contribution of lights:
-    float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, input.NormalW, toEyeDirection, shadowFactor);
+    float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, normalW, toEyeDirection, shadowFactor);
     
     // The final color results from the sum of the indirect and direct light:
     float4 color = ambientIntensity + lightIntensity;

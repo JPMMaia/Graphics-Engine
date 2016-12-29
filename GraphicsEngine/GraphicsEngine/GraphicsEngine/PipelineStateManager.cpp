@@ -100,6 +100,26 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 		m_pixelShaders["AlphaClippedShadows"] = PixelShader(device, shadersFolderPath + L"AlphaClippedShadowsPixelShader.hlsl", nullptr, "main", "ps_5_0");
 	}
 
+	// Standard normal mapping:
+	{
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"NORMAL_MAPPING", "1",
+			nullptr, nullptr
+		};
+		m_pixelShaders["StandardNormalMap"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"FOG", "1",
+			"NORMAL_MAPPING", "1",
+			nullptr, nullptr
+		};
+		m_pixelShaders["StandardNormalMapFog"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+	}
+
 	// Terrain shaders:
 	{
 		defines =
@@ -239,6 +259,17 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		alphaClippedShadowState.PixelShader = &m_pixelShaders.at("AlphaClippedShadows");
 		alphaClippedShadowState.RasterizerState = &m_rasterizerStates.at("Shadows");
 		m_pipelineStateObjects.emplace("AlphaClippedShadow", alphaClippedShadowState);
+	}
+
+	// Normal Mapping:
+	{
+		auto normalMappingState = opaqueState;
+		normalMappingState.PixelShader = &m_pixelShaders["NormalMapping"];
+		m_pipelineStateObjects.emplace("NormalMapping", normalMappingState);
+
+		auto normalMappingFogState = normalMappingState;
+		normalMappingFogState.PixelShader = &m_pixelShaders["NormalMappingFog"];
+		m_pipelineStateObjects.emplace("NormalMappingFog", normalMappingFogState);
 	}
 
 	// Terrain:

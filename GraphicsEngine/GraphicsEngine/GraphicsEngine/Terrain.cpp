@@ -220,9 +220,9 @@ void Terrain::CreateRenderItem(const D3DBase& d3dBase, Graphics& graphics, IScen
 	graphics.AddRenderItem(std::move(renderItem), { RenderLayer::Terrain });
 }
 
-GeometryGenerator2::MeshData Terrain::CreateMeshData(float width, float depth, uint32_t xCellCount, uint32_t zCellCount)
+GeometryGenerator::MeshData Terrain::CreateMeshData(float width, float depth, uint32_t xCellCount, uint32_t zCellCount)
 {
-	GeometryGenerator2::MeshData output;
+	GeometryGenerator::MeshData output;
 
 	auto xVertexCount = xCellCount + 1;
 	auto zVertexCount = zCellCount + 1;

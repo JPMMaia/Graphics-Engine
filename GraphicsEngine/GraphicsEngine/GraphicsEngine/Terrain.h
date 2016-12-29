@@ -2,7 +2,7 @@
 
 #include "D3DBase.h"
 #include "RenderItem.h"
-#include "GeometryGenerator2.h"
+#include "GeometryGenerator.h"
 
 namespace GraphicsEngine
 {
@@ -43,7 +43,7 @@ namespace GraphicsEngine
 		void CreateMaterial(const D3DBase& d3dBase, TextureManager& textureManager, IScene& scene);
 		void CreateRenderItem(const D3DBase& d3dBase, Graphics& graphics, IScene& scene);
 
-		static GeometryGenerator2::MeshData CreateMeshData(float width, float depth, uint32_t xCellCount, uint32_t zCellCount);
+		static GeometryGenerator::MeshData CreateMeshData(float width, float depth, uint32_t xCellCount, uint32_t zCellCount);
 		static void LoadRawHeightMap(const std::wstring& filename, uint32_t width, uint32_t height, float heightFactor, std::vector<float>& heightMap);
 
 	public:

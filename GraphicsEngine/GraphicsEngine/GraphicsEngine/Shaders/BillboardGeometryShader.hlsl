@@ -12,6 +12,7 @@ struct GeometryOutput
     float4 PositionH : SV_POSITION;
     float4 ShadowPositionH : POSITION1;
     float3 NormalW : NORMAL;
+    float3 TangentW : TANGENT;
     float2 TextureCoordinates : TEXCOORD;
 };
 
@@ -23,8 +24,8 @@ void main(point VertexOutput input[1], inout TriangleStream<GeometryOutput> outp
 
     // Create an orthonormal basis with the Z vector pointing to the camera:
     float3 normalW = normalize(EyePositionW - centerW);
-    float3 upW = float3(0.0f, 1.0f, 0.0f);
-    float3 leftW = cross(upW, normalW);
+    float3 bitangentW = float3(0.0f, 1.0f, 0.0f);
+    float3 tangentW = cross(bitangentW, normalW);
 
     // Create a rectangle facing the camera:
     {
@@ -33,27 +34,28 @@ void main(point VertexOutput input[1], inout TriangleStream<GeometryOutput> outp
         // TODO shadow 
         vertex.ShadowPositionH = float4(0.0f, 0.0f, 0.0f, 1.0f);
         vertex.NormalW = normalW;
+        vertex.TangentW = tangentW;
 
         // Left Up:
-        vertex.PositionW = centerW + leftW * extentsW.x + upW * extentsW.y;
+        vertex.PositionW = centerW + tangentW * extentsW.x + bitangentW * extentsW.y;
         vertex.PositionH = mul(float4(vertex.PositionW, 1.0f), ViewProjectionMatrix);
         vertex.TextureCoordinates = float2(0.0f, 0.0f);
         outputStream.Append(vertex);
 
         // Right Up:
-        vertex.PositionW = centerW - leftW * extentsW.x + upW * extentsW.y;
+        vertex.PositionW = centerW - tangentW * extentsW.x + bitangentW * extentsW.y;
         vertex.PositionH = mul(float4(vertex.PositionW, 1.0f), ViewProjectionMatrix);
         vertex.TextureCoordinates = float2(1.0f, 0.0f);
         outputStream.Append(vertex);
 
         // Left Down:
-        vertex.PositionW = centerW + leftW * extentsW.x - upW * extentsW.y;
+        vertex.PositionW = centerW + tangentW * extentsW.x - bitangentW * extentsW.y;
         vertex.PositionH = mul(float4(vertex.PositionW, 1.0f), ViewProjectionMatrix);
         vertex.TextureCoordinates = float2(0.0f, 1.0f);
         outputStream.Append(vertex);
 
         // Right Down:
-        vertex.PositionW = centerW - leftW * extentsW.x - upW * extentsW.y;
+        vertex.PositionW = centerW - tangentW * extentsW.x - bitangentW * extentsW.y;
         vertex.PositionH = mul(float4(vertex.PositionW, 1.0f), ViewProjectionMatrix);
         vertex.TextureCoordinates = float2(1.0f, 1.0f);
         outputStream.Append(vertex);

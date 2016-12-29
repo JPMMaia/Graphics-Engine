@@ -193,7 +193,6 @@
     <ClCompile Include="GraphicsEngine\DXInputHandler.cpp" />
     <ClCompile Include="GraphicsEngine\FrameResource.cpp" />
     <ClCompile Include="GraphicsEngine\GeometryGenerator.cpp" />
-    <ClCompile Include="GraphicsEngine\GeometryGenerator2.cpp" />
     <ClCompile Include="GraphicsEngine\GeometryShader.cpp" />
     <ClCompile Include="GraphicsEngine\Graphics.cpp" />
     <ClCompile Include="GraphicsEngine\HullShader.cpp" />
@@ -265,7 +264,6 @@
     <ClInclude Include="GraphicsEngine\DXInputHandler.h" />
     <ClInclude Include="GraphicsEngine\FrameResource.h" />
     <ClInclude Include="GraphicsEngine\GeometryGenerator.h" />
-    <ClInclude Include="GraphicsEngine\GeometryGenerator2.h" />
     <ClInclude Include="GraphicsEngine\GeometryShader.h" />
     <ClInclude Include="GraphicsEngine\Graphics.h" />
     <ClInclude Include="GraphicsEngine\HullShader.h" />

@@ -7,6 +7,7 @@ struct VertexOutput
     float4 PositionH : SV_POSITION;
     float4 ShadowPositionH : POSITION1;
     float3 NormalW : NORMAL;
+    float3 TangentW : TANGENT;
     float2 TextureCoordinates : TEXCOORD;
 };
 

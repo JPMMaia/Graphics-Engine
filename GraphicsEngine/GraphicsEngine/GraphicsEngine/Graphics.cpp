@@ -86,6 +86,7 @@ void Graphics::Render(const Common::Timer& timer) const
 		// Draw opaque:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueShadow");
 		DrawRenderItems(RenderLayer::Opaque);
+		DrawRenderItems(RenderLayer::NormalMapping);
 
 		// Draw terrain:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainShadow");
@@ -158,6 +159,10 @@ void Graphics::Render(const Common::Timer& timer) const
 		m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
 		DrawRenderItems(RenderLayer::Opaque);
 
+		// Draw normal mapped:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "NormalMapping");
+		DrawRenderItems(RenderLayer::NormalMapping);
+
 		// Draw terrain:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
 		DrawTerrain();
@@ -179,6 +184,10 @@ void Graphics::Render(const Common::Timer& timer) const
 		// Draw opaque:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueFog");
 		DrawRenderItems(RenderLayer::Opaque);
+
+		// Draw normal mapped:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "NormalMappingFog");
+		DrawRenderItems(RenderLayer::NormalMapping);
 
 		// Draw terrain:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainFog");

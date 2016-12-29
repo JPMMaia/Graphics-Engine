@@ -1,11 +1,11 @@
 ﻿#include "stdafx.h"
 #include "DefaultScene.h"
 #include "GraphicsEngine/Graphics.h"
-#include "GraphicsEngine/GeometryGenerator.h"
 #include "GraphicsEngine/VertexTypes.h"
 #include "GraphicsEngine/RenderItem.h"
 #include "GraphicsEngine/AssimpImporter/AssimpImporter.h"
 #include "GraphicsEngine/Terrain.h"
+#include "GraphicsEngine/GeometryGenerator.h"
 #include "Common/Helpers.h"
 
 #include <numeric>
@@ -71,7 +71,7 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 
 	// Rectangle for debug:
 	{
-		auto rectangleMeshData = GeometryGenerator2::CreateRectangle(0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
+		auto rectangleMeshData = GeometryGenerator::CreateRectangle(0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
 
 		std::vector<VertexTypes::TextureVertexType> vertices(rectangleMeshData.Vertices.size());
 		for(SIZE_T i = 0; i < vertices.size(); ++i)

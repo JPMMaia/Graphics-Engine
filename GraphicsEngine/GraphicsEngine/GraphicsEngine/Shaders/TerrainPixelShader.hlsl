@@ -17,19 +17,23 @@ Texture2D DiffuseMap : register(t0);
 Texture2D NormalMap : register(t1);
 Texture2D HeightMap : register(t2);
 Texture2D ShadowMap : register(t3);
+Texture2D TangentMap : register(t4);
+Texture2D TiledDiffuseMap : register(t5);
+Texture2D TiledNormalMap : register(t6);
 
 float4 main(DomainOutput input) : SV_TARGET
 {
     // Compute diffuse albedo by multiplying the sample from the texture and the diffuse albedo of the material:
-    float4 diffuseAlbedo = DiffuseMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates) * DiffuseAlbedo;
+    float4 diffuseAlbedo = TiledDiffuseMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates) * DiffuseAlbedo;
 
-    // Calculate the normal, tangent and bitangent from the height map:
-    float3 normalW, tangentW, bitangentW;
-    CalculateNormalTangentBitangentFromHeightMap(input.TextureCoordinates, TexelSize, HeightMap, SamplerLinearClamp, normalW, tangentW, bitangentW);
+    // Sample normal and tangent:
+    float3 normalW = NormalMap.Sample(SamplerAnisotropicWrap, input.TextureCoordinates).rgb;
+    float3 tangentW = TangentMap.Sample(SamplerAnisotropicWrap, input.TextureCoordinates).rgb;
 
-    // Sample value from the normal map and compute the bumped normal in world space:
-    float3 normalSample = NormalMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
-    float3 bumpedNormalW = NormalSampleToBumpedNormalW(normalSample, normalW, tangentW);
+    // Sample value from the tiled normal map and compute the bumped normal in world space:
+    float3 tiledNormalSample = NormalMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
+    float3 bumpedTiledNormalW = NormalSampleToBumpedNormalW(tiledNormalSample, normalW, tangentW);
+    bumpedTiledNormalW = normalize(bumpedTiledNormalW);
 
     // Calculate direction from point to camera:
     float3 toEyeDirection = EyePositionW - input.PositionW;
@@ -52,7 +56,7 @@ float4 main(DomainOutput input) : SV_TARGET
     float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerShadows, input.ShadowPositionH);
 
     // Compute contribution of lights:
-    float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, bumpedNormalW, toEyeDirection, shadowFactor);
+    float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, bumpedTiledNormalW, toEyeDirection, shadowFactor);
     
     // The final color results from the sum of the indirect and direct light:
     float4 color = ambientIntensity + lightIntensity;

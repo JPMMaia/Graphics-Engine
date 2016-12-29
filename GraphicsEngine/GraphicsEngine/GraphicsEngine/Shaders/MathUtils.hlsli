@@ -57,7 +57,6 @@ float3 NormalSampleToBumpedNormalW(float3 normalSample, float3 normalW, float3 t
     float3 bumpedNormalW = mul(normalT, tangentToWorldMatrix);
 
     return bumpedNormalW;
-
 }
 
 float4 AddFog(float4 color, float distanceToEye, float fogStart, float fogRange, float4 fogColor)

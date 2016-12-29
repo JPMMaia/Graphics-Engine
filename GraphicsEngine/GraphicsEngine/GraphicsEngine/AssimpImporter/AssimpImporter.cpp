@@ -102,7 +102,7 @@ void AssimpImporter::AddGeometry(const D3DBase& d3dBase, const std::string& name
 					vertex.TextureCoordinates = XMFLOAT2(textureCoordinates.x, textureCoordinates.y);
 				
 					const auto& tangentU = mesh->mTangents[i];
-					vertex.TangentU = XMFLOAT3(tangentU.x, tangentU.y, tangentU.z);
+					vertex.Tangent = XMFLOAT3(tangentU.x, tangentU.y, tangentU.z);
 				}
 				vertices.push_back(vertex);
 			}

@@ -23,7 +23,8 @@ namespace GraphicsEngine
 		explicit Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight, bool fullscreen);
 
 		void OnResize(uint32_t clientWidth, uint32_t clientHeight);
-		void Update(const Common::Timer& timer);
+		void FixedUpdate(const Common::Timer& timer);
+		void RenderUpdate(const Common::Timer& timer);
 		void Render(const Common::Timer& timer) const;
 
 		Camera* GetCamera();
@@ -34,7 +35,7 @@ namespace GraphicsEngine
 	private:
 		void UpdateInstancesData();
 		void UpdateMaterialData() const;
-		void UpdateLights() const;
+		void UpdateLights(const Common::Timer& timer) const;
 		void UpdateMainPassData(const Common::Timer& timer) const;
 		void UpdateShadowPassData(const Common::Timer& timer) const;
 
@@ -65,6 +66,6 @@ namespace GraphicsEngine
 		DirectX::XMFLOAT3 m_fogColor;
 		ShadowTexture m_shadowMap;
 		RenderTexture m_renderTexture;
-		DirectX::BoundingBox m_sceneBounds;
+		DirectX::BoundingSphere m_sceneBounds;
 	};
 }

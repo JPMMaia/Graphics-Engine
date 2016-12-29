@@ -37,11 +37,11 @@ Light Light::CreateSpotLight(const DirectX::XMFLOAT3& strength, float falloffSta
 	return light;
 }
 
-void Light::UpdateShadowMatrix(const BoundingBox& sceneBounds)
+void Light::UpdateMatrices(const BoundingSphere& sceneBounds)
 {
 	// Calculate the light position based on the direction of the light and the scene bounds:
 	auto lightDirection = XMLoadFloat3(&m_lightData.Direction);
-	auto lightPosition = -2.0f * sceneBounds.Extents.x * lightDirection;
+	auto lightPosition = -2.0f * sceneBounds.Radius * lightDirection;
 	XMStoreFloat3(&m_lightData.Position, lightPosition);
 
 	// Calculate the light view matrix:
@@ -54,12 +54,12 @@ void Light::UpdateShadowMatrix(const BoundingBox& sceneBounds)
 	XMStoreFloat3(&sceneCenterLightSpace, XMVector3TransformCoord(targetPosition, m_viewMatrix));
 
 	// Calculate the light orthographic projection matrix:
-	auto left = sceneCenterLightSpace.x - sceneBounds.Extents.x;
-	auto right = sceneCenterLightSpace.x + sceneBounds.Extents.x;
-	auto bottom = sceneCenterLightSpace.y - sceneBounds.Extents.z;
-	auto top = sceneCenterLightSpace.y + sceneBounds.Extents.z;
-	auto nearZ = sceneCenterLightSpace.z - sceneBounds.Extents.y;
-	auto farZ = sceneCenterLightSpace.z + sceneBounds.Extents.y;
+	auto left = sceneCenterLightSpace.x - sceneBounds.Radius;
+	auto right = sceneCenterLightSpace.x + sceneBounds.Radius;
+	auto bottom = sceneCenterLightSpace.y - sceneBounds.Radius;
+	auto top = sceneCenterLightSpace.y + sceneBounds.Radius;
+	auto nearZ = sceneCenterLightSpace.z - sceneBounds.Radius;
+	auto farZ = sceneCenterLightSpace.z + sceneBounds.Radius;
 	m_projectionMatrix = XMMatrixOrthographicOffCenterLH(left, right, bottom, top, nearZ, farZ);
 
 	// Transform from NDC space to texture space:
@@ -72,7 +72,11 @@ void Light::UpdateShadowMatrix(const BoundingBox& sceneBounds)
 
 	m_shadowMatrix = m_viewMatrix * m_projectionMatrix * lightTextureMatrix;
 }
-
+void Light::RotateRollPitchYaw(float pitchRadians, float yawRadians, float rollRadians)
+{
+	auto newDirection = XMVector3Rotate(XMLoadFloat3(&m_lightData.Direction), XMQuaternionRotationRollPitchYaw(pitchRadians, yawRadians, rollRadians));
+	XMStoreFloat3(&m_lightData.Direction, newDirection);
+}
 Light::Type Light::GetType() const
 {
 	return m_type;

@@ -58,11 +58,13 @@ int Application::Run()
 		XMStoreFloat3(&position, camera->GetPosition());
 		auto terrainHeight = m_graphics.GetScene()->GetTerrain().GetTerrainHeight(position.x, position.z);
 		camera->SetPosition(position.x, 5.0f + terrainHeight, position.z);*/
+
+		m_graphics.FixedUpdate(m_timer);
 	};
 
 	auto render = [this](const Timer& timer)
 	{
-		m_graphics.Update(timer);
+		m_graphics.RenderUpdate(timer);
 		m_graphics.Render(timer);
 	};
 

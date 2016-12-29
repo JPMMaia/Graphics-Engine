@@ -373,6 +373,9 @@
     <Filter Include="GraphicsEngine\States\PipelineState">
       <UniqueIdentifier>{d7aca9a2-8f5a-4083-8144-6e28918a11cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Shadows">
+      <UniqueIdentifier>{7c8de919-f2c5-4b94-b491-dbff3cbf1e87}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Libraries\rapidxml\manual.html">
@@ -436,6 +439,9 @@
     </FxCompile>
     <FxCompile Include="GraphicsEngine\Shaders\DebugWindowVertexShader.hlsl">
       <Filter>Shaders\DebugWindow</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\AlphaClippedShadowsPixelShader.hlsl">
+      <Filter>Shaders\Shadows</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

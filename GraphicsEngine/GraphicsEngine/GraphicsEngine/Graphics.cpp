@@ -21,9 +21,9 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_shadowsSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::Shadows),
 	m_fog(false),
 	m_fogColor(0.5f, 0.5f, 0.5f),
-	m_shadowMap(m_d3dBase.GetDevice(), 2048.0f, 2048.0f),
+	m_shadowMap(m_d3dBase.GetDevice(), 2048, 2048),
 	m_renderTexture(m_d3dBase.GetDevice(), clientWidth, clientHeight, DXGI_FORMAT_R8G8B8A8_UNORM),
-	m_sceneBounds(XMFLOAT3(0.0f, 128.0f, 0.0f), XMFLOAT3(512.0f, 256.0f, 512.0f))
+	m_sceneBounds(XMFLOAT3(0.0f, 256.0f, 0.0f), 512.0f)
 {
 	m_d3dBase.SetClearColor(m_fogColor);
 	m_camera.SetPosition(0.0f, 40.0f, -40.0f);
@@ -36,10 +36,20 @@ void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
 	// TODO
 }
 
-void Graphics::Update(const Common::Timer& timer)
+void Graphics::FixedUpdate(const Common::Timer& timer)
+{
+	auto deltaSeconds = static_cast<float>(timer.GetMillisecondsPerUpdate()) / 1000.0f;
+
+	const auto& castShadowsLights = m_lightManager.GetCastShadowsLights();
+	auto castShadowsLight = castShadowsLights[0];
+
+	auto deltaYaw = deltaSeconds * XM_PI / 24.0f;
+	castShadowsLight->RotateRollPitchYaw(0.0f, deltaYaw, 0.0f);
+}
+void Graphics::RenderUpdate(const Common::Timer& timer)
 {
 	m_camera.Update();
-	UpdateLights();
+	UpdateLights(timer);
 	UpdateMainPassData(timer);
 	UpdateShadowPassData(timer);
 	UpdateMaterialData();
@@ -293,11 +303,13 @@ void Graphics::UpdateMaterialData() const
 		m_currentFrameResource->MaterialDataArray[material->MaterialIndex].CopyData(deviceContext, &materialData, sizeof(ShaderBufferTypes::MaterialData));
 	}
 }
-void Graphics::UpdateLights() const
+void Graphics::UpdateLights(const Common::Timer& timer) const
 {
 	const auto& castShadowsLights = m_lightManager.GetCastShadowsLights();
 	auto castShadowsLight = castShadowsLights[0];
-	castShadowsLight->UpdateShadowMatrix(m_sceneBounds);
+
+	// Update light matrices:
+	castShadowsLight->UpdateMatrices(m_sceneBounds);
 }
 void Graphics::UpdateMainPassData(const Common::Timer& timer) const
 {
@@ -321,11 +333,11 @@ void Graphics::UpdateMainPassData(const Common::Timer& timer) const
 	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseProjectionMatrix));
 	XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
 	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
-	
+
 	const auto& castShadowsLights = m_lightManager.GetCastShadowsLights();
 	auto castShadowsLight = castShadowsLights[0];
 	XMStoreFloat4x4(&passData.ShadowMatrix, XMMatrixTranspose(castShadowsLight->GetShadowMatrix()));
-	
+
 	XMStoreFloat3(&passData.EyePositionW, m_camera.GetPosition());
 	passData.TerrainDisplacementScalarY = 1.0f;
 	passData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));

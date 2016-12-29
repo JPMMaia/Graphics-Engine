@@ -23,8 +23,10 @@ namespace GraphicsEngine
 		static Light CreateSpotLight(const DirectX::XMFLOAT3& strength, float falloffStart, const DirectX::XMFLOAT3& direction, float falloffEnd, const DirectX::XMFLOAT3& position, float spotPower);
 
 	public:
-		void UpdateShadowMatrix(const DirectX::BoundingBox& sceneBounds);
+		void UpdateMatrices(const DirectX::BoundingSphere& sceneBounds);
 		
+		void RotateRollPitchYaw(float pitchRadians, float yawRadians, float rollRadians);
+
 		Type GetType() const;
 		const ShaderBufferTypes::LightData& GetLightData() const;
 		bool CastShadows() const;

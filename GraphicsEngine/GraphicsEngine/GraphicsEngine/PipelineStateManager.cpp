@@ -97,6 +97,7 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 			nullptr, nullptr
 		};
 		m_pixelShaders["StandardAlphaClippedFog"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+		m_pixelShaders["AlphaClippedShadows"] = PixelShader(device, shadersFolderPath + L"AlphaClippedShadowsPixelShader.hlsl", nullptr, "main", "ps_5_0");
 	}
 
 	// Terrain shaders:
@@ -235,7 +236,7 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		m_pipelineStateObjects.emplace("AlphaClippedFog", alphaClippedFogState);
 
 		auto alphaClippedShadowState = alphaClippedState;
-		alphaClippedShadowState.PixelShader = &PixelShader::s_null; // TODO set shadow pixel shader
+		alphaClippedShadowState.PixelShader = &m_pixelShaders.at("AlphaClippedShadows");
 		alphaClippedShadowState.RasterizerState = &m_rasterizerStates.at("Shadows");
 		m_pipelineStateObjects.emplace("AlphaClippedShadow", alphaClippedShadowState);
 	}

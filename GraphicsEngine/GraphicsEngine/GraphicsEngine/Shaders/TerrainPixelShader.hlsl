@@ -31,9 +31,26 @@ float4 main(DomainOutput input) : SV_TARGET
     float3 tangentW = TangentMap.Sample(SamplerAnisotropicWrap, input.TextureCoordinates).rgb;
 
     // Sample value from the tiled normal map and compute the bumped normal in world space:
-    float3 tiledNormalSample = NormalMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
+    float3 tiledNormalSample = TiledNormalMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
     float3 bumpedTiledNormalW = NormalSampleToBumpedNormalW(tiledNormalSample, normalW, tangentW);
     bumpedTiledNormalW = normalize(bumpedTiledNormalW);
+    //float3 bumpedTiledNormalW = normalW;
+
+    /*float4 rockDiffuseAlbedo = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float4 snowDiffuseAlbedo = float4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    float4 diffuseAlbedo;
+    float slope = 1.0f - bumpedTiledNormalW.y;
+    if (slope < 0.2f)
+    {
+        float blendAmount = slope / 0.2f;
+        diffuseAlbedo = lerp(snowDiffuseAlbedo, rockDiffuseAlbedo, blendAmount);
+    }
+    if (slope >= 0.2f)
+    {
+        diffuseAlbedo = rockDiffuseAlbedo;
+    }
+    diffuseAlbedo *= DiffuseAlbedo;*/
 
     // Calculate direction from point to camera:
     float3 toEyeDirection = EyePositionW - input.PositionW;

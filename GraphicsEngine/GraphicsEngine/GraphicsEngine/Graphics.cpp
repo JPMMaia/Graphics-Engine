@@ -84,58 +84,24 @@ void Graphics::Render(const Common::Timer& timer) const
 		m_shadowMap.SetDepthStencilView(deviceContext);
 
 		// Draw opaque:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueShadow");
+		/*m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueShadow");
 		DrawRenderItems(RenderLayer::Opaque);
-		DrawRenderItems(RenderLayer::NormalMapping);
+		DrawRenderItems(RenderLayer::NormalMapping);*/
 
 		// Draw terrain:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainShadow");
-		DrawTerrain();
+		//m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainShadow");
+		//DrawTerrain();
 
 		// Draw transparent:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "TransparentShadow");
+		/*m_pipelineStateManager.SetPipelineState(deviceContext, "TransparentShadow");
 		DrawRenderItems(RenderLayer::Transparent);
 
 		// Draw alpha-clipped:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedShadow");
-		DrawRenderItems(RenderLayer::AlphaClipped);
+		DrawRenderItems(RenderLayer::AlphaClipped);*/
 
 		// Set default render target and depth stencil:
-		m_d3dBase.SetDefaultRenderTargets();
-	}*/
-
-	/*{
-		m_renderTexture.SetRenderTargetView(deviceContext, m_d3dBase.GetDepthStencilView());
-
-		// Set shadow pass data:
-		deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
-		deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
-		deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
-		deviceContext->GSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
-		deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
-
-		// Draw opaque:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
-		DrawRenderItems(RenderLayer::Opaque);
-
-		// Draw terrain:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
-		DrawTerrain();
-
-		// Draw transparent:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
-		DrawRenderItems(RenderLayer::Transparent);
-
-		// Draw alpha-clipped:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClipped");
-		DrawRenderItems(RenderLayer::AlphaClipped);
-
-		// Draw billboards:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "Billboard");
-		DrawNonInstancedRenderItems(RenderLayer::Billboard);
-
-		deviceContext->ClearDepthStencilView(m_d3dBase.GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		m_d3dBase.SetDefaultRenderTargets();
+		/*m_d3dBase.SetDefaultRenderTargets();
 	}*/
 
 	// Set main pass data:
@@ -152,11 +118,11 @@ void Graphics::Render(const Common::Timer& timer) const
 	if (!m_fog)
 	{
 		// Draw Skydome:
-		/*m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
+		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
 		DrawNonInstancedRenderItems(RenderLayer::SkyDome);
 
 		// Draw opaque:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
+		/*m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
 		DrawRenderItems(RenderLayer::Opaque);
 
 		// Draw normal mapped:

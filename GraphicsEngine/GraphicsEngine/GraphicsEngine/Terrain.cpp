@@ -363,8 +363,8 @@ void Terrain::LoadRawHeightMap(const std::wstring& filename, uint32_t width, uin
 		{
 			auto index = i * width + j;
 
-			//heightMap[index] = heightFactor * static_cast<float>(buffer[index]) / 65535.0f;
-			heightMap[index] = heightFactor * 0.0f;
+			heightMap[index] = heightFactor * static_cast<float>(buffer[index]) / 65535.0f;
+			//heightMap[index] = heightFactor * 0.0f;
 		}
 	}
 
@@ -390,7 +390,7 @@ void Terrain::LoadRawHeightMap(const std::wstring& filename, uint32_t width, uin
 			auto rightValue = heightMap[i * width + jRight];
 
 			auto tangentVector = XMVector3Normalize(XMVectorSet(2.0f, (upValue - downValue), 0.0f, 0.0f));
-			auto bitangentVector = XMVector3Normalize(XMVectorSet(0.0f, (rightValue - leftValue), 2.0f, 0.0f));
+			auto bitangentVector = XMVector3Normalize(XMVectorSet(0.0f, (rightValue - leftValue), -2.0f, 0.0f));
 			auto normalVector = XMVector3Cross(tangentVector, bitangentVector);
 
 			auto index = i * width + j;

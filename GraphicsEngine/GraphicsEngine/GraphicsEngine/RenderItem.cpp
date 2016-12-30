@@ -25,3 +25,9 @@ void RenderItem::RenderNonInstanced(ID3D11DeviceContext* deviceContext) const
 
 	deviceContext->DrawIndexed(this->IndexCount, this->StartIndexLocation, this->BaseVertexLocation);
 }
+
+void RenderItem::AddInstance(const ShaderBufferTypes::InstanceData& instanceData)
+{
+	this->Colliders.push_back(OctreeCollider(this, static_cast<uint32_t>(this->InstancesData.size())));
+	this->InstancesData.push_back(instanceData);
+}

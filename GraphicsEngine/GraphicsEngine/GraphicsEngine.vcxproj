@@ -200,6 +200,7 @@
     <ClCompile Include="GraphicsEngine\IShader.cpp" />
     <ClCompile Include="GraphicsEngine\Light.cpp" />
     <ClCompile Include="GraphicsEngine\LightManager.cpp" />
+    <ClCompile Include="GraphicsEngine\OctreeCollider.cpp" />
     <ClCompile Include="GraphicsEngine\PipelineState.cpp" />
     <ClCompile Include="GraphicsEngine\PipelineStateManager.cpp" />
     <ClCompile Include="GraphicsEngine\PixelShader.cpp" />
@@ -275,6 +276,7 @@
     <ClInclude Include="GraphicsEngine\Material.h" />
     <ClInclude Include="GraphicsEngine\MeshGeometry.h" />
     <ClInclude Include="GraphicsEngine\Octree.h" />
+    <ClInclude Include="GraphicsEngine\OctreeBaseCollider.h" />
     <ClInclude Include="GraphicsEngine\OctreeCollider.h" />
     <ClInclude Include="GraphicsEngine\PipelineState.h" />
     <ClInclude Include="GraphicsEngine\PipelineStateManager.h" />

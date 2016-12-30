@@ -4,7 +4,7 @@
 #include <array>
 #include <vector>
 
-#include "OctreeCollider.h"
+#include "OctreeBaseCollider.h"
 #include "Common/MemoryPool.h"
 
 namespace GraphicsEngineTester
@@ -67,29 +67,17 @@ namespace GraphicsEngine
 			// If it contains a lot of objects:
 			ConvertToNonLeaf(object);
 		}
-		void FrustumCullObjects(const DirectX::BoundingFrustum& boundingFrustum)
+		void XM_CALLCONV CalculateIntersections(const DirectX::BoundingFrustum& boundingFrustum, DirectX::FXMMATRIX inverseViewMatrix)
 		{
-			// Ignore if bounding frustum does not interesect this octree node:
-			if (!boundingFrustum.Intersects(m_boundingBox))
-				return;
-
-			if (!m_isLeaf)
+			if(!m_isLeaf)
 			{
-				// Perform frustum culling on the child nodes:
-				for (auto child : m_state.Children)
-					child->FrustumCullObjects(boundingFrustum);
-
-				return;
+				for(const auto& child : m_state.Children)
+					child->CalculateIntersections(boundingFrustum, inverseViewMatrix);
 			}
-
-			// For each object inside this octree node:
-			for (size_t i = 0; i < m_objectCount; ++i)
+			else
 			{
-				auto object = m_state.Objects[i];
-
-				// If the bounding frustum intersects the object, then we don't cull the object:
-				if (object->Intersects(boundingFrustum))
-					object->FrustumCull(false);
+				for (const auto& object : m_state.Objects)
+					object->Intersects(boundingFrustum, inverseViewMatrix);
 			}
 		}
 

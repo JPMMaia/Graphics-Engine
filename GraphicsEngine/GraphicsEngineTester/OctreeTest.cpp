@@ -3,6 +3,8 @@
 
 #include "GraphicsEngine/Octree.h"
 #include "GraphicsEngine/Camera.h"
+#include "GraphicsEngine/OctreeCollider.h"
+#include "GraphicsEngine/RenderItem.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -19,25 +21,31 @@ namespace GraphicsEngineTester
 			(v1.z == v2.z);
 	}
 
-	class ColliderTestClass : public OctreeCollider<BoundingBox>
+	class ColliderTestClass : public OctreeBaseCollider
 	{
 	public:
 		ColliderTestClass() :
-			OctreeCollider(),
 			m_id(0)
 		{
 		}
 		explicit ColliderTestClass(BoundingBox&& box) :
-			OctreeCollider(forward<BoundingBox>(box)),
-			m_id(s_counter++)
+			m_id(s_counter++),
+			m_box(std::move(box))
 		{
 		}
-		virtual ~ColliderTestClass()
+
+		bool Intersects(const DirectX::BoundingBox& box) const override
 		{
+			return box.Intersects(m_box);
+		}
+		bool __vectorcall Intersects(const DirectX::BoundingFrustum& viewSpaceCameraFrustum, DirectX::FXMMATRIX inverseViewMatrix) const override
+		{
+			throw runtime_error("Not Implemented");
 		}
 
 	private:
 		size_t m_id;
+		BoundingBox m_box;
 		static size_t s_counter;
 	};
 	size_t ColliderTestClass::s_counter = 0;
@@ -137,16 +145,37 @@ namespace GraphicsEngineTester
 
 		TEST_METHOD(TestOctreeFrustumIntersection)
 		{
-			Camera camera;
+			Camera camera(16.0f / 9.0f, 90.0f, 0.01f, 1000.0f, XMMatrixIdentity());
+			
+			// Get view matrix and calculate its inverse:
+			camera.Update();
+			auto viewMatrix = camera.GetViewMatrix();
+			auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
+			auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
 			auto cameraFrustum = camera.BuildViewSpaceBoundingFrustum();
 
 			auto octree = Octree<OctreeBaseCollider, 4>::Create(
-				BoundingBox(XMFLOAT3(0.0f, 6.0f, 0.0f), XMFLOAT3(8.0f, 8.0f, 8.0f))
+				BoundingBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(8.0f, 8.0f, 8.0f))
 				);
-			for (auto& object : m_gameObjects)
+
+			RenderItem renderItem;
+			renderItem.Bounds = { { 0.0f, 0.0f, 0.0f },{ 0.5f, 0.5f, 0.5f } };
+			{
+				ShaderBufferTypes::InstanceData data;
+
+				XMStoreFloat4x4(&data.WorldMatrix, XMMatrixTranslation(0.0f, 0.0f, 5.0f));
+				renderItem.AddInstance(data);
+
+				XMStoreFloat4x4(&data.WorldMatrix, XMMatrixTranslation(0.0f, 0.0f, -5.0f));
+				renderItem.AddInstance(data);
+			}
+
+			for (auto& object : renderItem.Colliders)
 				octree.AddObject(&object);
 
-			//auto intersections = octree.GetIntersections(cameraFrustum);
+			octree.CalculateIntersections(cameraFrustum, inverseViewMatrix);
+			Assert::AreEqual(static_cast<size_t>(1), renderItem.VisibleInstances.size());
+			Assert::AreEqual(0U, *renderItem.VisibleInstances.begin());
 		}
 	};
 }

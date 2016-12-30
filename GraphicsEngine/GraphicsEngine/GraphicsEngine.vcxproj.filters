@@ -110,6 +110,9 @@
     <ClCompile Include="GraphicsEngine\GeometryGenerator.cpp">
       <Filter>GraphicsEngine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\OctreeCollider.cpp">
+      <Filter>GraphicsEngine\Octree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -276,6 +279,9 @@
       <Filter>GraphicsEngine\Octree</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\OctreeCollider.h">
+      <Filter>GraphicsEngine\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\OctreeBaseCollider.h">
       <Filter>GraphicsEngine\Octree</Filter>
     </ClInclude>
   </ItemGroup>

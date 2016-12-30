@@ -4,9 +4,11 @@
 #include "Material.h"
 #include "ShaderBufferTypes.h"
 #include "VertexTypes.h"
+#include "OctreeCollider.h"
 
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
+#include <unordered_set>
 
 namespace GraphicsEngine
 {
@@ -18,6 +20,8 @@ namespace GraphicsEngine
 
 		void Render(ID3D11DeviceContext* deviceContext) const;
 		void RenderNonInstanced(ID3D11DeviceContext* deviceContext) const;
+
+		void AddInstance(const ShaderBufferTypes::InstanceData& instanceData);
 
 	public:
 		std::string Name;
@@ -34,5 +38,7 @@ namespace GraphicsEngine
 		DXGI_FORMAT IndexFormat = DXGI_FORMAT_R32_UINT;
 
 		std::vector<ShaderBufferTypes::InstanceData> InstancesData;
+		std::vector<OctreeCollider> Colliders;
+		std::unordered_set<uint32_t> VisibleInstances;
 	};
 }

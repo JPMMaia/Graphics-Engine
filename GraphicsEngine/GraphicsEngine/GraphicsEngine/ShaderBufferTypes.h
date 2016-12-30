@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "Common/MathHelper.h"
 
 namespace GraphicsEngine

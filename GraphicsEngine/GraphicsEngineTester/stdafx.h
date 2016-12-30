@@ -7,9 +7,10 @@
 
 #include "targetver.h"
 
-#include <stdafx.h>
+#include "stdafx.h"
 
 // Headers for CppUnitTest
 #include "CppUnitTest.h"
 
 // TODO: reference additional headers your program requires here
+#include <cstdint>

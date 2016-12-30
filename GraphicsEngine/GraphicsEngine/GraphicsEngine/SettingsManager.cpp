@@ -42,7 +42,7 @@ SettingsManager SettingsManager::Build(const wstring& filename)
 	return settings;
 }
 
-UINT SettingsManager::GetAdapterIndex() const
+uint32_t SettingsManager::GetAdapterIndex() const
 {
 	return m_adapterIndex;
 }
@@ -141,7 +141,7 @@ void SettingsManager::AddAdaptersInfo(rapidxml::xml_document<wchar_t>* document,
 	videoCardsNode->append_node(defaultVideoCardIndexNode);
 }
 
-void SettingsManager::AddAdapterInfo(xml_document<wchar_t>* document, rapidxml::xml_node<wchar_t>* parent, UINT adapterIndex, const DXGI_ADAPTER_DESC2& adapterDesc) const
+void SettingsManager::AddAdapterInfo(xml_document<wchar_t>* document, rapidxml::xml_node<wchar_t>* parent, uint32_t adapterIndex, const DXGI_ADAPTER_DESC2& adapterDesc) const
 {
 	// Create nodes to describe a video card:
 	xml_node<wchar_t>* videoCardNode = document->allocate_node(node_type::node_element, TAG_VIDEO_CARD);

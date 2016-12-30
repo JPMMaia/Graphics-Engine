@@ -1,8 +1,9 @@
 ﻿#pragma once
 
 #include <basetsd.h>
-#include <String>
+#include <string>
 #include <rapidxml/rapidxml.hpp>
+#include <dxgi1_2.h>
 
 namespace GraphicsEngine
 {
@@ -11,7 +12,7 @@ namespace GraphicsEngine
 	public:
 		static SettingsManager Build(const std::wstring& filename);
 
-		UINT GetAdapterIndex() const;
+		uint32_t GetAdapterIndex() const;
 		const std::wstring& GetAdapterDescription() const;
 		SIZE_T GetAdapterDedicatedVideoMemory() const;
 
@@ -22,13 +23,13 @@ namespace GraphicsEngine
 
 		void CreateFile(const std::wstring& filename);
 		void AddAdaptersInfo(rapidxml::xml_document<wchar_t>* document, rapidxml::xml_node<wchar_t>* parent);
-		void AddAdapterInfo(rapidxml::xml_document<wchar_t>* document, rapidxml::xml_node<wchar_t>* parent, UINT adapterIndex, const DXGI_ADAPTER_DESC2& adapterDesc) const;
+		void AddAdapterInfo(rapidxml::xml_document<wchar_t>* document, rapidxml::xml_node<wchar_t>* parent, uint32_t adapterIndex, const DXGI_ADAPTER_DESC2& adapterDesc) const;
 
 		template<typename T>
 		wchar_t* AllocateValue(rapidxml::xml_document<wchar_t>* document, T value) const;
 
 	private:
-		UINT m_adapterIndex;
+		uint32_t m_adapterIndex;
 		std::wstring m_adapterDescription;
 		SIZE_T m_adapterDedicatedVideoMemory;
 	};

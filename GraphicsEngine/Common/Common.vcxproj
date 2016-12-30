@@ -157,6 +157,8 @@
     <ClInclude Include="Common\Helpers.h" />
     <ClInclude Include="Common\IncludeReplacer.h" />
     <ClInclude Include="Common\MathHelper.h" />
+    <ClInclude Include="Common\MemoryPool.h" />
+    <ClInclude Include="Common\MemoryPoolElement.h" />
     <ClInclude Include="Common\Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

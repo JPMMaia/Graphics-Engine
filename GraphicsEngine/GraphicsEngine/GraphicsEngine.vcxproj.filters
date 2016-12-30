@@ -272,6 +272,12 @@
     <ClInclude Include="GraphicsEngine\GeometryGenerator.h">
       <Filter>GraphicsEngine\Model</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsEngine\Octree.h">
+      <Filter>GraphicsEngine\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\OctreeCollider.h">
+      <Filter>GraphicsEngine\Octree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -369,6 +375,9 @@
     </Filter>
     <Filter Include="Shaders\Shadows">
       <UniqueIdentifier>{7c8de919-f2c5-4b94-b491-dbff3cbf1e87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\Octree">
+      <UniqueIdentifier>{9a255b78-f275-4c31-8430-07c77336d458}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

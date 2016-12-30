@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include <Camera.h>
-#include <Octree.h>
+#include "GraphicsEngine/Octree.h"
+#include "GraphicsEngine/Camera.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -32,7 +32,7 @@ namespace GraphicsEngineTester
 			m_id(s_counter++)
 		{
 		}
-		~ColliderTestClass()
+		virtual ~ColliderTestClass()
 		{
 		}
 
@@ -78,21 +78,21 @@ namespace GraphicsEngineTester
 			octree.AddObject(&m_gameObjects[1]);
 			octree.AddObject(&m_gameObjects[2]);
 			Assert::IsTrue(octree.m_isLeaf);
-			Assert::AreEqual(3U, octree.m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(3), octree.m_objectCount);
 
 			// Do not allow to add duplicate objects:
 			octree.AddObject(&m_gameObjects[1]);
-			Assert::AreEqual(3U, octree.m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(3), octree.m_objectCount);
 
 			// Add an object which lies outside of the bounding box (it should be ignored):
 			octree.AddObject(&m_gameObjects[3]);
-			Assert::AreEqual(3U, octree.m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(3), octree.m_objectCount);
 
 			// Force octree to build new child nodes:
 			octree.AddObject(&m_gameObjects[4]);
 			octree.AddObject(&m_gameObjects[5]);
 			Assert::IsFalse(octree.m_isLeaf);
-			Assert::AreEqual(5U, octree.m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(5), octree.m_objectCount);
 
 			// Test if child nodes were successfully initialized:
 			const static XMFLOAT3 EXPECTED_CHILDREN_EXTENTS = { 4.0f, 4.0f, 4.0f };
@@ -104,10 +104,10 @@ namespace GraphicsEngineTester
 			}
 
 			// Check if the objects were correctly inserted into the child nodes:
-			Assert::AreEqual(3U, children[0]->m_objectCount);
-			Assert::AreEqual(0U, children[1]->m_objectCount);
-			Assert::AreEqual(1U, children[4]->m_objectCount);
-			Assert::AreEqual(1U, children[5]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(3), children[0]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(0), children[1]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(1), children[4]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(1), children[5]->m_objectCount);
 
 			// Add some more objects:
 			octree.AddObject(&m_gameObjects[6]);
@@ -116,28 +116,28 @@ namespace GraphicsEngineTester
 			octree.AddObject(&m_gameObjects[9]);
 
 			// Check if objects were correctly inserted:
-			Assert::AreEqual(9U, octree.m_objectCount);
-			Assert::AreEqual(6U, children[0]->m_objectCount);
-			Assert::AreEqual(0U, children[1]->m_objectCount);
-			Assert::AreEqual(2U, children[4]->m_objectCount);
-			Assert::AreEqual(1U, children[5]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(9), octree.m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(6), children[0]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(0), children[1]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(2), children[4]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(1), children[5]->m_objectCount);
 
 			// Insert an object which will be shared by multiple nodes:
 			octree.AddObject(&m_gameObjects[10]);
-			Assert::AreEqual(10U, octree.m_objectCount);
-			Assert::AreEqual(7U, children[0]->m_objectCount);
-			Assert::AreEqual(1U, children[1]->m_objectCount);
-			Assert::AreEqual(1U, children[2]->m_objectCount);
-			Assert::AreEqual(1U, children[3]->m_objectCount);
-			Assert::AreEqual(3U, children[4]->m_objectCount);
-			Assert::AreEqual(2U, children[5]->m_objectCount);
-			Assert::AreEqual(1U, children[6]->m_objectCount);
-			Assert::AreEqual(1U, children[7]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(10), octree.m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(7), children[0]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(1), children[1]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(1), children[2]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(1), children[3]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(3), children[4]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(2), children[5]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(1), children[6]->m_objectCount);
+			Assert::AreEqual(static_cast<size_t>(1), children[7]->m_objectCount);
 		}
 
 		TEST_METHOD(TestOctreeFrustumIntersection)
 		{
-			auto camera = Camera();
+			Camera camera;
 			auto cameraFrustum = camera.BuildViewSpaceBoundingFrustum();
 
 			auto octree = Octree<OctreeBaseCollider, 4>::Create(
@@ -146,7 +146,7 @@ namespace GraphicsEngineTester
 			for (auto& object : m_gameObjects)
 				octree.AddObject(&object);
 
-			auto intersections = octree.GetIntersections(cameraFrustum);
+			//auto intersections = octree.GetIntersections(cameraFrustum);
 		}
 	};
 }

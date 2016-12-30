@@ -274,6 +274,8 @@
     <ClInclude Include="GraphicsEngine\LightManager.h" />
     <ClInclude Include="GraphicsEngine\Material.h" />
     <ClInclude Include="GraphicsEngine\MeshGeometry.h" />
+    <ClInclude Include="GraphicsEngine\Octree.h" />
+    <ClInclude Include="GraphicsEngine\OctreeCollider.h" />
     <ClInclude Include="GraphicsEngine\PipelineState.h" />
     <ClInclude Include="GraphicsEngine\PipelineStateManager.h" />
     <ClInclude Include="GraphicsEngine\PixelShader.h" />

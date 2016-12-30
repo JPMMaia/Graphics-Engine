@@ -42,5 +42,7 @@
     <ClInclude Include="Common\IncludeReplacer.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="Common\MemoryPool.h" />
+    <ClInclude Include="Common\MemoryPoolElement.h" />
   </ItemGroup>
 </Project>

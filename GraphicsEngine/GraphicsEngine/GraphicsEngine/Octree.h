@@ -4,7 +4,6 @@
 #include <array>
 #include <vector>
 
-#include "OctreeBaseCollider.h"
 #include "Common/MemoryPool.h"
 
 namespace GraphicsEngineTester
@@ -15,8 +14,7 @@ namespace GraphicsEngineTester
 namespace GraphicsEngine
 {
 	template<
-		typename Type,
-		size_t MaxObjectsPerLeaf
+		typename Type
 	>
 		class Octree
 	{
@@ -25,21 +23,21 @@ namespace GraphicsEngine
 	private:
 		struct State
 		{
-			std::array<Octree<Type, MaxObjectsPerLeaf>*, 8> Children;
+			std::array<Octree<Type>*, 8> Children;
 			std::vector<Type*> Objects;
 		};
 
 	public:
-		template<typename = std::enable_if_t<std::is_base_of<OctreeBaseCollider, Type>::value>>
-		static Octree<Type, MaxObjectsPerLeaf>& Create(DirectX::BoundingBox&& boundingBox)
-		{
-			return s_memoryPool.NewElement(std::forward<DirectX::BoundingBox>(boundingBox));
-		}
+		static constexpr size_t s_memoryPoolSize = 5000;
+		static MemoryPool<Octree<Type>, s_memoryPoolSize> s_memoryPool;
 
-		explicit Octree(DirectX::BoundingBox&& boundingBox) :
+	public:
+		explicit Octree(size_t objectsPerLeaf, DirectX::BoundingBox&& boundingBox, const DirectX::XMFLOAT3& minExtents) :
 			m_boundingBox(boundingBox),
 			m_isLeaf(true),
-			m_objectCount(0)
+			m_objectCount(0),
+			m_objectsPerLeaf(objectsPerLeaf),
+			m_minExtents(minExtents)
 		{
 		}
 
@@ -57,8 +55,8 @@ namespace GraphicsEngine
 				return;
 			}
 
-			// If leaf node has enough space, of if its bounding box is small:
-			if (m_objectCount < MaxObjectsPerLeaf || IsSmall())
+			// If leaf node has enough space, or if its bounding box is small:
+			if (m_objectCount < m_objectsPerLeaf || IsSmall())
 			{
 				AddObjectToArray(object);
 				return;
@@ -67,17 +65,17 @@ namespace GraphicsEngine
 			// If it contains a lot of objects:
 			ConvertToNonLeaf(object);
 		}
-		void XM_CALLCONV CalculateIntersections(const DirectX::BoundingFrustum& boundingFrustum, DirectX::FXMMATRIX inverseViewMatrix)
+		void XM_CALLCONV CalculateIntersections(const DirectX::BoundingFrustum& viewSpaceBoundingFrustum, DirectX::FXMMATRIX inverseViewMatrix)
 		{
-			if(!m_isLeaf)
+			if (!m_isLeaf)
 			{
-				for(const auto& child : m_state.Children)
-					child->CalculateIntersections(boundingFrustum, inverseViewMatrix);
+				for (const auto& child : m_state.Children)
+					child->CalculateIntersections(viewSpaceBoundingFrustum, inverseViewMatrix);
 			}
 			else
 			{
 				for (const auto& object : m_state.Objects)
-					object->Intersects(boundingFrustum, inverseViewMatrix);
+					object->Intersects(viewSpaceBoundingFrustum, inverseViewMatrix);
 			}
 		}
 
@@ -112,7 +110,7 @@ namespace GraphicsEngine
 
 			// Move objects to a temporary list:
 			std::vector<Type*> objects(std::move(m_state.Objects));
-			m_objectCount -= MaxObjectsPerLeaf;
+			m_objectCount -= m_objectsPerLeaf;
 
 			// Create child nodes:
 			CreateChildNodes();
@@ -139,14 +137,18 @@ namespace GraphicsEngine
 				BoundingBox::CreateFromPoints(boundingBox, XMLoadFloat3(&corners[i]), XMLoadFloat3(&m_boundingBox.Center));
 
 				// Create child octree node:
-				children[i] = &Octree::Create(std::move(boundingBox));
+				children[i] = &Octree::CreateChildOctree(m_objectsPerLeaf, std::move(boundingBox), m_minExtents);
 			}
+		}
+		Octree& CreateChildOctree(size_t objectsPerLeaf, DirectX::BoundingBox&& boundingBox, const DirectX::XMFLOAT3& minExtents)
+		{
+			return s_memoryPool.NewElement(objectsPerLeaf, std::forward<DirectX::BoundingBox>(boundingBox), minExtents);
 		}
 
 		bool IsSmall() const
 		{
 			auto extents = m_boundingBox.Extents;
-			if (extents.x <= 1.0f || extents.y <= 1.0f || extents.z <= 1.0f)
+			if (extents.x <= m_minExtents.x || extents.y <= m_minExtents.y || extents.z <= m_minExtents.z)
 				return true;
 
 			return false;
@@ -157,10 +159,10 @@ namespace GraphicsEngine
 		bool m_isLeaf;
 		State m_state;
 		size_t m_objectCount;
-
-		static MemoryPool<Octree<Type, MaxObjectsPerLeaf>, 100> s_memoryPool;
+		size_t m_objectsPerLeaf;
+		DirectX::XMFLOAT3 m_minExtents;
 	};
 
-	template<typename Type, size_t MaxObjectsPerLeaf>
-	MemoryPool<Octree<Type, MaxObjectsPerLeaf>, 100> Octree<Type, MaxObjectsPerLeaf>::s_memoryPool;
+	template<typename Type>
+	MemoryPool<Octree<Type>, Octree<Type>::s_memoryPoolSize> Octree<Type>::s_memoryPool;
 }

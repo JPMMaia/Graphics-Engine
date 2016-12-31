@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include <DirectXPackedVector.h>
 
 namespace GraphicsEngine
 {
@@ -15,6 +16,17 @@ namespace GraphicsEngine
 				0.0f, 0.0f, 0.0f, 1.0f);
 
 			return I;
+		}
+
+		static DirectX::PackedVector::XMHALF4 ConvertFloat4ToHalf4(const DirectX::XMFLOAT4& value)
+		{
+			using namespace DirectX;
+			PackedVector::XMHALF4 half4;
+			half4.x = PackedVector::XMConvertFloatToHalf(value.x);
+			half4.y = PackedVector::XMConvertFloatToHalf(value.y);
+			half4.z = PackedVector::XMConvertFloatToHalf(value.z);
+			half4.w = PackedVector::XMConvertFloatToHalf(value.w);
+			return half4;
 		}
 
 		const auto Infinity = FLT_MAX;

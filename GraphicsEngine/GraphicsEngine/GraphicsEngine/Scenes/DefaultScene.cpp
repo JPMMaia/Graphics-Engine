@@ -222,7 +222,7 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 
 					XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixTranslation(start + i * offset, start + j * offset, start + k * offset));
 
-					cubeRenderItem->InstancesData.push_back(instanceData);
+					cubeRenderItem->AddInstance(instanceData);
 				}
 			}
 		}
@@ -256,7 +256,7 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 
 		ShaderBufferTypes::InstanceData instanceData;
 		XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f));
-		domeRenderItem->InstancesData.push_back(instanceData);
+		domeRenderItem->AddInstance(instanceData);
 
 		graphics->AddRenderItem(std::move(domeRenderItem), { RenderLayer::SkyDome });
 	}
@@ -296,8 +296,8 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 				const auto& position = randomPositions[i];
 
 				XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixRotationX(XM_PI / 2.0f) * XMMatrixTranslation(position.x, position.y - 2.0f, position.z));
-
-				renderItem->InstancesData.push_back(instanceData);
+				
+				renderItem->AddInstance(instanceData);
 			}
 
 			graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Opaque });
@@ -323,7 +323,7 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 				ShaderBufferTypes::InstanceData instanceData;
 				const auto& position = randomPositions[i];
 				XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixRotationX(XM_PI / 2.0f) * XMMatrixTranslation(position.x, position.y - 2.0f, position.z));
-				renderItem->InstancesData.push_back(instanceData);
+				renderItem->AddInstance(instanceData);
 			}
 			graphics->AddRenderItem(std::move(renderItem), { RenderLayer::AlphaClipped });
 		}
@@ -341,8 +341,8 @@ void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase,
 	terrainDescription.TiledNormalMapFilename = L"Textures/rock01n.dds";
 	terrainDescription.TiledNormalMap2Filename = L"Textures/snow01n.dds";
 	terrainDescription.HeightMapFilename = L"Textures/TerrainHeightMap.r16";
-	terrainDescription.HeightMapWidth = 1025;
-	terrainDescription.HeightMapHeight = 1025;
+	terrainDescription.HeightMapWidth = 1024;
+	terrainDescription.HeightMapHeight = 1024;
 	terrainDescription.HeightMapFactor = 255.0f;
 	terrainDescription.TiledTexelScale = 16.0f;
 	m_terrain = Terrain(d3dBase, *graphics, textureManager, *this, terrainDescription);

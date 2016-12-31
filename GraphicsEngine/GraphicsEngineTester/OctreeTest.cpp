@@ -76,12 +76,14 @@ namespace GraphicsEngineTester
 
 		TEST_METHOD(TestOctreeConstruction)
 		{
-			auto octree = Octree<OctreeBaseCollider, 4>::Create(
-				BoundingBox(XMFLOAT3(0.0f, 6.0f, 0.0f), XMFLOAT3(8.0f, 8.0f, 8.0f))
+			auto octree = Octree<OctreeBaseCollider>(
+				4,
+				BoundingBox(XMFLOAT3(0.0f, 6.0f, 0.0f), XMFLOAT3(8.0f, 8.0f, 8.0f)),
+				XMFLOAT3(1.0f, 1.0f, 1.0f)
 				);
 			Assert::IsTrue(octree.m_isLeaf);
 
-			// Add objects to the octree
+			// Add objects to the octree:
 			octree.AddObject(&m_gameObjects[0]);
 			octree.AddObject(&m_gameObjects[1]);
 			octree.AddObject(&m_gameObjects[2]);
@@ -154,8 +156,10 @@ namespace GraphicsEngineTester
 			auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
 			auto cameraFrustum = camera.BuildViewSpaceBoundingFrustum();
 
-			auto octree = Octree<OctreeBaseCollider, 4>::Create(
-				BoundingBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(8.0f, 8.0f, 8.0f))
+			auto octree = Octree<OctreeBaseCollider>(
+				4,
+				BoundingBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(8.0f, 8.0f, 8.0f)),
+				XMFLOAT3(1.0f, 1.0f, 1.0f)
 				);
 
 			RenderItem renderItem;

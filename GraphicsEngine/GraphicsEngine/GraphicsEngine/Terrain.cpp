@@ -154,12 +154,12 @@ void Terrain::CreateMaterial(const D3DBase& d3dBase, TextureManager& textureMana
 			// Load height map:
 			LoadRawHeightMap(m_description.HeightMapFilename, m_description.HeightMapWidth, m_description.HeightMapHeight, m_description.HeightMapFactor, m_heightMap, m_normalMap, m_tangentMap);
 
-			// Convert from vector of floats to vector of halfs:
-			std::vector<PackedVector::HALF> heightMapHalf(m_heightMap.size());
-			std::transform(m_heightMap.begin(), m_heightMap.end(), heightMapHalf.begin(), PackedVector::XMConvertFloatToHalf);
-
 			// Create height map texture:
 			{
+				// Convert from vector of floats to vector of halfs:
+				std::vector<PackedVector::HALF> heightMapHalf(m_heightMap.size());
+				std::transform(m_heightMap.begin(), m_heightMap.end(), heightMapHalf.begin(), PackedVector::XMConvertFloatToHalf);
+
 				D3D11_TEXTURE2D_DESC heightMapDescription;
 				heightMapDescription.Width = m_description.HeightMapWidth;
 				heightMapDescription.Height = m_description.HeightMapHeight;
@@ -193,12 +193,16 @@ void Terrain::CreateMaterial(const D3DBase& d3dBase, TextureManager& textureMana
 
 			// Normal map:
 			{
+				// Convert from vector of floats to vector of halfs:
+				std::vector<PackedVector::XMHALF4> normalMapHalf(m_normalMap.size());
+				std::transform(m_normalMap.begin(), m_normalMap.end(), normalMapHalf.begin(), MathHelper::ConvertFloat4ToHalf4);
+
 				D3D11_TEXTURE2D_DESC normalMapDescription;
 				normalMapDescription.Width = m_description.HeightMapWidth;
 				normalMapDescription.Height = m_description.HeightMapHeight;
 				normalMapDescription.MipLevels = 1;
 				normalMapDescription.ArraySize = 1;
-				normalMapDescription.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+				normalMapDescription.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 				normalMapDescription.SampleDesc.Count = 1;
 				normalMapDescription.SampleDesc.Quality = 0;
 				normalMapDescription.Usage = D3D11_USAGE_DEFAULT;
@@ -207,8 +211,8 @@ void Terrain::CreateMaterial(const D3DBase& d3dBase, TextureManager& textureMana
 				normalMapDescription.MiscFlags = 0;
 
 				D3D11_SUBRESOURCE_DATA data;
-				data.pSysMem = &m_normalMap[0];
-				data.SysMemPitch = static_cast<UINT>(m_description.HeightMapWidth * sizeof(XMFLOAT3));
+				data.pSysMem = &normalMapHalf[0];
+				data.SysMemPitch = static_cast<UINT>(m_description.HeightMapWidth * sizeof(PackedVector::XMHALF4));
 				data.SysMemSlicePitch = 0;
 
 				ComPtr<ID3D11Texture2D> normalMapTexture;
@@ -227,12 +231,16 @@ void Terrain::CreateMaterial(const D3DBase& d3dBase, TextureManager& textureMana
 
 			// Tangent map:
 			{
+				// Convert from vector of floats to vector of halfs:
+				std::vector<PackedVector::XMHALF4> tangentMapHalf(m_normalMap.size());
+				std::transform(m_normalMap.begin(), m_normalMap.end(), tangentMapHalf.begin(), MathHelper::ConvertFloat4ToHalf4);
+
 				D3D11_TEXTURE2D_DESC tangentMapDescription;
 				tangentMapDescription.Width = m_description.HeightMapWidth;
 				tangentMapDescription.Height = m_description.HeightMapHeight;
 				tangentMapDescription.MipLevels = 1;
 				tangentMapDescription.ArraySize = 1;
-				tangentMapDescription.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+				tangentMapDescription.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 				tangentMapDescription.SampleDesc.Count = 1;
 				tangentMapDescription.SampleDesc.Quality = 0;
 				tangentMapDescription.Usage = D3D11_USAGE_DEFAULT;
@@ -241,8 +249,8 @@ void Terrain::CreateMaterial(const D3DBase& d3dBase, TextureManager& textureMana
 				tangentMapDescription.MiscFlags = 0;
 
 				D3D11_SUBRESOURCE_DATA data;
-				data.pSysMem = &m_tangentMap[0];
-				data.SysMemPitch = static_cast<UINT>(m_description.HeightMapWidth * sizeof(XMFLOAT3));
+				data.pSysMem = &tangentMapHalf[0];
+				data.SysMemPitch = static_cast<UINT>(m_description.HeightMapWidth * sizeof(PackedVector::XMHALF4));
 				data.SysMemSlicePitch = 0;
 
 				ComPtr<ID3D11Texture2D> tangentMapTexture;
@@ -350,7 +358,7 @@ GeometryGenerator::MeshData Terrain::CreateMeshData(float width, float depth, ui
 
 	return output;
 }
-void Terrain::LoadRawHeightMap(const std::wstring& filename, uint32_t width, uint32_t height, float heightFactor, std::vector<float>& heightMap, std::vector<XMFLOAT3>& normalMap, std::vector<XMFLOAT3>& tangentMap)
+void Terrain::LoadRawHeightMap(const std::wstring& filename, uint32_t width, uint32_t height, float heightFactor, std::vector<float>& heightMap, std::vector<XMFLOAT4>& normalMap, std::vector<XMFLOAT4>& tangentMap)
 {
 	// Read file content into a buffer:
 	std::vector<uint16_t> buffer;
@@ -397,8 +405,8 @@ void Terrain::LoadRawHeightMap(const std::wstring& filename, uint32_t width, uin
 			auto normalVector = XMVector3Cross(tangentVector, bitangentVector);
 
 			auto index = i * width + j;
-			XMStoreFloat3(&tangentMap[index], tangentVector);
-			XMStoreFloat3(&normalMap[index], normalVector);
+			XMStoreFloat4(&tangentMap[index], tangentVector);
+			XMStoreFloat4(&normalMap[index], normalVector);
 		}
 	}
 }

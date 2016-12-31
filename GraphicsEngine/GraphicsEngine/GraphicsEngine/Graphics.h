@@ -14,6 +14,7 @@
 #include "ShadowTexture.h"
 #include "LightManager.h"
 #include "RenderTexture.h"
+#include "Octree.h"
 
 namespace GraphicsEngine
 {
@@ -33,7 +34,8 @@ namespace GraphicsEngine
 		void AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
 
 	private:
-		void UpdateInstancesData();
+		void UpdateInstancesDataFrustumCulling();
+		void UpdateInstancesDataOctreeCulling();
 		void UpdateMaterialData() const;
 		void UpdateLights(const Common::Timer& timer) const;
 		void UpdateMainPassData(const Common::Timer& timer) const;
@@ -52,6 +54,7 @@ namespace GraphicsEngine
 		TextureManager m_textureManager;
 		Camera m_camera;
 		LightManager m_lightManager;
+		Octree<OctreeCollider> m_octree;
 		DefaultScene m_scene;
 
 		std::vector<FrameResource> m_frameResources;
@@ -66,6 +69,6 @@ namespace GraphicsEngine
 		DirectX::XMFLOAT3 m_fogColor;
 		ShadowTexture m_shadowMap;
 		RenderTexture m_renderTexture;
-		DirectX::BoundingSphere m_sceneBounds;
+		DirectX::BoundingSphere m_sceneBounds;		
 	};
 }

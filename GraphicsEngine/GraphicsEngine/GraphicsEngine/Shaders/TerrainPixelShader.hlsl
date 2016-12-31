@@ -14,10 +14,10 @@ struct DomainOutput
 };
 
 Texture2D DiffuseMap : register(t0);
-Texture2D NormalMap : register(t1);
+Texture2D<float3> NormalMap : register(t1);
 Texture2D HeightMap : register(t2);
 Texture2D ShadowMap : register(t3);
-Texture2D TangentMap : register(t4);
+Texture2D<float3> TangentMap : register(t4);
 Texture2D TiledDiffuseMap : register(t5);
 Texture2D TiledNormalMap : register(t6);
 Texture2D TiledNormalMap2 : register(t7);

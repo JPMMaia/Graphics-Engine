@@ -45,12 +45,12 @@ namespace GraphicsEngine
 		void CreateRenderItem(const D3DBase& d3dBase, Graphics& graphics, IScene& scene) const;
 
 		static GeometryGenerator::MeshData CreateMeshData(float width, float depth, uint32_t xCellCount, uint32_t zCellCount);
-		static void LoadRawHeightMap(const std::wstring& filename, uint32_t width, uint32_t height, float heightFactor, std::vector<float>& heightMap, std::vector<DirectX::XMFLOAT3>& normalMap, std::vector<DirectX::XMFLOAT3>& tangentMap);
+		static void LoadRawHeightMap(const std::wstring& filename, uint32_t width, uint32_t height, float heightFactor, std::vector<float>& heightMap, std::vector<DirectX::XMFLOAT4>& normalMap, std::vector<DirectX::XMFLOAT4>& tangentMap);
 
 	public:
 		Description m_description;
 		std::vector<float> m_heightMap;
-		std::vector<DirectX::XMFLOAT3> m_normalMap;
-		std::vector<DirectX::XMFLOAT3> m_tangentMap;
+		std::vector<DirectX::XMFLOAT4> m_normalMap;
+		std::vector<DirectX::XMFLOAT4> m_tangentMap;
 	};
 }

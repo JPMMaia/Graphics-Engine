@@ -6,7 +6,10 @@ using namespace GraphicsEngine;
 
 bool OctreeCollider::Intersects(const DirectX::BoundingBox& box) const
 {
-	return box.Intersects(m_renderItem->Bounds);
+	BoundingBox worldSpaceBoundingBox;
+	m_renderItem->Bounds.Transform(worldSpaceBoundingBox, XMLoadFloat4x4(&m_renderItem->InstancesData[m_instanceID].WorldMatrix));
+
+	return worldSpaceBoundingBox.Intersects(box);
 }
 bool OctreeCollider::Intersects(const DirectX::BoundingFrustum& viewSpaceCameraFrustum, DirectX::FXMMATRIX inverseViewMatrix) const
 {

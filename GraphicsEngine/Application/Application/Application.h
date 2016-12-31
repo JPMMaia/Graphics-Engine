@@ -5,23 +5,24 @@
 #include "Common/Timer.h"
 #include "SoundEngine/SoundManager.h"
 #include "Window.h"
+#include <mutex>
 
 namespace Win32Application
 {
 	class Application
 	{
 	public:
-		static Application& GetInstance();
+		static Application* GetInstance();
+		static LRESULT CALLBACK MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+	public:
+		Application();
 
 		int Run();
 
-		static LRESULT CALLBACK MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-	protected:
-		Application();
-
 	private:
-		static Application s_instance;
+		static std::mutex s_mutex;
+		static std::unique_ptr<Application> s_instance;
 		Window m_window;
 
 		const double c_millisecondsPerUpdate = 10.0;

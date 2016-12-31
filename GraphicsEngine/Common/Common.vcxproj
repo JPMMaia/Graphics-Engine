@@ -150,6 +150,7 @@
     <ClCompile Include="Common\Helpers.cpp" />
     <ClCompile Include="Common\IncludeReplacer.cpp" />
     <ClCompile Include="Common\MathHelper.cpp" />
+    <ClCompile Include="Common\PerformanceTimer.cpp" />
     <ClCompile Include="Common\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +160,7 @@
     <ClInclude Include="Common\MathHelper.h" />
     <ClInclude Include="Common\MemoryPool.h" />
     <ClInclude Include="Common\MemoryPoolElement.h" />
+    <ClInclude Include="Common\PerformanceTimer.h" />
     <ClInclude Include="Common\Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

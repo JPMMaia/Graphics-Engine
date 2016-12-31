@@ -21,13 +21,27 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 
 		// All other messages pass to the message handler in the application class:
 	default:
-		return Application::GetInstance().MessageHandler(hwnd, msg, wParam, lParam);
+		auto application = Application::GetInstance();
+		if (application)
+			return application->MessageHandler(hwnd, msg, wParam, lParam);
+		
+		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
 }
 
-Application& Application::GetInstance()
+Application* Application::GetInstance()
 {
-	return s_instance;
+	if (!s_instance)
+	{
+		if (!s_mutex.try_lock())
+			return nullptr;
+
+		s_instance = std::make_unique<Application>();
+
+		s_mutex.unlock();
+	}
+
+	return s_instance.get();
 }
 
 int Application::Run()
@@ -54,7 +68,7 @@ int Application::Run()
 		camera->RotateLocalX(mouseDeltaY * mouseSensibility);
 
 		// Clamp camera to the ground:
-		/*XMFLOAT3 position; 
+		/*XMFLOAT3 position;
 		XMStoreFloat3(&position, camera->GetPosition());
 		auto terrainHeight = m_graphics.GetScene()->GetTerrain().GetTerrainHeight(position.x, position.z);
 		camera->SetPosition(position.x, 5.0f + terrainHeight, position.z);*/
@@ -114,7 +128,8 @@ LRESULT Application::MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-Application Application::s_instance = Application();
+std::mutex Application::s_mutex;
+std::unique_ptr<Application> Application::s_instance;
 Application::Application() :
 	m_window(MainWindowProc),
 	m_timer(c_millisecondsPerUpdate),

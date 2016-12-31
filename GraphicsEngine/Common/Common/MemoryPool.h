@@ -5,17 +5,17 @@
 
 #include "MemoryPoolElement.h"
 
-
 namespace GraphicsEngine
 {
 	template<typename Type, size_t Size>
 	class MemoryPool
 	{
 	public:
-		MemoryPool() :
-			m_activeElements(0),
-			m_firstAvailable(&m_pool[0])
+		MemoryPool()
 		{
+			m_activeElements = 0;
+			m_firstAvailable = &m_pool[0];
+
 			// Initialize a list of available elements:
 			for (size_t i = 0; i < m_pool.size() - 1; i++)
 				m_pool[i].SetNext(&m_pool[i + 1]);

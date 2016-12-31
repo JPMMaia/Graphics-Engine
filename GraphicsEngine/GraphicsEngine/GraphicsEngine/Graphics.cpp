@@ -3,6 +3,7 @@
 #include "ShaderBufferTypes.h"
 #include "SamplerStateDescConstants.h"
 #include "Terrain.h"
+#include "Common/PerformanceTimer.h"
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -12,6 +13,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_pipelineStateManager(m_d3dBase),
 	m_camera(m_d3dBase.GetAspectRatio(), 0.25f * XM_PI, 0.01f, 10000.0f, XMMatrixIdentity()),
 	m_lightManager(),
+	m_octree(8, BoundingBox(XMFLOAT3(0.0f, 256.0f, 0.0f), XMFLOAT3(1024.0f, 512.0f, 1024.0f)), XMFLOAT3(1.0f, 1.0f, 1.0f)),
 	m_scene(this, m_d3dBase, m_textureManager, m_lightManager),
 	m_frameResources(1, FrameResource(m_d3dBase.GetDevice(), m_allRenderItems, m_scene.GetMaterials().size())),
 	m_currentFrameResource(&m_frameResources[0]),
@@ -53,7 +55,15 @@ void Graphics::RenderUpdate(const Common::Timer& timer)
 	UpdateMainPassData(timer);
 	UpdateShadowPassData(timer);
 	UpdateMaterialData();
-	UpdateInstancesData();
+	
+	Common::PerformanceTimer performanceTimer;
+	performanceTimer.Start();
+	UpdateInstancesDataFrustumCulling();
+//	UpdateInstancesDataOctreeCulling();
+	performanceTimer.End();
+	auto elapsedTime = performanceTimer.ElapsedTime<float, std::milli>().count();
+	auto string = L"ElapsedTime: " + std::to_wstring(elapsedTime) + L"\n";
+	OutputDebugStringW(string.c_str());
 }
 
 void Graphics::Render(const Common::Timer& timer) const
@@ -204,10 +214,13 @@ void Graphics::AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::init
 		m_renderItemLayers[static_cast<SIZE_T>(renderLayer)].push_back(renderItem.get());
 	}
 
+	for (auto& collider : renderItem->Colliders)
+		m_octree.AddObject(&collider);
+
 	m_allRenderItems.push_back(std::move(renderItem));
 }
 
-void Graphics::UpdateInstancesData()
+void Graphics::UpdateInstancesDataFrustumCulling()
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
 
@@ -256,6 +269,50 @@ void Graphics::UpdateInstancesData()
 				auto& instanceDataView = instacesBufferView[visibleInstanceCount++];
 				instanceDataView.WorldMatrix = instanceData.WorldMatrix;
 			}
+		}
+		renderItem->VisibleInstanceCount = visibleInstanceCount;
+
+		// Unmap resource:
+		instancesBuffer.Unmap(deviceContext);
+	}
+}
+void Graphics::UpdateInstancesDataOctreeCulling()
+{
+	auto deviceContext = m_d3dBase.GetDeviceContext();
+
+	// Get view matrix and calculate its inverse:
+	auto viewMatrix = m_camera.GetViewMatrix();
+	auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
+	auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
+
+	// Build the view space camera frustum:
+	auto viewSpaceCameraFrustum = m_camera.BuildViewSpaceBoundingFrustum();
+
+	m_octree.CalculateIntersections(viewSpaceCameraFrustum, inverseViewMatrix);
+
+	for (const auto& renderItem : m_allRenderItems)
+	{
+		// Get instances buffer for the current render item:
+		auto location = m_currentFrameResource->InstancesBuffers.find(renderItem->Name);
+		if (location == m_currentFrameResource->InstancesBuffers.end())
+			continue;
+
+		const auto& instancesBuffer = location->second;
+
+		if (renderItem->VisibleInstances.empty())
+			continue;
+
+		// Map resource:
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		instancesBuffer.Map(deviceContext, &mappedResource);
+		auto instacesBufferView = reinterpret_cast<ShaderBufferTypes::InstanceData*>(mappedResource.pData);
+
+		// Update instance data:
+		auto visibleInstanceCount = 0;
+		for(auto instanceID : renderItem->VisibleInstances)
+		{
+			auto& instanceDataView = instacesBufferView[visibleInstanceCount++];
+			instanceDataView.WorldMatrix = renderItem->InstancesData[instanceID].WorldMatrix;
 		}
 		renderItem->VisibleInstanceCount = visibleInstanceCount;
 

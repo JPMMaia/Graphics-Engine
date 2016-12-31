@@ -295,7 +295,7 @@ void Terrain::CreateRenderItem(const D3DBase& d3dBase, Graphics& graphics, IScen
 	{
 		ShaderBufferTypes::InstanceData instanceData;
 		instanceData.WorldMatrix = MathHelper::Identity4x4();
-		renderItem->InstancesData.push_back(std::move(instanceData));
+		renderItem->InstancesData.push_back(instanceData);
 	}
 
 	graphics.AddRenderItem(std::move(renderItem), { RenderLayer::Terrain });

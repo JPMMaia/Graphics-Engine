@@ -58,8 +58,8 @@ void Graphics::RenderUpdate(const Common::Timer& timer)
 	
 	Common::PerformanceTimer performanceTimer;
 	performanceTimer.Start();
-	UpdateInstancesDataFrustumCulling();
-//	UpdateInstancesDataOctreeCulling();
+//	UpdateInstancesDataFrustumCulling();
+	UpdateInstancesDataOctreeCulling();
 	performanceTimer.End();
 	auto elapsedTime = performanceTimer.ElapsedTime<float, std::milli>().count();
 	auto string = L"ElapsedTime: " + std::to_wstring(elapsedTime) + L"\n";
@@ -508,9 +508,6 @@ void Graphics::DrawTerrain() const
 	// For each render item:
 	for (auto& renderItem : m_renderItemLayers[static_cast<SIZE_T>(RenderLayer::Terrain)])
 	{
-		// Set instances data:
-		deviceContext->IASetVertexBuffers(1, 1, m_currentFrameResource->InstancesBuffers[renderItem->Name].GetAddressOf(), &stride, &offset);
-
 		// Set material data:
 		const auto& materialData = m_currentFrameResource->MaterialDataArray[renderItem->Material->MaterialIndex];
 		deviceContext->VSSetConstantBuffers(1, 1, materialData.GetAddressOf());
@@ -527,6 +524,6 @@ void Graphics::DrawTerrain() const
 		deviceContext->PSSetShaderResources(7, 1, renderItem->Material->TiledNormalMap2->GetAddressOf());
 
 		// Render:
-		renderItem->Render(deviceContext);
+		renderItem->RenderNonInstanced(deviceContext);
 	}
 }

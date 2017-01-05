@@ -4,7 +4,7 @@
 struct VertexOutput
 {
     float3 CenterW : POSITION;
-    float2 ExtentsW : TEXCOORD;
+    float2 ExtentsW : TEXCOORD0;
 };
 struct GeometryOutput
 {
@@ -31,33 +31,37 @@ void main(point VertexOutput input[1], inout TriangleStream<GeometryOutput> outp
     {
         GeometryOutput vertex;
 
-        // TODO shadow 
+        // Shadows not used:
         vertex.ShadowPositionH = float4(0.0f, 0.0f, 0.0f, 1.0f);
+
+        // Setting normal and tangent:
         vertex.NormalW = normalW;
         vertex.TangentW = tangentW;
 
-        // Left Up:
-        vertex.PositionW = centerW + tangentW * extentsW.x + bitangentW * extentsW.y;
-        vertex.PositionH = mul(float4(vertex.PositionW, 1.0f), ViewProjectionMatrix);
-        vertex.TextureCoordinates = float2(0.0f, 0.0f);
-        outputStream.Append(vertex);
+        const uint offsetsSize = 4;
+        float2 offsets[offsetsSize] =
+        {
+            float2(+1.0f, +1.0f),
+            float2(-1.0f, +1.0f),
+            float2(+1.0f, -1.0f),
+            float2(-1.0f, -1.0f)
+        };
 
-        // Right Up:
-        vertex.PositionW = centerW - tangentW * extentsW.x + bitangentW * extentsW.y;
-        vertex.PositionH = mul(float4(vertex.PositionW, 1.0f), ViewProjectionMatrix);
-        vertex.TextureCoordinates = float2(1.0f, 0.0f);
-        outputStream.Append(vertex);
+        float2x2 rotationMatrix = float2x2(
+                GrassTransformMatrix._11, GrassTransformMatrix._12,
+                GrassTransformMatrix._21, GrassTransformMatrix._22
+            );
 
-        // Left Down:
-        vertex.PositionW = centerW + tangentW * extentsW.x - bitangentW * extentsW.y;
-        vertex.PositionH = mul(float4(vertex.PositionW, 1.0f), ViewProjectionMatrix);
-        vertex.TextureCoordinates = float2(0.0f, 1.0f);
-        outputStream.Append(vertex);
+        for (uint i = 0; i < offsetsSize; ++i)
+        {
+            float2 offset = offsets[i];
 
-        // Right Down:
-        vertex.PositionW = centerW - tangentW * extentsW.x - bitangentW * extentsW.y;
-        vertex.PositionH = mul(float4(vertex.PositionW, 1.0f), ViewProjectionMatrix);
-        vertex.TextureCoordinates = float2(1.0f, 1.0f);
-        outputStream.Append(vertex);
+            float3 positionL = offset.x * tangentW * extentsW.x + offset.y * bitangentW * extentsW.y;
+            positionL = float3(mul(positionL.xy, rotationMatrix), positionL.z);
+            vertex.PositionW = centerW + positionL;
+            vertex.PositionH = mul(float4(vertex.PositionW, 1.0f), ViewProjectionMatrix);
+            vertex.TextureCoordinates = float2(0.5f, 0.5f) + 0.5f * float2(-offset.x, -offset.y);
+            outputStream.Append(vertex);
+        }
     }
 };

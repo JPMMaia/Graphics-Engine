@@ -3,10 +3,12 @@
 #include "GraphicsEngine/IScene.h"
 #include "GraphicsEngine/MeshGeometry.h"
 #include "GraphicsEngine/Terrain.h"
+#include "Common/Timer.h"
 
 #include <memory>
 #include <unordered_map>
 #include "GraphicsEngine/Material.h"
+
 
 namespace GraphicsEngine
 {
@@ -21,9 +23,12 @@ namespace GraphicsEngine
 		DefaultScene() = default;
 		DefaultScene(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager, LightManager& lightManager);
 
+		void Update(const Graphics& graphics, const Common::Timer& timer) override;
+
 		void AddGeometry(std::unique_ptr<MeshGeometry>&& geometry) override;
 		void AddMaterial(std::unique_ptr<Material>&& material) override;
 		const Terrain& GetTerrain() const override;
+		const DirectX::XMFLOAT4X4& GetGrassTransformMatrix() const;
 
 		const std::unordered_map<std::string, std::unique_ptr<MeshGeometry>>& GetGeometries() const override;
 		const std::unordered_map<std::string, std::unique_ptr<Material>>& GetMaterials() const override;
@@ -42,5 +47,8 @@ namespace GraphicsEngine
 		std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> m_geometries;
 		std::unordered_map<std::string, std::unique_ptr<Material>> m_materials;
 		Terrain m_terrain;
+		float m_grassRotation;
+		float m_windDirection;
+		DirectX::XMFLOAT4X4 m_grassTransformMatrix;
 	};
 }

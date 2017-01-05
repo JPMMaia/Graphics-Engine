@@ -19,9 +19,13 @@ namespace GraphicsEngine
 			float TerrainDepth;
 			uint32_t CellXCount;
 			uint32_t CellZCount;
-			std::wstring TiledDiffuseMapFilename;
-			std::wstring TiledNormalMapFilename;
-			std::wstring TiledNormalMap2Filename;
+			std::wstring RockDiffuseMapFilename;
+			std::wstring RockNormalMapFilename;
+			std::wstring GrassDiffuseMapFilename;
+			std::wstring GrassNormalMapFilename;
+			std::wstring PathDiffuseMapFilename;
+			std::wstring PathNormalMapFilename;
+			std::wstring SnowNormalMapFilename;
 			std::wstring HeightMapFilename;
 			uint32_t HeightMapWidth;
 			uint32_t HeightMapHeight;

@@ -98,7 +98,7 @@ int Application::Run()
 
 	auto processFrameStatistics = [this](const Timer& timer)
 	{
-		auto extraCaption = L"FPS: " + std::to_wstring(timer.GetFramesPerSecond()) + L" | MSPF: " + std::to_wstring(timer.GetMillisecondsPerFrame());
+		auto extraCaption = L"FPS: " + std::to_wstring(timer.GetFramesPerSecond()) + L" | MSPF: " + std::to_wstring(timer.GetMillisecondsPerFrame()) + L" | V: " + std::to_wstring(m_graphics.GetVisibleInstances());
 		m_window.SetWindowExtraCaption(extraCaption);
 	};
 

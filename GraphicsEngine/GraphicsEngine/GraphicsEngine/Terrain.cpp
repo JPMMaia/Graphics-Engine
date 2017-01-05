@@ -140,14 +140,45 @@ void Terrain::CreateMaterial(const D3DBase& d3dBase, TextureManager& textureMana
 
 	// Load textures:
 	{
-		textureManager.Create(device, "TerrainTiledDiffuseMap", m_description.TiledDiffuseMapFilename);
-		material->TiledDiffuseMap = &textureManager["TerrainTiledDiffuseMap"];
+		// Rock:
+		{
+			auto difuseMap = "RockDiffuseMap";
+			textureManager.Create(device, difuseMap, m_description.RockDiffuseMapFilename);
+			material->TiledDiffuseMap = &textureManager[difuseMap];
 
-		textureManager.Create(device, "TerrainTiledNormalMap", m_description.TiledNormalMapFilename);
-		material->TiledNormalMap = &textureManager["TerrainTiledNormalMap"];
+			auto normalMap = "RockNormalMap";
+			textureManager.Create(device, normalMap, m_description.RockNormalMapFilename);
+			material->TiledNormalMap = &textureManager[normalMap];
+		}
+		
+		// Grass:
+		{
+			auto diffuseMap = "GrassDiffuseMap";
+			textureManager.Create(device, diffuseMap, m_description.GrassDiffuseMapFilename);
+			material->TiledDiffuseMap2 = &textureManager[diffuseMap];
 
-		textureManager.Create(device, "TerrainTiledNormalMap2", m_description.TiledNormalMap2Filename);
-		material->TiledNormalMap2 = &textureManager["TerrainTiledNormalMap2"];
+			auto normalMap = "GrassNormalMap";
+			textureManager.Create(device, normalMap, m_description.GrassNormalMapFilename);
+			material->TiledNormalMap2 = &textureManager[normalMap];
+		}
+
+		// Path:
+		{
+			auto diffuseMap = "PathDiffuseMap";
+			textureManager.Create(device, diffuseMap, m_description.PathDiffuseMapFilename);
+			material->TiledDiffuseMap3 = &textureManager[diffuseMap];
+
+			auto normalMap = "PathNormalMap";
+			textureManager.Create(device, normalMap, m_description.PathNormalMapFilename);
+			material->TiledNormalMap3 = &textureManager[normalMap];
+		}
+
+		// Snow:
+		{
+			auto normalMap = "SnowNormalMap";
+			textureManager.Create(device, normalMap, m_description.SnowNormalMapFilename);
+			material->TiledNormalMap4 = &textureManager[normalMap];
+		}
 
 		// Load height map:
 		{

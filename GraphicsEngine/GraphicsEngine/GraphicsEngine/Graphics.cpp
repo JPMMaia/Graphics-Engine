@@ -13,7 +13,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_pipelineStateManager(m_d3dBase),
 	m_camera(m_d3dBase.GetAspectRatio(), 0.25f * XM_PI, 0.01f, 10000.0f, XMMatrixIdentity()),
 	m_lightManager(),
-	m_octree(8, BoundingBox(XMFLOAT3(0.0f, 256.0f, 0.0f), XMFLOAT3(1024.0f, 512.0f, 1024.0f)), XMFLOAT3(1.0f, 1.0f, 1.0f)),
+	m_octree(32, BoundingBox(XMFLOAT3(0.0f, 256.0f, 0.0f), XMFLOAT3(1024.0f, 512.0f, 1024.0f)), XMFLOAT3(64.0f, 64.0f, 64.0f)),
 	m_scene(this, m_d3dBase, m_textureManager, m_lightManager),
 	m_frameResources(1, FrameResource(m_d3dBase.GetDevice(), m_allRenderItems, m_scene.GetMaterials().size())),
 	m_currentFrameResource(&m_frameResources[0]),
@@ -25,12 +25,13 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_fogColor(0.5f, 0.5f, 0.5f),
 	m_shadowMap(m_d3dBase.GetDevice(), 2048, 2048),
 	m_renderTexture(m_d3dBase.GetDevice(), clientWidth, clientHeight, DXGI_FORMAT_R8G8B8A8_UNORM),
-	m_sceneBounds(XMFLOAT3(0.0f, 256.0f, 0.0f), 512.0f)
+	m_sceneBounds(XMFLOAT3(0.0f, 256.0f, 0.0f), 512.0f), 
+	m_visibleInstances(0)
 {
 	m_d3dBase.SetClearColor(m_fogColor);
-	m_camera.SetPosition(0.0f, 40.0f, -40.0f);
+	m_camera.SetPosition(0.0f, 00.0f, -10.0f);
 	m_camera.Update();
-	m_camera.RotateLocalX(XM_PI / 4.0f);
+	//m_camera.RotateLocalX(XM_PI / 4.0f);
 }
 
 void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
@@ -47,6 +48,8 @@ void Graphics::FixedUpdate(const Common::Timer& timer)
 
 	auto deltaYaw = deltaSeconds * XM_PI / 24.0f;
 	castShadowsLight->RotateRollPitchYaw(0.0f, deltaYaw, 0.0f);
+
+	m_scene.Update(*this, timer);
 }
 void Graphics::RenderUpdate(const Common::Timer& timer)
 {
@@ -58,8 +61,8 @@ void Graphics::RenderUpdate(const Common::Timer& timer)
 	
 	Common::PerformanceTimer performanceTimer;
 	performanceTimer.Start();
-//	UpdateInstancesDataFrustumCulling();
-	UpdateInstancesDataOctreeCulling();
+	UpdateInstancesDataFrustumCulling();
+//	UpdateInstancesDataOctreeCulling();
 	performanceTimer.End();
 	auto elapsedTime = performanceTimer.ElapsedTime<float, std::milli>().count();
 	auto string = L"ElapsedTime: " + std::to_wstring(elapsedTime) + L"\n";
@@ -153,7 +156,7 @@ void Graphics::Render(const Common::Timer& timer) const
 
 		// Draw billboards:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "Billboard");
-		DrawNonInstancedRenderItems(RenderLayer::Billboard);
+		DrawNonInstancedRenderItems(RenderLayer::Grass);
 	}
 	else
 	{
@@ -179,17 +182,17 @@ void Graphics::Render(const Common::Timer& timer) const
 
 		// Draw billboards:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "BillboardFog");
-		DrawNonInstancedRenderItems(RenderLayer::Billboard);
+		DrawNonInstancedRenderItems(RenderLayer::Grass);
 	}
 
 	// Draw debug window:
-	//m_pipelineStateManager.SetPipelineState(deviceContext, "DebugWindow");
+	/*m_pipelineStateManager.SetPipelineState(deviceContext, "DebugWindow");
 	//deviceContext->PSSetShaderResources(0, 1, &shadowMapSRV);
-	//const auto& renderItem = m_renderItemLayers[static_cast<UINT>(RenderLayer::Terrain)][0];
-	//deviceContext->PSSetShaderResources(0, 1, renderItem->Material->TangentMap->GetAddressOf());
+	const auto& renderItem = m_renderItemLayers[static_cast<UINT>(RenderLayer::Terrain)][0];
+	deviceContext->PSSetShaderResources(0, 1, renderItem->Material->HeightMap->GetAddressOf());
 	//auto renderTextureSRV = m_renderTexture.GetShaderResourceView();
 	//deviceContext->PSSetShaderResources(0, 1, &renderTextureSRV);
-	//DrawNonInstancedRenderItems(RenderLayer::Debug);
+	//DrawNonInstancedRenderItems(RenderLayer::Debug);*/
 
 	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
 	deviceContext->PSSetShaderResources(3, 1, nullSRV);
@@ -218,6 +221,14 @@ void Graphics::AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::init
 		m_octree.AddObject(&collider);
 
 	m_allRenderItems.push_back(std::move(renderItem));
+}
+uint32_t Graphics::GetVisibleInstances() const
+{
+	return m_visibleInstances;
+}
+const std::vector<RenderItem*>& Graphics::GetRenderItems(RenderLayer renderLayer) const
+{
+	return m_renderItemLayers[static_cast<size_t>(renderLayer)];
 }
 
 void Graphics::UpdateInstancesDataFrustumCulling()
@@ -290,6 +301,7 @@ void Graphics::UpdateInstancesDataOctreeCulling()
 
 	m_octree.CalculateIntersections(viewSpaceCameraFrustum, inverseViewMatrix);
 
+	m_visibleInstances = 0;
 	for (const auto& renderItem : m_allRenderItems)
 	{
 		// Get instances buffer for the current render item:
@@ -314,6 +326,9 @@ void Graphics::UpdateInstancesDataOctreeCulling()
 			auto& instanceDataView = instacesBufferView[visibleInstanceCount++];
 			instanceDataView.WorldMatrix = renderItem->InstancesData[instanceID].WorldMatrix;
 		}
+		renderItem->VisibleInstances.clear();
+
+		m_visibleInstances += visibleInstanceCount;
 		renderItem->VisibleInstanceCount = visibleInstanceCount;
 
 		// Unmap resource:
@@ -372,6 +387,9 @@ void Graphics::UpdateMainPassData(const Common::Timer& timer) const
 	auto castShadowsLight = castShadowsLights[0];
 	XMStoreFloat4x4(&passData.ShadowMatrix, XMMatrixTranspose(castShadowsLight->GetShadowMatrix()));
 
+	const auto& grassTransformMatrix = m_scene.GetGrassTransformMatrix();
+	XMStoreFloat4x4(&passData.GrassTransformMatrix, XMLoadFloat4x4(&grassTransformMatrix));
+
 	XMStoreFloat3(&passData.EyePositionW, m_camera.GetPosition());
 	passData.TerrainDisplacementScalarY = 1.0f;
 	passData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));
@@ -424,6 +442,10 @@ void Graphics::UpdateShadowPassData(const Common::Timer& timer) const
 	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseProjectionMatrix));
 	XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
 	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
+
+	const auto& grassTransformMatrix = m_scene.GetGrassTransformMatrix();
+	XMStoreFloat4x4(&passData.GrassTransformMatrix, XMLoadFloat4x4(&grassTransformMatrix));
+
 	XMStoreFloat3(&passData.EyePositionW, m_camera.GetPosition());
 	passData.TerrainDisplacementScalarY = 1.0f;
 	passData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));
@@ -462,12 +484,16 @@ void Graphics::DrawRenderItems(RenderLayer renderLayer) const
 	// For each render item:
 	for (auto& renderItem : m_renderItemLayers[static_cast<SIZE_T>(renderLayer)])
 	{
+		if (renderItem->VisibleInstanceCount == 0)
+			continue;
+
 		// Set instances data:
 		deviceContext->IASetVertexBuffers(1, 1, m_currentFrameResource->InstancesBuffers[renderItem->Name].GetAddressOf(), &stride, &offset);
 
 		// Set material data:
 		const auto& materialData = m_currentFrameResource->MaterialDataArray[renderItem->Material->MaterialIndex];
 		deviceContext->VSSetConstantBuffers(1, 1, materialData.GetAddressOf());
+		deviceContext->GSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 		deviceContext->PSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 
 		// Set textures:
@@ -488,6 +514,7 @@ void Graphics::DrawNonInstancedRenderItems(RenderLayer renderLayer) const
 		// Set material data:
 		const auto& materialData = m_currentFrameResource->MaterialDataArray[renderItem->Material->MaterialIndex];
 		deviceContext->VSSetConstantBuffers(1, 1, materialData.GetAddressOf());
+		deviceContext->GSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 		deviceContext->PSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 
 		// Set textures:
@@ -514,15 +541,18 @@ void Graphics::DrawTerrain() const
 		deviceContext->PSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 
 		// Set textures:
-		//deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
-		deviceContext->PSSetShaderResources(1, 1, renderItem->Material->NormalMap->GetAddressOf());
-		deviceContext->DSSetShaderResources(2, 1, renderItem->Material->HeightMap->GetAddressOf());
-		deviceContext->PSSetShaderResources(2, 1, renderItem->Material->HeightMap->GetAddressOf());
-		deviceContext->PSSetShaderResources(4, 1, renderItem->Material->TangentMap->GetAddressOf());
-		deviceContext->PSSetShaderResources(5, 1, renderItem->Material->TiledDiffuseMap->GetAddressOf());
-		deviceContext->PSSetShaderResources(6, 1, renderItem->Material->TiledNormalMap->GetAddressOf());
+		deviceContext->PSSetShaderResources(0, 1, renderItem->Material->NormalMap->GetAddressOf());
+		deviceContext->DSSetShaderResources(1, 1, renderItem->Material->HeightMap->GetAddressOf());
+		deviceContext->PSSetShaderResources(1, 1, renderItem->Material->HeightMap->GetAddressOf());
+		deviceContext->PSSetShaderResources(2, 1, renderItem->Material->TangentMap->GetAddressOf());
+		deviceContext->PSSetShaderResources(4, 1, renderItem->Material->TiledDiffuseMap->GetAddressOf());
+		deviceContext->PSSetShaderResources(5, 1, renderItem->Material->TiledNormalMap->GetAddressOf());
+		deviceContext->PSSetShaderResources(6, 1, renderItem->Material->TiledDiffuseMap2->GetAddressOf());
 		deviceContext->PSSetShaderResources(7, 1, renderItem->Material->TiledNormalMap2->GetAddressOf());
-
+		deviceContext->PSSetShaderResources(8, 1, renderItem->Material->TiledDiffuseMap3->GetAddressOf());
+		deviceContext->PSSetShaderResources(9, 1, renderItem->Material->TiledNormalMap3->GetAddressOf());
+		deviceContext->PSSetShaderResources(10, 1, renderItem->Material->TiledNormalMap4->GetAddressOf());
+		
 		// Render:
 		renderItem->RenderNonInstanced(deviceContext);
 	}

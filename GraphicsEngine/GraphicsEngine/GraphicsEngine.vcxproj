@@ -240,10 +240,6 @@
     <ClCompile Include="GraphicsEngine\Texture.cpp" />
     <ClCompile Include="GraphicsEngine\TextureManager.cpp" />
     <ClCompile Include="GraphicsEngine\VertexShader.cpp" />
-    <ClCompile Include="GraphicsEngine\X3DParser\ParserException.cpp" />
-    <ClCompile Include="GraphicsEngine\X3DParser\RapidXMLHelper.cpp" />
-    <ClCompile Include="GraphicsEngine\X3DParser\X3DParser.cpp" />
-    <ClCompile Include="GraphicsEngine\X3DParser\X3DShapeParser.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -299,10 +295,6 @@
     <ClInclude Include="GraphicsEngine\VertexShader.h" />
     <ClInclude Include="GraphicsEngine\VertexTypes.h" />
     <ClInclude Include="GraphicsEngine\VirtualKey.h" />
-    <ClInclude Include="GraphicsEngine\X3DParser\ParserException.h" />
-    <ClInclude Include="GraphicsEngine\X3DParser\RapidXMLHelper.h" />
-    <ClInclude Include="GraphicsEngine\X3DParser\X3DParser.h" />
-    <ClInclude Include="GraphicsEngine\X3DParser\X3DShapeParser.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

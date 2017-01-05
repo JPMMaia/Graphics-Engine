@@ -32,6 +32,8 @@ namespace GraphicsEngine
 		IScene* GetScene();
 
 		void AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
+		uint32_t GetVisibleInstances() const;
+		const std::vector<RenderItem*>& GetRenderItems(RenderLayer renderLayer) const;
 
 	private:
 		void UpdateInstancesDataFrustumCulling();
@@ -69,6 +71,7 @@ namespace GraphicsEngine
 		DirectX::XMFLOAT3 m_fogColor;
 		ShadowTexture m_shadowMap;
 		RenderTexture m_renderTexture;
-		DirectX::BoundingSphere m_sceneBounds;		
+		DirectX::BoundingSphere m_sceneBounds;
+		uint32_t m_visibleInstances;
 	};
 }

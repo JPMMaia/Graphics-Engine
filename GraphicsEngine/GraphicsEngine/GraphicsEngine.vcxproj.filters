@@ -7,18 +7,6 @@
     <ClCompile Include="GraphicsEngine\Camera.cpp">
       <Filter>GraphicsEngine\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsEngine\X3DParser\ParserException.cpp">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsEngine\X3DParser\RapidXMLHelper.cpp">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsEngine\X3DParser\X3DParser.cpp">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsEngine\X3DParser\X3DShapeParser.cpp">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsEngine\TextureManager.cpp">
       <Filter>GraphicsEngine\Textures</Filter>
     </ClCompile>
@@ -132,18 +120,6 @@
     </ClInclude>
     <ClInclude Include="GraphicsEngine\Camera.h">
       <Filter>GraphicsEngine\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsEngine\X3DParser\ParserException.h">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsEngine\X3DParser\RapidXMLHelper.h">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsEngine\X3DParser\X3DParser.h">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsEngine\X3DParser\X3DShapeParser.h">
-      <Filter>GraphicsEngine\X3DParser</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\TextureManager.h">
       <Filter>GraphicsEngine\Textures</Filter>
@@ -306,9 +282,6 @@
     </Filter>
     <Filter Include="GraphicsEngine\Camera">
       <UniqueIdentifier>{4afc49ab-8f8a-41bd-9690-39a65fb6b298}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GraphicsEngine\X3DParser">
-      <UniqueIdentifier>{bf2d8f5f-c3aa-4655-9786-0e3b16201e43}</UniqueIdentifier>
     </Filter>
     <Filter Include="GraphicsEngine\Textures">
       <UniqueIdentifier>{bb2835cc-9f8c-4d84-9966-d121ad566905}</UniqueIdentifier>

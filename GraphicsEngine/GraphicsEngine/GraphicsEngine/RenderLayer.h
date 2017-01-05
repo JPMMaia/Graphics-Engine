@@ -9,7 +9,7 @@ namespace GraphicsEngine
 		AlphaClipped,
 		Terrain,
 		SkyDome,
-		Billboard,
+		Grass,
 		NormalMapping,
 		Debug,
 		Count

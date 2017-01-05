@@ -14,7 +14,9 @@ using namespace DirectX;
 using namespace Common;
 using namespace GraphicsEngine;
 
-DefaultScene::DefaultScene(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager, LightManager& lightManager)
+DefaultScene::DefaultScene(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager, LightManager& lightManager) :
+	m_grassRotation(0.0f),
+	m_windDirection(1.0f)
 {
 	InitializeTerrain(graphics, d3dBase, textureManager);
 	InitializeGeometry(d3dBase);
@@ -23,6 +25,23 @@ DefaultScene::DefaultScene(Graphics* graphics, const D3DBase& d3dBase, TextureMa
 	InitializeRenderItems(graphics);
 	InitializeLights(lightManager);
 	InitializeExternalModels(graphics, d3dBase, textureManager);
+}
+
+void DefaultScene::Update(const Graphics& graphics, const Common::Timer& timer)
+{
+	auto deltaSeconds = static_cast<float>(timer.GetMillisecondsPerUpdate()) / 1000.0f;
+
+	const float limit = XM_PI / 32.0f;
+	if (m_grassRotation >= limit)
+		m_windDirection = -1.0f;
+	else if (m_grassRotation <= -limit)
+		m_windDirection = 1.0f;
+	m_grassRotation += m_windDirection * deltaSeconds * XM_PI / 32.0f;
+
+	auto grassTransformMatrix = XMMatrixTranslation(-0.5f, -0.5f, -0.5f);
+	grassTransformMatrix *= XMMatrixRotationZ(m_grassRotation);
+	grassTransformMatrix *= XMMatrixTranslation(0.5f, 0.5f, 0.5f);
+	XMStoreFloat4x4(&m_grassTransformMatrix, grassTransformMatrix);
 }
 
 void DefaultScene::AddGeometry(std::unique_ptr<MeshGeometry>&& geometry)
@@ -38,6 +57,10 @@ void DefaultScene::AddMaterial(std::unique_ptr<Material>&& material)
 const Terrain& DefaultScene::GetTerrain() const
 {
 	return m_terrain;
+}
+const DirectX::XMFLOAT4X4& DefaultScene::GetGrassTransformMatrix() const
+{
+	return m_grassTransformMatrix;
 }
 
 const std::unordered_map<std::string, std::unique_ptr<MeshGeometry>>& DefaultScene::GetGeometries() const
@@ -57,7 +80,7 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 	{
 		std::vector<VertexTypes::BillboardVertexType> vertices =
 		{
-			{ { 0.0f, 0.0f, 0.0f },{ 10.0f, 10.0f } }
+			{ { 0.0f, 0.0f, 0.0f }, { 10.0f, 10.0f } }
 		};
 		std::vector<UINT> indices(vertices.size());
 		std::iota(indices.begin(), indices.end(), 0);
@@ -66,7 +89,41 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 		geometry->Name = "Billboard";
 		geometry->Vertices = VertexBuffer(device, vertices);
 		geometry->Indices = IndexBuffer(device, indices);
-		m_geometries[geometry->Name] = std::move(geometry);
+		AddGeometry(std::move(geometry));
+	}
+
+	// Grass:
+	{
+		XMFLOAT2 size = { 1.0f, 1.0f };
+		std::vector<VertexTypes::BillboardVertexType> vertices;
+		{
+			auto randomPositions = m_terrain.GenerateRandomPositions(2000);
+			vertices.reserve(randomPositions.size());
+
+			for (const auto& position : randomPositions)
+			{
+				ShaderBufferTypes::InstanceData instanceData;
+
+				vertices.push_back({ { position.x, position.y + 1.5f, position.z }, size });
+			}
+		}
+
+		std::vector<UINT> indices(vertices.size());
+		std::iota(indices.begin(), indices.end(), 0);
+
+		auto geometry = std::make_unique<MeshGeometry>();
+		geometry->Name = "Grass01";
+		geometry->Vertices = VertexBuffer(device, vertices);
+		geometry->Indices = IndexBuffer(device, indices);
+
+		SubmeshGeometry submesh;
+		submesh.StartIndexLocation = 0;
+		submesh.IndexCount = static_cast<uint32_t>(indices.size());
+		submesh.BaseVertexLocation = 0;
+		submesh.Bounds = BoundingBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(vertices[0].Extents.x, vertices[0].Extents.y, 0.1f));
+		geometry->Submeshes["Default"] = submesh;
+
+		AddGeometry(std::move(geometry));
 	}
 
 	// Rectangle for debug:
@@ -74,7 +131,7 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 		auto rectangleMeshData = GeometryGenerator::CreateRectangle(0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
 
 		std::vector<VertexTypes::TextureVertexType> vertices(rectangleMeshData.Vertices.size());
-		for(SIZE_T i = 0; i < vertices.size(); ++i)
+		for (SIZE_T i = 0; i < vertices.size(); ++i)
 		{
 			auto& vertex = vertices[i];
 			vertex.Position = rectangleMeshData.Vertices[i].Position;
@@ -85,7 +142,7 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 		geometry->Name = "Rectangle";
 		geometry->Vertices = VertexBuffer(device, vertices);
 		geometry->Indices = IndexBuffer(device, rectangleMeshData.Indices);
-		
+
 		SubmeshGeometry submesh;
 		submesh.StartIndexLocation = 0;
 		submesh.IndexCount = static_cast<uint32_t>(rectangleMeshData.Indices.size());
@@ -101,6 +158,7 @@ void DefaultScene::InitializeTextures(const D3DBase& d3dBase, TextureManager& te
 	auto device = d3dBase.GetDevice();
 
 	textureManager.Create(device, "BricksTexture", L"Textures/Started01.dds");
+	textureManager.Create(device, "Grass01", L"Textures/grass01d.dds");
 	textureManager.Create(device, "Test", L"Textures/test_diffuse_map.dds");
 }
 void DefaultScene::InitializeMaterials(TextureManager& textureManager)
@@ -128,14 +186,25 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 	}
 
 	{
-		auto test = std::make_unique<Material>();
-		test->Name = "NullTexture";
-		test->DiffuseMap = nullptr;
-		test->DiffuseAlbedo = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-		test->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
-		test->Roughness = 0.25f;
-		test->MaterialTransform = MathHelper::Identity4x4();
-		AddMaterial(std::move(test));
+		auto material = std::make_unique<Material>();
+		material->Name = "NullTexture";
+		material->DiffuseMap = nullptr;
+		material->DiffuseAlbedo = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+		material->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+		material->Roughness = 0.25f;
+		material->MaterialTransform = MathHelper::Identity4x4();
+		AddMaterial(std::move(material));
+	}
+
+	{
+		auto material = std::make_unique<Material>();
+		material->Name = "Grass01";
+		material->DiffuseMap = &textureManager["Grass01"];
+		material->DiffuseAlbedo = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+		material->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+		material->Roughness = 0.4f;
+		material->MaterialTransform = MathHelper::Identity4x4();
+		AddMaterial(std::move(material));
 	}
 }
 
@@ -144,16 +213,16 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 	// Billboards:
 	{
 		auto renderItem = std::make_unique<RenderItem>();
-		renderItem->Name = "Billboard";
+		renderItem->Name = "Grass01";
 		renderItem->Mesh = m_geometries.at("Billboard").get();
 		renderItem->Material = m_materials["Test"].get();
 		renderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
 		renderItem->IndexCount = 1;
 		renderItem->StartIndexLocation = 0;
 		renderItem->BaseVertexLocation = 0;
-		renderItem->Bounds = BoundingBox({0.0f, 0.0f, 0.0f}, { 10.0f, 10.0f, 0.1f });
+		renderItem->Bounds = BoundingBox({ 0.0f, 0.0f, 0.0f }, { 10.0f, 10.0f, 0.1f });
 		renderItem->Stride = sizeof(VertexTypes::BillboardVertexType);
-		graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Billboard });
+		//graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Grass });
 	}
 
 	// Debug:
@@ -170,6 +239,21 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 		renderItem->Bounds = submesh.Bounds;
 		renderItem->Stride = sizeof(VertexTypes::TextureVertexType);
 		graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Debug });
+	}
+
+	// Grass:
+	{
+		auto renderItem = std::make_unique<RenderItem>();
+		renderItem->Name = "Grass01";
+		renderItem->Mesh = m_geometries.at("Grass01").get();
+		renderItem->Material = m_materials["Grass01"].get();
+		const auto& submesh = renderItem->Mesh->Submeshes.at("Default");
+		renderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
+		renderItem->IndexCount = submesh.IndexCount;
+		renderItem->StartIndexLocation = submesh.StartIndexLocation;
+		renderItem->BaseVertexLocation = submesh.BaseVertexLocation;
+		renderItem->Stride = sizeof(VertexTypes::BillboardVertexType);
+		graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Grass });
 	}
 }
 
@@ -296,7 +380,7 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 				const auto& position = randomPositions[i];
 
 				XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixRotationX(XM_PI / 2.0f) * XMMatrixTranslation(position.x, position.y - 2.0f, position.z));
-				
+
 				renderItem->AddInstance(instanceData);
 			}
 
@@ -316,6 +400,7 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 			renderItem->StartIndexLocation = submesh.StartIndexLocation;
 			renderItem->BaseVertexLocation = submesh.BaseVertexLocation;
 			renderItem->Bounds = submesh.Bounds;
+
 			// Instances:
 			renderItem->InstancesData.reserve(randomPositions.size());
 			for (SIZE_T i = 0; i < randomPositions.size(); ++i)
@@ -335,15 +420,19 @@ void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase,
 	Terrain::Description terrainDescription;
 	terrainDescription.TerrainWidth = 1024.0f;
 	terrainDescription.TerrainDepth = 1024.0f;
-	terrainDescription.CellXCount = 128;
-	terrainDescription.CellZCount = 128;
-	terrainDescription.TiledDiffuseMapFilename = L"Textures/rock01d.dds";
-	terrainDescription.TiledNormalMapFilename = L"Textures/rock01n.dds";
-	terrainDescription.TiledNormalMap2Filename = L"Textures/snow01n.dds";
+	terrainDescription.CellXCount = 32;
+	terrainDescription.CellZCount = 32;
+	terrainDescription.RockDiffuseMapFilename = L"Textures/rock01d.dds";
+	terrainDescription.RockNormalMapFilename = L"Textures/rock01n.dds";
+	terrainDescription.GrassDiffuseMapFilename = L"Textures/ground14d.dds";
+	terrainDescription.GrassNormalMapFilename = L"Textures/ground14n.dds";
+	terrainDescription.PathDiffuseMapFilename = L"Textures/ground06d.dds";
+	terrainDescription.PathNormalMapFilename = L"Textures/ground06n.dds";
+	terrainDescription.SnowNormalMapFilename = L"Textures/snow01n.dds";
 	terrainDescription.HeightMapFilename = L"Textures/TerrainHeightMap.r16";
 	terrainDescription.HeightMapWidth = 1024;
 	terrainDescription.HeightMapHeight = 1024;
-	terrainDescription.HeightMapFactor = 255.0f;
+	terrainDescription.HeightMapFactor = 256.0f;
 	terrainDescription.TiledTexelScale = 16.0f;
 	m_terrain = Terrain(d3dBase, *graphics, textureManager, *this, terrainDescription);
 }

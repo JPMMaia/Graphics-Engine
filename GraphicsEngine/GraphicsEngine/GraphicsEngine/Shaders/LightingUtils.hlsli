@@ -42,7 +42,7 @@ float CalculateShadowFactor(Texture2D shadowMap, SamplerComparisonState samplerS
 
     float percentLit = 0.0f;
     [unroll]
-    for (int i = 0; i < numberOfOffsets; ++i)
+    for (uint i = 0; i < numberOfOffsets; ++i)
     {
         // Sample texture from [position.x + dx, position.y + dy] and compare it againts the depth value:
         percentLit += shadowMap.SampleCmpLevelZero(samplerState, shadowPositionH.xy + offsets[i], depth).r;

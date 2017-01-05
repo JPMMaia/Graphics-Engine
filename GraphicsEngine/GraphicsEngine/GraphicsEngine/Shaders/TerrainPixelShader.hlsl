@@ -13,47 +13,39 @@ struct DomainOutput
     float2 TiledTextureCoordinates : TEXCOORD1;
 };
 
-Texture2D DiffuseMap : register(t0);
-Texture2D<float3> NormalMap : register(t1);
-Texture2D HeightMap : register(t2);
+Texture2D<float3> NormalMap : register(t0);
+Texture2D HeightMap : register(t1);
+Texture2D TangentMap : register(t2);
 Texture2D ShadowMap : register(t3);
-Texture2D<float3> TangentMap : register(t4);
-Texture2D TiledDiffuseMap : register(t5);
-Texture2D TiledNormalMap : register(t6);
-Texture2D TiledNormalMap2 : register(t7);
+Texture2D RockDiffuseMap : register(t4);
+Texture2D RockNormalMap : register(t5);
+Texture2D GrassDiffuseMap : register(t6);
+Texture2D GrassNormalMap : register(t7);
+Texture2D PathDiffuseMap : register(t8);
+Texture2D PathNormalMap : register(t9);
+Texture2D SnowNormalMap : register(t10);
+
+float4 ComputeColor(float4 diffuseAlbedo, Material material, Texture2D normalMap, float3 positionW, float2 tiledTextureCoordinates, float3 normalW, float3 tangentW, float3 toEyeDirection, float shadowFactor)
+{
+    // Sample value from the tiled normal map and compute the bumped normal in world space:
+    float3 normalSample = normalMap.Sample(SamplerAnisotropicWrap, tiledTextureCoordinates).rgb;
+    float3 bumpedNormalW = NormalSampleToBumpedNormalW(normalSample, normalW, tangentW);
+
+    // Compute contribution of light:
+    float4 lightIntensity = ComputeLighting(Lights, material, positionW, bumpedNormalW, toEyeDirection, shadowFactor);
+
+    // Compute indirect light:
+    float4 ambientIntensity = AmbientLight * diffuseAlbedo;
+
+    // The final color results from the sum of the indirect and direct light:
+    return ambientIntensity + lightIntensity;
+}
 
 float4 main(DomainOutput input) : SV_TARGET
 {
-    // Compute diffuse albedo by multiplying the sample from the texture and the diffuse albedo of the material:
-    float4 rockDiffuseAlbedo = TiledDiffuseMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates) * float4(0.26f, 0.30f, 0.38f, 1.0f);
-    float4 snowDiffuseAlbedo = float4(1.0f, 1.0f, 1.0f, 1.0f);
-
-    // Create rock material:
-    Material rockMaterial =
-    {
-        rockDiffuseAlbedo,
-        float3(0.2f, 0.2f, 0.2f),
-        0.1f
-    };
-    
-    // Create snow material:
-    Material snowMaterial =
-    {
-        snowDiffuseAlbedo,
-        float3(0.8f, 0.8f, 0.8f),
-        0.7f
-    };
-
     // Sample normal and tangent:
     float3 normalW = NormalMap.Sample(SamplerAnisotropicWrap, input.TextureCoordinates).rgb;
     float3 tangentW = TangentMap.Sample(SamplerAnisotropicWrap, input.TextureCoordinates).rgb;
-
-    // Sample value from the tiled normal map and compute the bumped normal in world space:
-    float3 rockNormalSample = TiledNormalMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
-    float3 rockNormalW = NormalSampleToBumpedNormalW(rockNormalSample, normalW, tangentW);
-    //float3 bumpedTiledNormalW = normalize(normalW);
-    float3 snowNormalSample = TiledNormalMap2.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
-    float3 snowNormalW = NormalSampleToBumpedNormalW(snowNormalSample, normalW, tangentW);
 
     // Calculate direction from point to camera:
     float3 toEyeDirection = EyePositionW - input.PositionW;
@@ -62,18 +54,39 @@ float4 main(DomainOutput input) : SV_TARGET
 
     // Calculate the shadow factor:
     float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerShadows, input.ShadowPositionH);
-
-    // Compute contribution of lights:
-    float4 rockLightIntensity = ComputeLighting(Lights, rockMaterial, input.PositionW, rockNormalW, toEyeDirection, shadowFactor);
-    float4 snowLightIntensity = ComputeLighting(Lights, snowMaterial, input.PositionW, snowNormalW, toEyeDirection, shadowFactor);
     
-    // Compute indirect light:
-    float4 rockAmbientIntensity = AmbientLight * rockDiffuseAlbedo;
-    float4 snowAmbientIntensity = AmbientLight * snowDiffuseAlbedo;
+    // Rock:
+    float4 rockColor;
+    {
+        // Compute diffuse albedo by multiplying the sample from the texture and the diffuse albedo of the material:
+        float4 rockDiffuseAlbedo = RockDiffuseMap.Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates) * float4(0.26f, 0.30f, 0.38f, 1.0f);
 
-    // The final color results from the sum of the indirect and direct light:
-    float4 rockColor = rockAmbientIntensity + rockLightIntensity;
-    float4 snowColor = snowAmbientIntensity + snowLightIntensity;
+        // Create rock material:
+        Material rockMaterial =
+        {
+            rockDiffuseAlbedo,
+            float3(0.2f, 0.2f, 0.2f),
+            0.1f
+        };
+
+        rockColor = ComputeColor(rockDiffuseAlbedo, rockMaterial, RockNormalMap, input.PositionW, input.TiledTextureCoordinates, normalW, tangentW, toEyeDirection, shadowFactor);
+    }
+
+    // Snow:
+    float4 snowColor;
+    {
+        float4 snowDiffuseAlbedo = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    
+        // Create snow material:
+        Material snowMaterial =
+        {
+            snowDiffuseAlbedo,
+            float3(0.8f, 0.8f, 0.8f),
+            0.7f
+        };
+
+        snowColor = ComputeColor(snowDiffuseAlbedo, snowMaterial, SnowNormalMap, input.PositionW, input.TiledTextureCoordinates, normalW, tangentW, toEyeDirection, shadowFactor);
+    }
 
     // Interpolate materials depending on the slope:
     float4 color;

@@ -28,7 +28,7 @@ struct TesselationPatch
     float InsideTesselationFactor[NUM_INSIDE_TESSELATION_FACTOR] : SV_InsideTessFactor;
 };
 
-Texture2D HeightMap : register(t2);
+Texture2D HeightMap : register(t1);
 
 [domain("quad")]
 DomainOutput main(TesselationPatch input, float2 uv : SV_DomainLocation, const OutputPatch<HullOutput, NUM_CONTROL_POINTS> patch)

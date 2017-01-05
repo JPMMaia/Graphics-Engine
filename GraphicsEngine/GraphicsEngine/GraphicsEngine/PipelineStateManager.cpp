@@ -51,6 +51,7 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 
 	m_inputLayouts["Texture"] =
 	{
+		// Vertex data:
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
@@ -310,14 +311,14 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		PipelineState billboardState;
 		billboardState.VertexShader = &m_vertexShaders.at("Billboard");
 		billboardState.GeometryShader = &m_geometryShaders.at("Billboard");
-		billboardState.PixelShader = &m_pixelShaders.at("Standard");
+		billboardState.PixelShader = &m_pixelShaders.at("StandardAlphaClipped");
 		billboardState.RasterizerState = &m_rasterizerStates.at("Default");
-		billboardState.BlendState = &m_blendStates.at("Default");
+		billboardState.BlendState = &m_blendStates.at("Transparent");
 		billboardState.DepthStencilState = &m_depthStencilStates.at("Default");
 		m_pipelineStateObjects.emplace("Billboard", billboardState);
 
 		auto billboardFogState = billboardState;
-		billboardFogState.PixelShader = &m_pixelShaders.at("StandardFog");
+		billboardFogState.PixelShader = &m_pixelShaders.at("StandardAlphaClippedFog");
 		m_pipelineStateObjects.emplace("BillboardFog", billboardFogState);
 	}
 

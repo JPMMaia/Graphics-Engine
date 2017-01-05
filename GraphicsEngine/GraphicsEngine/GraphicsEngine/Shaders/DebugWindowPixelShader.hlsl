@@ -10,5 +10,5 @@ Texture2D TextureMap : register(t0);
 
 float4 main(VertexOutput input) : SV_Target
 {
-    return float4(TextureMap.SampleLevel(SamplerAnisotropicClamp, input.TextureCoordinates, 0).rgb, 1.0f);
+    return float4(TextureMap.SampleLevel(SamplerAnisotropicClamp, input.TextureCoordinates, 0).rrr / 256.0f, 1.0f);
 }

@@ -21,7 +21,7 @@ Texture2D ShadowMap : register(t3);
 float4 main(VertexOutput input) : SV_TARGET
 {
     // Compute diffuse albedo by multiplying the sample from the texture and the diffuse albedo of the material:
-    float4 diffuseAlbedo = DiffuseMap.Sample(SamplerAnisotropicClamp, input.TextureCoordinates) * DiffuseAlbedo;
+    float4 diffuseAlbedo = DiffuseMap.Sample(SamplerAnisotropicWrap, input.TextureCoordinates) * DiffuseAlbedo;
 
 #if defined(ALPHA_CLIPPING)
 	

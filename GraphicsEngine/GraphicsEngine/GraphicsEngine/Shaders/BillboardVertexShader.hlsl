@@ -9,7 +9,7 @@ struct VertexInput
 struct VertexOutput
 {
     float3 CenterW : POSITION;
-    float2 ExtentsW : TEXCOORD;
+    float2 ExtentsW : TEXCOORD0;
 };
 
 VertexOutput main(VertexInput input)

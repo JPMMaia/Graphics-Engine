@@ -51,7 +51,7 @@ int Application::Run()
 	auto update = [this](const Timer& timer)
 	{
 		auto camera = m_graphics.GetCamera();
-		auto scalar = 0.1f *  static_cast<float>(timer.GetMillisecondsPerUpdate());
+		auto scalar = 0.05f *  static_cast<float>(timer.GetMillisecondsPerUpdate());
 		if (m_input.IsKeyDown(DIK_W))
 			camera->MoveForward(scalar);
 		if (m_input.IsKeyDown(DIK_S))
@@ -98,7 +98,11 @@ int Application::Run()
 
 	auto processFrameStatistics = [this](const Timer& timer)
 	{
-		auto extraCaption = L"FPS: " + std::to_wstring(timer.GetFramesPerSecond()) + L" | MSPF: " + std::to_wstring(timer.GetMillisecondsPerFrame()) + L" | V: " + std::to_wstring(m_graphics.GetVisibleInstances());
+		auto camera = m_graphics.GetCamera();
+		XMFLOAT3 cameraPosition;
+		XMStoreFloat3(&cameraPosition, camera->GetPosition());
+		auto extraCaption = L"FPS: " + std::to_wstring(timer.GetFramesPerSecond()) + L" | MSPF: " + std::to_wstring(timer.GetMillisecondsPerFrame()) + L" | V: " + std::to_wstring(m_graphics.GetVisibleInstances()) + 
+			L" | (" + std::to_wstring(cameraPosition.x) + L", " + std::to_wstring(cameraPosition.y) + L", " + std::to_wstring(cameraPosition.z) + L")";
 		m_window.SetWindowExtraCaption(extraCaption);
 	};
 

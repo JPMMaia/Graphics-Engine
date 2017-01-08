@@ -157,9 +157,14 @@ void DefaultScene::InitializeTextures(const D3DBase& d3dBase, TextureManager& te
 {
 	auto device = d3dBase.GetDevice();
 
-	textureManager.Create(device, "BricksTexture", L"Textures/Started01.dds");
-	textureManager.Create(device, "Grass01", L"Textures/grass01d.dds");
+	textureManager.Create(device, "BricksTexture", L"Textures/test_diffuse_map.dds");
+	textureManager.Create(device, "Grass01d", L"Textures/grass01d.dds");
 	textureManager.Create(device, "Test", L"Textures/test_diffuse_map.dds");
+
+	auto diffuseMap = "GrassDiffuseMap";
+	textureManager.Create(device, "GrassDiffuseMap", L"Textures/ground14d.jpg");
+	textureManager.Create(device, "GrassNormalMap", L"Textures/ground14n.jpg");
+	textureManager.Create(device, "GrassSpecularMap", L"Textures/ground14s.jpg");
 }
 void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 {
@@ -199,7 +204,7 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 	{
 		auto material = std::make_unique<Material>();
 		material->Name = "Grass01";
-		material->DiffuseMap = &textureManager["Grass01"];
+		material->DiffuseMap = &textureManager["Grass01d"];
 		material->DiffuseAlbedo = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 		material->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 		material->Roughness = 0.4f;
@@ -271,7 +276,7 @@ void DefaultScene::InitializeLights(LightManager& lightManager)
 void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
 {
 	// Simple cube:
-	/*{
+	{
 		AssimpImporter importer;
 		AssimpImporter::ImportInfo importInfo;
 		std::wstring filename(L"Models/Cube.fbx");
@@ -285,6 +290,9 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 		cubeRenderItem->Name = "Cube";
 		cubeRenderItem->Mesh = importedGeometry;
 		cubeRenderItem->Material = m_materials.at(materialName).get();
+		cubeRenderItem->Material->DiffuseMap = &textureManager["GrassDiffuseMap"];
+		cubeRenderItem->Material->NormalMap = &textureManager["GrassNormalMap"];
+		cubeRenderItem->Material->SpecularMap = &textureManager["GrassSpecularMap"];
 		cubeRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		cubeRenderItem->IndexCount = submesh.IndexCount;
 		cubeRenderItem->StartIndexLocation = submesh.StartIndexLocation;
@@ -292,9 +300,9 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 		cubeRenderItem->Bounds = submesh.Bounds;
 
 		// Instances:
-		const auto size = 10;
+		const auto size = 1;
 		const auto offset = 4.0f;
-		const auto start = -size  * offset / 2.0f;
+		const auto start = 0.0f; // -size  * offset / 2.0f;
 		cubeRenderItem->InstancesData.reserve(size * size * size);
 		for (SIZE_T i = 0; i < size; ++i)
 		{
@@ -311,8 +319,8 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 			}
 		}
 
-		graphics->AddRenderItem(std::move(cubeRenderItem), { RenderLayer::Opaque });
-	}*/
+		graphics->AddRenderItem(std::move(cubeRenderItem), { RenderLayer::NormalSpecularMapping });
+	}
 
 	// Skydome:
 	{
@@ -422,17 +430,34 @@ void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase,
 	terrainDescription.TerrainDepth = 1024.0f;
 	terrainDescription.CellXCount = 32;
 	terrainDescription.CellZCount = 32;
-	terrainDescription.RockDiffuseMapFilename = L"Textures/rock01d.dds";
-	terrainDescription.RockNormalMapFilename = L"Textures/rock01n.dds";
-	terrainDescription.GrassDiffuseMapFilename = L"Textures/ground14d.dds";
-	terrainDescription.GrassNormalMapFilename = L"Textures/ground14n.dds";
-	terrainDescription.PathDiffuseMapFilename = L"Textures/ground06d.dds";
-	terrainDescription.PathNormalMapFilename = L"Textures/ground06n.dds";
-	terrainDescription.SnowNormalMapFilename = L"Textures/snow01n.dds";
+
+	terrainDescription.TiledTexturesFilenames =
+	{
+		{
+			{ "RockDiffuseMap", L"Textures/rock01d.dds" },
+			{ "RockNormalMap", L"Textures/rock01n.png" },
+			{ "RockSpecularMap", L"Textures/rock01s.dds" },
+		},
+		{
+			{ "GrassDiffuseMap", L"Textures/ground14d.jpg" },
+			{ "GrassNormalMap", L"Textures/ground14n.jpg" },
+			{ "GrassSpecularMap", L"Textures/ground14s.jpg" },
+		},
+		{
+			{ "PathDiffuseMap", L"Textures/ground06d.jpg" },
+			{ "PathNormalMap", L"Textures/ground06n.jpg" },
+			{ "PathSpecularMap", L"Textures/ground06s.jpg" },
+			{ "PathAlphaMap", L"Textures/ground06a.dds" },
+		},
+		{
+			{ "SnowNormalMap", L"Textures/snow01n.dds" },
+		},
+	};
+
 	terrainDescription.HeightMapFilename = L"Textures/TerrainHeightMap.r16";
 	terrainDescription.HeightMapWidth = 1024;
 	terrainDescription.HeightMapHeight = 1024;
 	terrainDescription.HeightMapFactor = 256.0f;
-	terrainDescription.TiledTexelScale = 16.0f;
+	terrainDescription.TiledTexelScale = 64.0f;
 	m_terrain = Terrain(d3dBase, *graphics, textureManager, *this, terrainDescription);
 }

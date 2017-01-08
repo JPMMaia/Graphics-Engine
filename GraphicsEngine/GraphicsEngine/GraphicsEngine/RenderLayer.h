@@ -10,7 +10,7 @@ namespace GraphicsEngine
 		Terrain,
 		SkyDome,
 		Grass,
-		NormalMapping,
+		NormalSpecularMapping,
 		Debug,
 		Count
 	};

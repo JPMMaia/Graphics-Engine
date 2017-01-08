@@ -58,7 +58,7 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 
 	auto maxNumLights = std::to_string(ShaderBufferTypes::PassData::MaxNumLights);
 	auto shadersFolderPath = wstring(L"../GraphicsEngine/GraphicsEngine/Shaders/");
-	std::array<D3D_SHADER_MACRO, 4> defines;
+	std::array<D3D_SHADER_MACRO, 5> defines;
 
 	// Standard shaders:
 	{
@@ -101,24 +101,26 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 		m_pixelShaders["AlphaClippedShadows"] = PixelShader(device, shadersFolderPath + L"AlphaClippedShadowsPixelShader.hlsl", nullptr, "main", "ps_5_0");
 	}
 
-	// Standard normal mapping:
+	// Standard normal & specular mapping:
 	{
 		defines =
 		{
 			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
 			"NORMAL_MAPPING", "1",
+			"SPECULAR_MAPPING", "1",
 			nullptr, nullptr
 		};
-		m_pixelShaders["StandardNormalMap"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+		m_pixelShaders["StandardNormalSpecularMapping"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 
 		defines =
 		{
 			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
 			"FOG", "1",
 			"NORMAL_MAPPING", "1",
+			"SPECULAR_MAPPING", "1",
 			nullptr, nullptr
 		};
-		m_pixelShaders["StandardNormalMapFog"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+		m_pixelShaders["StandardNormalSpecularMappingFog"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 	}
 
 	// Terrain shaders:
@@ -265,12 +267,12 @@ void PipelineStateManager::InitializePipelineStateObjects()
 	// Normal Mapping:
 	{
 		auto normalMappingState = opaqueState;
-		normalMappingState.PixelShader = &m_pixelShaders["NormalMapping"];
-		m_pipelineStateObjects.emplace("NormalMapping", normalMappingState);
+		normalMappingState.PixelShader = &m_pixelShaders["StandardNormalSpecularMapping"];
+		m_pipelineStateObjects.emplace("NormalSpecularMapping", normalMappingState);
 
 		auto normalMappingFogState = normalMappingState;
-		normalMappingFogState.PixelShader = &m_pixelShaders["NormalMappingFog"];
-		m_pipelineStateObjects.emplace("NormalMappingFog", normalMappingFogState);
+		normalMappingFogState.PixelShader = &m_pixelShaders["StandardNormalSpecularMappingFog"];
+		m_pipelineStateObjects.emplace("NormalSpecularMappingFog", normalMappingFogState);
 	}
 
 	// Terrain:

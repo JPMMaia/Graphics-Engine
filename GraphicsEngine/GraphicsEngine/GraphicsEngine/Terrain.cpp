@@ -140,44 +140,20 @@ void Terrain::CreateMaterial(const D3DBase& d3dBase, TextureManager& textureMana
 
 	// Load textures:
 	{
-		// Rock:
+		// Load tiled textures:
+		for(const auto& texturesFilenames : m_description.TiledTexturesFilenames)
 		{
-			auto difuseMap = "RockDiffuseMap";
-			textureManager.Create(device, difuseMap, m_description.RockDiffuseMapFilename);
-			material->TiledDiffuseMap = &textureManager[difuseMap];
+			TextureArray textureArray;
 
-			auto normalMap = "RockNormalMap";
-			textureManager.Create(device, normalMap, m_description.RockNormalMapFilename);
-			material->TiledNormalMap = &textureManager[normalMap];
-		}
-		
-		// Grass:
-		{
-			auto diffuseMap = "GrassDiffuseMap";
-			textureManager.Create(device, diffuseMap, m_description.GrassDiffuseMapFilename);
-			material->TiledDiffuseMap2 = &textureManager[diffuseMap];
+			for(const auto& pair : texturesFilenames)
+			{
+				const auto& textureName = pair.first;
+				const auto& textureFilename = pair.second;
+				textureManager.Create(device, textureName, textureFilename);
+				textureArray.Add(textureManager[textureName].Get());
+			}
 
-			auto normalMap = "GrassNormalMap";
-			textureManager.Create(device, normalMap, m_description.GrassNormalMapFilename);
-			material->TiledNormalMap2 = &textureManager[normalMap];
-		}
-
-		// Path:
-		{
-			auto diffuseMap = "PathDiffuseMap";
-			textureManager.Create(device, diffuseMap, m_description.PathDiffuseMapFilename);
-			material->TiledDiffuseMap3 = &textureManager[diffuseMap];
-
-			auto normalMap = "PathNormalMap";
-			textureManager.Create(device, normalMap, m_description.PathNormalMapFilename);
-			material->TiledNormalMap3 = &textureManager[normalMap];
-		}
-
-		// Snow:
-		{
-			auto normalMap = "SnowNormalMap";
-			textureManager.Create(device, normalMap, m_description.SnowNormalMapFilename);
-			material->TiledNormalMap4 = &textureManager[normalMap];
+			material->TiledMapsArrays.push_back(std::move(textureArray));
 		}
 
 		// Load height map:
@@ -263,8 +239,8 @@ void Terrain::CreateMaterial(const D3DBase& d3dBase, TextureManager& textureMana
 			// Tangent map:
 			{
 				// Convert from vector of floats to vector of halfs:
-				std::vector<PackedVector::XMHALF4> tangentMapHalf(m_normalMap.size());
-				std::transform(m_normalMap.begin(), m_normalMap.end(), tangentMapHalf.begin(), MathHelper::ConvertFloat4ToHalf4);
+				std::vector<PackedVector::XMHALF4> tangentMapHalf(m_tangentMap.size());
+				std::transform(m_tangentMap.begin(), m_tangentMap.end(), tangentMapHalf.begin(), MathHelper::ConvertFloat4ToHalf4);
 
 				D3D11_TEXTURE2D_DESC tangentMapDescription;
 				tangentMapDescription.Width = m_description.HeightMapWidth;

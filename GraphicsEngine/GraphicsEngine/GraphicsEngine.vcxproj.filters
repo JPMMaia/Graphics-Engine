@@ -101,6 +101,69 @@
     <ClCompile Include="GraphicsEngine\OctreeCollider.cpp">
       <Filter>GraphicsEngine\Octree</Filter>
     </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\BC.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\BC4BC5.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\BC6HBC7.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\BCDirectCompute.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexCompress.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexCompressGPU.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexConvert.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexD3D11.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexDDS.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexFlipRotate.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexHDR.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexImage.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexMipmaps.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexMisc.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexNormalMaps.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexPMAlpha.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexResize.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexTGA.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexUtil.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexWIC.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\TextureArray.cpp">
+      <Filter>GraphicsEngine\Textures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -260,6 +323,30 @@
     <ClInclude Include="GraphicsEngine\OctreeBaseCollider.h">
       <Filter>GraphicsEngine\Octree</Filter>
     </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\BC.h">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\BCDirectCompute.h">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\DDS.h">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\DirectXTex.h">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexP.h">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\Filters.h">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\scoped.h">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\TextureArray.h">
+      <Filter>GraphicsEngine\Textures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -358,10 +445,16 @@
     <Filter Include="GraphicsEngine\Octree">
       <UniqueIdentifier>{9a255b78-f275-4c31-8430-07c77336d458}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Libraries\DirectXTex\DirectXTex">
+      <UniqueIdentifier>{fe6414c6-babe-4bb7-bbb2-e6b2dd0be0cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Libraries\rapidxml\manual.html">
       <Filter>Libraries\RapidXml</Filter>
+    </None>
+    <None Include="..\Libraries\DirectXTex\DirectXTex\DirectXTex.inl">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

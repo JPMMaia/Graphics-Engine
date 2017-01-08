@@ -29,9 +29,9 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_visibleInstances(0)
 {
 	m_d3dBase.SetClearColor(m_fogColor);
-	m_camera.SetPosition(0.0f, 00.0f, -10.0f);
+	m_camera.SetPosition(220.0f - 512.0f, 27.0f, - (0.0f - 512.0f));
 	m_camera.Update();
-	//m_camera.RotateLocalX(XM_PI / 4.0f);
+	m_camera.RotateWorldY(XM_PI);
 }
 
 void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
@@ -99,7 +99,7 @@ void Graphics::Render(const Common::Timer& timer) const
 		// Draw opaque:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueShadow");
 		DrawRenderItems(RenderLayer::Opaque);
-		DrawRenderItems(RenderLayer::NormalMapping);
+		DrawRenderItems(RenderLayer::NormalSpecularMapping);
 
 		// Draw terrain:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainShadow");
@@ -139,8 +139,8 @@ void Graphics::Render(const Common::Timer& timer) const
 		DrawRenderItems(RenderLayer::Opaque);
 
 		// Draw normal mapped:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "NormalMapping");
-		DrawRenderItems(RenderLayer::NormalMapping);
+		m_pipelineStateManager.SetPipelineState(deviceContext, "NormalSpecularMapping");
+		DrawRenderItems(RenderLayer::NormalSpecularMapping);
 
 		// Draw terrain:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
@@ -165,8 +165,8 @@ void Graphics::Render(const Common::Timer& timer) const
 		DrawRenderItems(RenderLayer::Opaque);
 
 		// Draw normal mapped:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "NormalMappingFog");
-		DrawRenderItems(RenderLayer::NormalMapping);
+		m_pipelineStateManager.SetPipelineState(deviceContext, "NormalSpecularMappingFog");
+		DrawRenderItems(RenderLayer::NormalSpecularMapping);
 
 		// Draw terrain:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainFog");
@@ -499,6 +499,10 @@ void Graphics::DrawRenderItems(RenderLayer renderLayer) const
 		// Set textures:
 		if (renderItem->Material->DiffuseMap != nullptr)
 			deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
+		if (renderItem->Material->NormalMap != nullptr)
+			deviceContext->PSSetShaderResources(1, 1, renderItem->Material->NormalMap->GetAddressOf());
+		if (renderItem->Material->SpecularMap != nullptr)
+			deviceContext->PSSetShaderResources(2, 1, renderItem->Material->SpecularMap->GetAddressOf());
 
 		// Render:
 		renderItem->Render(deviceContext);
@@ -520,6 +524,10 @@ void Graphics::DrawNonInstancedRenderItems(RenderLayer renderLayer) const
 		// Set textures:
 		if (renderItem->Material->DiffuseMap != nullptr)
 			deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
+		if (renderItem->Material->NormalMap != nullptr)
+			deviceContext->PSSetShaderResources(1, 1, renderItem->Material->NormalMap->GetAddressOf());
+		if (renderItem->Material->SpecularMap != nullptr)
+			deviceContext->PSSetShaderResources(2, 1, renderItem->Material->SpecularMap->GetAddressOf());
 
 		// Render:
 		renderItem->RenderNonInstanced(deviceContext);
@@ -528,9 +536,6 @@ void Graphics::DrawNonInstancedRenderItems(RenderLayer renderLayer) const
 void Graphics::DrawTerrain() const
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
-
-	UINT stride = sizeof(ShaderBufferTypes::InstanceData);
-	UINT offset = 0;
 
 	// For each render item:
 	for (auto& renderItem : m_renderItemLayers[static_cast<SIZE_T>(RenderLayer::Terrain)])
@@ -541,17 +546,20 @@ void Graphics::DrawTerrain() const
 		deviceContext->PSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 
 		// Set textures:
-		deviceContext->PSSetShaderResources(0, 1, renderItem->Material->NormalMap->GetAddressOf());
-		deviceContext->DSSetShaderResources(1, 1, renderItem->Material->HeightMap->GetAddressOf());
-		deviceContext->PSSetShaderResources(1, 1, renderItem->Material->HeightMap->GetAddressOf());
-		deviceContext->PSSetShaderResources(2, 1, renderItem->Material->TangentMap->GetAddressOf());
-		deviceContext->PSSetShaderResources(4, 1, renderItem->Material->TiledDiffuseMap->GetAddressOf());
-		deviceContext->PSSetShaderResources(5, 1, renderItem->Material->TiledNormalMap->GetAddressOf());
-		deviceContext->PSSetShaderResources(6, 1, renderItem->Material->TiledDiffuseMap2->GetAddressOf());
-		deviceContext->PSSetShaderResources(7, 1, renderItem->Material->TiledNormalMap2->GetAddressOf());
-		deviceContext->PSSetShaderResources(8, 1, renderItem->Material->TiledDiffuseMap3->GetAddressOf());
-		deviceContext->PSSetShaderResources(9, 1, renderItem->Material->TiledNormalMap3->GetAddressOf());
-		deviceContext->PSSetShaderResources(10, 1, renderItem->Material->TiledNormalMap4->GetAddressOf());
+		auto material = renderItem->Material;
+		deviceContext->PSSetShaderResources(0, 1, material->NormalMap->GetAddressOf());
+		deviceContext->DSSetShaderResources(1, 1, material->HeightMap->GetAddressOf());
+		deviceContext->PSSetShaderResources(1, 1, material->HeightMap->GetAddressOf());
+		deviceContext->PSSetShaderResources(2, 1, material->TangentMap->GetAddressOf());
+
+		UINT startSlot = 4;
+		
+		for(auto tiledMapsArray : material->TiledMapsArrays)
+		{
+			auto numViews = static_cast<UINT>(tiledMapsArray.GetSize());
+			deviceContext->PSSetShaderResources(startSlot, numViews, tiledMapsArray.GetTextureArray());
+			startSlot += numViews;
+		}
 		
 		// Render:
 		renderItem->RenderNonInstanced(deviceContext);

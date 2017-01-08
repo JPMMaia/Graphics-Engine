@@ -16,6 +16,7 @@ struct VertexOutput
 
 Texture2D DiffuseMap : register(t0);
 Texture2D NormalMap : register(t1);
+Texture2D SpecularMap : register(t2);
 Texture2D ShadowMap : register(t3);
 
 float4 main(VertexOutput input) : SV_TARGET
@@ -42,6 +43,18 @@ float4 main(VertexOutput input) : SV_TARGET
 
 #endif
 
+    float specularFactor;
+
+#if defined(SPECULAR_MAPPING)
+
+    specularFactor = SpecularMap.Sample(SamplerAnisotropicWrap, input.TextureCoordinates).r;
+
+#else
+
+    specularFactor = 1.0f;
+
+#endif
+
     // Calculate direction from point to camera:
     float3 toEyeDirection = EyePositionW - input.PositionW;
     float distanceToEye = length(toEyeDirection);
@@ -63,7 +76,7 @@ float4 main(VertexOutput input) : SV_TARGET
     float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerShadows, input.ShadowPositionH);
 
     // Compute contribution of lights:
-    float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, normalW, toEyeDirection, shadowFactor);
+    float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, normalW, toEyeDirection, shadowFactor, specularFactor);
     
     // The final color results from the sum of the indirect and direct light:
     float4 color = ambientIntensity + lightIntensity;

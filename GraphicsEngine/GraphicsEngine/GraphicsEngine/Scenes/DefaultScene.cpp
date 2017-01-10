@@ -58,6 +58,11 @@ const Terrain& DefaultScene::GetTerrain() const
 {
 	return m_terrain;
 }
+Terrain& DefaultScene::GetTerrain()
+{
+	return m_terrain;
+}
+
 const DirectX::XMFLOAT4X4& DefaultScene::GetGrassTransformMatrix() const
 {
 	return m_grassTransformMatrix;
@@ -161,7 +166,6 @@ void DefaultScene::InitializeTextures(const D3DBase& d3dBase, TextureManager& te
 	textureManager.Create(device, "Grass01d", L"Textures/grass01d.dds");
 	textureManager.Create(device, "Test", L"Textures/test_diffuse_map.dds");
 
-	auto diffuseMap = "GrassDiffuseMap";
 	textureManager.Create(device, "GrassDiffuseMap", L"Textures/ground14d.jpg");
 	textureManager.Create(device, "GrassNormalMap", L"Textures/ground14n.jpg");
 	textureManager.Create(device, "GrassSpecularMap", L"Textures/ground14s.jpg");
@@ -362,8 +366,21 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 
 		auto importedGeometry = m_geometries.at(Helpers::WStringToString(filename)).get();
 
-		// Generate random positions:
-		auto randomPositions = m_terrain.GenerateRandomPositions(20);
+		// Size:
+		auto scale = 0.4f;
+		auto transformationMatrix = XMMatrixScaling(scale, scale, scale) * XMMatrixRotationX(XM_PI / 2.0f);
+
+		// Positions:
+		std::vector<XMFLOAT2> positionsT = 
+		{
+			{ 180.0f, 60.0f },
+			{ 195.0f, 64.0f },
+		};
+
+		std::vector<XMFLOAT3> positionsW;
+		positionsW.reserve(positionsT.size());
+		for(const auto& positionT : positionsT)
+			positionsW.push_back(m_terrain.TextureSpaceToWorldSpace(positionT));
 
 		// Trunk:
 		{
@@ -381,13 +398,13 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 			renderItem->Bounds = trunkSubmesh.Bounds;
 
 			// Instances:
-			renderItem->InstancesData.reserve(randomPositions.size());
-			for (SIZE_T i = 0; i < randomPositions.size(); ++i)
+			renderItem->InstancesData.reserve(positionsW.size());
+			for (SIZE_T i = 0; i < positionsT.size(); ++i)
 			{
 				ShaderBufferTypes::InstanceData instanceData;
-				const auto& position = randomPositions[i];
+				const auto& positionW = positionsW[i];
 
-				XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixRotationX(XM_PI / 2.0f) * XMMatrixTranslation(position.x, position.y - 2.0f, position.z));
+				XMStoreFloat4x4(&instanceData.WorldMatrix, transformationMatrix * XMMatrixTranslation(positionW.x, positionW.y - 2.0f, positionW.z));
 
 				renderItem->AddInstance(instanceData);
 			}
@@ -410,12 +427,12 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 			renderItem->Bounds = submesh.Bounds;
 
 			// Instances:
-			renderItem->InstancesData.reserve(randomPositions.size());
-			for (SIZE_T i = 0; i < randomPositions.size(); ++i)
+			renderItem->InstancesData.reserve(positionsW.size());
+			for (SIZE_T i = 0; i < positionsW.size(); ++i)
 			{
 				ShaderBufferTypes::InstanceData instanceData;
-				const auto& position = randomPositions[i];
-				XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixRotationX(XM_PI / 2.0f) * XMMatrixTranslation(position.x, position.y - 2.0f, position.z));
+				const auto& positionW = positionsW[i];
+				XMStoreFloat4x4(&instanceData.WorldMatrix, transformationMatrix * XMMatrixTranslation(positionW.x, positionW.y - 2.0f, positionW.z));
 				renderItem->AddInstance(instanceData);
 			}
 			graphics->AddRenderItem(std::move(renderItem), { RenderLayer::AlphaClipped });

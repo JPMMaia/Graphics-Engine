@@ -2,6 +2,7 @@
 
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
+#include "Ray.h"
 
 namespace GraphicsEngine
 {
@@ -28,6 +29,8 @@ namespace GraphicsEngine
 		const DirectX::XMMATRIX& GetViewMatrix() const;
 		const DirectX::XMMATRIX& GetProjectionMatrix() const;
 		const DirectX::XMVECTOR& GetForward() const;
+
+		Ray CreateRay() const;
 
 		float GetNearZ() const;
 		float GetFarZ() const;

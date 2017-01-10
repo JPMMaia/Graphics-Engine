@@ -4,6 +4,7 @@
 #include "SamplerStateDescConstants.h"
 #include "Terrain.h"
 #include "Common/PerformanceTimer.h"
+#include <numeric>
 
 using namespace DirectX;
 using namespace GraphicsEngine;
@@ -29,9 +30,13 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_visibleInstances(0)
 {
 	m_d3dBase.SetClearColor(m_fogColor);
-	m_camera.SetPosition(220.0f - 512.0f, 27.0f, - (0.0f - 512.0f));
+	m_camera.SetPosition(220.0f - 512.0f, 27.0f, -(0.0f - 512.0f));
 	m_camera.Update();
 	m_camera.RotateWorldY(XM_PI);
+
+	InitializeMainPassData();
+	BindSamplers();
+	//SetupTerrainMeshData();
 }
 
 void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
@@ -66,7 +71,7 @@ void Graphics::RenderUpdate(const Common::Timer& timer)
 	performanceTimer.End();
 	auto elapsedTime = performanceTimer.ElapsedTime<float, std::milli>().count();
 	auto string = L"ElapsedTime: " + std::to_wstring(elapsedTime) + L"\n";
-	OutputDebugStringW(string.c_str());
+	//OutputDebugStringW(string.c_str());
 }
 
 void Graphics::Render(const Common::Timer& timer) const
@@ -74,15 +79,6 @@ void Graphics::Render(const Common::Timer& timer) const
 	auto deviceContext = m_d3dBase.GetDeviceContext();
 
 	m_d3dBase.BeginScene();
-
-	// Set samplers:
-	deviceContext->DSSetSamplers(3, 1, m_linearClampSamplerState.GetAddressOf());
-	deviceContext->PSSetSamplers(3, 1, m_linearClampSamplerState.GetAddressOf());
-	deviceContext->DSSetSamplers(4, 1, m_anisotropicWrapSamplerState.GetAddressOf());
-	deviceContext->PSSetSamplers(4, 1, m_anisotropicWrapSamplerState.GetAddressOf());
-	deviceContext->DSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
-	deviceContext->PSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
-	deviceContext->PSSetSamplers(6, 1, m_shadowsSamplerState.GetAddressOf());
 
 	// Create shadow map:
 	{
@@ -231,6 +227,66 @@ const std::vector<RenderItem*>& Graphics::GetRenderItems(RenderLayer renderLayer
 	return m_renderItemLayers[static_cast<size_t>(renderLayer)];
 }
 
+void Graphics::BindSamplers() const
+{
+	auto deviceContext = m_d3dBase.GetDeviceContext();
+
+	// Set samplers:
+	deviceContext->DSSetSamplers(3, 1, m_linearClampSamplerState.GetAddressOf());
+	deviceContext->PSSetSamplers(3, 1, m_linearClampSamplerState.GetAddressOf());
+	deviceContext->DSSetSamplers(4, 1, m_anisotropicWrapSamplerState.GetAddressOf());
+	deviceContext->PSSetSamplers(4, 1, m_anisotropicWrapSamplerState.GetAddressOf());
+	deviceContext->DSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
+	deviceContext->PSSetSamplers(5, 1, m_anisotropicClampSamplerState.GetAddressOf());
+	deviceContext->PSSetSamplers(6, 1, m_shadowsSamplerState.GetAddressOf());
+}
+
+void Graphics::SetupTerrainMeshData()
+{
+	// Update main pass:
+	{
+		auto maxTesselationFactor = m_mainPassData.MaxTesselationFactor;
+		auto minTesselationFactor = m_mainPassData.MinTesselationFactor;
+		m_mainPassData.MaxTesselationFactor = 3.0f;
+		m_mainPassData.MinTesselationFactor = 3.0f;
+		UpdateMainPassData(Common::Timer(100.0f));
+		m_mainPassData.MaxTesselationFactor = maxTesselationFactor;
+		m_mainPassData.MinTesselationFactor = minTesselationFactor;
+	}
+
+	auto& terrain = m_scene.GetTerrain();
+	const auto& terrainDescription = terrain.GetDescription();
+	uint32_t vertexCount = (terrainDescription.CellXCount * terrainDescription.CellZCount) * 2 * 3 * 64;
+	uint32_t stride = sizeof(VertexTypes::PositionVertexType);
+	StreamOutputBuffer streamOutputBuffer(m_d3dBase.GetDevice(), vertexCount * stride, stride);
+	
+	auto deviceContext = m_d3dBase.GetDeviceContext();
+
+	UINT offsets = 0;
+	deviceContext->SOSetTargets(1, streamOutputBuffer.GetAddressOf(), &offsets);
+
+	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	deviceContext->GSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainStreamOutput");
+	DrawTerrain();
+	
+	StagingBuffer stagingBuffer(m_d3dBase.GetDevice(), streamOutputBuffer.GetSize(), streamOutputBuffer.GetStride());
+	deviceContext->CopyResource(stagingBuffer.Get(), streamOutputBuffer.Get());
+
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+	stagingBuffer.Map(deviceContext, D3D11_MAP_READ, &mappedSubresource);
+	std::vector<VertexTypes::PositionVertexType> vertices(vertexCount);
+	memcpy_s(vertices.data(), vertices.size() * sizeof(VertexTypes::PositionVertexType), mappedSubresource.pData, streamOutputBuffer.GetSize());
+	stagingBuffer.Unmap(deviceContext);
+
+	std::vector<uint32_t> indices(vertexCount);
+	std::iota(indices.begin(), indices.end(), 0);
+	
+	terrain.SetMeshData(std::move(vertices), std::move(indices));
+}
+
 void Graphics::UpdateInstancesDataFrustumCulling()
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
@@ -254,7 +310,7 @@ void Graphics::UpdateInstancesDataFrustumCulling()
 
 		// Map resource:
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		instancesBuffer.Map(deviceContext, &mappedResource);
+		instancesBuffer.Map(deviceContext, D3D11_MAP_WRITE_DISCARD, &mappedResource);
 		auto instacesBufferView = reinterpret_cast<ShaderBufferTypes::InstanceData*>(mappedResource.pData);
 
 		// For each instance:
@@ -316,7 +372,7 @@ void Graphics::UpdateInstancesDataOctreeCulling()
 
 		// Map resource:
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		instancesBuffer.Map(deviceContext, &mappedResource);
+		instancesBuffer.Map(deviceContext, D3D11_MAP_WRITE_DISCARD, &mappedResource);
 		auto instacesBufferView = reinterpret_cast<ShaderBufferTypes::InstanceData*>(mappedResource.pData);
 
 		// Update instance data:
@@ -360,10 +416,21 @@ void Graphics::UpdateLights(const Common::Timer& timer) const
 	// Update light matrices:
 	castShadowsLight->UpdateMatrices(m_sceneBounds);
 }
-void Graphics::UpdateMainPassData(const Common::Timer& timer) const
-{
-	ShaderBufferTypes::PassData passData;
 
+void Graphics::InitializeMainPassData()
+{
+	m_mainPassData.TerrainDisplacementScalarY = 1.0f;
+	m_mainPassData.FogStart = 20.0f;
+	m_mainPassData.FogRange = 100.0f;
+	m_mainPassData.MaxTesselationDistance = 100.0f;
+	m_mainPassData.MaxTesselationFactor = 6.0f;
+	m_mainPassData.MinTesselationDistance = 500.0f;
+	m_mainPassData.MinTesselationFactor = 0.0f;
+	m_mainPassData.SkyDomeColors[0] = { 0.9f, 0.9f, 0.97f, 1.0f };
+	m_mainPassData.SkyDomeColors[1] = { 0.17f, 0.30f, 0.51f, 1.0f };
+}
+void Graphics::UpdateMainPassData(const Common::Timer& timer)
+{
 	auto viewMatrix = m_camera.GetViewMatrix();
 	auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
 	auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
@@ -376,46 +443,37 @@ void Graphics::UpdateMainPassData(const Common::Timer& timer) const
 	auto viewProjectionMatrixDeterminant = XMMatrixDeterminant(viewProjectionMatrix);
 	auto inverseViewProjectionMatrix = XMMatrixInverse(&viewProjectionMatrixDeterminant, viewProjectionMatrix);
 
-	XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
-	XMStoreFloat4x4(&passData.InverseViewMatrix, XMMatrixTranspose(inverseViewMatrix));
-	XMStoreFloat4x4(&passData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
-	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseProjectionMatrix));
-	XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
-	XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
+	XMStoreFloat4x4(&m_mainPassData.ViewMatrix, XMMatrixTranspose(viewMatrix));
+	XMStoreFloat4x4(&m_mainPassData.InverseViewMatrix, XMMatrixTranspose(inverseViewMatrix));
+	XMStoreFloat4x4(&m_mainPassData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
+	XMStoreFloat4x4(&m_mainPassData.InverseProjectionMatrix, XMMatrixTranspose(inverseProjectionMatrix));
+	XMStoreFloat4x4(&m_mainPassData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
+	XMStoreFloat4x4(&m_mainPassData.InverseProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
 
 	const auto& castShadowsLights = m_lightManager.GetCastShadowsLights();
 	auto castShadowsLight = castShadowsLights[0];
-	XMStoreFloat4x4(&passData.ShadowMatrix, XMMatrixTranspose(castShadowsLight->GetShadowMatrix()));
+	XMStoreFloat4x4(&m_mainPassData.ShadowMatrix, XMMatrixTranspose(castShadowsLight->GetShadowMatrix()));
 
 	const auto& grassTransformMatrix = m_scene.GetGrassTransformMatrix();
-	XMStoreFloat4x4(&passData.GrassTransformMatrix, XMLoadFloat4x4(&grassTransformMatrix));
+	XMStoreFloat4x4(&m_mainPassData.GrassTransformMatrix, XMLoadFloat4x4(&grassTransformMatrix));
 
-	XMStoreFloat3(&passData.EyePositionW, m_camera.GetPosition());
-	passData.TerrainDisplacementScalarY = 1.0f;
-	passData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));
-	passData.InverseRenderTargetSize = XMFLOAT2(1.0f / static_cast<float>(m_d3dBase.GetClientWidth()), 1.0f / static_cast<float>(m_d3dBase.GetClientHeight()));
-	passData.NearZ = m_camera.GetNearZ();
-	passData.FarZ = m_camera.GetFarZ();
-	passData.TotalTime = static_cast<float>(timer.GetTotalMilliseconds());
-	passData.DeltaTime = static_cast<float>(timer.GetDeltaMilliseconds());
-	passData.FogColor = XMFLOAT4(m_fogColor.x, m_fogColor.y, m_fogColor.z, 1.0f);
-	passData.FogStart = 20.0f;
-	passData.FogRange = 100.0f;
-	passData.MaxTesselationDistance = 100.0f;
-	passData.MaxTesselationFactor = 6.0f;
-	passData.MinTesselationDistance = 500.0f;
-	passData.MinTesselationFactor = 1.0f;
+	XMStoreFloat3(&m_mainPassData.EyePositionW, m_camera.GetPosition());
+	m_mainPassData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));
+	m_mainPassData.InverseRenderTargetSize = XMFLOAT2(1.0f / static_cast<float>(m_d3dBase.GetClientWidth()), 1.0f / static_cast<float>(m_d3dBase.GetClientHeight()));
+	m_mainPassData.NearZ = m_camera.GetNearZ();
+	m_mainPassData.FarZ = m_camera.GetFarZ();
+	m_mainPassData.TotalTime = static_cast<float>(timer.GetTotalMilliseconds());
+	m_mainPassData.DeltaTime = static_cast<float>(timer.GetDeltaMilliseconds());
+	m_mainPassData.FogColor = XMFLOAT4(m_fogColor.x, m_fogColor.y, m_fogColor.z, 1.0f);
 
 	const auto& terrain = m_scene.GetTerrain();
-	passData.TexelSize = terrain.GetTexelSize();
-	passData.TiledTexelScale = terrain.GetDescription().TiledTexelScale;
+	m_mainPassData.TexelSize = terrain.GetTexelSize();
+	m_mainPassData.TiledTexelScale = terrain.GetDescription().TiledTexelScale;
 
-	passData.SkyDomeColors[0] = { 0.5f, 0.1f, 0.1f, 1.0f };
-	passData.SkyDomeColors[1] = { 0.1f, 0.1f, 0.8f, 1.0f };
-	passData.AmbientLight = m_lightManager.GetAmbientLight();
-	m_lightManager.Fill(passData.Lights.begin(), passData.Lights.end());
+	m_mainPassData.AmbientLight = m_lightManager.GetAmbientLight();
+	m_lightManager.Fill(m_mainPassData.Lights.begin(), m_mainPassData.Lights.end());
 
-	m_currentFrameResource->MainPassData.CopyData(m_d3dBase.GetDeviceContext(), &passData, sizeof(ShaderBufferTypes::PassData));
+	m_currentFrameResource->MainPassData.CopyData(m_d3dBase.GetDeviceContext(), &m_mainPassData, sizeof(ShaderBufferTypes::PassData));
 }
 void Graphics::UpdateShadowPassData(const Common::Timer& timer) const
 {

@@ -36,11 +36,15 @@ namespace GraphicsEngine
 		const std::vector<RenderItem*>& GetRenderItems(RenderLayer renderLayer) const;
 
 	private:
+		void BindSamplers() const;
+		void SetupTerrainMeshData();
+
 		void UpdateInstancesDataFrustumCulling();
 		void UpdateInstancesDataOctreeCulling();
 		void UpdateMaterialData() const;
 		void UpdateLights(const Common::Timer& timer) const;
-		void UpdateMainPassData(const Common::Timer& timer) const;
+		void InitializeMainPassData();
+		void UpdateMainPassData(const Common::Timer& timer);
 		void UpdateShadowPassData(const Common::Timer& timer) const;
 
 		void DrawRenderItems(RenderLayer renderLayer) const;
@@ -73,5 +77,6 @@ namespace GraphicsEngine
 		RenderTexture m_renderTexture;
 		DirectX::BoundingSphere m_sceneBounds;
 		uint32_t m_visibleInstances;
+		ShaderBufferTypes::PassData m_mainPassData;
 	};
 }

@@ -6,6 +6,11 @@ namespace GraphicsEngine
 {
 	namespace VertexTypes
 	{
+		struct PositionVertexType
+		{
+			DirectX::XMFLOAT3 Position;
+		};
+
 		struct ColorVertexType
 		{
 			DirectX::XMFLOAT3 Position;

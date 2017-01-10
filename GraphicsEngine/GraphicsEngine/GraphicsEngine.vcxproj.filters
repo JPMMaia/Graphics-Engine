@@ -164,6 +164,9 @@
     <ClCompile Include="GraphicsEngine\TextureArray.cpp">
       <Filter>GraphicsEngine\Textures</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\Ray.cpp">
+      <Filter>GraphicsEngine\Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -347,6 +350,9 @@
     <ClInclude Include="GraphicsEngine\TextureArray.h">
       <Filter>GraphicsEngine\Textures</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsEngine\Ray.h">
+      <Filter>GraphicsEngine\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -517,6 +523,9 @@
     </FxCompile>
     <FxCompile Include="GraphicsEngine\Shaders\AlphaClippedShadowsPixelShader.hlsl">
       <Filter>Shaders\Shadows</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\TerrainGeometryShader.hlsl">
+      <Filter>Shaders\Terrain</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

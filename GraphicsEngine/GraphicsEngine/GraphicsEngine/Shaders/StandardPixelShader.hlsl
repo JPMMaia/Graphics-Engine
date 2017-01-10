@@ -73,7 +73,8 @@ float4 main(VertexOutput input) : SV_TARGET
     };
 
     // Calculate the shadow factor:
-    float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerShadows, input.ShadowPositionH);
+    //float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerShadows, input.ShadowPositionH);
+    float shadowFactor = 1.0f;
 
     // Compute contribution of lights:
     float4 lightIntensity = ComputeLighting(Lights, material, input.PositionW, normalW, toEyeDirection, shadowFactor, specularFactor);

@@ -36,6 +36,10 @@ namespace GraphicsEngine
 		float GetTerrainHeight(float x, float z) const;
 		const Description& GetDescription() const;
 		DirectX::XMFLOAT2 GetTexelSize() const;
+		DirectX::XMFLOAT3 TextureSpaceToWorldSpace(const DirectX::XMFLOAT2& position) const;
+
+		void SetMeshData(std::vector<VertexTypes::PositionVertexType>&& vertices, std::vector<uint32_t>&& indices);
+		void GetMeshData(const std::vector<VertexTypes::PositionVertexType>*& vertices, const std::vector<uint32_t>*& indices) const;
 
 	private:
 		void CreateGeometry(const D3DBase& d3dBase, IScene& scene) const;
@@ -50,5 +54,7 @@ namespace GraphicsEngine
 		std::vector<float> m_heightMap;
 		std::vector<DirectX::XMFLOAT4> m_normalMap;
 		std::vector<DirectX::XMFLOAT4> m_tangentMap;
+		std::vector<VertexTypes::PositionVertexType> m_vertices;
+		std::vector<uint32_t> m_indices;
 	};
 }

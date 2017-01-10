@@ -110,6 +110,26 @@ DirectX::XMFLOAT2 Terrain::GetTexelSize() const
 	return XMFLOAT2(1.0f / static_cast<float>(m_description.HeightMapWidth), 1.0f / static_cast<float>(m_description.HeightMapHeight));
 }
 
+DirectX::XMFLOAT3 Terrain::TextureSpaceToWorldSpace(const DirectX::XMFLOAT2& position) const
+{
+	auto x = position.x - m_description.HeightMapWidth / 2.0f;
+	auto z = -(position.y - m_description.HeightMapHeight / 2.0f);
+	auto y = GetTerrainHeight(x, z);
+	return XMFLOAT3(x, y, z);
+}
+
+void Terrain::SetMeshData(std::vector<VertexTypes::PositionVertexType>&& vertices, std::vector<uint32_t>&& indices)
+{
+	m_vertices = std::move(vertices);
+	m_indices = std::move(indices);
+}
+
+void Terrain::GetMeshData(const std::vector<VertexTypes::PositionVertexType>*& vertices, const std::vector<uint32_t>*& indices) const
+{
+	vertices = &m_vertices;
+	indices = &m_indices;
+}
+
 void Terrain::CreateGeometry(const D3DBase& d3dBase, IScene& scene) const
 {
 	auto device = d3dBase.GetDevice();
@@ -159,7 +179,9 @@ void Terrain::CreateMaterial(const D3DBase& d3dBase, TextureManager& textureMana
 		// Load height map:
 		{
 			// Load height map:
-			LoadRawHeightMap(m_description.HeightMapFilename, m_description.HeightMapWidth, m_description.HeightMapHeight, m_description.HeightMapFactor, m_heightMap, m_normalMap, m_tangentMap);
+			auto width = m_description.HeightMapWidth;
+			auto height = m_description.HeightMapHeight;
+			LoadRawHeightMap(m_description.HeightMapFilename, width, height, m_description.HeightMapFactor, m_heightMap, m_normalMap, m_tangentMap);
 
 			// Create height map texture:
 			{
@@ -381,8 +403,8 @@ void Terrain::LoadRawHeightMap(const std::wstring& filename, uint32_t width, uin
 		{
 			auto index = i * width + j;
 
-			heightMap[index] = heightFactor * static_cast<float>(buffer[index]) / 65535.0f;
-			//heightMap[index] = heightFactor * 0.0f;
+			//heightMap[index] = heightFactor * static_cast<float>(buffer[index]) / 65535.0f;
+			heightMap[index] = heightFactor * 0.0f;
 		}
 	}
 

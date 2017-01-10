@@ -7,6 +7,7 @@
 #include "ShaderBufferTypes.h"
 #include "BlendStateDescConstants.h"
 #include "DepthStencilStateDescConstants.h"
+#include "VertexTypes.h"
 
 using namespace Common;
 using namespace GraphicsEngine;
@@ -142,6 +143,14 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 			nullptr, nullptr
 		};
 		m_pixelShaders["TerrainFog"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		std::array<D3D11_SO_DECLARATION_ENTRY, 1> streamOutputLayout = 
+		{
+			{ 0, "POSITION", 0, 0, 3, 0 }
+		};
+		std::array<UINT, 1> bufferStrides = { sizeof(VertexTypes::PositionVertexType) };
+		auto rasterizedStream = D3D11_SO_NO_RASTERIZED_STREAM;
+		m_geometryShaders["Terrain"] = GeometryShader(device, shadersFolderPath + L"TerrainGeometryShader.hlsl", defines.data(), "main", "gs_5_0", streamOutputLayout.data(), static_cast<UINT>(streamOutputLayout.size()), bufferStrides.data(), static_cast<UINT>(bufferStrides.size()), rasterizedStream);
 	}
 
 	// SkyDome shaders
@@ -295,6 +304,11 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		terrainShadowState.PixelShader = &PixelShader::s_null;
 		terrainShadowState.RasterizerState = &m_rasterizerStates.at("Shadows");
 		m_pipelineStateObjects.emplace("TerrainShadow", terrainShadowState);
+
+		auto terrainStreamOutputState = terrainState;
+		terrainStreamOutputState.GeometryShader = &m_geometryShaders.at("Terrain");
+		terrainStreamOutputState.PixelShader = &PixelShader::s_null;
+		m_pipelineStateObjects.emplace("TerrainStreamOutput", terrainStreamOutputState);
 	}
 
 	// SkyDome:

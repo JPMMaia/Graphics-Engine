@@ -113,6 +113,12 @@ const XMVECTOR& Camera::GetForward() const
 {
 	return m_rotationMatrix.r[2];
 }
+
+Ray Camera::CreateRay() const
+{
+	return Ray(m_position, GetForward());
+}
+
 float Camera::GetNearZ() const
 {
 	return m_nearZ;

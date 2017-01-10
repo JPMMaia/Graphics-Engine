@@ -28,6 +28,7 @@ namespace GraphicsEngine
 		void AddGeometry(std::unique_ptr<MeshGeometry>&& geometry) override;
 		void AddMaterial(std::unique_ptr<Material>&& material) override;
 		const Terrain& GetTerrain() const override;
+		Terrain& GetTerrain();
 		const DirectX::XMFLOAT4X4& GetGrassTransformMatrix() const;
 
 		const std::unordered_map<std::string, std::unique_ptr<MeshGeometry>>& GetGeometries() const override;

@@ -225,6 +225,7 @@
     <ClCompile Include="GraphicsEngine\PipelineStateManager.cpp" />
     <ClCompile Include="GraphicsEngine\PixelShader.cpp" />
     <ClCompile Include="GraphicsEngine\RasterizerState.cpp" />
+    <ClCompile Include="GraphicsEngine\Ray.cpp" />
     <ClCompile Include="GraphicsEngine\RenderItem.cpp" />
     <ClCompile Include="GraphicsEngine\RenderTexture.cpp" />
     <ClCompile Include="GraphicsEngine\SamplerState.cpp" />
@@ -307,6 +308,7 @@
     <ClInclude Include="GraphicsEngine\PixelShader.h" />
     <ClInclude Include="GraphicsEngine\RasterizerState.h" />
     <ClInclude Include="GraphicsEngine\RasterizerStateDescConstants.h" />
+    <ClInclude Include="GraphicsEngine\Ray.h" />
     <ClInclude Include="GraphicsEngine\RenderItem.h" />
     <ClInclude Include="GraphicsEngine\RenderLayer.h" />
     <ClInclude Include="GraphicsEngine\RenderTexture.h" />
@@ -425,6 +427,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\TerrainGeometryShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="GraphicsEngine\Shaders\TerrainHullShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

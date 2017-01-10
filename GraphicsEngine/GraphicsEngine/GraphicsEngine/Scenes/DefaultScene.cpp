@@ -15,16 +15,19 @@ using namespace Common;
 using namespace GraphicsEngine;
 
 DefaultScene::DefaultScene(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager, LightManager& lightManager) :
+	m_initialized(false),
 	m_grassRotation(0.0f),
-	m_windDirection(1.0f)
+	m_windDirection(1.0f),
+	m_sceneBuilder(L"Instances.json")
 {
 	InitializeTerrain(graphics, d3dBase, textureManager);
 	InitializeGeometry(d3dBase);
 	InitializeTextures(d3dBase, textureManager);
 	InitializeMaterials(textureManager);
-	InitializeRenderItems(graphics);
+	InitializeRenderItems(graphics, d3dBase, textureManager);
 	InitializeLights(lightManager);
-	InitializeExternalModels(graphics, d3dBase, textureManager);
+
+	m_initialized = true;
 }
 
 void DefaultScene::Update(const Graphics& graphics, const Common::Timer& timer)
@@ -62,12 +65,10 @@ Terrain& DefaultScene::GetTerrain()
 {
 	return m_terrain;
 }
-
 const DirectX::XMFLOAT4X4& DefaultScene::GetGrassTransformMatrix() const
 {
 	return m_grassTransformMatrix;
 }
-
 const std::unordered_map<std::string, std::unique_ptr<MeshGeometry>>& DefaultScene::GetGeometries() const
 {
 	return m_geometries;
@@ -77,6 +78,98 @@ const std::unordered_map<std::string, std::unique_ptr<Material>>& DefaultScene::
 	return m_materials;
 }
 
+void DefaultScene::AddInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData, FXMMATRIX transformMatrix)
+{
+	std::vector<RenderItem*> renderItems;
+	renderItems.reserve(renderItemNames.size());
+	for(const auto& renderItemName : renderItemNames)
+	{
+		auto renderItem = graphics->GetRenderItem(renderItemName)->get();
+		renderItem->InstancesData.reserve(renderItem->InstancesData.capacity() + instancesData.size());
+
+		renderItems.push_back(renderItem);
+	}
+
+	auto instanceDataCount = instancesData.size();
+	for (size_t i = 0; i < instanceDataCount; ++i)
+	{
+		const auto& instanceData = instancesData[i];
+		
+		const auto& position = instanceData.Position;
+		XMFLOAT3 positionW(position.x, m_terrain.GetTerrainHeight(position.x, position.y), position.y);
+
+		ShaderBufferTypes::InstanceData instanceDataBuffer;
+
+		auto scaleMatrix = XMMatrixScalingFromVector(XMLoadFloat3(&instanceData.Scale));
+		auto rotationMatrix = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&instanceData.Rotation));
+		auto translationMatrix = XMMatrixTranslationFromVector(XMLoadFloat3(&positionW));
+		XMStoreFloat4x4(&instanceDataBuffer.WorldMatrix, transformMatrix * scaleMatrix * rotationMatrix * translationMatrix);
+
+		for (auto renderItem : renderItems)
+			graphics->AddRenderItemInstance(renderItem, instanceDataBuffer);
+
+		if(m_initialized)
+		{
+			m_sceneBuilder.AddRenderItemInstance(name, instanceData);
+		}
+	}
+}
+void DefaultScene::AddTreeInstances(Graphics* graphics, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData)
+{
+	auto scale = 0.3f;
+	auto transformationMatrix = XMMatrixScaling(scale, scale, scale) * XMMatrixRotationX(XM_PI / 2.0f);
+
+	AddInstances(graphics, "Tree", { "Trunk", "Leaves" }, instancesData, transformationMatrix);
+}
+void DefaultScene::RemoveLastInstance(Graphics* graphics, const std::string& itemName, const std::initializer_list<std::string>& renderItemNames)
+{
+	for(const auto& renderItemName : renderItemNames)
+	{
+		auto renderItem = graphics->GetRenderItem(renderItemName)->get();
+		renderItem->RemoveLastInstance();
+	}
+
+	m_sceneBuilder.RemoveLastRenderItemInstance(itemName);
+}
+
+void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
+{
+	Terrain::Description terrainDescription;
+	terrainDescription.TerrainWidth = 1024.0f;
+	terrainDescription.TerrainDepth = 1024.0f;
+	terrainDescription.CellXCount = 32;
+	terrainDescription.CellZCount = 32;
+
+	terrainDescription.TiledTexturesFilenames =
+	{
+		{
+			{ "RockDiffuseMap", L"Textures/rock01d.dds" },
+			{ "RockNormalMap", L"Textures/rock01n.png" },
+			{ "RockSpecularMap", L"Textures/rock01s.dds" },
+		},
+		{
+			{ "GrassDiffuseMap", L"Textures/ground14d.jpg" },
+			{ "GrassNormalMap", L"Textures/ground14n.jpg" },
+			{ "GrassSpecularMap", L"Textures/ground14s.jpg" },
+		},
+		{
+			{ "PathDiffuseMap", L"Textures/ground06d.jpg" },
+			{ "PathNormalMap", L"Textures/ground06n.jpg" },
+			{ "PathSpecularMap", L"Textures/ground06s.jpg" },
+			{ "PathAlphaMap", L"Textures/ground06a.dds" },
+		},
+		{
+			{ "SnowNormalMap", L"Textures/snow01n.dds" },
+		},
+	};
+
+	terrainDescription.HeightMapFilename = L"Textures/TerrainHeightMap.r16";
+	terrainDescription.HeightMapWidth = 1024;
+	terrainDescription.HeightMapHeight = 1024;
+	terrainDescription.HeightMapFactor = 256.0f;
+	terrainDescription.TiledTexelScale = 64.0f;
+	m_terrain = Terrain(d3dBase, *graphics, textureManager, *this, terrainDescription);
+}
 void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 {
 	auto device = d3dBase.GetDevice();
@@ -217,7 +310,7 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 	}
 }
 
-void DefaultScene::InitializeRenderItems(Graphics* graphics)
+void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
 {
 	// Billboards:
 	{
@@ -264,21 +357,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics)
 		renderItem->Stride = sizeof(VertexTypes::BillboardVertexType);
 		graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Grass });
 	}
-}
 
-void DefaultScene::InitializeLights(LightManager& lightManager)
-{
-	lightManager.SetAmbientLight({ 0.25f, 0.25f, 0.35f, 1.0f });
-	//lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalCastShadowsLight({ 0.6f, 0.6f, 0.6f }, { 0.57735f, -0.57735f, 0.57735f }, {0.0f, m_terrain.GetDescription().HeightMapFactor, 0.0f})));
-	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.6f, 0.6f, 0.6f }, { 0.0f, -1.0f, 1.0f }, true)));
-	//lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.3f, 0.3f, 0.3f }, { 0.57735f, -0.57735f, 0.57735f })));
-	//lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.15f, 0.15f, 0.15f }, { 0.0f, -0.707f, -0.707f })));
-	//lightManager.AddLight(std::make_unique<Light>(Light::CreatePointLight({ 0.1f, 0.0f, 0.0f }, 2.0f, 20.0f, { 0.0f, 3.0f, 0.0f })));
-	//lightManager.AddLight(std::make_unique<Light>(Light::CreateSpotLight({ 0.0f, 0.0f, 0.9f }, 2.0f, { 0.0f,-1.0f, 0.0f }, 20.0f, { 0.0f, 3.0f, 0.0f }, 8.0f)));
-}
-
-void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
-{
 	// Simple cube:
 	{
 		AssimpImporter importer;
@@ -366,22 +445,6 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 
 		auto importedGeometry = m_geometries.at(Helpers::WStringToString(filename)).get();
 
-		// Size:
-		auto scale = 0.4f;
-		auto transformationMatrix = XMMatrixScaling(scale, scale, scale) * XMMatrixRotationX(XM_PI / 2.0f);
-
-		// Positions:
-		std::vector<XMFLOAT2> positionsT = 
-		{
-			{ 180.0f, 60.0f },
-			{ 195.0f, 64.0f },
-		};
-
-		std::vector<XMFLOAT3> positionsW;
-		positionsW.reserve(positionsT.size());
-		for(const auto& positionT : positionsT)
-			positionsW.push_back(m_terrain.TextureSpaceToWorldSpace(positionT));
-
 		// Trunk:
 		{
 			const auto& trunkSubmesh = importedGeometry->Submeshes.at("TrunkMeshData");
@@ -396,19 +459,6 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 			renderItem->StartIndexLocation = trunkSubmesh.StartIndexLocation;
 			renderItem->BaseVertexLocation = trunkSubmesh.BaseVertexLocation;
 			renderItem->Bounds = trunkSubmesh.Bounds;
-
-			// Instances:
-			renderItem->InstancesData.reserve(positionsW.size());
-			for (SIZE_T i = 0; i < positionsT.size(); ++i)
-			{
-				ShaderBufferTypes::InstanceData instanceData;
-				const auto& positionW = positionsW[i];
-
-				XMStoreFloat4x4(&instanceData.WorldMatrix, transformationMatrix * XMMatrixTranslation(positionW.x, positionW.y - 2.0f, positionW.z));
-
-				renderItem->AddInstance(instanceData);
-			}
-
 			graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Opaque });
 		}
 
@@ -425,56 +475,22 @@ void DefaultScene::InitializeExternalModels(Graphics* graphics, const D3DBase& d
 			renderItem->StartIndexLocation = submesh.StartIndexLocation;
 			renderItem->BaseVertexLocation = submesh.BaseVertexLocation;
 			renderItem->Bounds = submesh.Bounds;
-
-			// Instances:
-			renderItem->InstancesData.reserve(positionsW.size());
-			for (SIZE_T i = 0; i < positionsW.size(); ++i)
-			{
-				ShaderBufferTypes::InstanceData instanceData;
-				const auto& positionW = positionsW[i];
-				XMStoreFloat4x4(&instanceData.WorldMatrix, transformationMatrix * XMMatrixTranslation(positionW.x, positionW.y - 2.0f, positionW.z));
-				renderItem->AddInstance(instanceData);
-			}
 			graphics->AddRenderItem(std::move(renderItem), { RenderLayer::AlphaClipped });
 		}
+
+		// Add instances:
+		const auto& instancesData = m_sceneBuilder.GetRenderItemInstances("Tree");
+		AddTreeInstances(graphics, instancesData);
 	}
 }
 
-void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
+void DefaultScene::InitializeLights(LightManager& lightManager)
 {
-	Terrain::Description terrainDescription;
-	terrainDescription.TerrainWidth = 1024.0f;
-	terrainDescription.TerrainDepth = 1024.0f;
-	terrainDescription.CellXCount = 32;
-	terrainDescription.CellZCount = 32;
-
-	terrainDescription.TiledTexturesFilenames =
-	{
-		{
-			{ "RockDiffuseMap", L"Textures/rock01d.dds" },
-			{ "RockNormalMap", L"Textures/rock01n.png" },
-			{ "RockSpecularMap", L"Textures/rock01s.dds" },
-		},
-		{
-			{ "GrassDiffuseMap", L"Textures/ground14d.jpg" },
-			{ "GrassNormalMap", L"Textures/ground14n.jpg" },
-			{ "GrassSpecularMap", L"Textures/ground14s.jpg" },
-		},
-		{
-			{ "PathDiffuseMap", L"Textures/ground06d.jpg" },
-			{ "PathNormalMap", L"Textures/ground06n.jpg" },
-			{ "PathSpecularMap", L"Textures/ground06s.jpg" },
-			{ "PathAlphaMap", L"Textures/ground06a.dds" },
-		},
-		{
-			{ "SnowNormalMap", L"Textures/snow01n.dds" },
-		},
-	};
-
-	terrainDescription.HeightMapFilename = L"Textures/TerrainHeightMap.r16";
-	terrainDescription.HeightMapWidth = 1024;
-	terrainDescription.HeightMapHeight = 1024;
-	terrainDescription.HeightMapFactor = 256.0f;
-	terrainDescription.TiledTexelScale = 64.0f;
-	m_terrain = Terrain(d3dBase, *graphics, textureManager, *this, terrainDescription);
+	lightManager.SetAmbientLight({ 0.25f, 0.25f, 0.35f, 1.0f });
+	//lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalCastShadowsLight({ 0.6f, 0.6f, 0.6f }, { 0.57735f, -0.57735f, 0.57735f }, {0.0f, m_terrain.GetDescription().HeightMapFactor, 0.0f})));
+	lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.6f, 0.6f, 0.6f }, { 0.0f, -1.0f, 1.0f }, true)));
+	//lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.3f, 0.3f, 0.3f }, { 0.57735f, -0.57735f, 0.57735f })));
+	//lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.15f, 0.15f, 0.15f }, { 0.0f, -0.707f, -0.707f })));
+	//lightManager.AddLight(std::make_unique<Light>(Light::CreatePointLight({ 0.1f, 0.0f, 0.0f }, 2.0f, 20.0f, { 0.0f, 3.0f, 0.0f })));
+	//lightManager.AddLight(std::make_unique<Light>(Light::CreateSpotLight({ 0.0f, 0.0f, 0.9f }, 2.0f, { 0.0f,-1.0f, 0.0f }, 20.0f, { 0.0f, 3.0f, 0.0f }, 8.0f)));
 }

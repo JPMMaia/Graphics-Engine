@@ -403,8 +403,8 @@ void Terrain::LoadRawHeightMap(const std::wstring& filename, uint32_t width, uin
 		{
 			auto index = i * width + j;
 
-			//heightMap[index] = heightFactor * static_cast<float>(buffer[index]) / 65535.0f;
-			heightMap[index] = heightFactor * 0.0f;
+			heightMap[index] = heightFactor * static_cast<float>(buffer[index]) / 65535.0f;
+			//heightMap[index] = heightFactor * 0.0f;
 		}
 	}
 

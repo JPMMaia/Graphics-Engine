@@ -16,7 +16,7 @@ namespace GraphicsEngineTester
         TEST_METHOD(TestSettingsFile)
         {
 			wstring filenameW = L"settings.conf";
-			SettingsManager manager = SettingsManager::Build(filenameW);
+	        auto manager = SettingsManager::Build(filenameW);
 
 			Assert::IsTrue(Common::Helpers::FileExists(filenameW));
 			Assert::IsFalse(manager.GetAdapterDescription().empty());

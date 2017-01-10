@@ -230,6 +230,7 @@
     <ClCompile Include="GraphicsEngine\RenderTexture.cpp" />
     <ClCompile Include="GraphicsEngine\SamplerState.cpp" />
     <ClCompile Include="GraphicsEngine\Scenes\DefaultScene.cpp" />
+    <ClCompile Include="GraphicsEngine\Scenes\SceneBuilder.cpp" />
     <ClCompile Include="GraphicsEngine\SettingsManager.cpp" />
     <FxCompile Include="GraphicsEngine\Shaders\AlphaClippedShadowsPixelShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -273,6 +274,7 @@
     <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexP.h" />
     <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\Filters.h" />
     <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\scoped.h" />
+    <ClInclude Include="..\Libraries\nlohmann\json\json.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_iterators.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_print.hpp" />
@@ -315,6 +317,7 @@
     <ClInclude Include="GraphicsEngine\SamplerState.h" />
     <ClInclude Include="GraphicsEngine\SamplerStateDescConstants.h" />
     <ClInclude Include="GraphicsEngine\Scenes\DefaultScene.h" />
+    <ClInclude Include="GraphicsEngine\Scenes\SceneBuilder.h" />
     <ClInclude Include="GraphicsEngine\SettingsManager.h" />
     <ClInclude Include="GraphicsEngine\ShaderBufferTypes.h" />
     <ClInclude Include="GraphicsEngine\ShadowTexture.h" />

@@ -22,6 +22,7 @@ namespace GraphicsEngine
 		void RenderNonInstanced(ID3D11DeviceContext* deviceContext) const;
 
 		void AddInstance(const ShaderBufferTypes::InstanceData& instanceData);
+		void RemoveLastInstance();
 
 	public:
 		std::string Name;

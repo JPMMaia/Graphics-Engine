@@ -68,8 +68,10 @@ void DXInputHandler::Update()
 
 void DXInputHandler::ReadKeyboard()
 {
+	m_previousKeyboardState.swap(m_currentKeyboardState);
+
 	// Read the keyboard device:
-	auto result = m_keyboard->GetDeviceState(sizeof(m_keyboardState), &m_keyboardState);
+	auto result = m_keyboard->GetDeviceState(static_cast<DWORD>(m_currentKeyboardState.size() * sizeof(uint8_t)), m_currentKeyboardState.data());
 	if (FAILED(result))
 	{
 		// If the keyboard lost focus or was not acquired then try to get control back:
@@ -112,6 +114,16 @@ void DXInputHandler::ProcessInput()
 	if (m_mousePositionY < 0) m_mousePositionY = 0;
 	if (m_mousePositionX > static_cast<int>(m_screenWidth)) m_mousePositionX = m_screenWidth;
 	if (m_mousePositionY > static_cast<int>(m_screenHeight)) m_mousePositionY = m_screenHeight;
+
+	for(const auto& event : m_onKeyboardKeyDownEvents)
+	{
+		auto key = event.first;
+
+		if (!(m_previousKeyboardState[key] & 0x80) && (m_currentKeyboardState[key] & 0x80))
+		{
+			event.second.Raise(this, KeyboardEventArgs(key));
+		}	
+	}
 }
 
 void DXInputHandler::GetMousePosition(uint32_t& mouseX, uint32_t& mouseY) const

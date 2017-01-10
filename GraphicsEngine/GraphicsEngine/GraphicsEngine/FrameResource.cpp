@@ -26,3 +26,19 @@ FrameResource::FrameResource(ID3D11Device* device, const std::vector<std::unique
 	MainPassData.Initialize(device, passDataSize, passDataSize);
 	ShadowPassData.Initialize(device, passDataSize, passDataSize);
 }
+
+void FrameResource::RealocateInstanceBuffer(ID3D11Device* device, RenderItem* renderItem)
+{
+	auto& instanceBuffer = InstancesBuffers[renderItem->Name];
+	auto bufferStride = static_cast<uint32_t>(sizeof(ShaderBufferTypes::InstanceData));
+
+	auto instanceCount = renderItem->InstancesData.size();
+
+	auto neededBufferSize = instanceCount * bufferStride;
+	if(instanceBuffer.GetSize() >= neededBufferSize)
+		return;
+
+	// Allocate space for twice as needed:
+	auto targetBufferSize = 2 * neededBufferSize;
+	instanceBuffer.Initialize(device, targetBufferSize, bufferStride);
+}

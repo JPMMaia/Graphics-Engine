@@ -6,6 +6,8 @@
 #include "SoundEngine/SoundManager.h"
 #include "Window.h"
 #include <mutex>
+#include <random>
+#include <stack>
 
 namespace Win32Application
 {
@@ -20,6 +22,8 @@ namespace Win32Application
 
 		int Run();
 
+		void OnKeyboardKeyDown(void* sender, const GraphicsEngine::DXInputHandler::KeyboardEventArgs& eventArgs);
+
 	private:
 		static std::mutex s_mutex;
 		static std::unique_ptr<Application> s_instance;
@@ -31,5 +35,10 @@ namespace Win32Application
 		GraphicsEngine::DXInputHandler m_input;
 		GraphicsEngine::Graphics m_graphics;
 		SoundEngine::SoundManager m_soundManager;
+
+		std::random_device m_randomDevice;
+		std::default_random_engine m_randomEngine;
+		std::uniform_real_distribution<float> m_randomAngles;
+		std::uniform_real_distribution<float> m_randomScales;
 	};
 }

@@ -8,6 +8,7 @@
 #include <memory>
 #include <unordered_map>
 #include "GraphicsEngine/Material.h"
+#include "SceneBuilder.h"
 
 
 namespace GraphicsEngine
@@ -34,22 +35,28 @@ namespace GraphicsEngine
 		const std::unordered_map<std::string, std::unique_ptr<MeshGeometry>>& GetGeometries() const override;
 		const std::unordered_map<std::string, std::unique_ptr<Material>>& GetMaterials() const override;
 
+		void AddInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData, DirectX::FXMMATRIX transformMatrix);
+		void AddTreeInstances(Graphics* graphics, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData);
+		void RemoveLastInstance(Graphics* graphics, const std::string& itemName, const std::initializer_list<std::string>& renderItemNames);
+
 	private:
+		void InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager);
 		void InitializeGeometry(const D3DBase& d3dBase);
 		static void InitializeTextures(const D3DBase& d3dBase, TextureManager& textureManager);
 		void InitializeMaterials(TextureManager& textureManager);
-		void InitializeRenderItems(Graphics* graphics);
+		void InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager);
 		void InitializeLights(LightManager& lightManager);
 
-		void InitializeExternalModels(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager);
-		void InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager);
-
 	private:
+		bool m_initialized = false;
 		std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> m_geometries;
 		std::unordered_map<std::string, std::unique_ptr<Material>> m_materials;
 		Terrain m_terrain;
 		float m_grassRotation;
 		float m_windDirection;
 		DirectX::XMFLOAT4X4 m_grassTransformMatrix;
+		
+		SceneBuilder m_sceneBuilder;
+		static std::wstring m_sceneBuilderFilename;
 	};
 }

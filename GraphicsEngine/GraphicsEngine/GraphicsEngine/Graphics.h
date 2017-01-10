@@ -29,11 +29,13 @@ namespace GraphicsEngine
 		void Render(const Common::Timer& timer) const;
 
 		Camera* GetCamera();
-		IScene* GetScene();
+		DefaultScene* GetScene();
 
 		void AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
+		void AddRenderItemInstance(RenderItem* renderItem, const ShaderBufferTypes::InstanceData& instanceData) const;
 		uint32_t GetVisibleInstances() const;
 		const std::vector<RenderItem*>& GetRenderItems(RenderLayer renderLayer) const;
+		std::vector<std::unique_ptr<RenderItem>>::const_iterator GetRenderItem(std::string name) const;
 
 	private:
 		void BindSamplers() const;
@@ -52,6 +54,7 @@ namespace GraphicsEngine
 		void DrawTerrain() const;
 
 	private:
+		bool m_initialized = false;
 		D3DBase m_d3dBase;
 		PipelineStateManager m_pipelineStateManager;
 

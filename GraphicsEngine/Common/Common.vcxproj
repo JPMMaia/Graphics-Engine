@@ -147,6 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Common\EngineException.cpp" />
+    <ClCompile Include="Common\Event.cpp" />
     <ClCompile Include="Common\Helpers.cpp" />
     <ClCompile Include="Common\IncludeReplacer.cpp" />
     <ClCompile Include="Common\MathHelper.cpp" />
@@ -155,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\EngineException.h" />
+    <ClInclude Include="Common\Event.h" />
     <ClInclude Include="Common\Helpers.h" />
     <ClInclude Include="Common\IncludeReplacer.h" />
     <ClInclude Include="Common\MathHelper.h" />

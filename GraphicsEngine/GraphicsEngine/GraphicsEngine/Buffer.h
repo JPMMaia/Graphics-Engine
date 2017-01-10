@@ -110,10 +110,15 @@ namespace GraphicsEngine
 	private:
 		void Initialize(ID3D11Device* d3dDevice, uint32_t bufferSize, uint32_t stride, const D3D11_SUBRESOURCE_DATA* initialData)
 		{
+			if (m_initialized)
+				Reset();
+
 			m_stride = stride;
 			m_size = bufferSize;
 
 			CreateBuffer(d3dDevice, bufferSize, initialData);
+
+			m_initialized = true;
 		}
 		void CreateBuffer(ID3D11Device* d3dDevice, uint32_t bufferSize, const D3D11_SUBRESOURCE_DATA* initialData)
 		{
@@ -135,5 +140,6 @@ namespace GraphicsEngine
 		Microsoft::WRL::ComPtr<ID3D11Buffer> m_buffer;
 		uint32_t m_size = 0;
 		uint32_t m_stride = 0;
+		bool m_initialized = false;
 	};
 }

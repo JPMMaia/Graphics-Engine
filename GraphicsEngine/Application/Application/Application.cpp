@@ -1,5 +1,7 @@
 ﻿#include "Application.h"
 
+#include <functional>
+
 using namespace Common;
 using namespace Win32Application;
 using namespace GraphicsEngine;
@@ -67,11 +69,29 @@ int Application::Run()
 		camera->RotateWorldY(mouseDeltaX * mouseSensibility);
 		camera->RotateLocalX(mouseDeltaY * mouseSensibility);
 
+		const auto& terrain = m_graphics.GetScene()->GetTerrain();
+		
 		// Clamp camera to the ground:
 		/*XMFLOAT3 position;
 		XMStoreFloat3(&position, camera->GetPosition());
 		auto terrainHeight = m_graphics.GetScene()->GetTerrain().GetTerrainHeight(position.x, position.z);
 		camera->SetPosition(position.x, 5.0f + terrainHeight, position.z);*/
+
+		// Ray collision with terrain:
+		/*{
+			auto ray = camera->CreateRay();
+			const std::vector<VertexTypes::PositionVertexType>* vertices;
+			const std::vector<uint32_t>* indices;
+			terrain.GetMeshData(vertices, indices);
+			float distance;
+			if (ray.IntersectsTriangleMesh<VertexTypes::PositionVertexType, uint32_t>(*vertices, *indices, distance))
+			{
+				XMFLOAT3 intersection;
+				XMStoreFloat3(&intersection, ray.CalculatePoint(distance));
+				auto debugString = L"Intersected Position: (" + std::to_wstring(intersection.x) + L", " + std::to_wstring(intersection.y) + +L", " + std::to_wstring(intersection.z) + L")\n";
+				OutputDebugStringW(debugString.c_str());
+			}
+		}*/
 
 		m_graphics.FixedUpdate(m_timer);
 	};
@@ -127,9 +147,42 @@ int Application::Run()
 	return static_cast<int>(message.wParam);
 }
 
+void Application::OnKeyboardKeyDown(void* sender, const DXInputHandler::KeyboardEventArgs& eventArgs)
+{
+	auto pScene = m_graphics.GetScene();
+	auto pCamera = m_graphics.GetCamera();
+
+	if(eventArgs.Key == DIK_SPACE)
+	{
+		SceneBuilder::RenderItemInstanceData instanceData;
+
+		XMFLOAT3 spawnPosition;
+		XMStoreFloat3(&spawnPosition, pCamera->GetPosition() + pCamera->GetForward() * 1.0f);
+
+		auto scale = m_randomScales(m_randomEngine);
+		instanceData =
+		{
+			{ spawnPosition.x, spawnPosition.z },
+			{ 0.0f, m_randomAngles(m_randomEngine), 0.0f },
+			{ scale, scale, scale },
+		};
+
+		pScene->AddTreeInstances(&m_graphics, { instanceData });
+	}
+	else if(eventArgs.Key == DIK_Z)
+	{
+		pScene->RemoveLastInstance(&m_graphics, "Tree", { "Trunk", "Leaves" });
+	}
+}
+
 LRESULT Application::MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+void OnKeyboardKeyDown2(void* sender, const GraphicsEngine::DXInputHandler::KeyboardEventArgs& eventArgs)
+{
+	OutputDebugStringW(L"Hello\n");
 }
 
 std::mutex Application::s_mutex;
@@ -139,7 +192,15 @@ Application::Application() :
 	m_timer(c_millisecondsPerUpdate),
 	m_input(m_window.GetHInstance(), m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight()),
 	m_graphics(m_window.GetWindowHandle(), m_window.GetClientWidth(), m_window.GetClientHeight(), m_window.IsFullscreen()),
-	m_soundManager(m_window.GetWindowHandle())
+	m_soundManager(m_window.GetWindowHandle()),
+	m_randomDevice(),
+	m_randomEngine(m_randomDevice()),
+	m_randomAngles(0.0f, 2.0 * XM_PI),
+	m_randomScales(0.5f, 1.0f)
 {
 	m_soundManager.Create2DSoundFromWaveFile("TestSound", L"Sounds/Sound01.wav");
+
+	using namespace std::placeholders;
+	m_input.SubscribeToOnKeyDownEvents(DIK_SPACE, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_Z, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 }

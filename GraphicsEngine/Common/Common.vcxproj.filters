@@ -26,6 +26,7 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="Common\PerformanceTimer.cpp" />
+    <ClCompile Include="Common\Event.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\EngineException.h">
@@ -46,5 +47,6 @@
     <ClInclude Include="Common\MemoryPool.h" />
     <ClInclude Include="Common\MemoryPoolElement.h" />
     <ClInclude Include="Common\PerformanceTimer.h" />
+    <ClInclude Include="Common\Event.h" />
   </ItemGroup>
 </Project>

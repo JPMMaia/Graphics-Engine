@@ -28,6 +28,12 @@ void RenderItem::RenderNonInstanced(ID3D11DeviceContext* deviceContext) const
 
 void RenderItem::AddInstance(const ShaderBufferTypes::InstanceData& instanceData)
 {
-	this->Colliders.push_back(OctreeCollider(this, static_cast<uint32_t>(this->InstancesData.size())));
+	//this->Colliders.push_back(OctreeCollider(this, static_cast<uint32_t>(this->InstancesData.size())));
 	this->InstancesData.push_back(instanceData);
+}
+
+void RenderItem::RemoveLastInstance()
+{
+	if(!this->InstancesData.empty())
+		this->InstancesData.pop_back();
 }

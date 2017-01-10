@@ -167,6 +167,9 @@
     <ClCompile Include="GraphicsEngine\Ray.cpp">
       <Filter>GraphicsEngine\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\Scenes\SceneBuilder.cpp">
+      <Filter>GraphicsEngine\Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -353,6 +356,12 @@
     <ClInclude Include="GraphicsEngine\Ray.h">
       <Filter>GraphicsEngine\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsEngine\Scenes\SceneBuilder.h">
+      <Filter>GraphicsEngine\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\nlohmann\json\json.hpp">
+      <Filter>Libraries\nlohmann\json</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -453,6 +462,12 @@
     </Filter>
     <Filter Include="Libraries\DirectXTex\DirectXTex">
       <UniqueIdentifier>{fe6414c6-babe-4bb7-bbb2-e6b2dd0be0cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\nlohmann">
+      <UniqueIdentifier>{69404260-9e1d-4818-8ae4-b2992d46964a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\nlohmann\json">
+      <UniqueIdentifier>{8c7a540c-4b93-483f-862b-1d4723c45287}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

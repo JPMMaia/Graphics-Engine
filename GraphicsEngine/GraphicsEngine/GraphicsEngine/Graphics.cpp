@@ -10,6 +10,7 @@ using namespace DirectX;
 using namespace GraphicsEngine;
 
 Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight, bool fullscreen) :
+	m_initialized(false),
 	m_d3dBase(outputWindow, clientWidth, clientHeight, fullscreen),
 	m_pipelineStateManager(m_d3dBase),
 	m_camera(m_d3dBase.GetAspectRatio(), 0.25f * XM_PI, 0.01f, 10000.0f, XMMatrixIdentity()),
@@ -37,6 +38,8 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	InitializeMainPassData();
 	BindSamplers();
 	//SetupTerrainMeshData();
+
+	m_initialized = true;
 }
 
 void Graphics::OnResize(uint32_t clientWidth, uint32_t clientHeight)
@@ -201,7 +204,7 @@ Camera* Graphics::GetCamera()
 {
 	return &m_camera;
 }
-IScene* Graphics::GetScene()
+DefaultScene* Graphics::GetScene()
 {
 	return &m_scene;
 }
@@ -218,6 +221,15 @@ void Graphics::AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::init
 
 	m_allRenderItems.push_back(std::move(renderItem));
 }
+
+void Graphics::AddRenderItemInstance(RenderItem* renderItem, const ShaderBufferTypes::InstanceData& instanceData) const
+{
+	renderItem->AddInstance(instanceData);
+
+	if(m_initialized)
+		m_currentFrameResource->RealocateInstanceBuffer(m_d3dBase.GetDevice(), renderItem);
+}
+
 uint32_t Graphics::GetVisibleInstances() const
 {
 	return m_visibleInstances;
@@ -225,6 +237,16 @@ uint32_t Graphics::GetVisibleInstances() const
 const std::vector<RenderItem*>& Graphics::GetRenderItems(RenderLayer renderLayer) const
 {
 	return m_renderItemLayers[static_cast<size_t>(renderLayer)];
+}
+
+std::vector<std::unique_ptr<RenderItem>>::const_iterator Graphics::GetRenderItem(std::string name) const
+{
+	auto match = [&name](const std::unique_ptr<RenderItem>& renderItem)
+	{
+		return renderItem->Name == name;
+	};
+
+	return std::find_if(m_allRenderItems.begin(), m_allRenderItems.end(), match);
 }
 
 void Graphics::BindSamplers() const
@@ -299,6 +321,7 @@ void Graphics::UpdateInstancesDataFrustumCulling()
 	// Build the view space camera frustum:
 	auto viewSpaceCameraFrustum = m_camera.BuildViewSpaceBoundingFrustum();
 
+	m_visibleInstances = 0;
 	for (const auto& renderItem : m_allRenderItems)
 	{
 		// Get instances buffer for the current render item:
@@ -338,6 +361,7 @@ void Graphics::UpdateInstancesDataFrustumCulling()
 			}
 		}
 		renderItem->VisibleInstanceCount = visibleInstanceCount;
+		m_visibleInstances += visibleInstanceCount;
 
 		// Unmap resource:
 		instancesBuffer.Unmap(deviceContext);
@@ -391,6 +415,7 @@ void Graphics::UpdateInstancesDataOctreeCulling()
 		instancesBuffer.Unmap(deviceContext);
 	}
 }
+
 void Graphics::UpdateMaterialData() const
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();

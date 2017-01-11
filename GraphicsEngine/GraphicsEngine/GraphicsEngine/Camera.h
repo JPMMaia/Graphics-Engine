@@ -36,6 +36,7 @@ namespace GraphicsEngine
 		float GetFarZ() const;
 
 		void SetPosition(float x, float y, float z);
+		void XM_CALLCONV SetPosition(DirectX::FXMVECTOR position);
 		void SetAspectRatio(float aspectRatio);
 
 		bool IsDirty() const;

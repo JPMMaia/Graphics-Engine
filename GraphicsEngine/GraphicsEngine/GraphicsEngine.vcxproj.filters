@@ -170,6 +170,15 @@
     <ClCompile Include="GraphicsEngine\Scenes\SceneBuilder.cpp">
       <Filter>GraphicsEngine\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\AnimationManager.cpp">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\BaseAnimation.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\GeneralAnimation.cpp">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -362,6 +371,15 @@
     <ClInclude Include="..\Libraries\nlohmann\json\json.hpp">
       <Filter>Libraries\nlohmann\json</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsEngine\AnimationManager.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\LinearAnimation.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\GeneralAnimation.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -468,6 +486,9 @@
     </Filter>
     <Filter Include="Libraries\nlohmann\json">
       <UniqueIdentifier>{8c7a540c-4b93-483f-862b-1d4723c45287}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\Animations">
+      <UniqueIdentifier>{83640344-d3bf-49a6-b339-ac2457e8798a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

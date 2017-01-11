@@ -1,6 +1,7 @@
 ﻿#include "Application.h"
 
 #include <functional>
+#include "GraphicsEngine/GeneralAnimation.h"
 
 using namespace Common;
 using namespace Win32Application;
@@ -26,7 +27,7 @@ LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 		auto application = Application::GetInstance();
 		if (application)
 			return application->MessageHandler(hwnd, msg, wParam, lParam);
-		
+
 		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
 }
@@ -69,8 +70,8 @@ int Application::Run()
 		camera->RotateWorldY(mouseDeltaX * mouseSensibility);
 		camera->RotateLocalX(mouseDeltaY * mouseSensibility);
 
-		const auto& terrain = m_graphics.GetScene()->GetTerrain();
-		
+		//const auto& terrain = m_graphics.GetScene()->GetTerrain();
+
 		// Clamp camera to the ground:
 		/*XMFLOAT3 position;
 		XMStoreFloat3(&position, camera->GetPosition());
@@ -92,6 +93,8 @@ int Application::Run()
 				OutputDebugStringW(debugString.c_str());
 			}
 		}*/
+
+		m_animationManager.Update(m_timer);
 
 		m_graphics.FixedUpdate(m_timer);
 	};
@@ -121,7 +124,7 @@ int Application::Run()
 		auto camera = m_graphics.GetCamera();
 		XMFLOAT3 cameraPosition;
 		XMStoreFloat3(&cameraPosition, camera->GetPosition());
-		auto extraCaption = L"FPS: " + std::to_wstring(timer.GetFramesPerSecond()) + L" | MSPF: " + std::to_wstring(timer.GetMillisecondsPerFrame()) + L" | V: " + std::to_wstring(m_graphics.GetVisibleInstances()) + 
+		auto extraCaption = L"FPS: " + std::to_wstring(timer.GetFramesPerSecond()) + L" | MSPF: " + std::to_wstring(timer.GetMillisecondsPerFrame()) + L" | V: " + std::to_wstring(m_graphics.GetVisibleInstances()) +
 			L" | (" + std::to_wstring(cameraPosition.x) + L", " + std::to_wstring(cameraPosition.y) + L", " + std::to_wstring(cameraPosition.z) + L")";
 		m_window.SetWindowExtraCaption(extraCaption);
 	};
@@ -152,7 +155,7 @@ void Application::OnKeyboardKeyDown(void* sender, const DXInputHandler::Keyboard
 	auto pScene = m_graphics.GetScene();
 	auto pCamera = m_graphics.GetCamera();
 
-	if(eventArgs.Key == DIK_SPACE)
+	if (eventArgs.Key == DIK_SPACE)
 	{
 		SceneBuilder::RenderItemInstanceData instanceData;
 
@@ -169,10 +172,32 @@ void Application::OnKeyboardKeyDown(void* sender, const DXInputHandler::Keyboard
 
 		pScene->AddTreeInstances(&m_graphics, { instanceData });
 	}
-	else if(eventArgs.Key == DIK_Z)
+	else if (eventArgs.Key == DIK_Z)
 	{
 		pScene->RemoveLastInstance(&m_graphics, "Tree", { "Trunk", "Leaves" });
 	}
+}
+
+void Application::SetupAnimations()
+{
+	auto pCamera = m_graphics.GetCamera();
+
+	std::vector<std::unique_ptr<BaseAnimation>> animations;
+	animations.push_back(std::make_unique<GeneralAnimation>(
+		4000.0f, 10000.0f,
+		[pCamera](const Common::Timer& timer, float blendFactor)
+	{
+		static auto initialPosition = XMVectorSet(-292.0f, 27.0f, 512.0f, 1.0f);
+		static auto finalPosition = XMVectorSet(-327.0f, 27.0f, 352.0f, 1.0f);
+
+		auto position = (1.0f - blendFactor) * initialPosition + blendFactor * finalPosition;
+
+		pCamera->SetPosition(position);
+	}
+	));
+
+	for (auto& pAnimation : animations)
+		m_animationManager.AddAnimation(std::move(pAnimation));
 }
 
 LRESULT Application::MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -199,6 +224,7 @@ Application::Application() :
 	m_randomScales(0.5f, 1.0f)
 {
 	m_soundManager.Create2DSoundFromWaveFile("TestSound", L"Sounds/Sound01.wav");
+	SetupAnimations();
 
 	using namespace std::placeholders;
 	m_input.SubscribeToOnKeyDownEvents(DIK_SPACE, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));

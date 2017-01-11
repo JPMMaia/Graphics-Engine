@@ -138,6 +138,12 @@ void Camera::SetPosition(float x, float y, float z)
 	m_position = XMVectorSet(x, y, z, 1.0f);
 	m_dirty = true;
 }
+
+void Camera::SetPosition(DirectX::FXMVECTOR position)
+{
+	m_position = position;
+}
+
 void Camera::SetAspectRatio(float aspectRatio)
 {
 	m_aspectRatio = aspectRatio;

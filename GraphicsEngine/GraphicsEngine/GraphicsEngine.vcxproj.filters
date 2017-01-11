@@ -179,6 +179,9 @@
     <ClCompile Include="GraphicsEngine\GeneralAnimation.cpp">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\CameraAnimation.cpp">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -378,6 +381,9 @@
       <Filter>GraphicsEngine\Animations</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\GeneralAnimation.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\CameraAnimation.h">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClInclude>
   </ItemGroup>

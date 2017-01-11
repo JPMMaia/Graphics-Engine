@@ -22,8 +22,10 @@ namespace GraphicsEngine
 		void XM_CALLCONV Rotate(DirectX::FXMVECTOR axis, float radians);
 		void RotateLocalX(float radians);
 		void RotateLocalY(float radians);
+		void RotateLocalZ(float radians);
 		void RotateWorldX(float radians);
 		void RotateWorldY(float radians);
+		void RotateWorldZ(float radians);
 
 		DirectX::BoundingFrustum BuildViewSpaceBoundingFrustum() const;
 

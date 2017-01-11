@@ -2,6 +2,7 @@
 
 #include <functional>
 #include "GraphicsEngine/GeneralAnimation.h"
+#include "GraphicsEngine/CameraAnimation.h"
 
 using namespace Common;
 using namespace Win32Application;
@@ -63,12 +64,18 @@ int Application::Run()
 			camera->MoveRight(-scalar);
 		if (m_input.IsKeyDown(DIK_D))
 			camera->MoveRight(scalar);
+		
+		static const auto rotationSensibility = 0.005f;
+		if (m_input.IsKeyDown(DIK_Q))
+			camera->RotateWorldZ(-rotationSensibility);
+		if (m_input.IsKeyDown(DIK_E))
+			camera->RotateWorldZ(rotationSensibility);
 
-		static const auto mouseSensibility = 0.005f;
+		static const auto mouseSensibility = rotationSensibility;
 		int mouseDeltaX, mouseDeltaY;
 		m_input.GetMouseVelocity(mouseDeltaX, mouseDeltaY);
 		camera->RotateWorldY(-mouseDeltaX * mouseSensibility);
-		camera->RotateLocalX(mouseDeltaY * mouseSensibility);
+		camera->RotateWorldX(-mouseDeltaY * mouseSensibility);
 
 
 		//const auto& terrain = m_graphics.GetScene()->GetTerrain();
@@ -95,7 +102,7 @@ int Application::Run()
 			}
 		}*/
 
-		m_animationManager.Update(m_timer);
+		m_animationManager.FixedUpdate(m_timer);
 
 		m_graphics.FixedUpdate(m_timer);
 	};
@@ -182,21 +189,18 @@ void Application::OnKeyboardKeyDown(void* sender, const DXInputHandler::Keyboard
 void Application::SetupAnimations()
 {
 	auto pCamera = m_graphics.GetCamera();
-
 	std::vector<std::unique_ptr<BaseAnimation>> animations;
-	animations.push_back(std::make_unique<GeneralAnimation>(
-		4000.0f, 10000.0f,
-		[pCamera](const Common::Timer& timer, float blendFactor)
-	{
-		static auto initialPosition = XMVectorSet(-292.0f, 27.0f, 512.0f, 1.0f);
-		static auto finalPosition = XMVectorSet(-327.0f, 27.0f, 352.0f, 1.0f);
 
-		auto position = (1.0f - blendFactor) * initialPosition + blendFactor * finalPosition;
+	auto initialPosition = XMVectorSet(-292.0f, 50.0f, 512.0f, 1.0f);
+	auto finalPosition = XMVectorSet(-327.0f, 27.0f, 352.0f, 1.0f);
+	auto initialRotation = XMQuaternionRotationRollPitchYaw(0.0f, XM_PI, 0.0f);
+	auto finalRotation = XMQuaternionRotationRollPitchYaw(0.0f, 0.0f, 0.0f);
+	
+	animations.push_back(std::make_unique<CameraAnimation>(*pCamera, 4000.0f, 10000.0f, initialPosition, finalPosition, initialRotation, finalRotation));
 
-		pCamera->SetPosition(position);
-			
-	}
-	));
+
+
+
 
 	for (auto& pAnimation : animations)
 		m_animationManager.AddAnimation(std::move(pAnimation));

@@ -209,6 +209,7 @@
     <ClCompile Include="GraphicsEngine\BlendState.cpp" />
     <ClCompile Include="GraphicsEngine\BlendStateDescConstants.cpp" />
     <ClCompile Include="GraphicsEngine\Camera.cpp" />
+    <ClCompile Include="GraphicsEngine\CameraAnimation.cpp" />
     <ClCompile Include="GraphicsEngine\D3DBase.cpp" />
     <ClCompile Include="GraphicsEngine\DepthStencilState.cpp" />
     <ClCompile Include="GraphicsEngine\DomainShader.cpp" />
@@ -289,6 +290,7 @@
     <ClInclude Include="GraphicsEngine\Buffer.h" />
     <ClInclude Include="GraphicsEngine\BufferTypes.h" />
     <ClInclude Include="GraphicsEngine\Camera.h" />
+    <ClInclude Include="GraphicsEngine\CameraAnimation.h" />
     <ClInclude Include="GraphicsEngine\D3DBase.h" />
     <ClInclude Include="GraphicsEngine\DepthStencilState.h" />
     <ClInclude Include="GraphicsEngine\DepthStencilStateDescConstants.h" />

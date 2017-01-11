@@ -3,18 +3,18 @@
 
 using namespace GraphicsEngine;
 
-void AnimationManager::Update(const Common::Timer& timer)
+void AnimationManager::FixedUpdate(const Common::Timer& timer)
 {
 	for(auto& pAnimation : m_animations)
 	{
-		pAnimation->Update(timer);
+		pAnimation->FixedUpdate(timer);
 	}
 
 	auto eraser = [&timer](const std::unique_ptr<BaseAnimation>& pAnimation)
 	{
 		return pAnimation->HasEnded(timer);
 	};
-	std::remove_if(m_animations.begin(), m_animations.end(), eraser);
+	m_animations.erase(std::remove_if(m_animations.begin(), m_animations.end(), eraser), m_animations.end());
 }
 
 void AnimationManager::AddAnimation(std::unique_ptr<BaseAnimation>&& pAnimation)

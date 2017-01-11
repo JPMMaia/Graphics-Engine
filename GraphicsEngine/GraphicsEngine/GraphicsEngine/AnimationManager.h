@@ -10,7 +10,7 @@ namespace GraphicsEngine
 	public:
 		AnimationManager() = default;
 
-		void Update(const Common::Timer& timer);
+		void FixedUpdate(const Common::Timer& timer);
 
 		void AddAnimation(std::unique_ptr<BaseAnimation>&& pAnimation);
 

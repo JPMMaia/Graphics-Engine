@@ -9,7 +9,7 @@ namespace GraphicsEngine
 	public:
 		virtual ~BaseAnimation() = default;
 
-		virtual void Update(const Common::Timer& timer) const = 0;
+		virtual void FixedUpdate(const Common::Timer& timer) const = 0;
 		virtual bool HasEnded(const Common::Timer& timer) const = 0;
 	};
 }

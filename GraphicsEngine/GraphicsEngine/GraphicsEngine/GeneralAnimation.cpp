@@ -10,10 +10,10 @@ GeneralAnimation::GeneralAnimation(float startMilliseconds, float durationInMill
 {
 }
 
-void GeneralAnimation::Update(const Common::Timer& timer) const
+void GeneralAnimation::FixedUpdate(const Common::Timer& timer) const
 {
 	auto deltaMilliseconds = timer.GetTotalMilliseconds() - m_startMilliseconds;
-	float blendFactor = static_cast<float>(deltaMilliseconds) / m_durationInMilliseconds;
+	auto blendFactor = static_cast<float>(deltaMilliseconds) / m_durationInMilliseconds;
 
 	m_updateFunction(timer, blendFactor);
 }

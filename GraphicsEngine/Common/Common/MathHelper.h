@@ -29,6 +29,12 @@ namespace GraphicsEngine
 			return half4;
 		}
 
+		template<typename Type>
+		static Type LinearInterpolate(const Type& value1, const Type& value2, float blendFactor)
+		{
+			return (1.0f - blendFactor) * value1 + blendFactor * value2;
+		}
+
 		const auto Infinity = FLT_MAX;
 	}
 }

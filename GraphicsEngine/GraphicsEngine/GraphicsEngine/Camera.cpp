@@ -91,6 +91,11 @@ void Camera::RotateLocalY(float radians)
 	// Calculate the rotation arround the camera local Y-axis:
 	Rotate(GetLocalUp(), radians);
 }
+void Camera::RotateLocalZ(float radians)
+{
+	// Calculate the rotation arround the camera local Z-axis:
+	Rotate(GetLocalForward(), radians);
+}
 void Camera::RotateWorldX(float radians)
 {
 	// Calculate the rotation arround the world X-axis:
@@ -102,6 +107,12 @@ void Camera::RotateWorldY(float radians)
 	// Calculate the rotation arround the world Y-axis:
 	static const auto WORLD_Y_AXIS = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	Rotate(WORLD_Y_AXIS, radians);
+}
+void Camera::RotateWorldZ(float radians)
+{
+	// Calculate the rotation arround the world Z-axis:
+	static const auto WORLD_Z_AXIS = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	Rotate(WORLD_Z_AXIS, radians);
 }
 
 BoundingFrustum Camera::BuildViewSpaceBoundingFrustum() const

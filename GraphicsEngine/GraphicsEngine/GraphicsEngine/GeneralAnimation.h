@@ -14,7 +14,7 @@ namespace GraphicsEngine
 	public:
 		GeneralAnimation(float startMilliseconds, float durationInMilliseconds, const UpdateFunctionType& updateFunction);
 
-		void Update(const Common::Timer& timer) const override;
+		void FixedUpdate(const Common::Timer& timer) const override;
 		bool HasEnded(const Common::Timer& timer) const override;
 
 	private:

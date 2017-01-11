@@ -20,15 +20,20 @@ namespace GraphicsEngine
 		void MoveForward(float scalar);
 
 		void XM_CALLCONV Rotate(DirectX::FXMVECTOR axis, float radians);
-		void RotateLocalX(float radiansX);
-		void RotateWorldY(float radiansY);
+		void RotateLocalX(float radians);
+		void RotateLocalY(float radians);
+		void RotateWorldX(float radians);
+		void RotateWorldY(float radians);
 
 		DirectX::BoundingFrustum BuildViewSpaceBoundingFrustum() const;
 
 		const DirectX::XMVECTOR& GetPosition() const;
 		const DirectX::XMMATRIX& GetViewMatrix() const;
 		const DirectX::XMMATRIX& GetProjectionMatrix() const;
-		const DirectX::XMVECTOR& GetForward() const;
+		const DirectX::XMVECTOR& GetLocalRight() const;
+		const DirectX::XMVECTOR& GetLocalUp() const;
+		const DirectX::XMVECTOR& GetLocalForward() const;
+		const DirectX::XMVECTOR& GetRotationQuaternion() const;
 
 		Ray CreateRay() const;
 
@@ -37,6 +42,7 @@ namespace GraphicsEngine
 
 		void SetPosition(float x, float y, float z);
 		void XM_CALLCONV SetPosition(DirectX::FXMVECTOR position);
+		void XM_CALLCONV SetRotationQuaternion(DirectX::FXMVECTOR rotationQuaternion);
 		void SetAspectRatio(float aspectRatio);
 
 		bool IsDirty() const;

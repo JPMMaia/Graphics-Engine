@@ -67,8 +67,9 @@ int Application::Run()
 		static const auto mouseSensibility = 0.005f;
 		int mouseDeltaX, mouseDeltaY;
 		m_input.GetMouseVelocity(mouseDeltaX, mouseDeltaY);
-		camera->RotateWorldY(mouseDeltaX * mouseSensibility);
+		camera->RotateWorldY(-mouseDeltaX * mouseSensibility);
 		camera->RotateLocalX(mouseDeltaY * mouseSensibility);
+
 
 		//const auto& terrain = m_graphics.GetScene()->GetTerrain();
 
@@ -160,7 +161,7 @@ void Application::OnKeyboardKeyDown(void* sender, const DXInputHandler::Keyboard
 		SceneBuilder::RenderItemInstanceData instanceData;
 
 		XMFLOAT3 spawnPosition;
-		XMStoreFloat3(&spawnPosition, pCamera->GetPosition() + pCamera->GetForward() * 1.0f);
+		XMStoreFloat3(&spawnPosition, pCamera->GetPosition() + pCamera->GetLocalForward() * 1.0f);
 
 		auto scale = m_randomScales(m_randomEngine);
 		instanceData =
@@ -193,6 +194,7 @@ void Application::SetupAnimations()
 		auto position = (1.0f - blendFactor) * initialPosition + blendFactor * finalPosition;
 
 		pCamera->SetPosition(position);
+			
 	}
 	));
 

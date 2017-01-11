@@ -84,7 +84,7 @@ void Graphics::Render(const Common::Timer& timer) const
 	m_d3dBase.BeginScene();
 
 	// Create shadow map:
-	{
+	/*{
 		// Set shadow pass data:
 		deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
 		deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
@@ -114,7 +114,7 @@ void Graphics::Render(const Common::Timer& timer) const
 
 		// Set default render target and depth stencil:
 		m_d3dBase.SetDefaultRenderTargets();
-	}
+	}*/
 
 	// Set main pass data:
 	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
@@ -133,20 +133,20 @@ void Graphics::Render(const Common::Timer& timer) const
 		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
 		DrawNonInstancedRenderItems(RenderLayer::SkyDome);
 
-		// Draw opaque:
+		/*// Draw opaque:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
 		DrawRenderItems(RenderLayer::Opaque);
 
 		// Draw normal mapped:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "NormalSpecularMapping");
-		DrawRenderItems(RenderLayer::NormalSpecularMapping);
+		DrawRenderItems(RenderLayer::NormalSpecularMapping);*/
 
 		// Draw terrain:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
 		DrawTerrain();
 
 		// Draw transparent:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
+		/*m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
 		DrawRenderItems(RenderLayer::Transparent);
 
 		// Draw alpha-clipped:
@@ -155,7 +155,7 @@ void Graphics::Render(const Common::Timer& timer) const
 
 		// Draw billboards:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "Billboard");
-		DrawNonInstancedRenderItems(RenderLayer::Grass);
+		DrawNonInstancedRenderItems(RenderLayer::Grass);*/
 	}
 	else
 	{

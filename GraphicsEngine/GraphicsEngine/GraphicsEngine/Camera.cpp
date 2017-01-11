@@ -35,13 +35,16 @@ void Camera::Update()
 {
 	if (m_dirty)
 	{
-		// Update the rotation matrix:
+		// Create the camera translation matrix:
+		auto translationMatrix = XMMatrixTranslationFromVector(-m_position);
+
+		// Update the camera rotation matrix:
 		m_rotationMatrix = XMMatrixRotationQuaternion(m_rotationQuaternion);
 
+		
+
 		// Build view matrix:
-		auto up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-		auto forward = m_rotationMatrix.r[2];
-		m_viewMatrix = XMMatrixLookToLH(m_position, forward, up);
+		m_viewMatrix = translationMatrix * m_rotationMatrix;
 
 		m_dirty = false;
 	}
@@ -60,14 +63,12 @@ void Camera::Move(FXMVECTOR axis, float scalar)
 void Camera::MoveRight(float scalar)
 {
 	// Translate along the X-axis:
-	const auto& right = XMVectorSet(XMVectorGetX(m_viewMatrix.r[0]), XMVectorGetX(m_viewMatrix.r[1]), XMVectorGetX(m_viewMatrix.r[2]), 0.0f);
-	Move(right, scalar);
+	Move(GetLocalRight(), scalar);
 }
 void Camera::MoveForward(float scalar)
 {
 	// Translate along the Z-axis:
-	const auto& forward = m_rotationMatrix.r[2];
-	Move(forward, scalar);
+	Move(GetLocalForward(), scalar);
 }
 
 void Camera::Rotate(FXMVECTOR axis, float radians)
@@ -83,8 +84,18 @@ void Camera::Rotate(FXMVECTOR axis, float radians)
 void Camera::RotateLocalX(float radians)
 {
 	// Calculate the rotation arround the camera local X-axis:
-	const auto& right = XMVectorSet(XMVectorGetX(m_viewMatrix.r[0]), XMVectorGetX(m_viewMatrix.r[1]), XMVectorGetX(m_viewMatrix.r[2]), 0.0f);
-	Rotate(right, radians);
+	Rotate(GetLocalRight(), radians);
+}
+void Camera::RotateLocalY(float radians)
+{
+	// Calculate the rotation arround the camera local Y-axis:
+	Rotate(GetLocalUp(), radians);
+}
+void Camera::RotateWorldX(float radians)
+{
+	// Calculate the rotation arround the world X-axis:
+	static const auto WORLD_X_AXIS = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	Rotate(WORLD_X_AXIS, radians);
 }
 void Camera::RotateWorldY(float radians)
 {
@@ -109,14 +120,27 @@ const XMMATRIX& Camera::GetProjectionMatrix() const
 {
 	return m_projectionMatrix;
 }
-const XMVECTOR& Camera::GetForward() const
+
+const XMVECTOR& Camera::GetLocalRight() const
 {
-	return m_rotationMatrix.r[2];
+	return XMVectorSet(XMVectorGetX(m_rotationMatrix.r[0]), XMVectorGetX(m_rotationMatrix.r[1]), XMVectorGetX(m_rotationMatrix.r[2]), 0.0f);
+}
+const XMVECTOR& Camera::GetLocalUp() const
+{
+	return XMVectorSet(XMVectorGetY(m_rotationMatrix.r[0]), XMVectorGetY(m_rotationMatrix.r[1]), XMVectorGetY(m_rotationMatrix.r[2]), 0.0f);
+}
+const XMVECTOR& Camera::GetLocalForward() const
+{
+	return XMVectorSet(XMVectorGetZ(m_rotationMatrix.r[0]), XMVectorGetZ(m_rotationMatrix.r[1]), XMVectorGetZ(m_rotationMatrix.r[2]), 0.0f);
+}
+const XMVECTOR& Camera::GetRotationQuaternion() const
+{
+	return m_rotationQuaternion;
 }
 
 Ray Camera::CreateRay() const
 {
-	return Ray(m_position, GetForward());
+	return Ray(m_position, GetLocalForward());
 }
 
 float Camera::GetNearZ() const
@@ -139,11 +163,14 @@ void Camera::SetPosition(float x, float y, float z)
 	m_dirty = true;
 }
 
-void Camera::SetPosition(DirectX::FXMVECTOR position)
+void Camera::SetPosition(FXMVECTOR position)
 {
 	m_position = position;
 }
-
+void Camera::SetRotationQuaternion(FXMVECTOR rotationQuaternion)
+{
+	m_rotationQuaternion = rotationQuaternion;
+}
 void Camera::SetAspectRatio(float aspectRatio)
 {
 	m_aspectRatio = aspectRatio;

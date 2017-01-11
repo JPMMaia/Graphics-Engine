@@ -7,7 +7,8 @@ void AnimationManager::FixedUpdate(const Common::Timer& timer)
 {
 	for(auto& pAnimation : m_animations)
 	{
-		pAnimation->FixedUpdate(timer);
+		if(pAnimation->HasBegun(timer))
+			pAnimation->FixedUpdate(timer);
 	}
 
 	auto eraser = [&timer](const std::unique_ptr<BaseAnimation>& pAnimation)

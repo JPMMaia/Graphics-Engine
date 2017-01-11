@@ -11,8 +11,14 @@ struct VertexOutput
 
 float4 main(VertexOutput input) : SV_TARGET
 {
-    float s = saturate(input.TextureCoordinates);
-    float4 color = lerp(SkyDomeColors[0], SkyDomeColors[1], s);
+    float blendFactor = saturate(input.TextureCoordinates);
+    float4 color = lerp(SkyDomeColors[0], SkyDomeColors[1], blendFactor);
+
+#if defined(FOG)
+    color = lerp(color, FogColor, FogColor.w);
+#endif
+
+    color.a = 1.0f;
 
     return color;
 }

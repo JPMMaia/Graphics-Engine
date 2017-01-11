@@ -12,14 +12,11 @@ namespace GraphicsEngine
 		using UpdateFunctionType = std::function<void(const Common::Timer&, float)>;
 
 	public:
-		GeneralAnimation(float startMilliseconds, float durationInMilliseconds, const UpdateFunctionType& updateFunction);
+		GeneralAnimation(float startInMilliseconds, float durationInMilliseconds, const UpdateFunctionType& updateFunction);
 
 		void FixedUpdate(const Common::Timer& timer) const override;
-		bool HasEnded(const Common::Timer& timer) const override;
 
 	private:
 		UpdateFunctionType m_updateFunction;
-		float m_startMilliseconds;
-		float m_durationInMilliseconds;
 	};
 }

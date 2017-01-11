@@ -6,10 +6,9 @@
 using namespace DirectX;
 using namespace GraphicsEngine;
 
-CameraAnimation::CameraAnimation(Camera& camera, float startMilliseconds, float durationInMilliseconds, DirectX::CXMVECTOR initialPosition, DirectX::CXMVECTOR finalPosition, DirectX::CXMVECTOR initialRotationQuaternion, DirectX::CXMVECTOR finalRotationQuaternion) :
+CameraAnimation::CameraAnimation(Camera& camera, float startInMilliseconds, float durationInMilliseconds, DirectX::CXMVECTOR initialPosition, DirectX::CXMVECTOR finalPosition, DirectX::CXMVECTOR initialRotationQuaternion, DirectX::CXMVECTOR finalRotationQuaternion) :
+	BaseAnimation(startInMilliseconds, durationInMilliseconds),
 	m_camera(camera),
-	m_startMilliseconds(startMilliseconds),
-	m_durationInMilliseconds(durationInMilliseconds),
 	m_initialPosition(initialPosition),
 	m_finalPosition(finalPosition),
 	m_initialRotationQuaternion(initialRotationQuaternion),
@@ -19,8 +18,7 @@ CameraAnimation::CameraAnimation(Camera& camera, float startMilliseconds, float 
 
 void CameraAnimation::FixedUpdate(const Common::Timer& timer) const
 {
-	auto deltaMilliseconds = timer.GetTotalMilliseconds() - m_startMilliseconds;
-	auto blendFactor = static_cast<float>(deltaMilliseconds) / m_durationInMilliseconds;
+	auto blendFactor = CalculateBlendFactor(timer);
 
 	auto position = MathHelper::LinearInterpolate(m_initialPosition, m_finalPosition, blendFactor);
 	auto rotation = MathHelper::LinearInterpolate(m_initialRotationQuaternion, m_finalRotationQuaternion, blendFactor);
@@ -29,8 +27,3 @@ void CameraAnimation::FixedUpdate(const Common::Timer& timer) const
 	m_camera.SetRotationQuaternion(rotation);
 }
 
-bool CameraAnimation::HasEnded(const Common::Timer& timer) const
-{
-	auto deltaMilliseconds = timer.GetTotalMilliseconds() - m_startMilliseconds;
-	return deltaMilliseconds >= m_durationInMilliseconds;
-}

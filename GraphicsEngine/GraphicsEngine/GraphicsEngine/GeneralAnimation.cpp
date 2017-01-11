@@ -3,23 +3,16 @@
 
 using namespace GraphicsEngine;
 
-GeneralAnimation::GeneralAnimation(float startMilliseconds, float durationInMilliseconds, const UpdateFunctionType& updateFunction):
-	m_startMilliseconds(startMilliseconds),
-	m_durationInMilliseconds(durationInMilliseconds),
+GeneralAnimation::GeneralAnimation(float startInMilliseconds, float durationInMilliseconds, const UpdateFunctionType& updateFunction) :
+	BaseAnimation(startInMilliseconds, durationInMilliseconds),
 	m_updateFunction(updateFunction)
 {
 }
 
 void GeneralAnimation::FixedUpdate(const Common::Timer& timer) const
 {
-	auto deltaMilliseconds = timer.GetTotalMilliseconds() - m_startMilliseconds;
-	auto blendFactor = static_cast<float>(deltaMilliseconds) / m_durationInMilliseconds;
+	auto blendFactor = CalculateBlendFactor(timer);
 
 	m_updateFunction(timer, blendFactor);
 }
 
-bool GeneralAnimation::HasEnded(const Common::Timer& timer) const
-{
-	auto deltaMilliseconds = timer.GetTotalMilliseconds() - m_startMilliseconds;
-	return deltaMilliseconds >= m_durationInMilliseconds;
-}

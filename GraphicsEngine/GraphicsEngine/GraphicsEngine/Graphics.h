@@ -37,10 +37,15 @@ namespace GraphicsEngine
 		const std::vector<RenderItem*>& GetRenderItems(RenderLayer renderLayer) const;
 		std::vector<std::unique_ptr<RenderItem>>::const_iterator GetRenderItem(std::string name) const;
 
+		void SetFogState(bool state);
+		void SetFogDistanceParameters(float start, float range);
+		void SetFogColor(const DirectX::XMFLOAT4& color);
+
 	private:
 		void BindSamplers() const;
 		void SetupTerrainMeshData();
 
+		void UpdateCamera();
 		void UpdateInstancesDataFrustumCulling();
 		void UpdateInstancesDataOctreeCulling();
 		void UpdateMaterialData() const;
@@ -75,7 +80,6 @@ namespace GraphicsEngine
 		SamplerState m_anisotropicClampSamplerState;
 		SamplerState m_shadowsSamplerState;
 		bool m_fog;
-		DirectX::XMFLOAT3 m_fogColor;
 		ShadowTexture m_shadowMap;
 		RenderTexture m_renderTexture;
 		DirectX::BoundingSphere m_sceneBounds;

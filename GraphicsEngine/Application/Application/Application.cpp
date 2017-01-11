@@ -64,6 +64,27 @@ int Application::Run()
 			camera->MoveRight(-scalar);
 		if (m_input.IsKeyDown(DIK_D))
 			camera->MoveRight(scalar);
+
+		static auto range = 100.0f;
+		static auto sc = 1.0f;
+		if (m_input.IsKeyDown(DIK_I))
+		{
+			sc = sc - 0.01f;
+			if (sc > 0.0f)
+			{
+				m_graphics.SetFogDistanceParameters(20.0f / sc, range / sc);
+				m_graphics.SetFogColor(XMFLOAT4(0.5f, 0.5f, 0.5f, sc));
+			}
+		}
+		if (m_input.IsKeyDown(DIK_K))
+		{
+			sc = sc + 0.01f;
+			if(sc > 0.0f)
+			{
+				m_graphics.SetFogDistanceParameters(20.0f / sc, range / sc);
+				m_graphics.SetFogColor(XMFLOAT4(0.5f, 0.5f, 0.5f, sc));
+			}
+		}
 		
 		static const auto rotationSensibility = 0.005f;
 		if (m_input.IsKeyDown(DIK_Q))
@@ -76,7 +97,6 @@ int Application::Run()
 		m_input.GetMouseVelocity(mouseDeltaX, mouseDeltaY);
 		camera->RotateWorldY(-mouseDeltaX * mouseSensibility);
 		camera->RotateWorldX(-mouseDeltaY * mouseSensibility);
-
 
 		//const auto& terrain = m_graphics.GetScene()->GetTerrain();
 
@@ -184,6 +204,7 @@ void Application::OnKeyboardKeyDown(void* sender, const DXInputHandler::Keyboard
 	{
 		pScene->RemoveLastInstance(&m_graphics, "Tree", { "Trunk", "Leaves" });
 	}
+
 }
 
 void Application::SetupAnimations()

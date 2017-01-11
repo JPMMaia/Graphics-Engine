@@ -23,14 +23,12 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_anisotropicWrapSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicWrap),
 	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp),
 	m_shadowsSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::Shadows),
-	m_fog(false),
-	m_fogColor(0.5f, 0.5f, 0.5f),
+	m_fog(true),
 	m_shadowMap(m_d3dBase.GetDevice(), 2048, 2048),
 	m_renderTexture(m_d3dBase.GetDevice(), clientWidth, clientHeight, DXGI_FORMAT_R8G8B8A8_UNORM),
 	m_sceneBounds(XMFLOAT3(0.0f, 256.0f, 0.0f), 512.0f), 
 	m_visibleInstances(0)
 {
-	m_d3dBase.SetClearColor(m_fogColor);
 	m_camera.SetPosition(220.0f - 512.0f, 27.0f, -(0.0f - 512.0f));
 	m_camera.Update();
 	m_camera.RotateWorldY(XM_PI);
@@ -38,6 +36,8 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	InitializeMainPassData();
 	BindSamplers();
 	//SetupTerrainMeshData();
+
+	SetFogColor(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
 
 	m_initialized = true;
 }
@@ -61,11 +61,11 @@ void Graphics::FixedUpdate(const Common::Timer& timer)
 }
 void Graphics::RenderUpdate(const Common::Timer& timer)
 {
-	m_camera.Update();
 	UpdateLights(timer);
 	UpdateMainPassData(timer);
 	UpdateShadowPassData(timer);
 	UpdateMaterialData();
+	UpdateCamera();
 	
 	Common::PerformanceTimer performanceTimer;
 	performanceTimer.Start();
@@ -159,6 +159,10 @@ void Graphics::Render(const Common::Timer& timer) const
 	}
 	else
 	{
+		// Draw Skydome:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDomeFog");
+		DrawNonInstancedRenderItems(RenderLayer::SkyDome);
+
 		// Draw opaque:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueFog");
 		DrawRenderItems(RenderLayer::Opaque);
@@ -249,6 +253,22 @@ std::vector<std::unique_ptr<RenderItem>>::const_iterator Graphics::GetRenderItem
 	return std::find_if(m_allRenderItems.begin(), m_allRenderItems.end(), match);
 }
 
+void Graphics::SetFogState(bool state)
+{
+	m_fog = state;
+}
+void Graphics::SetFogDistanceParameters(float start, float range)
+{
+	m_mainPassData.FogStart = start;
+	m_mainPassData.FogRange = range;
+}
+
+void Graphics::SetFogColor(const DirectX::XMFLOAT4& color)
+{
+	m_mainPassData.FogColor = color;
+	m_d3dBase.SetClearColor(XMFLOAT3(color.x, color.y, color.z));
+}
+
 void Graphics::BindSamplers() const
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
@@ -309,6 +329,15 @@ void Graphics::SetupTerrainMeshData()
 	terrain.SetMeshData(std::move(vertices), std::move(indices));
 }
 
+void Graphics::UpdateCamera()
+{
+	if (m_fog)
+		m_camera.SetFarZ(m_mainPassData.FogStart + m_mainPassData.FogRange);
+	else
+		m_camera.SetFarZ(1024.0f);
+
+	m_camera.Update();
+}
 void Graphics::UpdateInstancesDataFrustumCulling()
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
@@ -489,7 +518,6 @@ void Graphics::UpdateMainPassData(const Common::Timer& timer)
 	m_mainPassData.FarZ = m_camera.GetFarZ();
 	m_mainPassData.TotalTime = static_cast<float>(timer.GetTotalMilliseconds());
 	m_mainPassData.DeltaTime = static_cast<float>(timer.GetDeltaMilliseconds());
-	m_mainPassData.FogColor = XMFLOAT4(m_fogColor.x, m_fogColor.y, m_fogColor.z, 1.0f);
 
 	const auto& terrain = m_scene.GetTerrain();
 	m_mainPassData.TexelSize = terrain.GetTexelSize();
@@ -502,7 +530,7 @@ void Graphics::UpdateMainPassData(const Common::Timer& timer)
 }
 void Graphics::UpdateShadowPassData(const Common::Timer& timer) const
 {
-	ShaderBufferTypes::PassData passData;
+	ShaderBufferTypes::PassData passData = m_mainPassData;
 
 	auto castShadowsLights = m_lightManager.GetCastShadowsLights();
 	auto castShadowsLight = castShadowsLights[0];
@@ -537,13 +565,6 @@ void Graphics::UpdateShadowPassData(const Common::Timer& timer) const
 	passData.FarZ = m_camera.GetFarZ();
 	passData.TotalTime = static_cast<float>(timer.GetTotalMilliseconds());
 	passData.DeltaTime = static_cast<float>(timer.GetDeltaMilliseconds());
-	passData.FogColor = XMFLOAT4(m_fogColor.x, m_fogColor.y, m_fogColor.z, 1.0f);
-	passData.FogStart = 20.0f;
-	passData.FogRange = 100.0f;
-	passData.MaxTesselationDistance = 100.0f;
-	passData.MaxTesselationFactor = 6.0f;
-	passData.MinTesselationDistance = 500.0f;
-	passData.MinTesselationFactor = 1.0f;
 
 	const auto& terrain = m_scene.GetTerrain();
 	passData.TexelSize = terrain.GetTexelSize();

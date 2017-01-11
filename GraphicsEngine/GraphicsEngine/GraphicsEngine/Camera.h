@@ -32,15 +32,18 @@ namespace GraphicsEngine
 		const DirectX::XMVECTOR& GetPosition() const;
 		const DirectX::XMMATRIX& GetViewMatrix() const;
 		const DirectX::XMMATRIX& GetProjectionMatrix() const;
-		const DirectX::XMVECTOR& GetLocalRight() const;
-		const DirectX::XMVECTOR& GetLocalUp() const;
-		const DirectX::XMVECTOR& GetLocalForward() const;
+		DirectX::XMVECTOR GetLocalRight() const;
+		DirectX::XMVECTOR GetLocalUp() const;
+		DirectX::XMVECTOR GetLocalForward() const;
 		const DirectX::XMVECTOR& GetRotationQuaternion() const;
 
 		Ray CreateRay() const;
 
 		float GetNearZ() const;
+		void SetNearZ(float value);
+
 		float GetFarZ() const;
+		void SetFarZ(float value);
 
 		void SetPosition(float x, float y, float z);
 		void XM_CALLCONV SetPosition(DirectX::FXMVECTOR position);

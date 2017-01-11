@@ -132,15 +132,15 @@ const XMMATRIX& Camera::GetProjectionMatrix() const
 	return m_projectionMatrix;
 }
 
-const XMVECTOR& Camera::GetLocalRight() const
+XMVECTOR Camera::GetLocalRight() const
 {
 	return XMVectorSet(XMVectorGetX(m_rotationMatrix.r[0]), XMVectorGetX(m_rotationMatrix.r[1]), XMVectorGetX(m_rotationMatrix.r[2]), 0.0f);
 }
-const XMVECTOR& Camera::GetLocalUp() const
+XMVECTOR Camera::GetLocalUp() const
 {
 	return XMVectorSet(XMVectorGetY(m_rotationMatrix.r[0]), XMVectorGetY(m_rotationMatrix.r[1]), XMVectorGetY(m_rotationMatrix.r[2]), 0.0f);
 }
-const XMVECTOR& Camera::GetLocalForward() const
+XMVECTOR Camera::GetLocalForward() const
 {
 	return XMVectorSet(XMVectorGetZ(m_rotationMatrix.r[0]), XMVectorGetZ(m_rotationMatrix.r[1]), XMVectorGetZ(m_rotationMatrix.r[2]), 0.0f);
 }
@@ -158,9 +158,26 @@ float Camera::GetNearZ() const
 {
 	return m_nearZ;
 }
+void Camera::SetNearZ(float value)
+{
+	if (m_nearZ == value)
+		return;
+
+	m_nearZ = value;
+	InitializeProjectionMatrix(XMMatrixIdentity());
+}
+
 float Camera::GetFarZ() const
 {
 	return m_farZ;
+}
+void Camera::SetFarZ(float value)
+{
+	if (m_farZ == value)
+		return;
+
+	m_farZ = value;
+	InitializeProjectionMatrix(XMMatrixIdentity());
 }
 
 const XMMATRIX& Camera::GetViewMatrix() const

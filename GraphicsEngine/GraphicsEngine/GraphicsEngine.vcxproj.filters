@@ -182,6 +182,12 @@
     <ClCompile Include="GraphicsEngine\CameraAnimation.cpp">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\FogAnimation.cpp">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\BaseAnimation.cpp">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -377,13 +383,13 @@
     <ClInclude Include="GraphicsEngine\AnimationManager.h">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsEngine\LinearAnimation.h">
-      <Filter>GraphicsEngine\Animations</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsEngine\GeneralAnimation.h">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\CameraAnimation.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\FogAnimation.h">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClInclude>
   </ItemGroup>

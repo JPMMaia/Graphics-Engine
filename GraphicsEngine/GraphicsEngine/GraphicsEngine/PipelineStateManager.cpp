@@ -163,6 +163,14 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 
 		m_vertexShaders["SkyDome"] = VertexShader(device, shadersFolderPath + L"SkyDomeVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
 		m_pixelShaders["SkyDome"] = PixelShader(device, shadersFolderPath + L"SkyDomePixelShader.hlsl", defines.data(), "main", "ps_5_0");
+		
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"FOG", "1",
+			nullptr, nullptr
+		};
+		m_pixelShaders["SkyDomeFog"] = PixelShader(device, shadersFolderPath + L"SkyDomePixelShader.hlsl", defines.data(), "main", "ps_5_0");
 	}
 
 	// Billboard shaders:
@@ -320,6 +328,10 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		skydomeState.BlendState = &m_blendStates.at("Default");
 		skydomeState.DepthStencilState = &m_depthStencilStates.at("DepthDisabled");
 		m_pipelineStateObjects.emplace("SkyDome", skydomeState);
+
+		auto skydomeFogState = skydomeState;
+		skydomeFogState.PixelShader = &m_pixelShaders.at("SkyDomeFog");
+		m_pipelineStateObjects.emplace("SkyDomeFog", skydomeFogState);
 	}
 
 	// Billboard:

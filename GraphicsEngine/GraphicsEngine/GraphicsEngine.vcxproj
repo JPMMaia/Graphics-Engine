@@ -205,6 +205,7 @@
     <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexWIC.cpp" />
     <ClCompile Include="GraphicsEngine\AnimationManager.cpp" />
     <ClCompile Include="GraphicsEngine\AssimpImporter\AssimpImporter.cpp" />
+    <ClCompile Include="GraphicsEngine\BaseAnimation.cpp" />
     <ClCompile Include="GraphicsEngine\BaseAnimation.h" />
     <ClCompile Include="GraphicsEngine\BlendState.cpp" />
     <ClCompile Include="GraphicsEngine\BlendStateDescConstants.cpp" />
@@ -214,6 +215,7 @@
     <ClCompile Include="GraphicsEngine\DepthStencilState.cpp" />
     <ClCompile Include="GraphicsEngine\DomainShader.cpp" />
     <ClCompile Include="GraphicsEngine\DXInputHandler.cpp" />
+    <ClCompile Include="GraphicsEngine\FogAnimation.cpp" />
     <ClCompile Include="GraphicsEngine\FrameResource.cpp" />
     <ClCompile Include="GraphicsEngine\GeneralAnimation.cpp" />
     <ClCompile Include="GraphicsEngine\GeometryGenerator.cpp" />
@@ -296,6 +298,7 @@
     <ClInclude Include="GraphicsEngine\DepthStencilStateDescConstants.h" />
     <ClInclude Include="GraphicsEngine\DomainShader.h" />
     <ClInclude Include="GraphicsEngine\DXInputHandler.h" />
+    <ClInclude Include="GraphicsEngine\FogAnimation.h" />
     <ClInclude Include="GraphicsEngine\FrameResource.h" />
     <ClInclude Include="GraphicsEngine\GeneralAnimation.h" />
     <ClInclude Include="GraphicsEngine\GeometryGenerator.h" />
@@ -307,7 +310,6 @@
     <ClInclude Include="GraphicsEngine\IShader.h" />
     <ClInclude Include="GraphicsEngine\Light.h" />
     <ClInclude Include="GraphicsEngine\LightManager.h" />
-    <ClInclude Include="GraphicsEngine\LinearAnimation.h" />
     <ClInclude Include="GraphicsEngine\Material.h" />
     <ClInclude Include="GraphicsEngine\MeshGeometry.h" />
     <ClInclude Include="GraphicsEngine\Octree.h" />

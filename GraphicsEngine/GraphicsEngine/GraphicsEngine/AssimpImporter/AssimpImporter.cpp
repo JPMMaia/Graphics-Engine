@@ -4,11 +4,12 @@
 #include "../D3DBase.h"
 #include "../IScene.h"
 #include "../TextureManager.h"
+#include "../VertexTypes.h"
+#include "../ImmutableMeshGeometry.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include "GraphicsEngine/VertexTypes.h"
 
 using namespace Common;
 using namespace DirectX;
@@ -56,8 +57,8 @@ void AssimpImporter::ConvertToMeshData(Graphics* graphics, const D3DBase& d3dBas
 
 void AssimpImporter::AddGeometry(const D3DBase& d3dBase, const std::string& name, IScene* scene, const std::wstring& filename, const aiScene* importedScene, AssimpImporter::ImportInfo& importInfo)
 {
-	auto geometry = std::make_unique<MeshGeometry>();
-	geometry->Name = name;
+	auto geometry = std::make_unique<ImmutableMeshGeometry>();
+	geometry->SetName(name);
 
 	// Count vertices and indices:
 	m_vertexCount = 0;
@@ -125,7 +126,7 @@ void AssimpImporter::AddGeometry(const D3DBase& d3dBase, const std::string& name
 		submesh.StartIndexLocation = startIndexLocation;
 		submesh.BaseVertexLocation = baseVertexLocation;
 		submesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(vertices);
-		geometry->Submeshes[mesh->mName.C_Str()] = std::move(submesh);
+		geometry->AddSubmesh(mesh->mName.C_Str(), std::move(submesh));
 
 		// Assign material to mesh:
 		aiString materialName;
@@ -139,8 +140,8 @@ void AssimpImporter::AddGeometry(const D3DBase& d3dBase, const std::string& name
 
 	// Create vertex and index buffer:
 	auto device = d3dBase.GetDevice();
-	geometry->Vertices = VertexBuffer(device, vertices);
-	geometry->Indices = IndexBuffer(device, indices);
+	geometry->CreateVertexBuffer(device, vertices);
+	geometry->CreateIndexBuffer(device, indices);
 
 	scene->AddGeometry(std::move(geometry));
 }

@@ -228,7 +228,7 @@ Application::Application() :
 	m_randomAngles(0.0f, 2.0 * XM_PI),
 	m_randomScales(0.5f, 1.0f),
 	m_animationManager(m_graphics, L"Animations.json"),
-	m_animationBuildMode(false),
+	m_animationBuildMode(true),
 	m_beginCameraAnimationFromLastSpot(false)
 {
 	m_soundManager.Create2DSoundFromWaveFile("TestSound", L"Sounds/Sound01.wav");

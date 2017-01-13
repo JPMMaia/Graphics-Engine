@@ -173,9 +173,6 @@
     <ClCompile Include="GraphicsEngine\AnimationManager.cpp">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsEngine\BaseAnimation.h">
-      <Filter>GraphicsEngine\Animations</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsEngine\GeneralAnimation.cpp">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClCompile>
@@ -190,6 +187,15 @@
     </ClCompile>
     <ClCompile Include="GraphicsEngine\BaseAnimation.cpp">
       <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\BillboardMeshGeometry.cpp">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\ImmutableMeshGeometry.cpp">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\MeshGeometry.cpp">
+      <Filter>GraphicsEngine\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -400,6 +406,13 @@
     </ClInclude>
     <ClInclude Include="GraphicsEngine\JsonHelper.h">
       <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\BaseAnimation.h" />
+    <ClInclude Include="GraphicsEngine\BillboardMeshGeometry.h">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\ImmutableMeshGeometry.h">
+      <Filter>GraphicsEngine\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

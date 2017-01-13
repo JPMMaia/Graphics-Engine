@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <random>
 #include <cmath>
+#include "ImmutableMeshGeometry.h"
 
 using namespace Common;
 using namespace DirectX;
@@ -136,10 +137,10 @@ void Terrain::CreateGeometry(const D3DBase& d3dBase, IScene& scene) const
 
 	auto meshData = CreateMeshData(m_description.TerrainWidth, m_description.TerrainDepth, m_description.CellXCount, m_description.CellZCount);
 
-	auto terrainGeometry = std::make_unique<MeshGeometry>();
-	terrainGeometry->Name = "TerrainGeometry";
-	terrainGeometry->Vertices = VertexBuffer(device, meshData.Vertices);
-	terrainGeometry->Indices = IndexBuffer(device, meshData.Indices);
+	auto terrainGeometry = std::make_unique<ImmutableMeshGeometry>();
+	terrainGeometry->SetName("TerrainGeometry");
+	terrainGeometry->CreateVertexBuffer(device, meshData.Vertices);
+	terrainGeometry->CreateIndexBuffer(device, meshData.Indices);
 
 	// Submesh:
 	SubmeshGeometry terrainSubmesh;
@@ -147,7 +148,7 @@ void Terrain::CreateGeometry(const D3DBase& d3dBase, IScene& scene) const
 	terrainSubmesh.StartIndexLocation = 0;
 	terrainSubmesh.BaseVertexLocation = 0;
 	terrainSubmesh.Bounds = BoundingBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(m_description.TerrainWidth, m_description.HeightMapFactor * 2.0f, m_description.TerrainDepth));
-	terrainGeometry->Submeshes["TerrainSubmesh"] = std::move(terrainSubmesh);
+	terrainGeometry->AddSubmesh("TerrainSubmesh", std::move(terrainSubmesh));
 
 	scene.AddGeometry(std::move(terrainGeometry));
 }
@@ -314,7 +315,7 @@ void Terrain::CreateRenderItem(const D3DBase& d3dBase, Graphics& graphics, IScen
 	renderItem->Material = scene.GetMaterials().at("TerrainMaterial").get();
 	renderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST;
 
-	const auto& terrainSubmesh = renderItem->Mesh->Submeshes.at("TerrainSubmesh");
+	const auto& terrainSubmesh = renderItem->Mesh->GetSubmesh("TerrainSubmesh");
 	renderItem->IndexCount = terrainSubmesh.IndexCount;
 	renderItem->StartIndexLocation = terrainSubmesh.StartIndexLocation;
 	renderItem->BaseVertexLocation = terrainSubmesh.BaseVertexLocation;

@@ -207,6 +207,7 @@
     <ClCompile Include="GraphicsEngine\AssimpImporter\AssimpImporter.cpp" />
     <ClInclude Include="GraphicsEngine\BaseAnimation.h" />
     <ClCompile Include="GraphicsEngine\BaseAnimation.cpp" />
+    <ClCompile Include="GraphicsEngine\BillboardMeshGeometry.cpp" />
     <ClCompile Include="GraphicsEngine\BlendState.cpp" />
     <ClCompile Include="GraphicsEngine\BlendStateDescConstants.cpp" />
     <ClCompile Include="GraphicsEngine\Camera.cpp" />
@@ -222,11 +223,13 @@
     <ClCompile Include="GraphicsEngine\GeometryShader.cpp" />
     <ClCompile Include="GraphicsEngine\Graphics.cpp" />
     <ClCompile Include="GraphicsEngine\HullShader.cpp" />
+    <ClCompile Include="GraphicsEngine\ImmutableMeshGeometry.cpp" />
     <ClCompile Include="GraphicsEngine\InputHandler.cpp" />
     <ClCompile Include="GraphicsEngine\IShader.cpp" />
     <ClCompile Include="GraphicsEngine\JsonHelper.cpp" />
     <ClCompile Include="GraphicsEngine\Light.cpp" />
     <ClCompile Include="GraphicsEngine\LightManager.cpp" />
+    <ClCompile Include="GraphicsEngine\MeshGeometry.cpp" />
     <ClCompile Include="GraphicsEngine\OctreeCollider.cpp" />
     <ClCompile Include="GraphicsEngine\PipelineState.cpp" />
     <ClCompile Include="GraphicsEngine\PipelineStateManager.cpp" />
@@ -289,6 +292,7 @@
     <ClInclude Include="GraphicsEngine\AnimationManager.h" />
     <ClInclude Include="GraphicsEngine\AnimationType.h" />
     <ClInclude Include="GraphicsEngine\AssimpImporter\AssimpImporter.h" />
+    <ClInclude Include="GraphicsEngine\BillboardMeshGeometry.h" />
     <ClInclude Include="GraphicsEngine\BlendState.h" />
     <ClInclude Include="GraphicsEngine\BlendStateDescConstants.h" />
     <ClInclude Include="GraphicsEngine\Buffer.h" />
@@ -307,6 +311,7 @@
     <ClInclude Include="GraphicsEngine\GeometryShader.h" />
     <ClInclude Include="GraphicsEngine\Graphics.h" />
     <ClInclude Include="GraphicsEngine\HullShader.h" />
+    <ClInclude Include="GraphicsEngine\ImmutableMeshGeometry.h" />
     <ClInclude Include="GraphicsEngine\InputHandler.h" />
     <ClInclude Include="GraphicsEngine\IScene.h" />
     <ClInclude Include="GraphicsEngine\IShader.h" />

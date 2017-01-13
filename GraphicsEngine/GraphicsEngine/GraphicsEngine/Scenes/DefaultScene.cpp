@@ -10,6 +10,7 @@
 
 #include <numeric>
 #include "GraphicsEngine/ImmutableMeshGeometry.h"
+#include "GraphicsEngine/NormalRenderItem.h"
 
 using namespace DirectX;
 using namespace Common;
@@ -48,7 +49,7 @@ void DefaultScene::Update(const Graphics& graphics, const Common::Timer& timer)
 	XMStoreFloat4x4(&m_grassTransformMatrix, grassTransformMatrix);
 }
 
-void DefaultScene::AddGeometry(std::unique_ptr<MeshGeometry>&& geometry)
+void DefaultScene::AddGeometry(std::unique_ptr<ImmutableMeshGeometry>&& geometry)
 {
 	m_geometries.emplace(geometry->GetName(), std::move(geometry));
 }
@@ -70,7 +71,7 @@ const DirectX::XMFLOAT4X4& DefaultScene::GetGrassTransformMatrix() const
 {
 	return m_grassTransformMatrix;
 }
-const std::unordered_map<std::string, std::unique_ptr<MeshGeometry>>& DefaultScene::GetGeometries() const
+const std::unordered_map<std::string, std::unique_ptr<ImmutableMeshGeometry>>& DefaultScene::GetGeometries() const
 {
 	return m_geometries;
 }
@@ -81,12 +82,12 @@ const std::unordered_map<std::string, std::unique_ptr<Material>>& DefaultScene::
 
 void DefaultScene::AddInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData, FXMMATRIX transformMatrix)
 {
-	std::vector<RenderItem*> renderItems;
+	std::vector<NormalRenderItem*> renderItems;
 	renderItems.reserve(renderItemNames.size());
 	for(const auto& renderItemName : renderItemNames)
 	{
-		auto renderItem = graphics->GetRenderItem(renderItemName)->get();
-		renderItem->InstancesData.reserve(renderItem->InstancesData.capacity() + instancesData.size());
+		auto renderItem = *graphics->GetNormalRenderItem(renderItemName);
+		renderItem->InscreaseInstancesCapacity(instancesData.size());
 
 		renderItems.push_back(renderItem);
 	}
@@ -107,7 +108,7 @@ void DefaultScene::AddInstances(Graphics* graphics, std::string name, const std:
 		XMStoreFloat4x4(&instanceDataBuffer.WorldMatrix, transformMatrix * scaleMatrix * rotationMatrix * translationMatrix);
 
 		for (auto renderItem : renderItems)
-			graphics->AddRenderItemInstance(renderItem, instanceDataBuffer);
+			graphics->AddNormalRenderItemInstance(renderItem, instanceDataBuffer);
 
 		if(m_initialized)
 		{
@@ -126,7 +127,7 @@ void DefaultScene::RemoveLastInstance(Graphics* graphics, const std::string& ite
 {
 	for(const auto& renderItemName : renderItemNames)
 	{
-		auto renderItem = graphics->GetRenderItem(renderItemName)->get();
+		auto renderItem = *graphics->GetNormalRenderItem(renderItemName);
 		renderItem->RemoveLastInstance();
 	}
 
@@ -175,22 +176,6 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 {
 	auto device = d3dBase.GetDevice();
 
-	// Billboards:
-	{
-		std::vector<VertexTypes::BillboardVertexType> vertices =
-		{
-			{ { 0.0f, 0.0f, 0.0f }, { 10.0f, 10.0f } }
-		};
-		std::vector<UINT> indices(vertices.size());
-		std::iota(indices.begin(), indices.end(), 0);
-
-		auto geometry = std::make_unique<ImmutableMeshGeometry>();
-		geometry->SetName("Billboard");
-		geometry->CreateVertexBuffer(device, vertices);
-		geometry->CreateIndexBuffer(device, indices);
-		AddGeometry(std::move(geometry));
-	}
-
 	// Grass:
 	{
 		XMFLOAT2 size = { 1.0f, 1.0f };
@@ -211,9 +196,9 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 		std::iota(indices.begin(), indices.end(), 0);
 
 		auto geometry = std::make_unique<ImmutableMeshGeometry>();
-		geometry->SetName("Grass01");
-		geometry->CreateVertexBuffer(device, vertices);
-		geometry->CreateIndexBuffer(device, indices);
+		geometry->SetName("Grass01Billboard");
+		geometry->CreateVertexBuffer(device, vertices, D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+		geometry->CreateIndexBuffer(device, indices, DXGI_FORMAT_R32_UINT);
 
 		SubmeshGeometry submesh;
 		submesh.StartIndexLocation = 0;
@@ -239,8 +224,8 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 
 		auto geometry = std::make_unique<ImmutableMeshGeometry>();
 		geometry->SetName("Rectangle");
-		geometry->CreateVertexBuffer(device, vertices);
-		geometry->CreateIndexBuffer(device, rectangleMeshData.Indices);
+		geometry->CreateVertexBuffer(device, vertices, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		geometry->CreateIndexBuffer(device, rectangleMeshData.Indices, DXGI_FORMAT_R32_UINT);
 
 		SubmeshGeometry submesh;
 		submesh.StartIndexLocation = 0;
@@ -257,7 +242,7 @@ void DefaultScene::InitializeTextures(const D3DBase& d3dBase, TextureManager& te
 	auto device = d3dBase.GetDevice();
 
 	textureManager.Create(device, "BricksTexture", L"Textures/test_diffuse_map.dds");
-	textureManager.Create(device, "Grass01d", L"Textures/grass01d.dds");
+	textureManager.Create(device, "GrassBillboardDiffuseMap", L"Textures/grass01d.dds");
 	textureManager.Create(device, "Test", L"Textures/test_diffuse_map.dds");
 
 	textureManager.Create(device, "GrassDiffuseMap", L"Textures/ground14d.jpg");
@@ -301,62 +286,52 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 
 	{
 		auto material = std::make_unique<Material>();
-		material->Name = "Grass01";
-		material->DiffuseMap = &textureManager["Grass01d"];
+		material->Name = "Grass01Billboard";
+		material->DiffuseMap = &textureManager["GrassBillboardDiffuseMap"];
 		material->DiffuseAlbedo = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 		material->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 		material->Roughness = 0.4f;
 		material->MaterialTransform = MathHelper::Identity4x4();
 		AddMaterial(std::move(material));
 	}
+
+	{
+		auto material = std::make_unique<Material>();
+		material->Name = "Crate01";
+		material->DiffuseMap = &textureManager["GrassBillboardDiffuseMap"];
+		material->DiffuseAlbedo = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+		material->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+		material->Roughness = 0.4f;
+		material->MaterialTransform = MathHelper::Identity4x4();
+		AddMaterial(std::move(material));
+	}
+
+	{
+		auto material = std::make_unique<Material>();
+		material->Name = "SkyDome";
+		AddMaterial(std::move(material));
+	}
 }
 
 void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
 {
-	// Billboards:
-	{
-		auto renderItem = std::make_unique<RenderItem>();
-		renderItem->Name = "Grass01";
-		renderItem->Mesh = m_geometries.at("Billboard").get();
-		renderItem->Material = m_materials["Test"].get();
-		renderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
-		renderItem->IndexCount = 1;
-		renderItem->StartIndexLocation = 0;
-		renderItem->BaseVertexLocation = 0;
-		renderItem->Bounds = BoundingBox({ 0.0f, 0.0f, 0.0f }, { 10.0f, 10.0f, 0.1f });
-		renderItem->Stride = sizeof(VertexTypes::BillboardVertexType);
-		//graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Grass });
-	}
 
 	// Debug:
 	{
-		auto renderItem = std::make_unique<RenderItem>();
-		renderItem->Name = "Debug";
-		renderItem->Mesh = m_geometries.at("Rectangle").get();
-		renderItem->Material = m_materials["NullTexture"].get();
-		renderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		const auto& submesh = renderItem->Mesh->GetSubmesh("Default");
-		renderItem->IndexCount = submesh.IndexCount;
-		renderItem->StartIndexLocation = submesh.StartIndexLocation;
-		renderItem->BaseVertexLocation = submesh.BaseVertexLocation;
-		renderItem->Bounds = submesh.Bounds;
-		renderItem->Stride = sizeof(VertexTypes::TextureVertexType);
-		graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Debug });
+		auto renderItem = std::make_unique<NormalRenderItem>();
+		renderItem->SetName("Debug");
+		renderItem->SetMesh(m_geometries.at("Rectangle").get(), "Default");
+		renderItem->SetMaterial(m_materials["NullTexture"].get());
+		graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::Debug });
 	}
 
 	// Grass:
 	{
-		auto renderItem = std::make_unique<RenderItem>();
-		renderItem->Name = "Grass01";
-		renderItem->Mesh = m_geometries.at("Grass01").get();
-		renderItem->Material = m_materials["Grass01"].get();
-		const auto& submesh = renderItem->Mesh->GetSubmesh("Default");
-		renderItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
-		renderItem->IndexCount = submesh.IndexCount;
-		renderItem->StartIndexLocation = submesh.StartIndexLocation;
-		renderItem->BaseVertexLocation = submesh.BaseVertexLocation;
-		renderItem->Stride = sizeof(VertexTypes::BillboardVertexType);
-		graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Grass });
+		auto renderItem = std::make_unique<NormalRenderItem>();
+		renderItem->SetName("Grass01Billboard");
+		renderItem->SetMesh(m_geometries.at("Grass01Billboard").get(), "Default");
+		renderItem->SetMaterial(m_materials["Grass01Billboard"].get());
+		graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::Grass });
 	}
 
 	// Simple cube:
@@ -367,27 +342,17 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 		importer.Import(graphics, d3dBase, textureManager, this, filename, importInfo);
 
 		auto importedGeometry = m_geometries.at(Helpers::WStringToString(filename)).get();
-		const auto& submesh = importedGeometry->GetSubmesh("Cube");
-		const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "Cube"));
 
-		auto cubeRenderItem = std::make_unique<RenderItem>();
-		cubeRenderItem->Name = "Cube";
-		cubeRenderItem->Mesh = importedGeometry;
-		cubeRenderItem->Material = m_materials.at(materialName).get();
-		cubeRenderItem->Material->DiffuseMap = &textureManager["GrassDiffuseMap"];
-		cubeRenderItem->Material->NormalMap = &textureManager["GrassNormalMap"];
-		cubeRenderItem->Material->SpecularMap = &textureManager["GrassSpecularMap"];
-		cubeRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		cubeRenderItem->IndexCount = submesh.IndexCount;
-		cubeRenderItem->StartIndexLocation = submesh.StartIndexLocation;
-		cubeRenderItem->BaseVertexLocation = submesh.BaseVertexLocation;
-		cubeRenderItem->Bounds = submesh.Bounds;
+		auto renderItem = std::make_unique<NormalRenderItem>();
+		renderItem->SetName("Cube");
+		renderItem->SetMesh(importedGeometry, "Cube");
+		renderItem->SetMaterial(m_materials["Crate01"].get());
 
 		// Instances:
 		const auto size = 1;
 		const auto offset = 4.0f;
 		const auto start = 0.0f; // -size  * offset / 2.0f;
-		cubeRenderItem->InstancesData.reserve(size * size * size);
+		renderItem->InscreaseInstancesCapacity(size * size * size);
 		for (SIZE_T i = 0; i < size; ++i)
 		{
 			for (SIZE_T j = 0; j < size; ++j)
@@ -398,43 +363,29 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 
 					XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixTranslation(start + i * offset, start + j * offset, start + k * offset));
 
-					cubeRenderItem->AddInstance(instanceData);
+					renderItem->AddInstance(instanceData);
 				}
 			}
 		}
 
-		graphics->AddRenderItem(std::move(cubeRenderItem), { RenderLayer::NormalSpecularMapping });
+		graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::NormalSpecularMapping });
 	}
 
 	// Skydome:
 	{
 		AssimpImporter importer;
 		AssimpImporter::ImportInfo importInfo;
-		std::wstring domefilename(L"Models/SkyDome.fbx");
-		importer.Import(graphics, d3dBase, textureManager, this, domefilename, importInfo);
+		std::wstring filename(L"Models/SkyDome.fbx");
+		importer.Import(graphics, d3dBase, textureManager, this, filename, importInfo);
 
-		auto domeGeometry = m_geometries.at(Helpers::WStringToString(domefilename)).get();
-		const auto& domeSubmesh = domeGeometry->GetSubmesh("Sphere");
+		auto geometry = m_geometries.at(Helpers::WStringToString(filename)).get();
 
-		auto domeMaterial = std::make_unique<Material>();
-		domeMaterial->Name = "DomeMaterial";
-		AddMaterial(std::move(domeMaterial));
+		auto renderItem = std::make_unique<NormalRenderItem>();
+		renderItem->SetName("SkyDome");
+		renderItem->SetMesh(geometry, "Sphere");
+		renderItem->SetMaterial(m_materials.at("SkyDome").get());
 
-		auto domeRenderItem = std::make_unique<RenderItem>();
-		domeRenderItem->Name = "SkyDome";
-		domeRenderItem->Mesh = domeGeometry;
-		domeRenderItem->Material = m_materials.at("DomeMaterial").get();
-		domeRenderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		domeRenderItem->IndexCount = domeSubmesh.IndexCount;
-		domeRenderItem->StartIndexLocation = domeSubmesh.StartIndexLocation;
-		domeRenderItem->BaseVertexLocation = domeSubmesh.BaseVertexLocation;
-		domeRenderItem->Bounds = domeSubmesh.Bounds;
-
-		ShaderBufferTypes::InstanceData instanceData;
-		XMStoreFloat4x4(&instanceData.WorldMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f));
-		domeRenderItem->AddInstance(instanceData);
-
-		graphics->AddRenderItem(std::move(domeRenderItem), { RenderLayer::SkyDome });
+		graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::SkyDome });
 	}
 
 	// AlanTree:
@@ -448,35 +399,24 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 
 		// Trunk:
 		{
-			const auto& trunkSubmesh = importedGeometry->GetSubmesh("TrunkMeshData");
 			const auto& trunkMaterialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "TrunkMeshData"));
 
-			auto renderItem = std::make_unique<RenderItem>();
-			renderItem->Name = "Trunk";
-			renderItem->Mesh = importedGeometry;
-			renderItem->Material = m_materials.at(trunkMaterialName).get();
-			renderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			renderItem->IndexCount = trunkSubmesh.IndexCount;
-			renderItem->StartIndexLocation = trunkSubmesh.StartIndexLocation;
-			renderItem->BaseVertexLocation = trunkSubmesh.BaseVertexLocation;
-			renderItem->Bounds = trunkSubmesh.Bounds;
-			graphics->AddRenderItem(std::move(renderItem), { RenderLayer::Opaque });
+			auto renderItem = std::make_unique<NormalRenderItem>();
+			renderItem->SetName("Trunk");
+			renderItem->SetMesh(importedGeometry, "TrunkMeshData");
+			renderItem->SetMaterial(m_materials.at(trunkMaterialName).get());
+			graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::Opaque });
 		}
 
 		// Leaves:
 		{
 			const auto& submesh = importedGeometry->GetSubmesh("LeavesMeshData");
 			const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "LeavesMeshData"));
-			auto renderItem = std::make_unique<RenderItem>();
-			renderItem->Name = "Leaves";
-			renderItem->Mesh = importedGeometry;
-			renderItem->Material = m_materials.at(materialName).get();
-			renderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			renderItem->IndexCount = submesh.IndexCount;
-			renderItem->StartIndexLocation = submesh.StartIndexLocation;
-			renderItem->BaseVertexLocation = submesh.BaseVertexLocation;
-			renderItem->Bounds = submesh.Bounds;
-			graphics->AddRenderItem(std::move(renderItem), { RenderLayer::AlphaClipped });
+			auto renderItem = std::make_unique<NormalRenderItem>();
+			renderItem->SetName("Leaves");
+			renderItem->SetMesh(importedGeometry, "LeavesMeshData");
+			renderItem->SetMaterial(m_materials.at(materialName).get());
+			graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::AlphaClipped });
 		}
 
 		// Add instances:

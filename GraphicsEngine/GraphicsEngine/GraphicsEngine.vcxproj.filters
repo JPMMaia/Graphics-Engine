@@ -197,6 +197,12 @@
     <ClCompile Include="GraphicsEngine\MeshGeometry.cpp">
       <Filter>GraphicsEngine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\BillboardRenderItem.cpp">
+      <Filter>GraphicsEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\NormalRenderItem.cpp">
+      <Filter>GraphicsEngine\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -407,12 +413,20 @@
     <ClInclude Include="GraphicsEngine\JsonHelper.h">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsEngine\BaseAnimation.h" />
     <ClInclude Include="GraphicsEngine\BillboardMeshGeometry.h">
       <Filter>GraphicsEngine\Model</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\ImmutableMeshGeometry.h">
       <Filter>GraphicsEngine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\BaseAnimation.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\BillboardRenderItem.h">
+      <Filter>GraphicsEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\NormalRenderItem.h">
+      <Filter>GraphicsEngine\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

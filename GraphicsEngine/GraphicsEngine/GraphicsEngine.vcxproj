@@ -208,6 +208,7 @@
     <ClInclude Include="GraphicsEngine\BaseAnimation.h" />
     <ClCompile Include="GraphicsEngine\BaseAnimation.cpp" />
     <ClCompile Include="GraphicsEngine\BillboardMeshGeometry.cpp" />
+    <ClCompile Include="GraphicsEngine\BillboardRenderItem.cpp" />
     <ClCompile Include="GraphicsEngine\BlendState.cpp" />
     <ClCompile Include="GraphicsEngine\BlendStateDescConstants.cpp" />
     <ClCompile Include="GraphicsEngine\Camera.cpp" />
@@ -230,6 +231,7 @@
     <ClCompile Include="GraphicsEngine\Light.cpp" />
     <ClCompile Include="GraphicsEngine\LightManager.cpp" />
     <ClCompile Include="GraphicsEngine\MeshGeometry.cpp" />
+    <ClCompile Include="GraphicsEngine\NormalRenderItem.cpp" />
     <ClCompile Include="GraphicsEngine\OctreeCollider.cpp" />
     <ClCompile Include="GraphicsEngine\PipelineState.cpp" />
     <ClCompile Include="GraphicsEngine\PipelineStateManager.cpp" />
@@ -293,6 +295,7 @@
     <ClInclude Include="GraphicsEngine\AnimationType.h" />
     <ClInclude Include="GraphicsEngine\AssimpImporter\AssimpImporter.h" />
     <ClInclude Include="GraphicsEngine\BillboardMeshGeometry.h" />
+    <ClInclude Include="GraphicsEngine\BillboardRenderItem.h" />
     <ClInclude Include="GraphicsEngine\BlendState.h" />
     <ClInclude Include="GraphicsEngine\BlendStateDescConstants.h" />
     <ClInclude Include="GraphicsEngine\Buffer.h" />
@@ -320,6 +323,7 @@
     <ClInclude Include="GraphicsEngine\LightManager.h" />
     <ClInclude Include="GraphicsEngine\Material.h" />
     <ClInclude Include="GraphicsEngine\MeshGeometry.h" />
+    <ClInclude Include="GraphicsEngine\NormalRenderItem.h" />
     <ClInclude Include="GraphicsEngine\Octree.h" />
     <ClInclude Include="GraphicsEngine\OctreeBaseCollider.h" />
     <ClInclude Include="GraphicsEngine\OctreeCollider.h" />

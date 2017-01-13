@@ -140,8 +140,8 @@ void AssimpImporter::AddGeometry(const D3DBase& d3dBase, const std::string& name
 
 	// Create vertex and index buffer:
 	auto device = d3dBase.GetDevice();
-	geometry->CreateVertexBuffer(device, vertices);
-	geometry->CreateIndexBuffer(device, indices);
+	geometry->CreateVertexBuffer(device, vertices, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	geometry->CreateIndexBuffer(device, indices, DXGI_FORMAT_R32_UINT);
 
 	scene->AddGeometry(std::move(geometry));
 }

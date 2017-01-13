@@ -174,12 +174,12 @@ namespace GraphicsEngineTester
 				renderItem.AddInstance(data);
 			}
 
-			for (auto& object : renderItem.Colliders)
+			for (auto& object : renderItem.m_colliders)
 				octree.AddObject(&object);
 
 			octree.CalculateIntersections(cameraFrustum, inverseViewMatrix);
-			Assert::AreEqual(static_cast<size_t>(1), renderItem.VisibleInstances.size());
-			Assert::AreEqual(0U, *renderItem.VisibleInstances.begin());
+			Assert::AreEqual(static_cast<size_t>(1), renderItem.m_visibleInstances.size());
+			Assert::AreEqual(0U, *renderItem.m_visibleInstances.begin());
 		}
 	};
 }

@@ -1,8 +1,10 @@
 #pragma once
 
 #include "D3DBase.h"
-#include "RenderItem.h"
 #include "GeometryGenerator.h"
+#include "VertexTypes.h"
+
+#include <unordered_map>
 
 namespace GraphicsEngine
 {

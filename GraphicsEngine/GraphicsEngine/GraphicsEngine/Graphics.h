@@ -15,6 +15,7 @@
 #include "LightManager.h"
 #include "RenderTexture.h"
 #include "Octree.h"
+#include "NormalRenderItem.h"
 
 namespace GraphicsEngine
 {
@@ -31,11 +32,12 @@ namespace GraphicsEngine
 		Camera* GetCamera();
 		DefaultScene* GetScene();
 
-		void AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
-		void AddRenderItemInstance(RenderItem* renderItem, const ShaderBufferTypes::InstanceData& instanceData) const;
+		void AddNormalRenderItem(std::unique_ptr<NormalRenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
+		void AddNormalRenderItemInstance(NormalRenderItem* renderItem, const ShaderBufferTypes::InstanceData& instanceData) const;
 		uint32_t GetVisibleInstances() const;
 		const std::vector<RenderItem*>& GetRenderItems(RenderLayer renderLayer) const;
 		std::vector<std::unique_ptr<RenderItem>>::const_iterator GetRenderItem(std::string name) const;
+		std::vector<NormalRenderItem*>::const_iterator GetNormalRenderItem(std::string name) const;
 
 		void SetFogState(bool state);
 		void SetFogDistanceParameters(float start, float range);
@@ -64,6 +66,7 @@ namespace GraphicsEngine
 		PipelineStateManager m_pipelineStateManager;
 
 		std::vector<std::unique_ptr<RenderItem>> m_allRenderItems;
+		std::vector<NormalRenderItem*> m_normalRenderItems;
 		std::vector<RenderItem*> m_renderItemLayers[static_cast<SIZE_T>(RenderLayer::Count)];
 		TextureManager m_textureManager;
 		Camera m_camera;

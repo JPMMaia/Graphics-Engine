@@ -3,11 +3,13 @@
 #include "../RenderItem.h"
 
 #include <string>
+#include <unordered_map>
 
 struct aiScene;
 
 namespace GraphicsEngine
 {
+	class D3DBase;
 	class IScene;
 	class Graphics;
 	class TextureManager;

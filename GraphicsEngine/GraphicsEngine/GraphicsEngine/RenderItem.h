@@ -1,45 +1,28 @@
 ﻿#pragma once
 
-#include "MeshGeometry.h"
 #include "Material.h"
-#include "ShaderBufferTypes.h"
-#include "VertexTypes.h"
 #include "OctreeCollider.h"
 
-#include <DirectXMath.h>
-#include <DirectXCollision.h>
 #include <unordered_set>
 
 namespace GraphicsEngine
 {
-	struct RenderItem
+	class RenderItem
 	{
 	public:
 		RenderItem() = default;
-		explicit RenderItem(SIZE_T maxInstanceCount);
+		virtual ~RenderItem() = default;
 
-		void Render(ID3D11DeviceContext* deviceContext) const;
-		void RenderNonInstanced(ID3D11DeviceContext* deviceContext) const;
+		virtual void Render(ID3D11DeviceContext* deviceContext) const = 0;
+		virtual void RenderNonInstanced(ID3D11DeviceContext* deviceContext) const = 0;
 
-		void AddInstance(const ShaderBufferTypes::InstanceData& instanceData);
-		void RemoveLastInstance();
+		std::string GetName() const;
+		void SetName(const std::string& name);
+		Material* GetMaterial() const;
+		void SetMaterial(Material* material);
 
-	public:
-		std::string Name;
-		MeshGeometry* Mesh = nullptr;
-		Material* Material = nullptr;
-		D3D_PRIMITIVE_TOPOLOGY PrimitiveType = D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		uint32_t IndexCount = 0;
-		uint32_t StartIndexLocation = 0;
-		int BaseVertexLocation = 0;
-		DirectX::BoundingBox Bounds;
-		SIZE_T VisibleInstanceCount = 0;
-		UINT Stride = sizeof(VertexTypes::DefaultVertexType);
-		UINT Offset = 0;
-		DXGI_FORMAT IndexFormat = DXGI_FORMAT_R32_UINT;
-
-		std::vector<ShaderBufferTypes::InstanceData> InstancesData;
-		std::vector<OctreeCollider> Colliders;
-		std::unordered_set<uint32_t> VisibleInstances;
+	private:
+		std::string m_name;
+		Material* m_material = nullptr;
 	};
 }

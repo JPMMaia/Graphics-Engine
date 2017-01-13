@@ -1,19 +1,21 @@
 ﻿#include "stdafx.h"
 #include "FrameResource.h"
 #include "ShaderBufferTypes.h"
+#include "NormalRenderItem.h"
 
 using namespace Common;
 using namespace GraphicsEngine;
 
-FrameResource::FrameResource(ID3D11Device* device, const std::vector<std::unique_ptr<RenderItem>>& renderItems, SIZE_T materialCount) :
+FrameResource::FrameResource(ID3D11Device* device, const std::vector<NormalRenderItem*>& renderItems, SIZE_T materialCount) :
 	MaterialDataArray(materialCount)
 {
 	// Initialize instances buffers:
 	auto stride = static_cast<uint32_t>(sizeof(ShaderBufferTypes::InstanceData));
 	for(auto& renderItem : renderItems)
 	{
-		if(!renderItem->InstancesData.empty())
-			InstancesBuffers[renderItem->Name].Initialize(device, static_cast<UINT>(stride * renderItem->InstancesData.size()), stride);
+		const auto& instancesData = renderItem->GetInstancesData();
+		if(!instancesData.empty())
+			InstancesBuffers[renderItem->GetName()].Initialize(device, static_cast<UINT>(stride * instancesData.size()), stride);
 	}
 		
 	// Initialize material data array:
@@ -27,12 +29,12 @@ FrameResource::FrameResource(ID3D11Device* device, const std::vector<std::unique
 	ShadowPassData.Initialize(device, passDataSize, passDataSize);
 }
 
-void FrameResource::RealocateInstanceBuffer(ID3D11Device* device, RenderItem* renderItem)
+void FrameResource::RealocateInstanceBuffer(ID3D11Device* device, NormalRenderItem* renderItem)
 {
-	auto& instanceBuffer = InstancesBuffers[renderItem->Name];
+	auto& instanceBuffer = InstancesBuffers[renderItem->GetName()];
 	auto bufferStride = static_cast<uint32_t>(sizeof(ShaderBufferTypes::InstanceData));
 
-	auto instanceCount = renderItem->InstancesData.size();
+	auto instanceCount = renderItem->GetInstancesData().size();
 
 	auto neededBufferSize = instanceCount * bufferStride;
 	if(instanceBuffer.GetSize() >= neededBufferSize)

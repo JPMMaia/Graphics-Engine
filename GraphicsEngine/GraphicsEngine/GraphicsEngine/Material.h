@@ -6,6 +6,7 @@
 
 #include <DirectXMath.h>
 #include <string>
+#include <vector>
 
 namespace GraphicsEngine
 {

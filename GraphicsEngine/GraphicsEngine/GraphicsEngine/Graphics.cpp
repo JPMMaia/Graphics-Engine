@@ -17,7 +17,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_lightManager(),
 	m_octree(32, BoundingBox(XMFLOAT3(0.0f, 256.0f, 0.0f), XMFLOAT3(1024.0f, 512.0f, 1024.0f)), XMFLOAT3(64.0f, 64.0f, 64.0f)),
 	m_scene(this, m_d3dBase, m_textureManager, m_lightManager),
-	m_frameResources(1, FrameResource(m_d3dBase.GetDevice(), m_allRenderItems, m_scene.GetMaterials().size())),
+	m_frameResources(1, FrameResource(m_d3dBase.GetDevice(), m_normalRenderItems, m_scene.GetMaterials().size())),
 	m_currentFrameResource(&m_frameResources[0]),
 	m_linearClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::LinearClamp),
 	m_anisotropicWrapSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicWrap),
@@ -213,20 +213,22 @@ DefaultScene* Graphics::GetScene()
 	return &m_scene;
 }
 
-void Graphics::AddRenderItem(std::unique_ptr<RenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers)
+void Graphics::AddNormalRenderItem(std::unique_ptr<NormalRenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers)
 {
 	for (auto renderLayer : renderLayers)
 	{
 		m_renderItemLayers[static_cast<SIZE_T>(renderLayer)].push_back(renderItem.get());
 	}
 
-	for (auto& collider : renderItem->Colliders)
+	m_normalRenderItems.push_back(renderItem.get());
+
+	for (auto& collider : renderItem->GetColliders())
 		m_octree.AddObject(&collider);
 
 	m_allRenderItems.push_back(std::move(renderItem));
 }
 
-void Graphics::AddRenderItemInstance(RenderItem* renderItem, const ShaderBufferTypes::InstanceData& instanceData) const
+void Graphics::AddNormalRenderItemInstance(NormalRenderItem* renderItem, const ShaderBufferTypes::InstanceData& instanceData) const
 {
 	renderItem->AddInstance(instanceData);
 
@@ -247,10 +249,20 @@ std::vector<std::unique_ptr<RenderItem>>::const_iterator Graphics::GetRenderItem
 {
 	auto match = [&name](const std::unique_ptr<RenderItem>& renderItem)
 	{
-		return renderItem->Name == name;
+		return renderItem->GetName() == name;
 	};
 
 	return std::find_if(m_allRenderItems.begin(), m_allRenderItems.end(), match);
+}
+
+std::vector<NormalRenderItem*>::const_iterator Graphics::GetNormalRenderItem(std::string name) const
+{
+	auto match = [&name](const NormalRenderItem* renderItem)
+	{
+		return renderItem->GetName() == name;
+	};
+
+	return std::find_if(m_normalRenderItems.begin(), m_normalRenderItems.end(), match);
 }
 
 void Graphics::SetFogState(bool state)
@@ -352,10 +364,10 @@ void Graphics::UpdateInstancesDataFrustumCulling()
 	auto viewSpaceCameraFrustum = m_camera.BuildViewSpaceBoundingFrustum();
 
 	m_visibleInstances = 0;
-	for (const auto& renderItem : m_allRenderItems)
+	for (const auto& renderItem : m_normalRenderItems)
 	{
 		// Get instances buffer for the current render item:
-		auto location = m_currentFrameResource->InstancesBuffers.find(renderItem->Name);
+		auto location = m_currentFrameResource->InstancesBuffers.find(renderItem->GetName());
 		if (location == m_currentFrameResource->InstancesBuffers.end())
 			continue;
 
@@ -368,7 +380,7 @@ void Graphics::UpdateInstancesDataFrustumCulling()
 
 		// For each instance:
 		auto visibleInstanceCount = 0;
-		for (const auto& instanceData : renderItem->InstancesData)
+		for (const auto& instanceData : renderItem->GetInstancesData())
 		{
 			// Get the world matrix of the instance and calculate its inverse:
 			auto worldMatrix = XMLoadFloat4x4(&instanceData.WorldMatrix);
@@ -383,14 +395,14 @@ void Graphics::UpdateInstancesDataFrustumCulling()
 			viewSpaceCameraFrustum.Transform(localSpaceCameraFrustum, viewToLocalMatrix);
 
 			// If the camera frustum intersects the instance bounds:
-			if (localSpaceCameraFrustum.Contains(renderItem->Bounds) != ContainmentType::DISJOINT)
+			if (localSpaceCameraFrustum.Contains(renderItem->GetSubmesh().Bounds) != ContainmentType::DISJOINT)
 			{
 				// Update instance data:
 				auto& instanceDataView = instacesBufferView[visibleInstanceCount++];
 				instanceDataView.WorldMatrix = instanceData.WorldMatrix;
 			}
 		}
-		renderItem->VisibleInstanceCount = visibleInstanceCount;
+		renderItem->SetVisibleInstanceCount(visibleInstanceCount);
 		m_visibleInstances += visibleInstanceCount;
 
 		// Unmap resource:
@@ -412,16 +424,17 @@ void Graphics::UpdateInstancesDataOctreeCulling()
 	m_octree.CalculateIntersections(viewSpaceCameraFrustum, inverseViewMatrix);
 
 	m_visibleInstances = 0;
-	for (const auto& renderItem : m_allRenderItems)
+	for (const auto& renderItem : m_normalRenderItems)
 	{
 		// Get instances buffer for the current render item:
-		auto location = m_currentFrameResource->InstancesBuffers.find(renderItem->Name);
+		auto location = m_currentFrameResource->InstancesBuffers.find(renderItem->GetName());
 		if (location == m_currentFrameResource->InstancesBuffers.end())
 			continue;
 
 		const auto& instancesBuffer = location->second;
 
-		if (renderItem->VisibleInstances.empty())
+		const auto& visibleInstances = renderItem->GetVisibleInstances();
+		if (visibleInstances.empty())
 			continue;
 
 		// Map resource:
@@ -431,15 +444,16 @@ void Graphics::UpdateInstancesDataOctreeCulling()
 
 		// Update instance data:
 		auto visibleInstanceCount = 0;
-		for(auto instanceID : renderItem->VisibleInstances)
+		for(auto instanceID : visibleInstances)
 		{
 			auto& instanceDataView = instacesBufferView[visibleInstanceCount++];
-			instanceDataView.WorldMatrix = renderItem->InstancesData[instanceID].WorldMatrix;
+			const auto& instanceData = renderItem->GetInstance(instanceID);
+			instanceDataView.WorldMatrix = instanceData.WorldMatrix;
 		}
-		renderItem->VisibleInstances.clear();
+		renderItem->ClearVisibleInstances();
 
 		m_visibleInstances += visibleInstanceCount;
-		renderItem->VisibleInstanceCount = visibleInstanceCount;
+		renderItem->SetVisibleInstanceCount(visibleInstanceCount);
 
 		// Unmap resource:
 		instancesBuffer.Unmap(deviceContext);
@@ -589,25 +603,23 @@ void Graphics::DrawRenderItems(RenderLayer renderLayer) const
 	// For each render item:
 	for (auto& renderItem : m_renderItemLayers[static_cast<SIZE_T>(renderLayer)])
 	{
-		if (renderItem->VisibleInstanceCount == 0)
-			continue;
-
 		// Set instances data:
-		deviceContext->IASetVertexBuffers(1, 1, m_currentFrameResource->InstancesBuffers[renderItem->Name].GetAddressOf(), &stride, &offset);
+		deviceContext->IASetVertexBuffers(1, 1, m_currentFrameResource->InstancesBuffers[renderItem->GetName()].GetAddressOf(), &stride, &offset);
 
 		// Set material data:
-		const auto& materialData = m_currentFrameResource->MaterialDataArray[renderItem->Material->MaterialIndex];
+		auto pMaterial = renderItem->GetMaterial();
+		const auto& materialData = m_currentFrameResource->MaterialDataArray[pMaterial->MaterialIndex];
 		deviceContext->VSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 		deviceContext->GSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 		deviceContext->PSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 
 		// Set textures:
-		if (renderItem->Material->DiffuseMap != nullptr)
-			deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
-		if (renderItem->Material->NormalMap != nullptr)
-			deviceContext->PSSetShaderResources(1, 1, renderItem->Material->NormalMap->GetAddressOf());
-		if (renderItem->Material->SpecularMap != nullptr)
-			deviceContext->PSSetShaderResources(2, 1, renderItem->Material->SpecularMap->GetAddressOf());
+		if (pMaterial->DiffuseMap != nullptr)
+			deviceContext->PSSetShaderResources(0, 1, pMaterial->DiffuseMap->GetAddressOf());
+		if (pMaterial->NormalMap != nullptr)
+			deviceContext->PSSetShaderResources(1, 1, pMaterial->NormalMap->GetAddressOf());
+		if (pMaterial->SpecularMap != nullptr)
+			deviceContext->PSSetShaderResources(2, 1, pMaterial->SpecularMap->GetAddressOf());
 
 		// Render:
 		renderItem->Render(deviceContext);
@@ -621,18 +633,19 @@ void Graphics::DrawNonInstancedRenderItems(RenderLayer renderLayer) const
 	for (auto& renderItem : m_renderItemLayers[static_cast<SIZE_T>(renderLayer)])
 	{
 		// Set material data:
-		const auto& materialData = m_currentFrameResource->MaterialDataArray[renderItem->Material->MaterialIndex];
+		auto pMaterial = renderItem->GetMaterial();
+		const auto& materialData = m_currentFrameResource->MaterialDataArray[pMaterial->MaterialIndex];
 		deviceContext->VSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 		deviceContext->GSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 		deviceContext->PSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 
 		// Set textures:
-		if (renderItem->Material->DiffuseMap != nullptr)
-			deviceContext->PSSetShaderResources(0, 1, renderItem->Material->DiffuseMap->GetAddressOf());
-		if (renderItem->Material->NormalMap != nullptr)
-			deviceContext->PSSetShaderResources(1, 1, renderItem->Material->NormalMap->GetAddressOf());
-		if (renderItem->Material->SpecularMap != nullptr)
-			deviceContext->PSSetShaderResources(2, 1, renderItem->Material->SpecularMap->GetAddressOf());
+		if (pMaterial->DiffuseMap != nullptr)
+			deviceContext->PSSetShaderResources(0, 1, pMaterial->DiffuseMap->GetAddressOf());
+		if (pMaterial->NormalMap != nullptr)
+			deviceContext->PSSetShaderResources(1, 1, pMaterial->NormalMap->GetAddressOf());
+		if (pMaterial->SpecularMap != nullptr)
+			deviceContext->PSSetShaderResources(2, 1, pMaterial->SpecularMap->GetAddressOf());
 
 		// Render:
 		renderItem->RenderNonInstanced(deviceContext);
@@ -646,20 +659,20 @@ void Graphics::DrawTerrain() const
 	for (auto& renderItem : m_renderItemLayers[static_cast<SIZE_T>(RenderLayer::Terrain)])
 	{
 		// Set material data:
-		const auto& materialData = m_currentFrameResource->MaterialDataArray[renderItem->Material->MaterialIndex];
+		auto pMaterial = renderItem->GetMaterial();
+		const auto& materialData = m_currentFrameResource->MaterialDataArray[pMaterial->MaterialIndex];
 		deviceContext->VSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 		deviceContext->PSSetConstantBuffers(1, 1, materialData.GetAddressOf());
 
 		// Set textures:
-		auto material = renderItem->Material;
-		deviceContext->PSSetShaderResources(0, 1, material->NormalMap->GetAddressOf());
-		deviceContext->DSSetShaderResources(1, 1, material->HeightMap->GetAddressOf());
-		deviceContext->PSSetShaderResources(1, 1, material->HeightMap->GetAddressOf());
-		deviceContext->PSSetShaderResources(2, 1, material->TangentMap->GetAddressOf());
+		deviceContext->PSSetShaderResources(0, 1, pMaterial->NormalMap->GetAddressOf());
+		deviceContext->DSSetShaderResources(1, 1, pMaterial->HeightMap->GetAddressOf());
+		deviceContext->PSSetShaderResources(1, 1, pMaterial->HeightMap->GetAddressOf());
+		deviceContext->PSSetShaderResources(2, 1, pMaterial->TangentMap->GetAddressOf());
 
 		UINT startSlot = 4;
 		
-		for(auto tiledMapsArray : material->TiledMapsArrays)
+		for(auto tiledMapsArray : pMaterial->TiledMapsArrays)
 		{
 			auto numViews = static_cast<UINT>(tiledMapsArray.GetSize());
 			deviceContext->PSSetShaderResources(startSlot, numViews, tiledMapsArray.GetTextureArray());

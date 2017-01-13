@@ -4,6 +4,8 @@
 #include "BufferTypes.h"
 
 #include <memory>
+#include <unordered_map>
+#include "NormalRenderItem.h"
 
 namespace GraphicsEngine
 {
@@ -11,9 +13,9 @@ namespace GraphicsEngine
 	{
 	public:
 		FrameResource() = default;
-		FrameResource(ID3D11Device* device, const std::vector<std::unique_ptr<RenderItem>>& renderItems, SIZE_T materialCount);
+		FrameResource(ID3D11Device* device, const std::vector<NormalRenderItem*>& renderItems, SIZE_T materialCount);
 
-		void RealocateInstanceBuffer(ID3D11Device* device, RenderItem* renderItem);
+		void RealocateInstanceBuffer(ID3D11Device* device, NormalRenderItem* renderItem);
 
 	public:
 		std::unordered_map<std::string, InstanceBuffer> InstancesBuffers;

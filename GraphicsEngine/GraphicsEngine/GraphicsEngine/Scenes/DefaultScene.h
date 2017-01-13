@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include "GraphicsEngine/Material.h"
 #include "SceneBuilder.h"
+#include "GraphicsEngine/ImmutableMeshGeometry.h"
 
 
 namespace GraphicsEngine
@@ -26,13 +27,13 @@ namespace GraphicsEngine
 
 		void Update(const Graphics& graphics, const Common::Timer& timer) override;
 
-		void AddGeometry(std::unique_ptr<MeshGeometry>&& geometry) override;
+		void AddGeometry(std::unique_ptr<ImmutableMeshGeometry>&& geometry) override;
 		void AddMaterial(std::unique_ptr<Material>&& material) override;
 		const Terrain& GetTerrain() const override;
 		Terrain& GetTerrain();
 		const DirectX::XMFLOAT4X4& GetGrassTransformMatrix() const;
 
-		const std::unordered_map<std::string, std::unique_ptr<MeshGeometry>>& GetGeometries() const override;
+		const std::unordered_map<std::string, std::unique_ptr<ImmutableMeshGeometry>>& GetGeometries() const override;
 		const std::unordered_map<std::string, std::unique_ptr<Material>>& GetMaterials() const override;
 
 		void AddInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData, DirectX::FXMMATRIX transformMatrix);
@@ -49,7 +50,7 @@ namespace GraphicsEngine
 
 	private:
 		bool m_initialized = false;
-		std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> m_geometries;
+		std::unordered_map<std::string, std::unique_ptr<ImmutableMeshGeometry>> m_geometries;
 		std::unordered_map<std::string, std::unique_ptr<Material>> m_materials;
 		Terrain m_terrain;
 		float m_grassRotation;

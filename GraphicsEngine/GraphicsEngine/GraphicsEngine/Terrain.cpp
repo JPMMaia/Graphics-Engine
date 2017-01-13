@@ -10,6 +10,7 @@
 #include <random>
 #include <cmath>
 #include "ImmutableMeshGeometry.h"
+#include "NormalRenderItem.h"
 
 using namespace Common;
 using namespace DirectX;
@@ -139,8 +140,8 @@ void Terrain::CreateGeometry(const D3DBase& d3dBase, IScene& scene) const
 
 	auto terrainGeometry = std::make_unique<ImmutableMeshGeometry>();
 	terrainGeometry->SetName("TerrainGeometry");
-	terrainGeometry->CreateVertexBuffer(device, meshData.Vertices);
-	terrainGeometry->CreateIndexBuffer(device, meshData.Indices);
+	terrainGeometry->CreateVertexBuffer(device, meshData.Vertices, D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+	terrainGeometry->CreateIndexBuffer(device, meshData.Indices, DXGI_FORMAT_R32_UINT);
 
 	// Submesh:
 	SubmeshGeometry terrainSubmesh;
@@ -309,26 +310,12 @@ void Terrain::CreateMaterial(const D3DBase& d3dBase, TextureManager& textureMana
 }
 void Terrain::CreateRenderItem(const D3DBase& d3dBase, Graphics& graphics, IScene& scene) const
 {
-	auto renderItem = std::make_unique<RenderItem>();
-	renderItem->Name = "Terrain";
-	renderItem->Mesh = scene.GetGeometries().at("TerrainGeometry").get();
-	renderItem->Material = scene.GetMaterials().at("TerrainMaterial").get();
-	renderItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST;
+	auto renderItem = std::make_unique<NormalRenderItem>();
+	renderItem->SetName("Terrain");
+	renderItem->SetMesh(dynamic_cast<ImmutableMeshGeometry*>(scene.GetGeometries().at("TerrainGeometry").get()), "TerrainSubmesh");
+	renderItem->SetMaterial(scene.GetMaterials().at("TerrainMaterial").get());
 
-	const auto& terrainSubmesh = renderItem->Mesh->GetSubmesh("TerrainSubmesh");
-	renderItem->IndexCount = terrainSubmesh.IndexCount;
-	renderItem->StartIndexLocation = terrainSubmesh.StartIndexLocation;
-	renderItem->BaseVertexLocation = terrainSubmesh.BaseVertexLocation;
-	renderItem->Bounds = terrainSubmesh.Bounds;
-
-	// Add instance:
-	{
-		ShaderBufferTypes::InstanceData instanceData;
-		instanceData.WorldMatrix = MathHelper::Identity4x4();
-		renderItem->InstancesData.push_back(instanceData);
-	}
-
-	graphics.AddRenderItem(std::move(renderItem), { RenderLayer::Terrain });
+	graphics.AddNormalRenderItem(std::move(renderItem), { RenderLayer::Terrain });
 }
 
 GeometryGenerator::MeshData Terrain::CreateMeshData(float width, float depth, uint32_t xCellCount, uint32_t zCellCount)

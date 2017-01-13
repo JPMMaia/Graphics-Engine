@@ -49,6 +49,10 @@ namespace GraphicsEngine
 		std::unordered_map<std::string, SubmeshGeometry> GetSubmeshes() const;
 		virtual ID3D11Buffer* GetVertexBuffer() const = 0;
 		virtual ID3D11Buffer* GetIndexBuffer() const = 0;
+		virtual UINT GetStride() const = 0;
+		virtual UINT GetOffset() const = 0;
+		virtual DXGI_FORMAT GetIndexFormat() const = 0;
+		virtual D3D_PRIMITIVE_TOPOLOGY GetPrimitiveType() const = 0;
 
 	private:
 		std::string m_name;

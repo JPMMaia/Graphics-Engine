@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "BillboardMeshGeometry.h"
+#include <numeric>
 
 using namespace GraphicsEngine;
 
@@ -29,10 +30,25 @@ void BillboardMeshGeometry::AddInstance(ID3D11Device* device, const VertexType& 
 	m_indices.push_back(static_cast<IndexType>(m_indices.size()));
 	RealocateBuffers(device);
 }
+void BillboardMeshGeometry::AddInstances(ID3D11Device* device, const std::vector<VertexType>& instances)
+{
+	m_vertices.insert(m_vertices.end(), instances.begin(), instances.end());
+
+	auto indicesPreviousSize = m_indices.size();
+	m_indices.resize(m_indices.size() + instances.size());
+	std::iota(m_indices.begin() + indicesPreviousSize, m_indices.end(), static_cast<uint32_t>(indicesPreviousSize));
+
+	RealocateBuffers(device);
+}
 void BillboardMeshGeometry::RemoveLastInstance()
 {
 	m_vertices.pop_back();
 	m_indices.pop_back();
+}
+
+size_t BillboardMeshGeometry::GetInstanceCount() const
+{
+	return m_indices.size();
 }
 
 ID3D11Buffer* BillboardMeshGeometry::GetVertexBuffer() const
@@ -42,6 +58,22 @@ ID3D11Buffer* BillboardMeshGeometry::GetVertexBuffer() const
 ID3D11Buffer* BillboardMeshGeometry::GetIndexBuffer() const
 {
 	return m_indexBuffer.Get();
+}
+UINT BillboardMeshGeometry::GetStride() const
+{
+	return s_vertexBufferStride;
+}
+UINT BillboardMeshGeometry::GetOffset() const
+{
+	return 0;
+}
+DXGI_FORMAT BillboardMeshGeometry::GetIndexFormat() const
+{
+	return DXGI_FORMAT_R32_UINT;
+}
+D3D_PRIMITIVE_TOPOLOGY BillboardMeshGeometry::GetPrimitiveType() const
+{
+	return D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
 }
 
 void BillboardMeshGeometry::RealocateBuffers(ID3D11Device* device)

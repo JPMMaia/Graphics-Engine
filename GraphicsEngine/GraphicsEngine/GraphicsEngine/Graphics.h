@@ -16,6 +16,7 @@
 #include "RenderTexture.h"
 #include "Octree.h"
 #include "NormalRenderItem.h"
+#include "BillboardRenderItem.h"
 
 namespace GraphicsEngine
 {
@@ -34,6 +35,8 @@ namespace GraphicsEngine
 
 		void AddNormalRenderItem(std::unique_ptr<NormalRenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
 		void AddNormalRenderItemInstance(NormalRenderItem* renderItem, const ShaderBufferTypes::InstanceData& instanceData) const;
+		void AddBillboardRenderItem(std::unique_ptr<BillboardRenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
+		void AddBillboardRenderItemInstance(BillboardRenderItem* renderItem, const BillboardMeshGeometry::VertexType& instanceData) const;
 		uint32_t GetVisibleInstances() const;
 		const std::vector<RenderItem*>& GetRenderItems(RenderLayer renderLayer) const;
 		std::vector<std::unique_ptr<RenderItem>>::const_iterator GetRenderItem(std::string name) const;
@@ -50,6 +53,7 @@ namespace GraphicsEngine
 		void UpdateCamera();
 		void UpdateInstancesDataFrustumCulling();
 		void UpdateInstancesDataOctreeCulling();
+		void UpdateBillboards();
 		void UpdateMaterialData() const;
 		void UpdateLights(const Common::Timer& timer) const;
 		void InitializeMainPassData();
@@ -67,6 +71,7 @@ namespace GraphicsEngine
 
 		std::vector<std::unique_ptr<RenderItem>> m_allRenderItems;
 		std::vector<NormalRenderItem*> m_normalRenderItems;
+		std::vector<BillboardRenderItem*> m_billboardRenderItems;
 		std::vector<RenderItem*> m_renderItemLayers[static_cast<SIZE_T>(RenderLayer::Count)];
 		TextureManager m_textureManager;
 		Camera m_camera;

@@ -151,7 +151,7 @@ void Terrain::CreateGeometry(const D3DBase& d3dBase, IScene& scene) const
 	terrainSubmesh.Bounds = BoundingBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(m_description.TerrainWidth, m_description.HeightMapFactor * 2.0f, m_description.TerrainDepth));
 	terrainGeometry->AddSubmesh("TerrainSubmesh", std::move(terrainSubmesh));
 
-	scene.AddGeometry(std::move(terrainGeometry));
+	scene.AddImmutableGeometry(std::move(terrainGeometry));
 }
 void Terrain::CreateMaterial(const D3DBase& d3dBase, TextureManager& textureManager, IScene& scene)
 {
@@ -312,7 +312,7 @@ void Terrain::CreateRenderItem(const D3DBase& d3dBase, Graphics& graphics, IScen
 {
 	auto renderItem = std::make_unique<NormalRenderItem>();
 	renderItem->SetName("Terrain");
-	renderItem->SetMesh(dynamic_cast<ImmutableMeshGeometry*>(scene.GetGeometries().at("TerrainGeometry").get()), "TerrainSubmesh");
+	renderItem->SetMesh(dynamic_cast<ImmutableMeshGeometry*>(scene.GetImmutableGeometries().at("TerrainGeometry").get()), "TerrainSubmesh");
 	renderItem->SetMaterial(scene.GetMaterials().at("TerrainMaterial").get());
 
 	graphics.AddNormalRenderItem(std::move(renderItem), { RenderLayer::Terrain });

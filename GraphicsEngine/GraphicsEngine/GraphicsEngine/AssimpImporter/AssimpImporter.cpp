@@ -143,7 +143,7 @@ void AssimpImporter::AddGeometry(const D3DBase& d3dBase, const std::string& name
 	geometry->CreateVertexBuffer(device, vertices, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	geometry->CreateIndexBuffer(device, indices, DXGI_FORMAT_R32_UINT);
 
-	scene->AddGeometry(std::move(geometry));
+	scene->AddImmutableGeometry(std::move(geometry));
 }
 void AssimpImporter::AddMaterials(const D3DBase& d3dBase, TextureManager& textureManager, IScene* scene, const aiScene* importedScene)
 {

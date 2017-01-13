@@ -25,10 +25,10 @@ namespace GraphicsEngine
 
 		ID3D11Buffer* GetVertexBuffer() const override;
 		ID3D11Buffer* GetIndexBuffer() const override;
-		UINT GetStride() const;
-		UINT GetOffset() const;
-		DXGI_FORMAT GetIndexFormat() const;
-		D3D_PRIMITIVE_TOPOLOGY GetPrimitiveType() const;
+		UINT GetStride() const override;
+		UINT GetOffset() const override;
+		DXGI_FORMAT GetIndexFormat() const override;
+		D3D_PRIMITIVE_TOPOLOGY GetPrimitiveType() const override;
 
 	private:
 		VertexBuffer m_vertexBuffer;
@@ -36,6 +36,6 @@ namespace GraphicsEngine
 		UINT m_stride = 0;
 		UINT m_offset = 0;
 		DXGI_FORMAT m_indexFormat = DXGI_FORMAT_R32_UINT;
-		D3D_PRIMITIVE_TOPOLOGY m_primitiveType = D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		D3D_PRIMITIVE_TOPOLOGY m_primitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	};
 }

@@ -49,9 +49,13 @@ void DefaultScene::Update(const Graphics& graphics, const Common::Timer& timer)
 	XMStoreFloat4x4(&m_grassTransformMatrix, grassTransformMatrix);
 }
 
-void DefaultScene::AddGeometry(std::unique_ptr<ImmutableMeshGeometry>&& geometry)
+void DefaultScene::AddImmutableGeometry(std::unique_ptr<ImmutableMeshGeometry>&& geometry)
 {
-	m_geometries.emplace(geometry->GetName(), std::move(geometry));
+	m_immutableGeometries.emplace(geometry->GetName(), std::move(geometry));
+}
+void DefaultScene::AddBillboardGeometry(std::unique_ptr<BillboardMeshGeometry>&& geometry)
+{
+	m_billboardGeometries.emplace(geometry->GetName(), std::move(geometry));
 }
 void DefaultScene::AddMaterial(std::unique_ptr<Material>&& material)
 {
@@ -71,9 +75,13 @@ const DirectX::XMFLOAT4X4& DefaultScene::GetGrassTransformMatrix() const
 {
 	return m_grassTransformMatrix;
 }
-const std::unordered_map<std::string, std::unique_ptr<ImmutableMeshGeometry>>& DefaultScene::GetGeometries() const
+const std::unordered_map<std::string, std::unique_ptr<ImmutableMeshGeometry>>& DefaultScene::GetImmutableGeometries() const
 {
-	return m_geometries;
+	return m_immutableGeometries;
+}
+const std::unordered_map<std::string, std::unique_ptr<BillboardMeshGeometry>>& DefaultScene::GetBillboardGeometries() const
+{
+	return m_billboardGeometries;
 }
 const std::unordered_map<std::string, std::unique_ptr<Material>>& DefaultScene::GetMaterials() const
 {
@@ -178,36 +186,9 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 
 	// Grass:
 	{
-		XMFLOAT2 size = { 1.0f, 1.0f };
-		std::vector<VertexTypes::BillboardVertexType> vertices;
-		{
-			auto randomPositions = m_terrain.GenerateRandomPositions(2000);
-			vertices.reserve(randomPositions.size());
-
-			for (const auto& position : randomPositions)
-			{
-				ShaderBufferTypes::InstanceData instanceData;
-
-				vertices.push_back({ { position.x, position.y + 1.5f, position.z }, size });
-			}
-		}
-
-		std::vector<UINT> indices(vertices.size());
-		std::iota(indices.begin(), indices.end(), 0);
-
-		auto geometry = std::make_unique<ImmutableMeshGeometry>();
+		auto geometry = std::make_unique<BillboardMeshGeometry>();
 		geometry->SetName("Grass01Billboard");
-		geometry->CreateVertexBuffer(device, vertices, D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-		geometry->CreateIndexBuffer(device, indices, DXGI_FORMAT_R32_UINT);
-
-		SubmeshGeometry submesh;
-		submesh.StartIndexLocation = 0;
-		submesh.IndexCount = static_cast<uint32_t>(indices.size());
-		submesh.BaseVertexLocation = 0;
-		submesh.Bounds = BoundingBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(vertices[0].Extents.x, vertices[0].Extents.y, 0.1f));
-		geometry->AddSubmesh("Default", std::move(submesh));
-
-		AddGeometry(std::move(geometry));
+		AddBillboardGeometry(std::move(geometry));
 	}
 
 	// Rectangle for debug:
@@ -234,7 +215,7 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 		submesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(vertices);
 		geometry->AddSubmesh("Default", std::move(submesh));
 
-		AddGeometry(std::move(geometry));
+		AddImmutableGeometry(std::move(geometry));
 	}
 }
 void DefaultScene::InitializeTextures(const D3DBase& d3dBase, TextureManager& textureManager)
@@ -320,18 +301,33 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 	{
 		auto renderItem = std::make_unique<NormalRenderItem>();
 		renderItem->SetName("Debug");
-		renderItem->SetMesh(m_geometries.at("Rectangle").get(), "Default");
+		renderItem->SetMesh(m_immutableGeometries.at("Rectangle").get(), "Default");
 		renderItem->SetMaterial(m_materials["NullTexture"].get());
 		graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::Debug });
 	}
 
 	// Grass:
 	{
-		auto renderItem = std::make_unique<NormalRenderItem>();
+		XMFLOAT2 size = { 1.0f, 1.0f };
+		std::vector<VertexTypes::BillboardVertexType> instances;
+		{
+			auto randomPositions = m_terrain.GenerateRandomPositions(2000);
+			instances.reserve(randomPositions.size());
+
+			for (const auto& position : randomPositions)
+			{
+				ShaderBufferTypes::InstanceData instanceData;
+
+				instances.push_back({ { position.x, position.y + 1.5f, position.z }, size });
+			}
+		}
+
+		auto renderItem = std::make_unique<BillboardRenderItem>();
 		renderItem->SetName("Grass01Billboard");
-		renderItem->SetMesh(m_geometries.at("Grass01Billboard").get(), "Default");
+		renderItem->SetMesh(m_billboardGeometries.at("Grass01Billboard").get());
+		renderItem->AddInstances(d3dBase.GetDevice(), instances);
 		renderItem->SetMaterial(m_materials["Grass01Billboard"].get());
-		graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::Grass });
+		graphics->AddBillboardRenderItem(std::move(renderItem), { RenderLayer::Grass });
 	}
 
 	// Simple cube:
@@ -341,7 +337,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 		std::wstring filename(L"Models/Cube.fbx");
 		importer.Import(graphics, d3dBase, textureManager, this, filename, importInfo);
 
-		auto importedGeometry = m_geometries.at(Helpers::WStringToString(filename)).get();
+		auto importedGeometry = m_immutableGeometries.at(Helpers::WStringToString(filename)).get();
 
 		auto renderItem = std::make_unique<NormalRenderItem>();
 		renderItem->SetName("Cube");
@@ -378,7 +374,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 		std::wstring filename(L"Models/SkyDome.fbx");
 		importer.Import(graphics, d3dBase, textureManager, this, filename, importInfo);
 
-		auto geometry = m_geometries.at(Helpers::WStringToString(filename)).get();
+		auto geometry = m_immutableGeometries.at(Helpers::WStringToString(filename)).get();
 
 		auto renderItem = std::make_unique<NormalRenderItem>();
 		renderItem->SetName("SkyDome");
@@ -395,7 +391,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 		std::wstring filename(L"Models/AlanTree.fbx");
 		importer.Import(graphics, d3dBase, textureManager, this, filename, importInfo);
 
-		auto importedGeometry = m_geometries.at(Helpers::WStringToString(filename)).get();
+		auto importedGeometry = m_immutableGeometries.at(Helpers::WStringToString(filename)).get();
 
 		// Trunk:
 		{

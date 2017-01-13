@@ -27,15 +27,16 @@ namespace GraphicsEngine
 
 		void Update(const Graphics& graphics, const Common::Timer& timer) override;
 
-		void AddGeometry(std::unique_ptr<ImmutableMeshGeometry>&& geometry) override;
+		void AddImmutableGeometry(std::unique_ptr<ImmutableMeshGeometry>&& geometry) override;
+		void AddBillboardGeometry(std::unique_ptr<BillboardMeshGeometry>&& geometry) override;
 		void AddMaterial(std::unique_ptr<Material>&& material) override;
 		const Terrain& GetTerrain() const override;
 		Terrain& GetTerrain();
 		const DirectX::XMFLOAT4X4& GetGrassTransformMatrix() const;
 
-		const std::unordered_map<std::string, std::unique_ptr<ImmutableMeshGeometry>>& GetGeometries() const override;
+		const std::unordered_map<std::string, std::unique_ptr<ImmutableMeshGeometry>>& GetImmutableGeometries() const override;
+		const std::unordered_map<std::string, std::unique_ptr<BillboardMeshGeometry>>& GetBillboardGeometries() const override;
 		const std::unordered_map<std::string, std::unique_ptr<Material>>& GetMaterials() const override;
-
 		void AddInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData, DirectX::FXMMATRIX transformMatrix);
 		void AddTreeInstances(Graphics* graphics, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData);
 		void RemoveLastInstance(Graphics* graphics, const std::string& itemName, const std::initializer_list<std::string>& renderItemNames);
@@ -50,7 +51,8 @@ namespace GraphicsEngine
 
 	private:
 		bool m_initialized = false;
-		std::unordered_map<std::string, std::unique_ptr<ImmutableMeshGeometry>> m_geometries;
+		std::unordered_map<std::string, std::unique_ptr<ImmutableMeshGeometry>> m_immutableGeometries;
+		std::unordered_map<std::string, std::unique_ptr<BillboardMeshGeometry>> m_billboardGeometries;
 		std::unordered_map<std::string, std::unique_ptr<Material>> m_materials;
 		Terrain m_terrain;
 		float m_grassRotation;

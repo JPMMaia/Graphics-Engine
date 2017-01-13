@@ -66,7 +66,8 @@ void Graphics::RenderUpdate(const Common::Timer& timer)
 	UpdateMainPassData(timer);
 	UpdateShadowPassData(timer);
 	UpdateMaterialData();
-	
+	UpdateBillboards();
+
 	Common::PerformanceTimer performanceTimer;
 	performanceTimer.Start();
 	UpdateInstancesDataFrustumCulling();
@@ -235,7 +236,18 @@ void Graphics::AddNormalRenderItemInstance(NormalRenderItem* renderItem, const S
 	if(m_initialized)
 		m_currentFrameResource->RealocateInstanceBuffer(m_d3dBase.GetDevice(), renderItem);
 }
+void Graphics::AddBillboardRenderItem(std::unique_ptr<BillboardRenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers)
+{
+	for (auto renderLayer : renderLayers)
+		m_renderItemLayers[static_cast<SIZE_T>(renderLayer)].push_back(renderItem.get());
 
+	m_billboardRenderItems.push_back(renderItem.get());
+	m_allRenderItems.push_back(std::move(renderItem));
+}
+void Graphics::AddBillboardRenderItemInstance(BillboardRenderItem* renderItem, const BillboardMeshGeometry::VertexType& instanceData) const
+{
+	renderItem->AddInstance(m_d3dBase.GetDevice(), instanceData);
+}
 uint32_t Graphics::GetVisibleInstances() const
 {
 	return m_visibleInstances;
@@ -459,7 +471,12 @@ void Graphics::UpdateInstancesDataOctreeCulling()
 		instancesBuffer.Unmap(deviceContext);
 	}
 }
-
+void Graphics::UpdateBillboards()
+{
+	auto deviceContext = m_d3dBase.GetDeviceContext();
+	for(auto& renderItem : m_billboardRenderItems)
+		renderItem->Update(deviceContext);
+}
 void Graphics::UpdateMaterialData() const
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();

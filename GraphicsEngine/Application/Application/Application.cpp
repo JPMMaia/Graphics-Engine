@@ -173,24 +173,44 @@ void Application::OnKeyboardKeyDown(void* sender, const DXInputHandler::Keyboard
 
 	if (eventArgs.Key == DIK_SPACE)
 	{
-		SceneBuilder::RenderItemInstanceData instanceData;
-
-		XMFLOAT3 spawnPosition;
-		XMStoreFloat3(&spawnPosition, pCamera->GetPosition() + pCamera->GetLocalForward() * 1.0f);
-
-		auto scale = m_randomScales(m_randomEngine);
-		instanceData =
 		{
+			/*SceneBuilder::RenderItemInstanceData instanceData;
+
+			XMFLOAT3 spawnPosition;
+			XMStoreFloat3(&spawnPosition, pCamera->GetPosition() + pCamera->GetLocalForward() * 1.0f);
+
+			auto scale = m_randomScales(m_randomEngine);
+			instanceData =
+			{
 			{ spawnPosition.x, spawnPosition.z },
 			{ 0.0f, m_randomAngles(m_randomEngine), 0.0f },
 			{ scale, scale, scale },
-		};
+			};
 
-		pScene->AddTreeInstances(&m_graphics, { instanceData });
+			pScene->AddTreeInstances(&m_graphics, { instanceData });*/
+		}
+
+		{
+			SceneBuilder::RenderItemInstanceData instanceData;
+
+			XMFLOAT3 spawnPosition;
+			XMStoreFloat3(&spawnPosition, pCamera->GetPosition() + pCamera->GetLocalForward() * 1.0f);
+
+			auto scale = 1.0f;
+			instanceData =
+			{
+				{ spawnPosition.x, spawnPosition.z },
+				{ 0.0f, m_randomAngles(m_randomEngine), 0.0f },
+				{ scale, scale, scale },
+			};
+
+			pScene->AddGrassInstances(&m_graphics, { instanceData });
+		}
 	}
 	else if (eventArgs.Key == DIK_Z)
 	{
-		pScene->RemoveLastInstance(&m_graphics, "Tree", { "Trunk", "Leaves" });
+		//pScene->RemoveLastInstance(&m_graphics, "Tree", { "Trunk", "Leaves" });
+		pScene->RemoveLastInstance(&m_graphics, "Grass01Billboard", { "Grass01Billboard" });
 	}
 	else if(eventArgs.Key == DIK_C)
 	{

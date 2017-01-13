@@ -266,7 +266,6 @@ std::vector<std::unique_ptr<RenderItem>>::const_iterator Graphics::GetRenderItem
 
 	return std::find_if(m_allRenderItems.begin(), m_allRenderItems.end(), match);
 }
-
 std::vector<NormalRenderItem*>::const_iterator Graphics::GetNormalRenderItem(std::string name) const
 {
 	auto match = [&name](const NormalRenderItem* renderItem)
@@ -276,7 +275,15 @@ std::vector<NormalRenderItem*>::const_iterator Graphics::GetNormalRenderItem(std
 
 	return std::find_if(m_normalRenderItems.begin(), m_normalRenderItems.end(), match);
 }
+std::vector<BillboardRenderItem*>::const_iterator Graphics::GetBillboardRenderItem(std::string name) const
+{
+	auto match = [&name](const BillboardRenderItem* renderItem)
+	{
+		return renderItem->GetName() == name;
+	};
 
+	return std::find_if(m_billboardRenderItems.begin(), m_billboardRenderItems.end(), match);
+}
 void Graphics::SetFogState(bool state)
 {
 	m_fog = state;

@@ -41,6 +41,7 @@ namespace GraphicsEngine
 		const std::vector<RenderItem*>& GetRenderItems(RenderLayer renderLayer) const;
 		std::vector<std::unique_ptr<RenderItem>>::const_iterator GetRenderItem(std::string name) const;
 		std::vector<NormalRenderItem*>::const_iterator GetNormalRenderItem(std::string name) const;
+		std::vector<BillboardRenderItem*>::const_iterator GetBillboardRenderItem(std::string name) const;
 
 		void SetFogState(bool state);
 		void SetFogDistanceParameters(float start, float range);

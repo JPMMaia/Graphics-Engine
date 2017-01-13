@@ -6,7 +6,7 @@ using namespace GraphicsEngine;
 
 void BillboardMeshGeometry::Update(ID3D11DeviceContext* deviceContext)
 {
-	if (!m_dirty)
+	if (!m_dirty || GetInstanceCount() == 0)
 		return;
 
 	{

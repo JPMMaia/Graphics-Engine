@@ -88,7 +88,7 @@ const std::unordered_map<std::string, std::unique_ptr<Material>>& DefaultScene::
 	return m_materials;
 }
 
-void DefaultScene::AddInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData, FXMMATRIX transformMatrix)
+void DefaultScene::AddNormalInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData, FXMMATRIX transformMatrix)
 {
 	std::vector<NormalRenderItem*> renderItems;
 	renderItems.reserve(renderItemNames.size());
@@ -124,12 +124,46 @@ void DefaultScene::AddInstances(Graphics* graphics, std::string name, const std:
 		}
 	}
 }
+void DefaultScene::AddBillboardInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData)
+{
+	std::vector<BillboardRenderItem*> renderItems;
+	renderItems.reserve(renderItemNames.size());
+	for (const auto& renderItemName : renderItemNames)
+	{
+		auto renderItem = *graphics->GetBillboardRenderItem(renderItemName);
+		renderItems.push_back(renderItem);
+	}
+
+	auto instanceDataCount = instancesData.size();
+	for (size_t i = 0; i < instanceDataCount; ++i)
+	{
+		const auto& instanceData = instancesData[i];
+
+		BillboardMeshGeometry::VertexType instanceDataBuffer;
+
+		const auto& position = instanceData.Position;
+		instanceDataBuffer.Center = XMFLOAT3(position.x, m_terrain.GetTerrainHeight(position.x, position.y), position.y);
+		instanceDataBuffer.Extents = XMFLOAT2(instanceData.Scale.x, instanceData.Scale.y);
+
+		for (auto renderItem : renderItems)
+			graphics->AddBillboardRenderItemInstance(renderItem, instanceDataBuffer);
+		
+		if (m_initialized)
+		{
+			m_sceneBuilder.AddRenderItemInstance(name, instanceData);
+		}
+	}
+}
 void DefaultScene::AddTreeInstances(Graphics* graphics, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData)
 {
 	auto scale = 0.3f;
 	auto transformationMatrix = XMMatrixScaling(scale, scale, scale) * XMMatrixRotationX(XM_PI / 2.0f);
 
-	AddInstances(graphics, "Tree", { "Trunk", "Leaves" }, instancesData, transformationMatrix);
+	AddNormalInstances(graphics, "Tree", { "Trunk", "Leaves" }, instancesData, transformationMatrix);
+}
+void DefaultScene::AddGrassInstances(Graphics* graphics, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData)
+{
+	AddBillboardInstances(graphics, "Grass01Billboard", { "Grass01Billboard" }, instancesData);
 }
 void DefaultScene::RemoveLastInstance(Graphics* graphics, const std::string& itemName, const std::initializer_list<std::string>& renderItemNames)
 {
@@ -308,7 +342,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 
 	// Grass:
 	{
-		XMFLOAT2 size = { 1.0f, 1.0f };
+		/*XMFLOAT2 size = { 1.0f, 1.0f };
 		std::vector<VertexTypes::BillboardVertexType> instances;
 		{
 			auto randomPositions = m_terrain.GenerateRandomPositions(2000);
@@ -320,14 +354,17 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 
 				instances.push_back({ { position.x, position.y + 1.5f, position.z }, size });
 			}
-		}
+		}*/
 
 		auto renderItem = std::make_unique<BillboardRenderItem>();
 		renderItem->SetName("Grass01Billboard");
 		renderItem->SetMesh(m_billboardGeometries.at("Grass01Billboard").get());
-		renderItem->AddInstances(d3dBase.GetDevice(), instances);
 		renderItem->SetMaterial(m_materials["Grass01Billboard"].get());
 		graphics->AddBillboardRenderItem(std::move(renderItem), { RenderLayer::Grass });
+
+		// Add instances:
+		const auto& instancesData = m_sceneBuilder.GetRenderItemInstances("Grass01Billboard");
+		AddGrassInstances(graphics, instancesData);
 	}
 
 	// Simple cube:

@@ -37,8 +37,10 @@ namespace GraphicsEngine
 		const std::unordered_map<std::string, std::unique_ptr<ImmutableMeshGeometry>>& GetImmutableGeometries() const override;
 		const std::unordered_map<std::string, std::unique_ptr<BillboardMeshGeometry>>& GetBillboardGeometries() const override;
 		const std::unordered_map<std::string, std::unique_ptr<Material>>& GetMaterials() const override;
-		void AddInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData, DirectX::FXMMATRIX transformMatrix);
+		void AddNormalInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData, DirectX::FXMMATRIX transformMatrix);
+		void AddBillboardInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData);
 		void AddTreeInstances(Graphics* graphics, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData);
+		void AddGrassInstances(Graphics* graphics, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData);
 		void RemoveLastInstance(Graphics* graphics, const std::string& itemName, const std::initializer_list<std::string>& renderItemNames);
 
 	private:

@@ -61,11 +61,11 @@ void Graphics::FixedUpdate(const Common::Timer& timer)
 }
 void Graphics::RenderUpdate(const Common::Timer& timer)
 {
+	UpdateCamera();
 	UpdateLights(timer);
 	UpdateMainPassData(timer);
 	UpdateShadowPassData(timer);
 	UpdateMaterialData();
-	UpdateCamera();
 	
 	Common::PerformanceTimer performanceTimer;
 	performanceTimer.Start();
@@ -261,12 +261,18 @@ void Graphics::SetFogDistanceParameters(float start, float range)
 {
 	m_mainPassData.FogStart = start;
 	m_mainPassData.FogRange = range;
+
+	if (m_mainPassData.FogColor.w == 1.0f)
+		m_camera.SetFarZ(start + range);
 }
 
 void Graphics::SetFogColor(const DirectX::XMFLOAT4& color)
 {
 	m_mainPassData.FogColor = color;
 	m_d3dBase.SetClearColor(XMFLOAT3(color.x, color.y, color.z));
+
+	if (color.w < 1.0f)
+		m_camera.SetFarZ(1024.0f);
 }
 
 void Graphics::BindSamplers() const
@@ -331,11 +337,6 @@ void Graphics::SetupTerrainMeshData()
 
 void Graphics::UpdateCamera()
 {
-	if (m_fog)
-		m_camera.SetFarZ(m_mainPassData.FogStart + m_mainPassData.FogRange);
-	else
-		m_camera.SetFarZ(1024.0f);
-
 	m_camera.Update();
 }
 void Graphics::UpdateInstancesDataFrustumCulling()

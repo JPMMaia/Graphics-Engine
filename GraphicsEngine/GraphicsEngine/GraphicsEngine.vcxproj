@@ -205,8 +205,8 @@
     <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexWIC.cpp" />
     <ClCompile Include="GraphicsEngine\AnimationManager.cpp" />
     <ClCompile Include="GraphicsEngine\AssimpImporter\AssimpImporter.cpp" />
+    <ClInclude Include="GraphicsEngine\BaseAnimation.h" />
     <ClCompile Include="GraphicsEngine\BaseAnimation.cpp" />
-    <ClCompile Include="GraphicsEngine\BaseAnimation.h" />
     <ClCompile Include="GraphicsEngine\BlendState.cpp" />
     <ClCompile Include="GraphicsEngine\BlendStateDescConstants.cpp" />
     <ClCompile Include="GraphicsEngine\Camera.cpp" />
@@ -224,6 +224,7 @@
     <ClCompile Include="GraphicsEngine\HullShader.cpp" />
     <ClCompile Include="GraphicsEngine\InputHandler.cpp" />
     <ClCompile Include="GraphicsEngine\IShader.cpp" />
+    <ClCompile Include="GraphicsEngine\JsonHelper.cpp" />
     <ClCompile Include="GraphicsEngine\Light.cpp" />
     <ClCompile Include="GraphicsEngine\LightManager.cpp" />
     <ClCompile Include="GraphicsEngine\OctreeCollider.cpp" />
@@ -286,6 +287,7 @@
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_print.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_utils.hpp" />
     <ClInclude Include="GraphicsEngine\AnimationManager.h" />
+    <ClInclude Include="GraphicsEngine\AnimationType.h" />
     <ClInclude Include="GraphicsEngine\AssimpImporter\AssimpImporter.h" />
     <ClInclude Include="GraphicsEngine\BlendState.h" />
     <ClInclude Include="GraphicsEngine\BlendStateDescConstants.h" />
@@ -308,6 +310,7 @@
     <ClInclude Include="GraphicsEngine\InputHandler.h" />
     <ClInclude Include="GraphicsEngine\IScene.h" />
     <ClInclude Include="GraphicsEngine\IShader.h" />
+    <ClInclude Include="GraphicsEngine\JsonHelper.h" />
     <ClInclude Include="GraphicsEngine\Light.h" />
     <ClInclude Include="GraphicsEngine\LightManager.h" />
     <ClInclude Include="GraphicsEngine\Material.h" />

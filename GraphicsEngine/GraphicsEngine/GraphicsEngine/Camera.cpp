@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "Camera.h"
 
+#include <sstream>
+
 using namespace DirectX;
 using namespace GraphicsEngine;
 
@@ -208,6 +210,21 @@ void Camera::SetAspectRatio(float aspectRatio)
 bool Camera::IsDirty() const
 {
 	return m_dirty;
+}
+
+std::wstring Camera::ToWString() const
+{
+	std::wstringstream ss;
+
+	XMFLOAT3 position;
+	XMStoreFloat3(&position, m_position);
+	ss << L"(" + std::to_wstring(position.x) + L"f, " + std::to_wstring(position.y) + L"f, " + std::to_wstring(position.z) + L"f)";
+
+	XMFLOAT4 rotation;
+	XMStoreFloat4(&rotation, m_rotationQuaternion);
+	ss << L"(" + std::to_wstring(rotation.x) + L"f, " + std::to_wstring(rotation.y) + L"f, " + std::to_wstring(rotation.z) + L"f, " + std::to_wstring(rotation.w) + L"f)";
+
+	return ss.str();
 }
 
 void Camera::InitializeProjectionMatrix(FXMMATRIX orientationMatrix)

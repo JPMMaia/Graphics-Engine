@@ -25,9 +25,6 @@ namespace Win32Application
 		void OnKeyboardKeyDown(void* sender, const GraphicsEngine::DXInputHandler::KeyboardEventArgs& eventArgs);
 
 	private:
-		void SetupAnimations();
-
-	private:
 		static std::mutex s_mutex;
 		static std::unique_ptr<Application> s_instance;
 		Window m_window;
@@ -44,5 +41,7 @@ namespace Win32Application
 		std::uniform_real_distribution<float> m_randomAngles;
 		std::uniform_real_distribution<float> m_randomScales;
 		GraphicsEngine::AnimationManager m_animationManager;
+		bool m_animationBuildMode;
+		bool m_beginCameraAnimationFromLastSpot;
 	};
 }

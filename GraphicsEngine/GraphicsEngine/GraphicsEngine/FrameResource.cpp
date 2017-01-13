@@ -39,6 +39,6 @@ void FrameResource::RealocateInstanceBuffer(ID3D11Device* device, RenderItem* re
 		return;
 
 	// Allocate space for twice as needed:
-	auto targetBufferSize = 2 * neededBufferSize;
+	auto targetBufferSize = static_cast<int32_t>(2 * neededBufferSize);
 	instanceBuffer.Initialize(device, targetBufferSize, bufferStride);
 }

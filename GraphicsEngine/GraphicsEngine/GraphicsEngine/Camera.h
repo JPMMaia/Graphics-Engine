@@ -52,6 +52,8 @@ namespace GraphicsEngine
 
 		bool IsDirty() const;
 
+		std::wstring ToWString() const;
+
 	private:
 		void XM_CALLCONV InitializeProjectionMatrix(DirectX::FXMMATRIX orientationMatrix);
 

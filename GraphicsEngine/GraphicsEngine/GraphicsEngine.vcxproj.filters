@@ -185,6 +185,9 @@
     <ClCompile Include="GraphicsEngine\FogAnimation.cpp">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\JsonHelper.cpp">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
     <ClCompile Include="GraphicsEngine\BaseAnimation.cpp">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClCompile>
@@ -390,6 +393,12 @@
       <Filter>GraphicsEngine\Animations</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\FogAnimation.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\AnimationType.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\JsonHelper.h">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClInclude>
   </ItemGroup>

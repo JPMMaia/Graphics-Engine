@@ -29,6 +29,8 @@ SOFTWARE.
 #ifndef NLOHMANN_JSON_HPP
 #define NLOHMANN_JSON_HPP
 
+#undef max
+
 #include <algorithm> // all_of, for_each, transform
 #include <array> // array
 #include <cassert> // assert

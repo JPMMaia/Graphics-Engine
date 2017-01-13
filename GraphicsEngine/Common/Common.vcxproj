@@ -151,6 +151,7 @@
     <ClCompile Include="Common\Helpers.cpp" />
     <ClCompile Include="Common\IncludeReplacer.cpp" />
     <ClCompile Include="Common\MathHelper.cpp" />
+    <ClCompile Include="Common\NotImplementedException.cpp" />
     <ClCompile Include="Common\PerformanceTimer.cpp" />
     <ClCompile Include="Common\Timer.cpp" />
   </ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="Common\MathHelper.h" />
     <ClInclude Include="Common\MemoryPool.h" />
     <ClInclude Include="Common\MemoryPoolElement.h" />
+    <ClInclude Include="Common\NotImplementedException.h" />
     <ClInclude Include="Common\PerformanceTimer.h" />
     <ClInclude Include="Common\Timer.h" />
   </ItemGroup>

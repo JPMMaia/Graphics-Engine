@@ -16,6 +16,8 @@ namespace GraphicsEngine
 
 		void FixedUpdate(const Common::Timer& timer) const override;
 
+		nlohmann::json ToJson() const override;
+
 	private:
 		UpdateFunctionType m_updateFunction;
 	};

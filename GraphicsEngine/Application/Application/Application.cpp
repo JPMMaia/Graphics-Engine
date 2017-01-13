@@ -1,8 +1,8 @@
 ﻿#include "Application.h"
+#include "GraphicsEngine/CameraAnimation.h"
+#include "GraphicsEngine/FogAnimation.h"
 
 #include <functional>
-#include "GraphicsEngine/GeneralAnimation.h"
-#include "GraphicsEngine/CameraAnimation.h"
 
 using namespace Common;
 using namespace Win32Application;
@@ -65,27 +65,6 @@ int Application::Run()
 		if (m_input.IsKeyDown(DIK_D))
 			camera->MoveRight(scalar);
 
-		static auto range = 100.0f;
-		static auto sc = 1.0f;
-		if (m_input.IsKeyDown(DIK_I))
-		{
-			sc = sc - 0.01f;
-			if (sc > 0.0f)
-			{
-				m_graphics.SetFogDistanceParameters(20.0f / sc, range / sc);
-				m_graphics.SetFogColor(XMFLOAT4(0.5f, 0.5f, 0.5f, sc));
-			}
-		}
-		if (m_input.IsKeyDown(DIK_K))
-		{
-			sc = sc + 0.01f;
-			if(sc > 0.0f)
-			{
-				m_graphics.SetFogDistanceParameters(20.0f / sc, range / sc);
-				m_graphics.SetFogColor(XMFLOAT4(0.5f, 0.5f, 0.5f, sc));
-			}
-		}
-		
 		static const auto rotationSensibility = 0.005f;
 		if (m_input.IsKeyDown(DIK_Q))
 			camera->RotateWorldZ(-rotationSensibility);
@@ -122,7 +101,10 @@ int Application::Run()
 			}
 		}*/
 
-		m_animationManager.FixedUpdate(m_timer);
+		if(!m_animationBuildMode)
+		{
+			m_animationManager.FixedUpdate(m_timer);
+		}
 
 		m_graphics.FixedUpdate(m_timer);
 	};
@@ -152,9 +134,15 @@ int Application::Run()
 		auto camera = m_graphics.GetCamera();
 		XMFLOAT3 cameraPosition;
 		XMStoreFloat3(&cameraPosition, camera->GetPosition());
-		auto extraCaption = L"FPS: " + std::to_wstring(timer.GetFramesPerSecond()) + L" | MSPF: " + std::to_wstring(timer.GetMillisecondsPerFrame()) + L" | V: " + std::to_wstring(m_graphics.GetVisibleInstances()) +
-			L" | (" + std::to_wstring(cameraPosition.x) + L", " + std::to_wstring(cameraPosition.y) + L", " + std::to_wstring(cameraPosition.z) + L")";
-		m_window.SetWindowExtraCaption(extraCaption);
+
+		std::wstringstream extraCaption;
+
+		extraCaption << L"FPS: " << std::to_wstring(timer.GetFramesPerSecond());
+		if(!m_animationBuildMode) extraCaption << L" | V: " << std::to_wstring(m_graphics.GetVisibleInstances());
+		if(m_animationBuildMode) extraCaption << L" | Begin From Last Spot: " << (m_beginCameraAnimationFromLastSpot ? L"Yes" : L"No");
+		extraCaption << L" | " << camera->ToWString();
+
+		m_window.SetWindowExtraCaption(extraCaption.str());
 	};
 
 	m_timer.Reset();
@@ -204,37 +192,27 @@ void Application::OnKeyboardKeyDown(void* sender, const DXInputHandler::Keyboard
 	{
 		pScene->RemoveLastInstance(&m_graphics, "Tree", { "Trunk", "Leaves" });
 	}
+	else if(eventArgs.Key == DIK_C)
+	{
+		if (m_animationBuildMode)
+		{
+			m_animationManager.AddAnimation(std::make_unique<CameraAnimation>(
+				*pCamera,
+				m_animationManager.GetLastCameraFinalTime(),
+				static_cast<float>(m_timer.GetTotalMilliseconds() - m_animationManager.GetLastCameraFinalTime()),
+				m_animationManager.GetLastCameraPosition(),
+				pCamera->GetPosition(),
+				m_animationManager.GetLastCameraRotationQuaternion(),
+				pCamera->GetRotationQuaternion()
+				));
+		}
+	}
 
-}
-
-void Application::SetupAnimations()
-{
-	auto pCamera = m_graphics.GetCamera();
-	std::vector<std::unique_ptr<BaseAnimation>> animations;
-
-	auto initialPosition = XMVectorSet(-292.0f, 50.0f, 512.0f, 1.0f);
-	auto finalPosition = XMVectorSet(-327.0f, 27.0f, 352.0f, 1.0f);
-	auto initialRotation = XMQuaternionRotationRollPitchYaw(0.0f, XM_PI, 0.0f);
-	auto finalRotation = XMQuaternionRotationRollPitchYaw(0.0f, 0.0f, 0.0f);
-	
-	animations.push_back(std::make_unique<CameraAnimation>(*pCamera, 4000.0f, 10000.0f, initialPosition, finalPosition, initialRotation, finalRotation));
-
-
-
-
-
-	for (auto& pAnimation : animations)
-		m_animationManager.AddAnimation(std::move(pAnimation));
 }
 
 LRESULT Application::MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	return DefWindowProc(hwnd, msg, wParam, lParam);
-}
-
-void OnKeyboardKeyDown2(void* sender, const GraphicsEngine::DXInputHandler::KeyboardEventArgs& eventArgs)
-{
-	OutputDebugStringW(L"Hello\n");
 }
 
 std::mutex Application::s_mutex;
@@ -248,12 +226,28 @@ Application::Application() :
 	m_randomDevice(),
 	m_randomEngine(m_randomDevice()),
 	m_randomAngles(0.0f, 2.0 * XM_PI),
-	m_randomScales(0.5f, 1.0f)
+	m_randomScales(0.5f, 1.0f),
+	m_animationManager(m_graphics, L"Animations.json"),
+	m_animationBuildMode(false),
+	m_beginCameraAnimationFromLastSpot(false)
 {
 	m_soundManager.Create2DSoundFromWaveFile("TestSound", L"Sounds/Sound01.wav");
-	SetupAnimations();
 
 	using namespace std::placeholders;
 	m_input.SubscribeToOnKeyDownEvents(DIK_SPACE, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_Z, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_C, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_V, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_B, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+
+	if(m_animationBuildMode)
+	{
+		/*auto pCamera = m_graphics.GetCamera();
+		//pCamera->SetPosition(m_animationManager.GetLastCameraPosition());
+		pCamera->SetRotationQuaternion(m_animationManager.GetLastCameraRotationQuaternion());
+
+		pCamera->SetPosition(220.0f - 512.0f, 27.0f, -(0.0f - 512.0f));
+		pCamera->Update();
+		pCamera->RotateWorldY(XM_PI);*/
+	}
 }

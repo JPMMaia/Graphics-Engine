@@ -22,7 +22,7 @@ namespace Win32Application
 
 		int Run();
 
-		void OnKeyboardKeyDown(void* sender, const GraphicsEngine::DXInputHandler::KeyboardEventArgs& eventArgs);
+		void OnKeyboardKeyDown(const void* sender, const GraphicsEngine::DXInputHandler::KeyboardEventArgs& eventArgs);
 
 	private:
 		static std::mutex s_mutex;

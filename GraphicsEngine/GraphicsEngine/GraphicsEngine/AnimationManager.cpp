@@ -7,13 +7,15 @@
 #include "CameraAnimation.h"
 #include "Graphics.h"
 #include "Common/NotImplementedException.h"
+#include "KeyAnimation.h"
 
 using namespace Common;
 using namespace GraphicsEngine;
 using namespace std;
 
-AnimationManager::AnimationManager(Graphics& graphics, const std::wstring& filename) :
+AnimationManager::AnimationManager(Graphics& graphics, DXInputHandler& inputHandler, const std::wstring& filename) :
 	m_graphics(graphics),
+	m_inputHandler(inputHandler),
 	m_filename(filename)
 {
 	LoadFromFile();
@@ -104,6 +106,8 @@ void AnimationManager::LoadFromFile()
 			AddAnimation(std::make_unique<CameraAnimation>(CameraAnimation::FromJson(animationJson, camera)));
 		else if (name == "FogAnimation")
 			AddAnimation(std::make_unique<FogAnimation>(FogAnimation::FromJson(animationJson, m_graphics)));
+		else if (name == "KeyAnimation")
+			AddAnimation(std::make_unique<KeyAnimation>(KeyAnimation::FromJson(animationJson, m_inputHandler)));
 		else
 			throw NotImplementedException();
 	}

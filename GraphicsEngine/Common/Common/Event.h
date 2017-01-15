@@ -8,7 +8,7 @@ namespace Common
 	class Event
 	{
 	public:
-		using EventFunctionType = std::function<void(void*, const EventArgsType&)>;
+		using EventFunctionType = std::function<void(const void*, const EventArgsType&)>;
 
 	public:
 		void Subscribe(const EventFunctionType& onRaiseEvent)
@@ -16,7 +16,7 @@ namespace Common
 			m_subscribers.push_back(onRaiseEvent);
 		}
 
-		void Raise(void* sender, const EventArgsType& eventArgs) const
+		void Raise(const void* sender, const EventArgsType& eventArgs) const
 		{
 			for(const auto& subscriberFunction : m_subscribers)
 			{

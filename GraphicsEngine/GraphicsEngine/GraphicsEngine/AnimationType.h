@@ -6,6 +6,7 @@ namespace GraphicsEngine
 	{
 		CameraAnimation,
 		FogAnimation,
+		KeyAnimation,
 		GeneralAnimation
 	};
 };

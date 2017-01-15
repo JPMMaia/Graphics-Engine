@@ -203,6 +203,9 @@
     <ClCompile Include="GraphicsEngine\NormalRenderItem.cpp">
       <Filter>GraphicsEngine\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsEngine\KeyAnimation.cpp">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
@@ -427,6 +430,9 @@
     </ClInclude>
     <ClInclude Include="GraphicsEngine\NormalRenderItem.h">
       <Filter>GraphicsEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\KeyAnimation.h">
+      <Filter>GraphicsEngine\Animations</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

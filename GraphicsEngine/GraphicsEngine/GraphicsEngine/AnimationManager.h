@@ -7,11 +7,12 @@
 namespace GraphicsEngine
 {
 	class Graphics;
+	class DXInputHandler;
 
 	class AnimationManager
 	{
 	public:
-		explicit AnimationManager(Graphics& graphics, const std::wstring& filename);
+		AnimationManager(Graphics& graphics, DXInputHandler& inputHandler, const std::wstring& filename);
 		~AnimationManager();
 
 		void FixedUpdate(const Common::Timer& timer);
@@ -27,6 +28,7 @@ namespace GraphicsEngine
 
 	private:
 		Graphics& m_graphics;
+		DXInputHandler& m_inputHandler;
 		std::wstring m_filename;
 		std::vector<std::unique_ptr<BaseAnimation>> m_animations;
 		DirectX::XMVECTOR m_lastCameraPosition;

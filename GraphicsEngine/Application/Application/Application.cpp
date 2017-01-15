@@ -55,7 +55,7 @@ int Application::Run()
 	auto update = [this](const Timer& timer)
 	{
 		auto camera = m_graphics.GetCamera();
-		auto scalar = 0.05f *  static_cast<float>(timer.GetMillisecondsPerUpdate());
+		auto scalar = 0.01f *  static_cast<float>(timer.GetMillisecondsPerUpdate());
 		if (m_input.IsKeyDown(DIK_W))
 			camera->MoveForward(scalar);
 		if (m_input.IsKeyDown(DIK_S))
@@ -166,7 +166,7 @@ int Application::Run()
 	return static_cast<int>(message.wParam);
 }
 
-void Application::OnKeyboardKeyDown(void* sender, const DXInputHandler::KeyboardEventArgs& eventArgs)
+void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::KeyboardEventArgs& eventArgs)
 {
 	auto pScene = m_graphics.GetScene();
 	auto pCamera = m_graphics.GetCamera();
@@ -254,7 +254,7 @@ Application::Application() :
 	m_randomEngine(m_randomDevice()),
 	m_randomAngles(0.0f, 2.0 * XM_PI),
 	m_randomScales(0.5f, 1.0f),
-	m_animationManager(m_graphics, L"Animations.json"),
+	m_animationManager(m_graphics, m_input, L"Animations.json"),
 	m_animationBuildMode(true),
 	m_beginCameraAnimationFromLastSpot(false)
 {
@@ -276,7 +276,6 @@ Application::Application() :
 	m_input.SubscribeToOnKeyDownEvents(DIK_7, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_8, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_9, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
-
 
 	if(m_animationBuildMode)
 	{

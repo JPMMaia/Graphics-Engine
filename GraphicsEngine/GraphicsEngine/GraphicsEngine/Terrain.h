@@ -23,6 +23,8 @@ namespace GraphicsEngine
 			uint32_t CellZCount;
 			std::vector<std::unordered_map<std::string, std::wstring>> TiledTexturesFilenames;
 			std::wstring HeightMapFilename;
+			std::wstring NormalMapFilename;
+			std::wstring TangentMapFilename;
 			uint32_t HeightMapWidth;
 			uint32_t HeightMapHeight;
 			float HeightMapFactor;
@@ -49,7 +51,7 @@ namespace GraphicsEngine
 		void CreateRenderItem(const D3DBase& d3dBase, Graphics& graphics, IScene& scene) const;
 
 		static GeometryGenerator::MeshData CreateMeshData(float width, float depth, uint32_t xCellCount, uint32_t zCellCount);
-		static void LoadRawHeightMap(const std::wstring& filename, uint32_t width, uint32_t height, float heightFactor, std::vector<float>& heightMap, std::vector<DirectX::XMFLOAT4>& normalMap, std::vector<DirectX::XMFLOAT4>& tangentMap);
+		static void LoadRawHeightMap(const std::wstring& heightMapFilename, const std::wstring& normalMapFilename, const std::wstring& tangentMapFilename, uint32_t width, uint32_t height, float heightFactor, std::vector<float>& heightMap, std::vector<DirectX::XMFLOAT4>& normalMap, std::vector<DirectX::XMFLOAT4>& tangentMap);
 
 	public:
 		Description m_description;

@@ -183,7 +183,7 @@ void Terrain::CreateMaterial(const D3DBase& d3dBase, TextureManager& textureMana
 			// Load height map:
 			auto width = m_description.HeightMapWidth;
 			auto height = m_description.HeightMapHeight;
-			LoadRawHeightMap(m_description.HeightMapFilename, width, height, m_description.HeightMapFactor, m_heightMap, m_normalMap, m_tangentMap);
+			LoadRawHeightMap(m_description.HeightMapFilename, m_description.NormalMapFilename, m_description.TangentMapFilename, width, height, m_description.HeightMapFactor, m_heightMap, m_normalMap, m_tangentMap);
 
 			// Create height map texture:
 			{
@@ -375,11 +375,11 @@ GeometryGenerator::MeshData Terrain::CreateMeshData(float width, float depth, ui
 
 	return output;
 }
-void Terrain::LoadRawHeightMap(const std::wstring& filename, uint32_t width, uint32_t height, float heightFactor, std::vector<float>& heightMap, std::vector<XMFLOAT4>& normalMap, std::vector<XMFLOAT4>& tangentMap)
+void Terrain::LoadRawHeightMap(const std::wstring& heightMapFilename, const std::wstring& normalMapFilename, const std::wstring& tangentMapFilename, uint32_t width, uint32_t height, float heightFactor, std::vector<float>& heightMap, std::vector<DirectX::XMFLOAT4>& normalMap, std::vector<DirectX::XMFLOAT4>& tangentMap)
 {
 	// Read file content into a buffer:
 	std::vector<uint16_t> buffer;
-	Helpers::ReadData(filename, buffer);
+	Helpers::ReadData(heightMapFilename, buffer);
 
 	if (width * height != buffer.size())
 		ThrowEngineException(L"Terrain dimensions don't match with the height map dimensions!");

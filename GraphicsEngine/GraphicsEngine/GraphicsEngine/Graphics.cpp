@@ -23,14 +23,14 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_anisotropicWrapSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicWrap),
 	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp),
 	m_shadowsSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::Shadows),
-	m_fog(false),
+	m_fog(true),
 	m_shadowMap(m_d3dBase.GetDevice(), 2048, 2048),
 	m_renderTexture(m_d3dBase.GetDevice(), clientWidth, clientHeight, DXGI_FORMAT_R8G8B8A8_UNORM),
 	m_sceneBounds(XMFLOAT3(0.0f, 256.0f, 0.0f), 512.0f),
 	m_visibleInstances(0),
 	m_debugWindowMode(DebugWindowMode::Hidden),
 	m_enableShadows(true),
-	m_drawTerrainOnly(true)
+	m_drawTerrainOnly(false)
 {
 	m_camera.SetPosition(220.0f - 512.0f, 27.0f, -(0.0f - 512.0f));
 	m_camera.Update();
@@ -305,6 +305,9 @@ void Graphics::UpdateInstancesDataFrustumCulling()
 			continue;
 
 		const auto& instancesBuffer = location->second;
+
+		if (renderItem->GetInstancesData().size() == 0)
+			continue;
 
 		// Map resource:
 		D3D11_MAPPED_SUBRESOURCE mappedResource;

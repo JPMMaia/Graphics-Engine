@@ -3,6 +3,7 @@
 #include "GraphicsEngine/FogAnimation.h"
 
 #include <functional>
+#include "GraphicsEngine/KeyAnimation.h"
 
 using namespace Common;
 using namespace Win32Application;
@@ -101,7 +102,7 @@ int Application::Run()
 			}
 		}*/
 
-		if(!m_animationBuildMode)
+		if (!m_animationBuildMode)
 		{
 			m_animationManager.FixedUpdate(m_timer);
 		}
@@ -138,8 +139,8 @@ int Application::Run()
 		std::wstringstream extraCaption;
 
 		extraCaption << L"FPS: " << std::to_wstring(timer.GetFramesPerSecond());
-		if(!m_animationBuildMode) extraCaption << L" | V: " << std::to_wstring(m_graphics.GetVisibleInstances());
-		if(m_animationBuildMode) extraCaption << L" | Begin From Last Spot: " << (m_beginCameraAnimationFromLastSpot ? L"Yes" : L"No");
+		if (!m_animationBuildMode) extraCaption << L" | V: " << std::to_wstring(m_graphics.GetVisibleInstances());
+		if (m_animationBuildMode) extraCaption << L" | Begin From Last Spot: " << (m_beginCameraAnimationFromLastSpot ? L"Yes" : L"No");
 		extraCaption << L" | " << camera->ToWString();
 
 		m_window.SetWindowExtraCaption(extraCaption.str());
@@ -171,6 +172,15 @@ void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::Ke
 	auto pScene = m_graphics.GetScene();
 	auto pCamera = m_graphics.GetCamera();
 
+	std::array<std::string, 4> grassNames = {
+		"BillboardGrass0001",
+		"BillboardGrass0002",
+		"BillboardBlueFlowers",
+		"BillboardRedFlowers"
+	};
+
+	const auto& grassName = grassNames[0];
+
 	if (eventArgs.Key == DIK_SPACE)
 	{
 		{
@@ -196,7 +206,7 @@ void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::Ke
 			XMFLOAT3 spawnPosition;
 			XMStoreFloat3(&spawnPosition, pCamera->GetPosition() + pCamera->GetLocalForward() * 1.0f);
 
-			auto scale = 2.0f;
+			auto scale = 1.0f;
 			instanceData =
 			{
 				{ spawnPosition.x, spawnPosition.z },
@@ -204,35 +214,52 @@ void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::Ke
 				{ scale, scale, scale },
 			};
 
-			pScene->AddGrassInstances(&m_graphics, { instanceData });
+			pScene->AddBillboardInstances(&m_graphics, grassName, { grassName }, { instanceData }, 0.5f);;
 		}
 	}
 	else if (eventArgs.Key == DIK_Z)
 	{
 		//pScene->RemoveLastInstance(&m_graphics, "Tree", { "Trunk", "Leaves" });
-		pScene->RemoveLastInstance(&m_graphics, "Grass01Billboard", { "Grass01Billboard" });
+		pScene->RemoveLastInstance(&m_graphics, grassName, { grassName });
 	}
-	else if(eventArgs.Key == DIK_C)
+	else if (eventArgs.Key == DIK_C)
 	{
-		if (m_animationBuildMode)
-		{
-			m_animationManager.AddAnimation(std::make_unique<CameraAnimation>(
-				*pCamera,
-				m_animationManager.GetLastCameraFinalTime(),
-				static_cast<float>(m_timer.GetTotalMilliseconds() - m_animationManager.GetLastCameraFinalTime()),
-				m_animationManager.GetLastCameraPosition(),
-				pCamera->GetPosition(),
-				m_animationManager.GetLastCameraRotationQuaternion(),
-				pCamera->GetRotationQuaternion()
-				));
-		}
+		m_animationManager.AddAnimation(std::make_unique<CameraAnimation>(
+			*pCamera,
+			m_animationManager.GetLastCameraFinalTime(),
+			static_cast<float>(m_timer.GetTotalMilliseconds() - m_animationManager.GetLastCameraFinalTime()),
+			m_animationManager.GetLastCameraPosition(),
+			pCamera->GetPosition(),
+			m_animationManager.GetLastCameraRotationQuaternion(),
+			pCamera->GetRotationQuaternion()
+			));
 	}
-	else if(eventArgs.Key == DIK_P)
+	else if (eventArgs.Key == DIK_F)
+	{
+		m_animationManager.AddAnimation(std::make_unique<FogAnimation>(
+			static_cast<float>(m_timer.GetTotalMilliseconds()),
+			10000.0f,
+			m_graphics,
+			20.0f,
+			1024.0f,
+			100.0f,
+			1000.0f,
+			XMVectorSet(0.5f, 0.5f, 0.5f, 1.0f),
+			XMVectorSet(0.5f, 0.5f, 0.5f, 0.0f)
+			), true);
+	}
+	else if (eventArgs.Key == DIK_P)
 	{
 		m_graphics.ToggleDebugMode();
 	}
 	else
 	{
+		m_animationManager.AddAnimation(std::make_unique<KeyAnimation>(
+			m_input,
+			eventArgs.Key,
+			m_timer.GetTotalMilliseconds()
+			), false);
+
 		m_graphics.SetDebugWindowMode(static_cast<Graphics::DebugWindowMode>(eventArgs.Key - 2));
 	}
 }
@@ -255,8 +282,7 @@ Application::Application() :
 	m_randomAngles(0.0f, 2.0 * XM_PI),
 	m_randomScales(0.5f, 1.0f),
 	m_animationManager(m_graphics, m_input, L"Animations.json"),
-	m_animationBuildMode(true),
-	m_beginCameraAnimationFromLastSpot(false)
+	m_animationBuildMode(false)
 {
 	m_soundManager.Create2DSoundFromWaveFile("TestSound", L"Sounds/Sound01.wav");
 
@@ -267,6 +293,7 @@ Application::Application() :
 	m_input.SubscribeToOnKeyDownEvents(DIK_V, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_B, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_P, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_F, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_1, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_2, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_3, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
@@ -277,14 +304,5 @@ Application::Application() :
 	m_input.SubscribeToOnKeyDownEvents(DIK_8, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_9, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 
-	if(m_animationBuildMode)
-	{
-		/*auto pCamera = m_graphics.GetCamera();
-		//pCamera->SetPosition(m_animationManager.GetLastCameraPosition());
-		pCamera->SetRotationQuaternion(m_animationManager.GetLastCameraRotationQuaternion());
-
-		pCamera->SetPosition(220.0f - 512.0f, 27.0f, -(0.0f - 512.0f));
-		pCamera->Update();
-		pCamera->RotateWorldY(XM_PI);*/
-	}
+	//m_timer.SetTotalMilliseconds(190000.0);
 }

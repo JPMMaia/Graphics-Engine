@@ -32,8 +32,8 @@ namespace GraphicsEngine
 			TerrainNormalVectors,
 			TerrainTangentVectors,
 			TerrainNormalMapping,
-			TerrainPathAlpha,
 			TerrainSpecularMapping,
+			TerrainPathAlpha,
 			Count
 		};
 

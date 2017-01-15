@@ -1,1 +1,4385 @@
-[]
+[
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-292,
+					27,
+					509.799865722656,
+					1
+				],
+				[
+					-292,
+					27,
+					509.799865722656,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.0,
+					0.99999988079071,
+					0.0,
+					-1.19209289550781e-07
+				],
+				[
+					0.0,
+					0.99999988079071,
+					0.0,
+					-1.19209289550781e-07
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 10,
+			"StartInMilliseconds": 0.0
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-292,
+					27,
+					509.799865722656,
+					1
+				],
+				[
+					-288.854400634766,
+					27.9493541717529,
+					488.608184814453,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.0,
+					0.99999988079071,
+					0.0,
+					-1.19209289550781e-07
+				],
+				[
+					-0.0346879921853542,
+					0.996116876602173,
+					0.00959661137312651,
+					-0.0803595036268234
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2149.66870117188,
+			"StartInMilliseconds": 733.373291015625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-288.854400634766,
+					27.9493541717529,
+					488.608184814453,
+					1
+				],
+				[
+					-290.400421142578,
+					28.0355644226074,
+					470.642150878906,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0346879921853542,
+					0.996116876602173,
+					0.00959661137312651,
+					-0.0803595036268234
+				],
+				[
+					-0.0650938227772713,
+					0.985189974308014,
+					0.00197277334518731,
+					0.158630892634392
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1816.64709472656,
+			"StartInMilliseconds": 2883.0419921875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-290.400421142578,
+					28.0355644226074,
+					470.642150878906,
+					1
+				],
+				[
+					-297.586883544922,
+					27.9032020568848,
+					454.086761474609,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0650938227772713,
+					0.985189974308014,
+					0.00197277334518731,
+					0.158630892634392
+				],
+				[
+					-0.061489500105381,
+					0.971053659915924,
+					0.011812137439847,
+					0.230524063110352
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1816.84484863281,
+			"StartInMilliseconds": 4699.68896484375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-297.586883544922,
+					27.9032020568848,
+					454.086761474609,
+					1
+				],
+				[
+					-306.247680664063,
+					28.2489719390869,
+					435.849182128906,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.061489500105381,
+					0.971053659915924,
+					0.011812137439847,
+					0.230524063110352
+				],
+				[
+					-0.0196963362395763,
+					0.977549731731415,
+					0.0267355367541313,
+					0.208090379834175
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2016.24890136719,
+			"StartInMilliseconds": 6516.53369140625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-306.247680664063,
+					28.2489719390869,
+					435.849182128906,
+					1
+				],
+				[
+					-313.452270507813,
+					29.0522270202637,
+					416.154205322266,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0196963362395763,
+					0.977549731731415,
+					0.0267355367541313,
+					0.208090379834175
+				],
+				[
+					-0.000906777684576809,
+					0.986320793628693,
+					0.01200030464679,
+					0.164424568414688
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2099.87963867188,
+			"StartInMilliseconds": 8532.7822265625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-313.452270507813,
+					29.0522270202637,
+					416.154205322266,
+					1
+				],
+				[
+					-319.043518066406,
+					28.760669708252,
+					398.529541015625,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.000906777684576809,
+					0.986320793628693,
+					0.01200030464679,
+					0.164424568414688
+				],
+				[
+					-0.00637017004191875,
+					0.989228010177612,
+					-0.0225117616355419,
+					0.144539773464203
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1849.96423339844,
+			"StartInMilliseconds": 10632.662109375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-319.043518066406,
+					28.760669708252,
+					398.529541015625,
+					1
+				],
+				[
+					-323.776794433594,
+					27.2914943695068,
+					376.628967285156,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.00637017004191875,
+					0.989228010177612,
+					-0.0225117616355419,
+					0.144539773464203
+				],
+				[
+					-0.0109832789748907,
+					0.995670080184937,
+					-0.0543291755020618,
+					0.0747005492448807
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2250.18505859375,
+			"StartInMilliseconds": 12482.6259765625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-323.776794433594,
+					27.2914943695068,
+					376.628967285156,
+					1
+				],
+				[
+					-327.298095703125,
+					25.3585300445557,
+					358.080169677734,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0109832789748907,
+					0.995670080184937,
+					-0.0543291755020618,
+					0.0747005492448807
+				],
+				[
+					-0.0356962010264397,
+					0.985894501209259,
+					-0.0230792555958033,
+					0.161918297410011
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1899.65844726563,
+			"StartInMilliseconds": 14732.810546875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-327.298095703125,
+					25.3585300445557,
+					358.080169677734,
+					1
+				],
+				[
+					-335.746673583984,
+					23.9637756347656,
+					341.873962402344,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0356962010264397,
+					0.985894501209259,
+					-0.0230792555958033,
+					0.161918297410011
+				],
+				[
+					-0.070255845785141,
+					0.943301141262054,
+					-0.0144642125815153,
+					0.324121803045273
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1866.57739257813,
+			"StartInMilliseconds": 16632.46875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-335.746673583984,
+					23.9637756347656,
+					341.873962402344,
+					1
+				],
+				[
+					-347.771667480469,
+					23.0721530914307,
+					330.783203125,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.070255845785141,
+					0.943301141262054,
+					-0.0144642125815153,
+					0.324121803045273
+				],
+				[
+					-0.0563943609595299,
+					0.885331690311432,
+					0.00826218351721764,
+					0.461473405361176
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1633.56042480469,
+			"StartInMilliseconds": 18499.046875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-347.771667480469,
+					23.0721530914307,
+					330.783203125,
+					1
+				],
+				[
+					-365.329345703125,
+					22.2798671722412,
+					317.912628173828,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0563943609595299,
+					0.885331690311432,
+					0.00826218351721764,
+					0.461473405361176
+				],
+				[
+					0.0176765453070402,
+					0.908894062042236,
+					-0.0260374080389738,
+					0.415863275527954
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2183.06884765625,
+			"StartInMilliseconds": 20132.607421875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-365.329345703125,
+					22.2798671722412,
+					317.912628173828,
+					1
+				],
+				[
+					-382.352691650391,
+					19.6784439086914,
+					300.740173339844,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.0176765453070402,
+					0.908894062042236,
+					-0.0260374080389738,
+					0.415863275527954
+				],
+				[
+					-0.00587721168994904,
+					0.928627490997314,
+					-0.0745158419013023,
+					0.363438755273819
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 3083.3037109375,
+			"StartInMilliseconds": 22315.67578125
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-382.352691650391,
+					19.6784439086914,
+					300.740173339844,
+					1
+				],
+				[
+					-387.683532714844,
+					18.4312973022461,
+					294.776153564453,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.00587721168994904,
+					0.928627490997314,
+					-0.0745158419013023,
+					0.363438755273819
+				],
+				[
+					-0.0162223596125841,
+					0.941553950309753,
+					-0.0927844345569611,
+					0.323463797569275
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2482.88403320313,
+			"StartInMilliseconds": 25398.98046875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-387.683532714844,
+					18.4312973022461,
+					294.776153564453,
+					1
+				],
+				[
+					-390.74169921875,
+					17.198450088501,
+					290.551330566406,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0162223596125841,
+					0.941553950309753,
+					-0.0927844345569611,
+					0.323463797569275
+				],
+				[
+					0.0212249793112278,
+					0.944454789161682,
+					-0.0163538567721844,
+					0.32759565114975
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 5999.81298828125,
+			"StartInMilliseconds": 27881.865234375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-390.74169921875,
+					17.198450088501,
+					290.551330566406,
+					1
+				],
+				[
+					-393.774871826172,
+					16.4188194274902,
+					283.083526611328,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.0212249793112278,
+					0.944454789161682,
+					-0.0163538567721844,
+					0.32759565114975
+				],
+				[
+					-0.0130617981776595,
+					0.999378800392151,
+					0.0322818569839001,
+					0.00845458824187517
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 7232.97265625,
+			"StartInMilliseconds": 33881.6796875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-393.774871826172,
+					16.4188194274902,
+					283.083526611328,
+					1
+				],
+				[
+					-390.207794189453,
+					16.2459297180176,
+					280.326995849609,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0130617981776595,
+					0.999378800392151,
+					0.0322818569839001,
+					0.00845458824187517
+				],
+				[
+					0.0122249601408839,
+					0.986044108867645,
+					0.00713193695992231,
+					0.166019320487976
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 3650.07104492188,
+			"StartInMilliseconds": 41114.65234375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-390.207794189453,
+					16.2459297180176,
+					280.326995849609,
+					1
+				],
+				[
+					-390.054718017578,
+					15.8457040786743,
+					266.216613769531,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.0122249601408839,
+					0.986044108867645,
+					0.00713193695992231,
+					0.166019320487976
+				],
+				[
+					-0.0281739588826895,
+					0.998598992824554,
+					-0.0384770184755325,
+					0.0240515656769276
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 5333.03857421875,
+			"StartInMilliseconds": 44764.72265625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-390.054718017578,
+					15.8457040786743,
+					266.216613769531,
+					1
+				],
+				[
+					-381.209228515625,
+					16.9984607696533,
+					237.439651489258,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0281739588826895,
+					0.998598992824554,
+					-0.0384770184755325,
+					0.0240515656769276
+				],
+				[
+					0.00885116122663021,
+					0.970976233482361,
+					0.0231587756425142,
+					-0.238004088401794
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 3633.01440429688,
+			"StartInMilliseconds": 50097.76171875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-381.209228515625,
+					16.9984607696533,
+					237.439651489258,
+					1
+				],
+				[
+					-349.649017333984,
+					25.5218658447266,
+					222.623275756836,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.00885116122663021,
+					0.970976233482361,
+					0.0231587756425142,
+					-0.238004088401794
+				],
+				[
+					-0.0126778110861778,
+					0.990917503833771,
+					-0.0602731816470623,
+					0.119812585413456
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 9466.2353515625,
+			"StartInMilliseconds": 53730.77734375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-349.649017333984,
+					25.5218658447266,
+					222.623275756836,
+					1
+				],
+				[
+					-333.568206787109,
+					21.4041118621826,
+					203.196975708008,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0126778110861778,
+					0.990917503833771,
+					-0.0602731816470623,
+					0.119812585413456
+				],
+				[
+					-0.00840407703071833,
+					0.588773131370544,
+					-0.0507845506072044,
+					0.806702554225922
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 5516.5986328125,
+			"StartInMilliseconds": 63197.01171875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-333.568206787109,
+					21.4041118621826,
+					203.196975708008,
+					1
+				],
+				[
+					-353.356811523438,
+					15.6192312240601,
+					194.231872558594,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.00840407703071833,
+					0.588773131370544,
+					-0.0507845506072044,
+					0.806702554225922
+				],
+				[
+					-0.106879837810993,
+					0.178938508033752,
+					-0.0609115771949291,
+					0.976180493831635
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 4499.9169921875,
+			"StartInMilliseconds": 68713.609375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-353.356811523438,
+					15.6192312240601,
+					194.231872558594,
+					1
+				],
+				[
+					-359.508331298828,
+					12.3918056488037,
+					210.418731689453,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.106879837810993,
+					0.178938508033752,
+					-0.0609115771949291,
+					0.976180493831635
+				],
+				[
+					0.00591975916177034,
+					-0.940434575080872,
+					0.0214251801371574,
+					0.339378535747528
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 3982.87109375,
+			"StartInMilliseconds": 73213.5234375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-359.508331298828,
+					12.3918056488037,
+					210.418731689453,
+					1
+				],
+				[
+					-354.428009033203,
+					11.6644496917725,
+					204.057846069336,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.00591975916177034,
+					-0.940434575080872,
+					0.0214251801371574,
+					0.339378535747528
+				],
+				[
+					0.0365638248622417,
+					-0.922992289066315,
+					-0.0267533622682095,
+					0.382264465093613
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 7149.68896484375,
+			"StartInMilliseconds": 77196.390625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-354.428009033203,
+					11.6644496917725,
+					204.057846069336,
+					1
+				],
+				[
+					-354.416168212891,
+					11.5799341201782,
+					205.455261230469,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.0365638248622417,
+					-0.922992289066315,
+					-0.0267533622682095,
+					0.382264465093613
+				],
+				[
+					-0.0122303059324622,
+					-0.997936606407166,
+					-0.0521657690405846,
+					0.0367237590253353
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 6399.71435546875,
+			"StartInMilliseconds": 84346.078125
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-354.416168212891,
+					11.5799341201782,
+					205.455261230469,
+					1
+				],
+				[
+					-338.613067626953,
+					11.9438591003418,
+					170.967498779297,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0122303059324622,
+					-0.997936606407166,
+					-0.0521657690405846,
+					0.0367237590253353
+				],
+				[
+					-0.0126380287110806,
+					-0.956683754920959,
+					0.0153395934030414,
+					0.290646851062775
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 12499.4501953125,
+			"StartInMilliseconds": 90745.7890625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-338.613067626953,
+					11.9438591003418,
+					170.967498779297,
+					1
+				],
+				[
+					-329.624633789063,
+					11.3432836532593,
+					148.286819458008,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0126380287110806,
+					-0.956683754920959,
+					0.0153395934030414,
+					0.290646851062775
+				],
+				[
+					-0.0153491171076894,
+					-0.990341186523438,
+					-0.00252894684672356,
+					0.138203144073486
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2499.82739257813,
+			"StartInMilliseconds": 103245.2421875
+		}
+	},
+	{
+		"Name": "FogAnimation",
+		"SpecificParameters": {
+			"FogColor": [
+				[
+					0.5,
+					0.5,
+					0.5,
+					1
+				],
+				[
+					0.5,
+					0.5,
+					0.5,
+					0.0
+				]
+			],
+			"FogRange": [
+				100,
+				1000
+			],
+			"FogStart": [
+				20,
+				1024
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 20000,
+			"StartInMilliseconds": 21642.2890625
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 100441.0703125
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-329.624633789063,
+					11.3432836532593,
+					148.286819458008,
+					1
+				],
+				[
+					-326.761779785156,
+					12.4146547317505,
+					113.328269958496,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0153491171076894,
+					-0.990341186523438,
+					-0.00252894684672356,
+					0.138203144073486
+				],
+				[
+					-0.0152689414098859,
+					-0.997578978538513,
+					-0.0351044945418835,
+					-0.0590799748897552
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 4726.97998046875,
+			"StartInMilliseconds": 105745.0703125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 115155.1796875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-326.761779785156,
+					12.4146547317505,
+					113.328269958496,
+					1
+				],
+				[
+					-321.796356201172,
+					13.5165977478027,
+					102.09854888916,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0152689414098859,
+					-0.997578978538513,
+					-0.0351044945418835,
+					-0.0590799748897552
+				],
+				[
+					-0.0219066720455885,
+					-0.9989914894104,
+					-0.0335382968187332,
+					0.0230933036655188
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 5866.49658203125,
+			"StartInMilliseconds": 110472.046875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-321.796356201172,
+					13.5165977478027,
+					102.09854888916,
+					1
+				],
+				[
+					-320.930694580078,
+					14.5932502746582,
+					81.8097457885742,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0219066720455885,
+					-0.9989914894104,
+					-0.0335382968187332,
+					0.0230933036655188
+				],
+				[
+					-0.0220346599817276,
+					-0.999431908130646,
+					-0.0211530067026615,
+					0.0180548317730427
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2933.16552734375,
+			"StartInMilliseconds": 116338.546875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 120538.3046875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 100442.15625
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 115157.5234375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 120540.5859375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-320.930694580078,
+					14.5932502746582,
+					81.8097457885742,
+					1
+				],
+				[
+					-319.890258789063,
+					15.7824850082397,
+					53.3302230834961,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0220346599817276,
+					-0.999431908130646,
+					-0.0211530067026615,
+					0.0180548317730427
+				],
+				[
+					-0.0216166507452726,
+					-0.999403238296509,
+					-0.0289662126451731,
+					0.00322179892100394
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 5968.6044921875,
+			"StartInMilliseconds": 119271.7109375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 126873.578125
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-319.890258789063,
+					15.7824850082397,
+					53.3302230834961,
+					1
+				],
+				[
+					-321.921142578125,
+					20.7750396728516,
+					8.05120372772217,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0216166507452726,
+					-0.999403238296509,
+					-0.0289662126451731,
+					0.00322179892100394
+				],
+				[
+					-0.0209912080317736,
+					-0.997868657112122,
+					-0.0570670962333679,
+					-0.0261686090379953
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 4566.5732421875,
+			"StartInMilliseconds": 125240.3125
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-321.921142578125,
+					20.7750396728516,
+					8.05120372772217,
+					1
+				],
+				[
+					-323.829467773438,
+					35.5719833374023,
+					-109.54273223877,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0209912080317736,
+					-0.997868657112122,
+					-0.0570670962333679,
+					-0.0261686090379953
+				],
+				[
+					0.0107461363077164,
+					-0.637627959251404,
+					-0.0138309504836798,
+					0.77023047208786
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 12449.28125,
+			"StartInMilliseconds": 129806.8828125
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-323.829467773438,
+					35.5719833374023,
+					-109.54273223877,
+					1
+				],
+				[
+					-333.609588623047,
+					37.9770660400391,
+					-137.673843383789,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.0107461363077164,
+					-0.637627959251404,
+					-0.0138309504836798,
+					0.77023047208786
+				],
+				[
+					-0.0553338676691055,
+					-0.209090545773506,
+					-0.0200449991971254,
+					0.976192891597748
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2816.61279296875,
+			"StartInMilliseconds": 142256.15625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-333.609588623047,
+					37.9770660400391,
+					-137.673843383789,
+					1
+				],
+				[
+					-331.703308105469,
+					40.6755599975586,
+					-157.732864379883,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0553338676691055,
+					-0.209090545773506,
+					-0.0200449991971254,
+					0.976192891597748
+				],
+				[
+					-0.0736958608031273,
+					0.204576343297958,
+					0.0036455113440752,
+					0.976134717464447
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2166.57275390625,
+			"StartInMilliseconds": 145072.765625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-331.703308105469,
+					40.6755599975586,
+					-157.732864379883,
+					1
+				],
+				[
+					-333.193298339844,
+					43.6576652526855,
+					-177.301956176758,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0736958608031273,
+					0.204576343297958,
+					0.0036455113440752,
+					0.976134717464447
+				],
+				[
+					-0.0199644360691309,
+					0.913426995277405,
+					0.11941160261631,
+					0.388754159212112
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2033.34020996094,
+			"StartInMilliseconds": 147239.34375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-333.193298339844,
+					43.6576652526855,
+					-177.301956176758,
+					1
+				],
+				[
+					-341.515991210938,
+					50.4840660095215,
+					-201.842987060547,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0199644360691309,
+					0.913426995277405,
+					0.11941160261631,
+					0.388754159212112
+				],
+				[
+					-0.0212796665728092,
+					0.976930141448975,
+					0.133265599608421,
+					0.165937155485153
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2733.29956054688,
+			"StartInMilliseconds": 149272.6875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 156839.015625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-341.515991210938,
+					50.4840660095215,
+					-201.842987060547,
+					1
+				],
+				[
+					-352.897369384766,
+					59.2240905761719,
+					-233.228637695313,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0212796665728092,
+					0.976930141448975,
+					0.133265599608421,
+					0.165937155485153
+				],
+				[
+					-0.0212796647101641,
+					0.97693008184433,
+					0.13326558470726,
+					0.165937140583992
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 5899.6748046875,
+			"StartInMilliseconds": 152005.984375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-352.897369384766,
+					59.2240905761719,
+					-233.228637695313,
+					1
+				],
+				[
+					-353.396362304688,
+					60.3455047607422,
+					-239.831695556641,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0212796647101641,
+					0.97693008184433,
+					0.13326558470726,
+					0.165937140583992
+				],
+				[
+					-0.0702283456921577,
+					0.110329210758209,
+					0.00525492429733276,
+					0.991467416286469
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1549.80834960938,
+			"StartInMilliseconds": 157905.65625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-353.396362304688,
+					60.3455047607422,
+					-239.831695556641,
+					1
+				],
+				[
+					-359.312438964844,
+					68.5834350585938,
+					-246.40837097168,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0702283456921577,
+					0.110329210758209,
+					0.00525492429733276,
+					0.991467416286469
+				],
+				[
+					-0.256594747304916,
+					-0.324579000473022,
+					0.0530491173267365,
+					0.908920228481293
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2199.91259765625,
+			"StartInMilliseconds": 159455.46875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-359.312438964844,
+					68.5834350585938,
+					-246.40837097168,
+					1
+				],
+				[
+					-365.065948486328,
+					70.8316650390625,
+					-253.8134765625,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.256594747304916,
+					-0.324579000473022,
+					0.0530491173267365,
+					0.908920228481293
+				],
+				[
+					-0.0534228645265102,
+					-0.312615275382996,
+					-0.0136829651892185,
+					0.948353230953217
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 983.276550292969,
+			"StartInMilliseconds": 161655.375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 163788.578125
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-365.065948486328,
+					70.8316650390625,
+					-253.8134765625,
+					1
+				],
+				[
+					-371.883575439453,
+					84.4172973632813,
+					-285.361663818359,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0534228645265102,
+					-0.312615275382996,
+					-0.0136829651892185,
+					0.948353230953217
+				],
+				[
+					-0.14768660068512,
+					-0.335820615291595,
+					-0.0717818364500999,
+					0.927590131759644
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 7033.115234375,
+			"StartInMilliseconds": 162638.65625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-371.883575439453,
+					84.4172973632813,
+					-285.361663818359,
+					1
+				],
+				[
+					-398.716064453125,
+					86.4503021240234,
+					-300.480621337891,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.14768660068512,
+					-0.335820615291595,
+					-0.0717818364500999,
+					0.927590131759644
+				],
+				[
+					-0.0420999303460121,
+					-0.751825869083405,
+					0.0853371471166611,
+					-0.652588069438934
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 4366.419921875,
+			"StartInMilliseconds": 169671.765625
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 8
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 176871.34375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165013.734375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165013.734375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165013.734375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165013.734375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165013.734375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165013.734375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165013.734375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165013.734375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165013.734375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-398.716064453125,
+					86.4503021240234,
+					-300.480621337891,
+					1
+				],
+				[
+					-451.454010009766,
+					82.0411376953125,
+					-301.660369873047,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0420999303460121,
+					-0.751825869083405,
+					0.0853371471166611,
+					-0.652588069438934
+				],
+				[
+					-0.0860031843185425,
+					0.739496648311615,
+					0.142327725887299,
+					0.652432978153229
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 7647.8662109375,
+			"StartInMilliseconds": 174038.1875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 8
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 176886.421875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165012.546875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165012.546875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165012.546875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165012.546875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165012.546875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165012.546875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165012.546875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165012.546875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165012.546875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165027.609375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165027.609375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165027.609375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165027.609375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165027.609375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165027.609375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165027.609375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165027.609375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165027.609375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 8
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 176876.796875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165010.34375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165010.34375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165010.34375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165010.34375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165010.34375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165010.34375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165010.34375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165010.34375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165010.34375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 165033.125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 8
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 176882.234375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 8
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 176882.234375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 8
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 176898.75
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-451.454010009766,
+					82.0411376953125,
+					-301.660369873047,
+					1
+				],
+				[
+					-464.592529296875,
+					84.0535049438477,
+					-305.475616455078,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0860031843185425,
+					0.739496648311615,
+					0.142327725887299,
+					0.652432978153229
+				],
+				[
+					0.0677864328026772,
+					-0.795436143875122,
+					-0.155674606561661,
+					-0.581920206546783
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 3129.01879882813,
+			"StartInMilliseconds": 181686.046875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-464.592529296875,
+					84.0535049438477,
+					-305.475616455078,
+					1
+				],
+				[
+					-472.076477050781,
+					84.6891326904297,
+					-308.130554199219,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.0677864328026772,
+					-0.795436143875122,
+					-0.155674606561661,
+					-0.581920206546783
+				],
+				[
+					-0.135517284274101,
+					0.814625322818756,
+					0.0540304817259312,
+					0.561497986316681
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1800.0517578125,
+			"StartInMilliseconds": 184815.0625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-472.076477050781,
+					84.6891326904297,
+					-308.130554199219,
+					1
+				],
+				[
+					-485.256408691406,
+					82.6895904541016,
+					-314.292297363281,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.135517284274101,
+					0.814625322818756,
+					0.0540304817259312,
+					0.561497986316681
+				],
+				[
+					0.167748063802719,
+					-0.834097802639008,
+					-0.00991441495716572,
+					-0.52556973695755
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1533.33825683594,
+			"StartInMilliseconds": 186615.109375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-485.256408691406,
+					82.6895904541016,
+					-314.292297363281,
+					1
+				],
+				[
+					-492.430999755859,
+					85.1213989257813,
+					-319.151702880859,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.167748063802719,
+					-0.834097802639008,
+					-0.00991441495716572,
+					-0.52556973695755
+				],
+				[
+					-0.055987935513258,
+					0.907186806201935,
+					0.197927057743073,
+					0.367272287607193
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2149.88549804688,
+			"StartInMilliseconds": 188148.453125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 2
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 192814.703125
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-492.430999755859,
+					85.1213989257813,
+					-319.151702880859,
+					1
+				],
+				[
+					-492.46533203125,
+					87.4972915649414,
+					-322.898132324219,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.055987935513258,
+					0.907186806201935,
+					0.197927057743073,
+					0.367272287607193
+				],
+				[
+					0.0599987916648388,
+					-0.812974333763123,
+					-0.216001287102699,
+					-0.537599265575409
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 6082.87060546875,
+			"StartInMilliseconds": 190298.34375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-492.46533203125,
+					87.4972915649414,
+					-322.898132324219,
+					1
+				],
+				[
+					-505.297088623047,
+					86.8320541381836,
+					-317.382141113281,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.0599987916648388,
+					-0.812974333763123,
+					-0.216001287102699,
+					-0.537599265575409
+				],
+				[
+					0.0982245355844498,
+					0.953166365623474,
+					0.0696235150098801,
+					-0.277808874845505
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 3433.1435546875,
+			"StartInMilliseconds": 196381.21875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-505.297088623047,
+					86.8320541381836,
+					-317.382141113281,
+					1
+				],
+				[
+					-481.701721191406,
+					87.696159362793,
+					-329.447692871094,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.0982245355844498,
+					0.953166365623474,
+					0.0696235150098801,
+					-0.277808874845505
+				],
+				[
+					-0.0176392272114754,
+					-0.792757332324982,
+					-0.0598804466426373,
+					0.606501698493958
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 3233.23828125,
+			"StartInMilliseconds": 199814.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 9
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 205097.75
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-481.701721191406,
+					87.696159362793,
+					-329.447692871094,
+					1
+				],
+				[
+					-457.885375976563,
+					90.2577285766602,
+					-341.819885253906,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0176392272114754,
+					-0.792757332324982,
+					-0.0598804466426373,
+					0.606501698493958
+				],
+				[
+					0.00926116295158863,
+					0.86451244354248,
+					0.0644062533974648,
+					-0.498589515686035
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 3399.86401367188,
+			"StartInMilliseconds": 203047.59375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 8
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 8
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 8
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 3
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 4
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 5
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 6
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 7
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 8
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 8
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 8
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 190010.359375
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 2
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 192816.40625
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 9
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 205097.90625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-457.885375976563,
+					90.2577285766602,
+					-341.819885253906,
+					1
+				],
+				[
+					-442.449157714844,
+					93.819091796875,
+					-356.396057128906,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.00926116295158863,
+					0.86451244354248,
+					0.0644062533974648,
+					-0.498589515686035
+				],
+				[
+					0.0189534723758698,
+					-0.289070010185242,
+					-0.0357701145112514,
+					0.956563413143158
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 4550.20458984375,
+			"StartInMilliseconds": 206447.453125
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-442.449157714844,
+					93.819091796875,
+					-356.396057128906,
+					1
+				],
+				[
+					-413.261657714844,
+					98.1896362304688,
+					-360.301971435547,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.0189534723758698,
+					-0.289070010185242,
+					-0.0357701145112514,
+					0.956563413143158
+				],
+				[
+					0.202314510941505,
+					-0.374024420976639,
+					0.0118117528036237,
+					-0.905127584934235
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 3816.47509765625,
+			"StartInMilliseconds": 210997.65625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-413.261657714844,
+					98.1896362304688,
+					-360.301971435547,
+					1
+				],
+				[
+					-411.419006347656,
+					93.7123413085938,
+					-339.019897460938,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.202314510941505,
+					-0.374024420976639,
+					0.0118117528036237,
+					-0.905127584934235
+				],
+				[
+					-0.0376530773937702,
+					-0.1060651242733,
+					0.0196481868624687,
+					0.993563532829285
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2800.02319335938,
+			"StartInMilliseconds": 214814.125
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-411.419006347656,
+					93.7123413085938,
+					-339.019897460938,
+					1
+				],
+				[
+					-408.806518554688,
+					91.1988372802734,
+					-321.022491455078,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0376530773937702,
+					-0.1060651242733,
+					0.0196481868624687,
+					0.993563532829285
+				],
+				[
+					0.101776167750359,
+					0.0482397675514221,
+					0.0354027301073074,
+					-0.993118464946747
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1849.78051757813,
+			"StartInMilliseconds": 217614.140625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-408.806518554688,
+					91.1988372802734,
+					-321.022491455078,
+					1
+				],
+				[
+					-407.116729736328,
+					86.8759841918945,
+					-302.845733642578,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.101776167750359,
+					0.0482397675514221,
+					0.0354027301073074,
+					-0.993118464946747
+				],
+				[
+					-0.12534761428833,
+					-0.0286750849336386,
+					-0.0324414968490601,
+					0.991282403469086
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1883.26611328125,
+			"StartInMilliseconds": 219463.921875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-407.116729736328,
+					86.8759841918945,
+					-302.845733642578,
+					1
+				],
+				[
+					-406.220977783203,
+					82.5863189697266,
+					-289.149322509766,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.12534761428833,
+					-0.0286750849336386,
+					-0.0324414968490601,
+					0.991282403469086
+				],
+				[
+					0.204617470502853,
+					0.0163749363273382,
+					0.0276934187859297,
+					-0.97843074798584
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1449.99145507813,
+			"StartInMilliseconds": 221347.1875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-406.220977783203,
+					82.5863189697266,
+					-289.149322509766,
+					1
+				],
+				[
+					-406.241943359375,
+					75.703369140625,
+					-276.439544677734,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.204617470502853,
+					0.0163749363273382,
+					0.0276934187859297,
+					-0.97843074798584
+				],
+				[
+					-0.292739629745483,
+					0.0253719445317984,
+					-0.0177671480923891,
+					0.955812156200409
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1466.57666015625,
+			"StartInMilliseconds": 222797.171875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 8
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 227763.859375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-406.241943359375,
+					75.703369140625,
+					-276.439544677734,
+					1
+				],
+				[
+					-404.805786132813,
+					48.2510795593262,
+					-231.768203735352,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.292739629745483,
+					0.0253719445317984,
+					-0.0177671480923891,
+					0.955812156200409
+				],
+				[
+					0.385611057281494,
+					0.0496143400669098,
+					0.033387366682291,
+					-0.920851707458496
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 5283.07763671875,
+			"StartInMilliseconds": 224263.75
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 2
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 230580.234375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-404.805786132813,
+					48.2510795593262,
+					-231.768203735352,
+					1
+				],
+				[
+					-400.565124511719,
+					34.6208724975586,
+					-217.273849487305,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.385611057281494,
+					0.0496143400669098,
+					0.033387366682291,
+					-0.920851707458496
+				],
+				[
+					-0.268778264522552,
+					-0.126663044095039,
+					-0.0818238109350204,
+					0.951452493667603
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2049.86791992188,
+			"StartInMilliseconds": 229546.828125
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-400.565124511719,
+					34.6208724975586,
+					-217.273849487305,
+					1
+				],
+				[
+					-394.727905273438,
+					26.7886371612549,
+					-198.497100830078,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.268778264522552,
+					-0.126663044095039,
+					-0.0818238109350204,
+					0.951452493667603
+				],
+				[
+					0.156296148896217,
+					0.120298705995083,
+					0.0406237579882145,
+					-0.979641258716583
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2133.24462890625,
+			"StartInMilliseconds": 231596.703125
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-394.727905273438,
+					26.7886371612549,
+					-198.497100830078,
+					1
+				],
+				[
+					-385.970825195313,
+					21.2782821655273,
+					-179.647247314453,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.156296148896217,
+					0.120298705995083,
+					0.0406237579882145,
+					-0.979641258716583
+				],
+				[
+					-0.119428209960461,
+					-0.324412733316422,
+					-0.0425747856497765,
+					0.937516570091248
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2166.59326171875,
+			"StartInMilliseconds": 233729.953125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 9
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 237996.4375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-385.970825195313,
+					21.2782821655273,
+					-179.647247314453,
+					1
+				],
+				[
+					-364.258850097656,
+					15.8253002166748,
+					-150.858276367188,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.119428209960461,
+					-0.324412733316422,
+					-0.0425747856497765,
+					0.937516570091248
+				],
+				[
+					0.0393794849514961,
+					0.26185417175293,
+					0.063728429377079,
+					-0.962332367897034
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 3983.13061523438,
+			"StartInMilliseconds": 235896.546875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 8
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 241512.96875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-364.258850097656,
+					15.8253002166748,
+					-150.858276367188,
+					1
+				],
+				[
+					-352.499481201172,
+					14.3785152435303,
+					-128.427429199219,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.0393794849514961,
+					0.26185417175293,
+					0.063728429377079,
+					-0.962332367897034
+				],
+				[
+					-0.0583958141505718,
+					-0.270250260829926,
+					-0.0599026419222355,
+					0.95928680896759
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2549.88549804688,
+			"StartInMilliseconds": 239879.671875
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 2
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 243479.890625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-352.499481201172,
+					14.3785152435303,
+					-128.427429199219,
+					1
+				],
+				[
+					-343.0234375,
+					13.5907258987427,
+					-112.850975036621,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0583958141505718,
+					-0.270250260829926,
+					-0.0599026419222355,
+					0.95928680896759
+				],
+				[
+					0.0158695392310619,
+					0.223678931593895,
+					0.0709455981850624,
+					-0.972086608409882
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1833.43249511719,
+			"StartInMilliseconds": 242429.5625
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 10
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 245379.65625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-343.0234375,
+					13.5907258987427,
+					-112.850975036621,
+					1
+				],
+				[
+					-332.704772949219,
+					14.2089719772339,
+					-94.447998046875,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.0158695392310619,
+					0.223678931593895,
+					0.0709455981850624,
+					-0.972086608409882
+				],
+				[
+					-0.00142754521220922,
+					-0.25340348482132,
+					-0.0770124197006226,
+					0.964434683322906
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 2116.57690429688,
+			"StartInMilliseconds": 244263
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-332.704772949219,
+					14.2089719772339,
+					-94.447998046875,
+					1
+				],
+				[
+					-326.080749511719,
+					14.9528961181641,
+					-80.7242050170898,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.00142754521220922,
+					-0.25340348482132,
+					-0.0770124197006226,
+					0.964434683322906
+				],
+				[
+					-0.0169980507344007,
+					0.213563814759254,
+					0.0491911210119724,
+					-0.975688278675079
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1533.06774902344,
+			"StartInMilliseconds": 246379.578125
+		}
+	},
+	{
+		"Name": "KeyAnimation",
+		"SpecificParameters": {
+			"Key": 2
+		},
+		"TimeParameters": {
+			"StartInMilliseconds": 249096
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-326.080749511719,
+					14.9528961181641,
+					-80.7242050170898,
+					1
+				],
+				[
+					-318.111999511719,
+					15.9931182861328,
+					-63.2867050170898,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.0169980507344007,
+					0.213563814759254,
+					0.0491911210119724,
+					-0.975688278675079
+				],
+				[
+					0.0169980507344007,
+					-0.213563814759254,
+					-0.0491911210119724,
+					0.975688278675079
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1933.47534179688,
+			"StartInMilliseconds": 247912.640625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-318.111999511719,
+					15.9931182861328,
+					-63.2867050170898,
+					1
+				],
+				[
+					-314.639892578125,
+					17.279956817627,
+					-55.7785530090332,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.0169980507344007,
+					-0.213563814759254,
+					-0.0491911210119724,
+					0.975688278675079
+				],
+				[
+					-0.102870091795921,
+					0.220595240592957,
+					0.0671636164188385,
+					-0.967745006084442
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 849.924926757813,
+			"StartInMilliseconds": 249846.109375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-314.639892578125,
+					17.279956817627,
+					-55.7785530090332,
+					1
+				],
+				[
+					-310.841064453125,
+					19.6336421966553,
+					-47.6257095336914,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.102870091795921,
+					0.220595240592957,
+					0.0671636164188385,
+					-0.967745006084442
+				],
+				[
+					0.12944084405899,
+					-0.218665063381195,
+					-0.073203831911087,
+					0.964550793170929
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 933.388061523438,
+			"StartInMilliseconds": 250696.03125
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-310.841064453125,
+					19.6336421966553,
+					-47.6257095336914,
+					1
+				],
+				[
+					-305.942230224609,
+					24.0870380401611,
+					-36.7244110107422,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.12944084405899,
+					-0.218665063381195,
+					-0.073203831911087,
+					0.964550793170929
+				],
+				[
+					-0.191676259040833,
+					0.206206351518631,
+					0.0885819867253304,
+					-0.955609679222107
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1283.09399414063,
+			"StartInMilliseconds": 251629.421875
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-305.942230224609,
+					24.0870380401611,
+					-36.7244110107422,
+					1
+				],
+				[
+					-302.021575927734,
+					29.2532691955566,
+					-27.4855842590332,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.191676259040833,
+					0.206206351518631,
+					0.0885819867253304,
+					-0.955609679222107
+				],
+				[
+					0.246757656335831,
+					-0.205508381128311,
+					-0.099136047065258,
+					0.941991329193115
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1133.345703125,
+			"StartInMilliseconds": 252912.515625
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-302.021575927734,
+					29.2532691955566,
+					-27.4855842590332,
+					1
+				],
+				[
+					-298.480072021484,
+					34.735179901123,
+					-19.2615032196045,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.246757656335831,
+					-0.205508381128311,
+					-0.099136047065258,
+					0.941991329193115
+				],
+				[
+					-0.268630832433701,
+					0.210277110338211,
+					0.101851664483547,
+					-0.934637010097504
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1066.47668457031,
+			"StartInMilliseconds": 254045.859375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-298.480072021484,
+					34.735179901123,
+					-19.2615032196045,
+					1
+				],
+				[
+					-295.216827392578,
+					41.1818771362305,
+					-12.363431930542,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.268630832433701,
+					0.210277110338211,
+					0.101851664483547,
+					-0.934637010097504
+				],
+				[
+					0.395214647054672,
+					-0.225180879235268,
+					-0.121481351554394,
+					0.882411539554596
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1016.65240478516,
+			"StartInMilliseconds": 255112.34375
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-295.216827392578,
+					41.1818771362305,
+					-12.363431930542,
+					1
+				],
+				[
+					-292.313110351563,
+					49.1476249694824,
+					-7.19439220428467,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					0.395214647054672,
+					-0.225180879235268,
+					-0.121481351554394,
+					0.882411539554596
+				],
+				[
+					-0.478291422128677,
+					0.2398701608181,
+					0.129671484231949,
+					-0.834988296031952
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 1000.71118164063,
+			"StartInMilliseconds": 256129
+		}
+	},
+	{
+		"Name": "CameraAnimation",
+		"SpecificParameters": {
+			"Position": [
+				[
+					-292.313110351563,
+					49.1476249694824,
+					-7.19439220428467,
+					1
+				],
+				[
+					-289.896423339844,
+					57.1533241271973,
+					-3.74097728729248,
+					1
+				]
+			],
+			"RotationQuaternion": [
+				[
+					-0.478291422128677,
+					0.2398701608181,
+					0.129671484231949,
+					-0.834988296031952
+				],
+				[
+					0.524526596069336,
+					-0.245545104146004,
+					-0.135216280817986,
+					0.804131925106049
+				]
+			]
+		},
+		"TimeParameters": {
+			"DurationInMilliseconds": 915.910766601563,
+			"StartInMilliseconds": 257129.71875
+		}
+	}
+]

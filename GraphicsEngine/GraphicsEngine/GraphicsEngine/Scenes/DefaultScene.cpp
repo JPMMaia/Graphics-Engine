@@ -161,10 +161,6 @@ void DefaultScene::AddTreeInstances(Graphics* graphics, const std::vector<SceneB
 
 	AddNormalInstances(graphics, "Tree", { "Trunk", "Leaves" }, instancesData, transformationMatrix);
 }
-void DefaultScene::AddGrassInstances(Graphics* graphics, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData)
-{
-	AddBillboardInstances(graphics, "Grass01Billboard", { "Grass01Billboard" }, instancesData, 0.5f);
-}
 void DefaultScene::RemoveLastInstance(Graphics* graphics, const std::string& itemName, const std::initializer_list<std::string>& renderItemNames)
 {
 	for(const auto& renderItemName : renderItemNames)
@@ -208,6 +204,8 @@ void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase,
 	};
 
 	terrainDescription.HeightMapFilename = L"Textures/TerrainHeightMap.r16";
+	terrainDescription.NormalMapFilename = L"Textures/TerrainNormalMap.png";
+	terrainDescription.TangentMapFilename = L"Textures/TerrainTangentMap.png";
 	terrainDescription.HeightMapWidth = 1024;
 	terrainDescription.HeightMapHeight = 1024;
 	terrainDescription.HeightMapFactor = 256.0f;
@@ -220,9 +218,19 @@ void DefaultScene::InitializeGeometry(const D3DBase& d3dBase)
 
 	// Grass:
 	{
-		auto geometry = std::make_unique<BillboardMeshGeometry>();
-		geometry->SetName("Grass01Billboard");
-		AddBillboardGeometry(std::move(geometry));
+		std::array<std::string, 4> grassNames = {
+			"BillboardGrass0001",
+			"BillboardGrass0002",
+			"BillboardBlueFlowers",
+			"BillboardRedFlowers"
+		};
+
+		for (const auto& grassName : grassNames)
+		{
+			auto geometry = std::make_unique<BillboardMeshGeometry>();
+			geometry->SetName(grassName);
+			AddBillboardGeometry(std::move(geometry));
+		}
 	}
 
 	// Rectangle for debug:
@@ -256,9 +264,10 @@ void DefaultScene::InitializeTextures(const D3DBase& d3dBase, TextureManager& te
 {
 	auto device = d3dBase.GetDevice();
 
-	textureManager.Create(device, "BricksTexture", L"Textures/test_diffuse_map.dds");
-	textureManager.Create(device, "GrassBillboardDiffuseMap", L"Textures/grass01d.dds");
-	textureManager.Create(device, "Test", L"Textures/test_diffuse_map.dds");
+	textureManager.Create(device, "BillboardGrass0001", L"Textures/BillboardGrass0001.dds");
+	textureManager.Create(device, "BillboardGrass0002", L"Textures/BillboardGrass0002.dds");
+	textureManager.Create(device, "BillboardBlueFlowers", L"Textures/BillboardBlueFlowers.dds");
+	textureManager.Create(device, "BillboardRedFlowers", L"Textures/BillboardRedFlowers.dds");
 
 	textureManager.Create(device, "GrassDiffuseMap", L"Textures/ground14d.jpg");
 	textureManager.Create(device, "GrassNormalMap", L"Textures/ground14n.jpg");
@@ -266,28 +275,6 @@ void DefaultScene::InitializeTextures(const D3DBase& d3dBase, TextureManager& te
 }
 void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 {
-	{
-		auto bricks = std::make_unique<Material>();
-		bricks->Name = "Bricks";
-		bricks->DiffuseMap = &textureManager["BricksTexture"];
-		bricks->DiffuseAlbedo = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-		bricks->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
-		bricks->Roughness = 0.25f;
-		bricks->MaterialTransform = MathHelper::Identity4x4();
-		AddMaterial(std::move(bricks));
-	}
-
-	{
-		auto test = std::make_unique<Material>();
-		test->Name = "Test";
-		test->DiffuseMap = &textureManager["Test"];
-		test->DiffuseAlbedo = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-		test->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
-		test->Roughness = 0.25f;
-		test->MaterialTransform = MathHelper::Identity4x4();
-		AddMaterial(std::move(test));
-	}
-
 	{
 		auto material = std::make_unique<Material>();
 		material->Name = "NullTexture";
@@ -301,19 +288,38 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 
 	{
 		auto material = std::make_unique<Material>();
-		material->Name = "Grass01Billboard";
-		material->DiffuseMap = &textureManager["GrassBillboardDiffuseMap"];
+		material->Name = "BillboardGrass0001";
+		material->DiffuseMap = &textureManager["BillboardGrass0001"];
 		material->DiffuseAlbedo = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 		material->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 		material->Roughness = 0.4f;
 		material->MaterialTransform = MathHelper::Identity4x4();
 		AddMaterial(std::move(material));
 	}
-
 	{
 		auto material = std::make_unique<Material>();
-		material->Name = "Crate01";
-		material->DiffuseMap = &textureManager["GrassBillboardDiffuseMap"];
+		material->Name = "BillboardGrass0002";
+		material->DiffuseMap = &textureManager["BillboardGrass0002"];
+		material->DiffuseAlbedo = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+		material->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+		material->Roughness = 0.4f;
+		material->MaterialTransform = MathHelper::Identity4x4();
+		AddMaterial(std::move(material));
+	}
+	{
+		auto material = std::make_unique<Material>();
+		material->Name = "BillboardBlueFlowers";
+		material->DiffuseMap = &textureManager["BillboardBlueFlowers"];
+		material->DiffuseAlbedo = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+		material->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+		material->Roughness = 0.4f;
+		material->MaterialTransform = MathHelper::Identity4x4();
+		AddMaterial(std::move(material));
+	}
+	{
+		auto material = std::make_unique<Material>();
+		material->Name = "BillboardRedFlowers";
+		material->DiffuseMap = &textureManager["BillboardRedFlowers"];
 		material->DiffuseAlbedo = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 		material->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 		material->Roughness = 0.4f;
@@ -342,33 +348,29 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 
 	// Grass:
 	{
-		/*XMFLOAT2 size = { 1.0f, 1.0f };
-		std::vector<VertexTypes::BillboardVertexType> instances;
+		std::array<std::string, 4> grassNames = {
+			"BillboardGrass0001",
+			"BillboardGrass0002",
+			"BillboardBlueFlowers",
+			"BillboardRedFlowers"
+		};
+
+		for(const auto& grassName : grassNames)
 		{
-			auto randomPositions = m_terrain.GenerateRandomPositions(2000);
-			instances.reserve(randomPositions.size());
+			auto renderItem = std::make_unique<BillboardRenderItem>();
+			renderItem->SetName(grassName);
+			renderItem->SetMesh(m_billboardGeometries.at(grassName).get());
+			renderItem->SetMaterial(m_materials[grassName].get());
+			graphics->AddBillboardRenderItem(std::move(renderItem), { RenderLayer::Grass });
 
-			for (const auto& position : randomPositions)
-			{
-				ShaderBufferTypes::InstanceData instanceData;
-
-				instances.push_back({ { position.x, position.y + 1.5f, position.z }, size });
-			}
-		}*/
-
-		auto renderItem = std::make_unique<BillboardRenderItem>();
-		renderItem->SetName("Grass01Billboard");
-		renderItem->SetMesh(m_billboardGeometries.at("Grass01Billboard").get());
-		renderItem->SetMaterial(m_materials["Grass01Billboard"].get());
-		graphics->AddBillboardRenderItem(std::move(renderItem), { RenderLayer::Grass });
-
-		// Add instances:
-		const auto& instancesData = m_sceneBuilder.GetRenderItemInstances("Grass01Billboard");
-		AddGrassInstances(graphics, instancesData);
+			// Add instances:
+			const auto& instancesData = m_sceneBuilder.GetRenderItemInstances(grassName);
+			AddBillboardInstances(graphics, grassName, { grassName }, instancesData, 0.5f);
+		}
 	}
 
 	// Simple cube:
-	{
+	/*{
 		AssimpImporter importer;
 		AssimpImporter::ImportInfo importInfo;
 		std::wstring filename(L"Models/Cube.fbx");
@@ -402,7 +404,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 		}
 
 		graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::NormalSpecularMapping });
-	}
+	}*/
 
 	// Skydome:
 	{

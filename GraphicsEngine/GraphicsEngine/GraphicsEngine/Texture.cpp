@@ -4,6 +4,7 @@
 #include <cwctype>
 #include <DirectXTex/DDSTextureLoader/DDSTextureLoader.h>
 #include <DirectXTex/DirectXTex/DirectXTex.h>
+#include <wincodec.h>
 
 using namespace Common;
 using namespace DirectX;

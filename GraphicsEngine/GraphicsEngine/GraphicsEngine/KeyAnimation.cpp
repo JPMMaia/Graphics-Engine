@@ -43,7 +43,7 @@ nlohmann::json KeyAnimation::ToJson() const
 		},
 		{ "SpecificParameters",
 		{
-			{ "Key", { m_key } }
+			{ "Key", m_key }
 		}
 		}
 	};
@@ -61,11 +61,7 @@ KeyAnimation KeyAnimation::FromJson(const nlohmann::json& objectJson, DXInputHan
 
 	{
 		auto specificParametersJson = objectJson.at("SpecificParameters");
-
-		{
-			auto keyJsonArray = specificParametersJson.at("Key");
-			object.SetKey(keyJsonArray.get<uint8_t>());
-		}
+		object.SetKey(specificParametersJson.at("Key").get<uint8_t>());
 	}
 
 	return object;

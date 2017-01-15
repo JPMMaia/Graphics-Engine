@@ -27,22 +27,25 @@ AnimationManager::~AnimationManager()
 
 void AnimationManager::FixedUpdate(const Common::Timer& timer)
 {
-	for (auto& pAnimation : m_animations)
+	for (auto& pAnimation : m_animationsToRun)
 	{
 		if (pAnimation->HasBegun(timer))
 			pAnimation->FixedUpdate(timer);
 	}
 
-	auto eraser = [&timer](const std::unique_ptr<BaseAnimation>& pAnimation)
+	auto eraser = [&timer](BaseAnimation* pAnimation)
 	{
 		return pAnimation->HasEnded(timer);
 	};
-	m_animations.erase(std::remove_if(m_animations.begin(), m_animations.end(), eraser), m_animations.end());
+	m_animationsToRun.erase(std::remove_if(m_animationsToRun.begin(), m_animationsToRun.end(), eraser), m_animationsToRun.end());
 }
 
-void AnimationManager::AddAnimation(std::unique_ptr<BaseAnimation>&& pAnimation)
+void AnimationManager::AddAnimation(std::unique_ptr<BaseAnimation>&& pAnimation, bool runNow)
 {
-	m_animations.push_back(std::move(pAnimation));
+	if(runNow)
+		m_animationsToRun.push_back(pAnimation.get());
+
+	m_allAnimations.push_back(std::move(pAnimation));
 }
 void AnimationManager::AddAnimation(std::unique_ptr<CameraAnimation>&& pAnimation)
 {
@@ -54,7 +57,7 @@ void AnimationManager::AddAnimation(std::unique_ptr<CameraAnimation>&& pAnimatio
 		m_lastCameraRotationQuaternion = pAnimation->GetFinalRotationQuaternion();
 	}
 
-	m_animations.push_back(std::move(pAnimation));
+	AddAnimation(std::unique_ptr<BaseAnimation>(std::move(pAnimation)), true);
 }
 
 DirectX::XMVECTOR AnimationManager::GetLastCameraPosition() const
@@ -76,7 +79,7 @@ void AnimationManager::SaveToFile() const
 
 	auto fileJson(nlohmann::json::array({}));
 
-	for (const auto& animation : m_animations)
+	for (const auto& animation : m_allAnimations)
 	{
 		fileJson.push_back(animation->ToJson());
 	}
@@ -105,9 +108,9 @@ void AnimationManager::LoadFromFile()
 		if (name == "CameraAnimation")
 			AddAnimation(std::make_unique<CameraAnimation>(CameraAnimation::FromJson(animationJson, camera)));
 		else if (name == "FogAnimation")
-			AddAnimation(std::make_unique<FogAnimation>(FogAnimation::FromJson(animationJson, m_graphics)));
+			AddAnimation(std::make_unique<FogAnimation>(FogAnimation::FromJson(animationJson, m_graphics)), true);
 		else if (name == "KeyAnimation")
-			AddAnimation(std::make_unique<KeyAnimation>(KeyAnimation::FromJson(animationJson, m_inputHandler)));
+			AddAnimation(std::make_unique<KeyAnimation>(KeyAnimation::FromJson(animationJson, m_inputHandler)), true);
 		else
 			throw NotImplementedException();
 	}

@@ -42,6 +42,9 @@ void BillboardMeshGeometry::AddInstances(ID3D11Device* device, const std::vector
 }
 void BillboardMeshGeometry::RemoveLastInstance()
 {
+	if (GetInstanceCount() == 0)
+		return;
+
 	m_vertices.pop_back();
 	m_indices.pop_back();
 }

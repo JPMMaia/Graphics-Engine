@@ -34,8 +34,8 @@ namespace GraphicsEngine
 		static constexpr auto s_vertexBufferStride = sizeof(VertexType);
 		static constexpr auto s_indexBufferStride = sizeof(IndexType);
 
-		InstanceBuffer m_vertexBuffer;
-		InstanceBuffer m_indexBuffer;
+		Buffer<D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE> m_vertexBuffer;
+		Buffer<D3D11_BIND_INDEX_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE> m_indexBuffer;
 		std::vector<VertexType> m_vertices;
 		std::vector<IndexType> m_indices;
 		bool m_dirty = true;

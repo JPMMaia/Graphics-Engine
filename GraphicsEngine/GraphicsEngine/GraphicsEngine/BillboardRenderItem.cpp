@@ -32,7 +32,8 @@ void BillboardRenderItem::AddInstances(ID3D11Device* device, const std::vector<B
 {
 	m_mesh->AddInstances(device, instances);
 }
-void BillboardRenderItem::RemoveLastInstance() const
+
+void BillboardRenderItem::RemoveLastInstance()
 {
 	m_mesh->RemoveLastInstance();
 }

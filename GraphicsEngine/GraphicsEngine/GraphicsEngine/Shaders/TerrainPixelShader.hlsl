@@ -116,6 +116,11 @@ float4 ComputeSnowColor(float3 positionW, float2 tiledTextureCoordinates, float3
 
 float4 main(DomainOutput input) : SV_TARGET
 {
+
+#if defined(DEBUG_PATH_ALPHA)
+    return float4(PathMaps[3].Sample(SamplerAnisotropicWrap, input.TextureCoordinates).rrr, 1.0f);
+#endif
+
     // Sample normal and tangent:
     float3 normalW = NormalMap.Sample(SamplerAnisotropicWrap, input.TextureCoordinates).rgb;
     float3 tangentW = TangentMap.Sample(SamplerAnisotropicWrap, input.TextureCoordinates).rgb;
@@ -123,6 +128,12 @@ float4 main(DomainOutput input) : SV_TARGET
     // Normalize sample vectors:
     normalW = normalize(normalW);
     tangentW = normalize(tangentW);
+
+#if defined(DEBUG_NORMAL_VECTORS)
+    return float4((normalW + 1.0f) / 2.0f, 1.0f);
+#elif defined(DEBUG_TANGENT_VECTORS)
+    return float4((tangentW + 1.0f) / 2.0f, 1.0f);
+#endif
 
     // Calculate direction from point to camera:
     float3 toEyeDirection = EyePositionW - input.PositionW;
@@ -132,8 +143,16 @@ float4 main(DomainOutput input) : SV_TARGET
     // Calculate the shadow factor:
     float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerShadows, input.ShadowPositionH);
     
+#if defined(DEBUG_NORMAL_MAPPING)
+    float3 rockNormalSample = RockMaps[1].Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
+    float3 rockBumpedNormalW = NormalSampleToBumpedNormalW(rockNormalSample, normalW, tangentW);
+    float4 rockColor = float4((rockBumpedNormalW + 1.0f) / 2.0f, 1.0f);
+#elif defined(DEBUG_SPECULAR_MAP)
+    float4 rockColor = float4(RockMaps[2].Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rrr, 1.0f);
+#else
     // Calculate the color for rock:
     float4 rockColor = ComputeRockColor(input.PositionW, input.TiledTextureCoordinates, normalW, tangentW, toEyeDirection, shadowFactor);
+#endif
 
     // Interpolate materials depending on the slope and height:
     float4 color;
@@ -147,17 +166,45 @@ float4 main(DomainOutput input) : SV_TARGET
         const float low = 20.0f;
         if (input.PositionW.y < low)
         {
+#if defined(DEBUG_NORMAL_MAPPING)
+            float3 grassNormalSample = GrassMaps[1].Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
+            float3 grassBumpedNormalW = NormalSampleToBumpedNormalW(grassNormalSample, normalW, tangentW);
+            blendColor = float4((grassBumpedNormalW + 1.0f) / 2.0f, 1.0f);
+#elif defined(DEBUG_SPECULAR_MAP)
+            blendColor = float4(GrassMaps[2].Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rrr, 1.0f);
+#else
             blendColor = ComputeGrassColor(input.PositionW, input.TiledTextureCoordinates, normalW, tangentW, toEyeDirection, shadowFactor);
+#endif
         }
         else if (input.PositionW.y < up)
         {
+#if defined(DEBUG_NORMAL_MAPPING)
+            float3 grassNormalSample = GrassMaps[1].Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
+            float3 grassBumpedNormalW = NormalSampleToBumpedNormalW(grassNormalSample, normalW, tangentW);
+            float4 grassColor = float4((grassBumpedNormalW + 1.0f) / 2.0f, 1.0f);
+            float3 snowNormalSample = SnowMaps[0].Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
+            float3 snowBumpedNormalW = NormalSampleToBumpedNormalW(snowNormalSample, normalW, tangentW);
+            float4 snowColor = float4((snowBumpedNormalW + 1.0f) / 2.0f, 1.0f);
+#elif defined(DEBUG_SPECULAR_MAP)
+            float4 grassColor = float4(GrassMaps[2].Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rrr, 1.0f);
+            float4 snowColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+#else
             float4 grassColor = ComputeGrassColor(input.PositionW, input.TiledTextureCoordinates, normalW, tangentW, toEyeDirection, shadowFactor);
             float4 snowColor = ComputeSnowColor(input.PositionW, input.TiledTextureCoordinates, normalW, tangentW, toEyeDirection, shadowFactor);
+#endif
             blendColor = lerp(snowColor, grassColor, (up - input.PositionW.y) / (up - low));
         }
         else
         {
+#if defined(DEBUG_NORMAL_MAPPING)
+            float3 snowNormalSample = SnowMaps[0].Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
+            float3 snowBumpedNormalW = NormalSampleToBumpedNormalW(snowNormalSample, normalW, tangentW);
+            blendColor = float4((snowBumpedNormalW + 1.0f) / 2.0f, 1.0f);
+#elif defined(DEBUG_SPECULAR_MAP)
+            blendColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+#else
             blendColor = ComputeSnowColor(input.PositionW, input.TiledTextureCoordinates, normalW, tangentW, toEyeDirection, shadowFactor);
+#endif
         }
 
         // Interpolate color with rock, based on the slope:
@@ -170,9 +217,17 @@ float4 main(DomainOutput input) : SV_TARGET
     }
 
     float pathAlpha = PathMaps[3].Sample(SamplerAnisotropicWrap, input.TextureCoordinates).r;
-    float4 pathColor = ComputePathColor(input.PositionW, input.TiledTextureCoordinates, normalW, tangentW, toEyeDirection, shadowFactor);
-    color = lerp(color, pathColor, pathAlpha);
 
+#if defined(DEBUG_NORMAL_MAPPING)
+    float3 pathNormalSample = PathMaps[1].Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
+    float3 pathBumpedNormalW = NormalSampleToBumpedNormalW(pathNormalSample, normalW, tangentW);
+    float4 pathColor = float4((pathBumpedNormalW + 1.0f) / 2.0f, 1.0f);
+#elif defined(DEBUG_SPECULAR_MAP)
+    float4 pathColor = float4(PathMaps[2].Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rrr, 1.0f);
+#else
+    float4 pathColor = ComputePathColor(input.PositionW, input.TiledTextureCoordinates, normalW, tangentW, toEyeDirection, shadowFactor);
+#endif
+    color = lerp(color, pathColor, pathAlpha);
 
 #if defined(FOG)
     color = AddFog(color, distanceToEye, FogStart, FogRange, FogColor);

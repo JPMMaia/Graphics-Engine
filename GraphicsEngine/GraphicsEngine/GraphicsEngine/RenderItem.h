@@ -16,6 +16,8 @@ namespace GraphicsEngine
 		virtual void Render(ID3D11DeviceContext* deviceContext) const = 0;
 		virtual void RenderNonInstanced(ID3D11DeviceContext* deviceContext) const = 0;
 
+		virtual void RemoveLastInstance() = 0;
+
 		std::string GetName() const;
 		void SetName(const std::string& name);
 		Material* GetMaterial() const;

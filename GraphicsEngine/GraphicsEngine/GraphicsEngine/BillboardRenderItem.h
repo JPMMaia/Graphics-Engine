@@ -15,7 +15,7 @@ namespace GraphicsEngine
 
 		void AddInstance(ID3D11Device* device, const BillboardMeshGeometry::VertexType& instance) const;
 		void AddInstances(ID3D11Device* device, const std::vector<BillboardMeshGeometry::VertexType>& instances) const;
-		void RemoveLastInstance() const;
+		void RemoveLastInstance() override;
 
 		BillboardMeshGeometry* GetMesh() const;
 		void SetMesh(BillboardMeshGeometry* mesh);

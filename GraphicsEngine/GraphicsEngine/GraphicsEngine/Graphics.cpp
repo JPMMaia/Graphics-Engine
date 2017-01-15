@@ -23,16 +23,20 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_anisotropicWrapSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicWrap),
 	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp),
 	m_shadowsSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::Shadows),
-	m_fog(true),
+	m_fog(false),
 	m_shadowMap(m_d3dBase.GetDevice(), 2048, 2048),
 	m_renderTexture(m_d3dBase.GetDevice(), clientWidth, clientHeight, DXGI_FORMAT_R8G8B8A8_UNORM),
-	m_sceneBounds(XMFLOAT3(0.0f, 256.0f, 0.0f), 512.0f), 
-	m_visibleInstances(0)
+	m_sceneBounds(XMFLOAT3(0.0f, 256.0f, 0.0f), 512.0f),
+	m_visibleInstances(0),
+	m_debugWindowMode(DebugWindowMode::Hidden),
+	m_enableShadows(true),
+	m_drawTerrainOnly(true)
 {
 	m_camera.SetPosition(220.0f - 512.0f, 27.0f, -(0.0f - 512.0f));
 	m_camera.Update();
 	m_camera.RotateWorldY(XM_PI);
 
+	SetupDebugMode();
 	InitializeMainPassData();
 	BindSamplers();
 	//SetupTerrainMeshData();
@@ -54,7 +58,7 @@ void Graphics::FixedUpdate(const Common::Timer& timer)
 	const auto& castShadowsLights = m_lightManager.GetCastShadowsLights();
 	auto castShadowsLight = castShadowsLights[0];
 
-	auto deltaYaw = deltaSeconds * XM_PI / 24.0f;
+	auto deltaYaw = deltaSeconds * XM_PI / 48.0f;
 	castShadowsLight->RotateRollPitchYaw(0.0f, deltaYaw, 0.0f);
 
 	m_scene.Update(*this, timer);
@@ -68,13 +72,13 @@ void Graphics::RenderUpdate(const Common::Timer& timer)
 	UpdateMaterialData();
 	UpdateBillboards();
 
-	Common::PerformanceTimer performanceTimer;
-	performanceTimer.Start();
+	//Common::PerformanceTimer performanceTimer;
+	//performanceTimer.Start();
 	UpdateInstancesDataFrustumCulling();
-//	UpdateInstancesDataOctreeCulling();
-	performanceTimer.End();
-	auto elapsedTime = performanceTimer.ElapsedTime<float, std::milli>().count();
-	auto string = L"ElapsedTime: " + std::to_wstring(elapsedTime) + L"\n";
+	//	UpdateInstancesDataOctreeCulling();
+	//performanceTimer.End();
+	//auto elapsedTime = performanceTimer.ElapsedTime<float, std::milli>().count();
+	//auto string = L"ElapsedTime: " + std::to_wstring(elapsedTime) + L"\n";
 	//OutputDebugStringW(string.c_str());
 }
 
@@ -84,124 +88,11 @@ void Graphics::Render(const Common::Timer& timer) const
 
 	m_d3dBase.BeginScene();
 
-	// Create shadow map:
-	/*{
-		// Set shadow pass data:
-		deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
-		deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
-		deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
-		deviceContext->GSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
-		deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
-
-		// Bind a depth stencil view to record the depth of the scene from the light point of view:
-		m_shadowMap.SetDepthStencilView(deviceContext);
-
-		// Draw opaque:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueShadow");
-		DrawRenderItems(RenderLayer::Opaque);
-		DrawRenderItems(RenderLayer::NormalSpecularMapping);
-
-		// Draw terrain:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainShadow");
-		DrawTerrain();
-
-		// Draw transparent:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "TransparentShadow");
-		DrawRenderItems(RenderLayer::Transparent);
-
-		// Draw alpha-clipped:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedShadow");
-		DrawRenderItems(RenderLayer::AlphaClipped);
-
-		// Set default render target and depth stencil:
-		m_d3dBase.SetDefaultRenderTargets();
-	}*/
-
-	// Set main pass data:
-	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
-	deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
-	deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
-	deviceContext->GSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
-	deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
-
-	// Bind shadow map for use in shaders:
-	auto shadowMapSRV = m_shadowMap.GetShaderResourceView();
-	deviceContext->PSSetShaderResources(3, 1, &shadowMapSRV);
-
-	if (!m_fog)
-	{
-		// Draw Skydome:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
-		DrawNonInstancedRenderItems(RenderLayer::SkyDome);
-
-		/*// Draw opaque:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
-		DrawRenderItems(RenderLayer::Opaque);
-
-		// Draw normal mapped:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "NormalSpecularMapping");
-		DrawRenderItems(RenderLayer::NormalSpecularMapping);*/
-
-		// Draw terrain:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
-		DrawTerrain();
-
-		// Draw transparent:
-		/*m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
-		DrawRenderItems(RenderLayer::Transparent);
-
-		// Draw alpha-clipped:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClipped");
-		DrawRenderItems(RenderLayer::AlphaClipped);
-
-		// Draw billboards:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "Billboard");
-		DrawNonInstancedRenderItems(RenderLayer::Grass);*/
-	}
+	if (m_debugWindowMode == DebugWindowMode::Hidden || m_debugWindowMode == DebugWindowMode::TerrainHeightMap || m_debugWindowMode == DebugWindowMode::ShadowMap)
+		DrawInNormalMode();
 	else
-	{
-		// Draw Skydome:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDomeFog");
-		DrawNonInstancedRenderItems(RenderLayer::SkyDome);
+		DrawInDebugMode();
 
-		// Draw opaque:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueFog");
-		DrawRenderItems(RenderLayer::Opaque);
-
-		// Draw normal mapped:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "NormalSpecularMappingFog");
-		DrawRenderItems(RenderLayer::NormalSpecularMapping);
-
-		// Draw terrain:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainFog");
-		DrawTerrain();
-
-		// Draw transparent:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "TransparentFog");
-		DrawRenderItems(RenderLayer::Transparent);
-
-		// Draw alpha-clipped:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedFog");
-		DrawRenderItems(RenderLayer::AlphaClipped);
-
-		// Draw billboards:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "BillboardFog");
-		DrawNonInstancedRenderItems(RenderLayer::Grass);
-	}
-
-	// Draw debug window:
-	/*m_pipelineStateManager.SetPipelineState(deviceContext, "DebugWindow");
-	//deviceContext->PSSetShaderResources(0, 1, &shadowMapSRV);
-	const auto& renderItem = m_renderItemLayers[static_cast<UINT>(RenderLayer::Terrain)][0];
-	deviceContext->PSSetShaderResources(0, 1, renderItem->Material->HeightMap->GetAddressOf());
-	//auto renderTextureSRV = m_renderTexture.GetShaderResourceView();
-	//deviceContext->PSSetShaderResources(0, 1, &renderTextureSRV);
-	//DrawNonInstancedRenderItems(RenderLayer::Debug);*/
-
-	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
-	deviceContext->PSSetShaderResources(3, 1, nullSRV);
-	deviceContext->PSSetShaderResources(0, 1, nullSRV);
-	m_shadowMap.ClearDepthStencilView(deviceContext);
 	m_d3dBase.EndScene();
 }
 
@@ -233,7 +124,7 @@ void Graphics::AddNormalRenderItemInstance(NormalRenderItem* renderItem, const S
 {
 	renderItem->AddInstance(instanceData);
 
-	if(m_initialized)
+	if (m_initialized)
 		m_currentFrameResource->RealocateInstanceBuffer(m_d3dBase.GetDevice(), renderItem);
 }
 void Graphics::AddBillboardRenderItem(std::unique_ptr<BillboardRenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers)
@@ -305,6 +196,19 @@ void Graphics::SetFogColor(const DirectX::XMFLOAT4& color)
 	if (color.w < 1.0f)
 		m_camera.SetFarZ(1024.0f);
 }
+Graphics::DebugWindowMode Graphics::GetDebugWindowMode() const
+{
+	return m_debugWindowMode;
+}
+void Graphics::SetDebugWindowMode(DebugWindowMode debugWindowMode)
+{
+	m_debugWindowMode = debugWindowMode;
+}
+
+void Graphics::ToggleDebugMode()
+{
+	m_debugWindowMode = static_cast<DebugWindowMode>((static_cast<size_t>(m_debugWindowMode) + 1) % static_cast<size_t>(DebugWindowMode::Count));
+}
 
 void Graphics::BindSamplers() const
 {
@@ -338,7 +242,7 @@ void Graphics::SetupTerrainMeshData()
 	uint32_t vertexCount = (terrainDescription.CellXCount * terrainDescription.CellZCount) * 2 * 3 * 64;
 	uint32_t stride = sizeof(VertexTypes::PositionVertexType);
 	StreamOutputBuffer streamOutputBuffer(m_d3dBase.GetDevice(), vertexCount * stride, stride);
-	
+
 	auto deviceContext = m_d3dBase.GetDeviceContext();
 
 	UINT offsets = 0;
@@ -350,7 +254,7 @@ void Graphics::SetupTerrainMeshData()
 	deviceContext->GSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
 	m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainStreamOutput");
 	DrawTerrain();
-	
+
 	StagingBuffer stagingBuffer(m_d3dBase.GetDevice(), streamOutputBuffer.GetSize(), streamOutputBuffer.GetStride());
 	deviceContext->CopyResource(stagingBuffer.Get(), streamOutputBuffer.Get());
 
@@ -362,10 +266,20 @@ void Graphics::SetupTerrainMeshData()
 
 	std::vector<uint32_t> indices(vertexCount);
 	std::iota(indices.begin(), indices.end(), 0);
-	
+
 	terrain.SetMeshData(std::move(vertices), std::move(indices));
 }
-
+void Graphics::SetupDebugMode()
+{
+	m_debugPipelineStateNames.emplace(DebugWindowMode::TerrainNormalVectors, "TerrainDebugNormalVectors");
+	m_debugPipelineStateNames.emplace(DebugWindowMode::TerrainTangentVectors, "TerrainDebugTangentVectors");
+	m_debugPipelineStateNames.emplace(DebugWindowMode::TerrainPathAlpha, "TerrainDebugPathAlpha");
+	m_debugPipelineStateNames.emplace(DebugWindowMode::TerrainNormalMapping, "TerrainDebugNormalMapping");
+	m_debugPipelineStateNames.emplace(DebugWindowMode::TerrainSpecularMapping, "TerrainDebugSpecularMapping");
+	m_debugPipelineStateNames.emplace(DebugWindowMode::TerrainWireframe, "TerrainDebugWireframe");
+	m_debugPipelineStateNames.emplace(DebugWindowMode::TerrainHeightMap, "DebugWindowHeightMap");
+	m_debugPipelineStateNames.emplace(DebugWindowMode::ShadowMap, "DebugWindowSingleChannel");
+}
 void Graphics::UpdateCamera()
 {
 	m_camera.Update();
@@ -463,7 +377,7 @@ void Graphics::UpdateInstancesDataOctreeCulling()
 
 		// Update instance data:
 		auto visibleInstanceCount = 0;
-		for(auto instanceID : visibleInstances)
+		for (auto instanceID : visibleInstances)
 		{
 			auto& instanceDataView = instacesBufferView[visibleInstanceCount++];
 			const auto& instanceData = renderItem->GetInstance(instanceID);
@@ -481,7 +395,7 @@ void Graphics::UpdateInstancesDataOctreeCulling()
 void Graphics::UpdateBillboards()
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
-	for(auto& renderItem : m_billboardRenderItems)
+	for (auto& renderItem : m_billboardRenderItems)
 		renderItem->Update(deviceContext);
 }
 void Graphics::UpdateMaterialData() const
@@ -617,6 +531,154 @@ void Graphics::UpdateShadowPassData(const Common::Timer& timer) const
 	m_currentFrameResource->ShadowPassData.CopyData(m_d3dBase.GetDeviceContext(), &passData, sizeof(ShaderBufferTypes::PassData));
 }
 
+void Graphics::DrawInNormalMode() const
+{
+	auto deviceContext = m_d3dBase.GetDeviceContext();
+
+	// Create shadow map:
+	{
+		if (m_enableShadows)
+		{
+			// Set shadow pass data:
+			deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
+			deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
+			deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
+			deviceContext->GSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
+			deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->ShadowPassData.GetAddressOf());
+
+			// Bind a depth stencil view to record the depth of the scene from the light point of view:
+			m_shadowMap.SetDepthStencilView(deviceContext);
+
+			if(!m_drawTerrainOnly)
+			{
+				// Draw opaque:
+				m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueShadow");
+				DrawRenderItems(RenderLayer::Opaque);
+				DrawRenderItems(RenderLayer::NormalSpecularMapping);
+			}
+
+			// Draw terrain:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainShadow");
+			DrawTerrain();
+
+			if (!m_drawTerrainOnly)
+			{
+				// Draw transparent:
+				m_pipelineStateManager.SetPipelineState(deviceContext, "TransparentShadow");
+				DrawRenderItems(RenderLayer::Transparent);
+
+				// Draw alpha-clipped:
+				m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedShadow");
+				DrawRenderItems(RenderLayer::AlphaClipped);
+			}
+
+			// Set default render target and depth stencil:
+			m_d3dBase.SetDefaultRenderTargets();
+		}
+	}
+
+	// Set main pass data:
+	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	deviceContext->GSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+
+	// Bind shadow map for use in shaders:
+	auto shadowMapSRV = m_shadowMap.GetShaderResourceView();
+	deviceContext->PSSetShaderResources(3, 1, &shadowMapSRV);
+
+	if (!m_fog)
+	{
+		// Draw Skydome:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
+		DrawNonInstancedRenderItems(RenderLayer::SkyDome);
+
+		if (!m_drawTerrainOnly)
+		{
+			// Draw opaque:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "Opaque");
+			DrawRenderItems(RenderLayer::Opaque);
+
+			// Draw normal mapped:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "NormalSpecularMapping");
+			DrawRenderItems(RenderLayer::NormalSpecularMapping);
+		}
+
+		// Draw terrain:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
+		DrawTerrain();
+
+		if (!m_drawTerrainOnly)
+		{
+			// Draw transparent:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "Transparent");
+			DrawRenderItems(RenderLayer::Transparent);
+
+			// Draw alpha-clipped:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClipped");
+			DrawRenderItems(RenderLayer::AlphaClipped);
+
+			// Draw billboards:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "Billboard");
+			DrawNonInstancedRenderItems(RenderLayer::Grass);
+		}
+	}
+	else
+	{
+		// Draw Skydome:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDomeFog");
+		DrawNonInstancedRenderItems(RenderLayer::SkyDome);
+
+		if (!m_drawTerrainOnly)
+		{
+			// Draw opaque:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueFog");
+			DrawRenderItems(RenderLayer::Opaque);
+
+			// Draw normal mapped:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "NormalSpecularMappingFog");
+			DrawRenderItems(RenderLayer::NormalSpecularMapping);
+		}
+
+		// Draw terrain:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainFog");
+		DrawTerrain();
+
+		if (!m_drawTerrainOnly)
+		{
+			// Draw transparent:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "TransparentFog");
+			DrawRenderItems(RenderLayer::Transparent);
+
+			// Draw alpha-clipped:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedFog");
+			DrawRenderItems(RenderLayer::AlphaClipped);
+
+			// Draw billboards:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "BillboardFog");
+			DrawNonInstancedRenderItems(RenderLayer::Grass);
+		}
+	}
+
+	if (m_debugWindowMode == DebugWindowMode::ShadowMap || m_debugWindowMode == DebugWindowMode::TerrainHeightMap)
+	{
+		m_pipelineStateManager.SetPipelineState(deviceContext, m_debugPipelineStateNames.at(m_debugWindowMode));
+
+		if (m_debugWindowMode == DebugWindowMode::ShadowMap)
+			deviceContext->PSSetShaderResources(0, 1, &shadowMapSRV);
+		else if (m_debugWindowMode == DebugWindowMode::TerrainHeightMap)
+			deviceContext->PSSetShaderResources(0, 1, m_renderItemLayers[static_cast<UINT>(RenderLayer::Terrain)][0]->GetMaterial()->HeightMap->GetAddressOf());
+
+		DrawNonInstancedRenderItems(RenderLayer::Debug);
+	}
+
+	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+	deviceContext->PSSetShaderResources(3, 1, nullSRV);
+	deviceContext->PSSetShaderResources(0, 1, nullSRV);
+	m_shadowMap.ClearDepthStencilView(deviceContext);
+}
+
 void Graphics::DrawRenderItems(RenderLayer renderLayer) const
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
@@ -695,15 +757,23 @@ void Graphics::DrawTerrain() const
 		deviceContext->PSSetShaderResources(2, 1, pMaterial->TangentMap->GetAddressOf());
 
 		UINT startSlot = 4;
-		
-		for(auto tiledMapsArray : pMaterial->TiledMapsArrays)
+
+		for (auto tiledMapsArray : pMaterial->TiledMapsArrays)
 		{
 			auto numViews = static_cast<UINT>(tiledMapsArray.GetSize());
 			deviceContext->PSSetShaderResources(startSlot, numViews, tiledMapsArray.GetTextureArray());
 			startSlot += numViews;
 		}
-		
+
 		// Render:
 		renderItem->RenderNonInstanced(deviceContext);
 	}
+}
+
+void Graphics::DrawInDebugMode() const
+{
+	auto deviceContext = m_d3dBase.GetDeviceContext();
+
+	m_pipelineStateManager.SetPipelineState(deviceContext, m_debugPipelineStateNames.at(m_debugWindowMode));
+	DrawTerrain();
 }

@@ -151,6 +151,46 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 		std::array<UINT, 1> bufferStrides = { sizeof(VertexTypes::PositionVertexType) };
 		auto rasterizedStream = D3D11_SO_NO_RASTERIZED_STREAM;
 		m_geometryShaders["Terrain"] = GeometryShader(device, shadersFolderPath + L"TerrainGeometryShader.hlsl", defines.data(), "main", "gs_5_0", streamOutputLayout.data(), static_cast<UINT>(streamOutputLayout.size()), bufferStrides.data(), static_cast<UINT>(bufferStrides.size()), rasterizedStream);
+
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"DEBUG_PATH_ALPHA", "1",
+			nullptr, nullptr
+		};
+		m_pixelShaders["TerrainDebugPathAlpha"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"DEBUG_NORMAL_VECTORS", "1",
+			nullptr, nullptr
+		};
+		m_pixelShaders["TerrainDebugNormalVectors"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"DEBUG_TANGENT_VECTORS", "1",
+			nullptr, nullptr
+		};
+		m_pixelShaders["TerrainDebugTangentVectors"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"DEBUG_NORMAL_MAPPING", "1",
+			nullptr, nullptr
+		};
+		m_pixelShaders["TerrainDebugNormalMapping"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"DEBUG_SPECULAR_MAP", "1",
+			nullptr, nullptr
+		};
+		m_pixelShaders["TerrainDebugSpecularMapping"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 	}
 
 	// SkyDome shaders
@@ -187,14 +227,28 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 
 	// Debug Window shaders:
 	{
+		m_vertexShaders["DebugWindow"] = VertexShader(device, shadersFolderPath + L"DebugWindowVertexShader.hlsl", nullptr, "main", "vs_5_0", m_inputLayouts["Texture"]);
+
 		defines =
 		{
-			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"SINGLE_CHANNEL", "1",
 			nullptr, nullptr
 		};
+		m_pixelShaders["DebugWindowSingleChannel"] = PixelShader(device, shadersFolderPath + L"DebugWindowPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 
-		m_vertexShaders["DebugWindow"] = VertexShader(device, shadersFolderPath + L"DebugWindowVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Texture"]);
-		m_pixelShaders["DebugWindow"] = PixelShader(device, shadersFolderPath + L"DebugWindowPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+		defines =
+		{
+			"NORMALIZED_VECTORS", "1",
+			nullptr, nullptr
+		};
+		m_pixelShaders["DebugWindowNormalizedVectors"] = PixelShader(device, shadersFolderPath + L"DebugWindowPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		defines =
+		{
+			"HEIGHT_MAP", "1",
+			nullptr, nullptr
+		};
+		m_pixelShaders["DebugWindowHeightMap"] = PixelShader(device, shadersFolderPath + L"DebugWindowPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 	}
 }
 void PipelineStateManager::InitializeRasterizerStates(const D3DBase& d3dBase)
@@ -317,6 +371,26 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		terrainStreamOutputState.GeometryShader = &m_geometryShaders.at("Terrain");
 		terrainStreamOutputState.PixelShader = &PixelShader::s_null;
 		m_pipelineStateObjects.emplace("TerrainStreamOutput", terrainStreamOutputState);
+
+		auto debugTerrainState = terrainState;
+		debugTerrainState.PixelShader = &m_pixelShaders.at("TerrainDebugPathAlpha");
+		m_pipelineStateObjects.emplace("TerrainDebugPathAlpha", debugTerrainState);
+
+		debugTerrainState.PixelShader = &m_pixelShaders.at("TerrainDebugNormalVectors");
+		m_pipelineStateObjects.emplace("TerrainDebugNormalVectors", debugTerrainState);
+
+		debugTerrainState.PixelShader = &m_pixelShaders.at("TerrainDebugTangentVectors");
+		m_pipelineStateObjects.emplace("TerrainDebugTangentVectors", debugTerrainState);
+
+		debugTerrainState.PixelShader = &m_pixelShaders.at("TerrainDebugNormalMapping");
+		m_pipelineStateObjects.emplace("TerrainDebugNormalMapping", debugTerrainState);
+
+		debugTerrainState.PixelShader = &m_pixelShaders.at("TerrainDebugSpecularMapping");
+		m_pipelineStateObjects.emplace("TerrainDebugSpecularMapping", debugTerrainState);
+
+		debugTerrainState = terrainState;
+		debugTerrainState.RasterizerState = &m_rasterizerStates.at("Wireframe");
+		m_pipelineStateObjects.emplace("TerrainDebugWireframe", debugTerrainState);
 	}
 
 	// SkyDome:
@@ -354,10 +428,16 @@ void PipelineStateManager::InitializePipelineStateObjects()
 	{
 		PipelineState debugWindowState;
 		debugWindowState.VertexShader = &m_vertexShaders.at("DebugWindow");
-		debugWindowState.PixelShader = &m_pixelShaders.at("DebugWindow");
+		debugWindowState.PixelShader = &m_pixelShaders.at("DebugWindowSingleChannel");
 		debugWindowState.RasterizerState = &m_rasterizerStates.at("Default");
 		debugWindowState.BlendState = &m_blendStates.at("Default");
 		debugWindowState.DepthStencilState = &m_depthStencilStates.at("Default");
-		m_pipelineStateObjects.emplace("DebugWindow", debugWindowState);
+		m_pipelineStateObjects.emplace("DebugWindowSingleChannel", debugWindowState);
+
+		debugWindowState.PixelShader = &m_pixelShaders.at("DebugWindowNormalizedVectors");
+		m_pipelineStateObjects.emplace("DebugWindowNormalizedVectors", debugWindowState);
+
+		debugWindowState.PixelShader = &m_pixelShaders.at("DebugWindowHeightMap");
+		m_pipelineStateObjects.emplace("DebugWindowHeightMap", debugWindowState);
 	}
 }

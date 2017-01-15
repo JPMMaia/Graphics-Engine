@@ -124,7 +124,7 @@ void DefaultScene::AddNormalInstances(Graphics* graphics, std::string name, cons
 		}
 	}
 }
-void DefaultScene::AddBillboardInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData)
+void DefaultScene::AddBillboardInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData, float yOffset)
 {
 	std::vector<BillboardRenderItem*> renderItems;
 	renderItems.reserve(renderItemNames.size());
@@ -142,7 +142,7 @@ void DefaultScene::AddBillboardInstances(Graphics* graphics, std::string name, c
 		BillboardMeshGeometry::VertexType instanceDataBuffer;
 
 		const auto& position = instanceData.Position;
-		instanceDataBuffer.Center = XMFLOAT3(position.x, m_terrain.GetTerrainHeight(position.x, position.y), position.y);
+		instanceDataBuffer.Center = XMFLOAT3(position.x, m_terrain.GetTerrainHeight(position.x, position.y) + yOffset, position.y);
 		instanceDataBuffer.Extents = XMFLOAT2(instanceData.Scale.x, instanceData.Scale.y);
 
 		for (auto renderItem : renderItems)
@@ -163,14 +163,14 @@ void DefaultScene::AddTreeInstances(Graphics* graphics, const std::vector<SceneB
 }
 void DefaultScene::AddGrassInstances(Graphics* graphics, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData)
 {
-	AddBillboardInstances(graphics, "Grass01Billboard", { "Grass01Billboard" }, instancesData);
+	AddBillboardInstances(graphics, "Grass01Billboard", { "Grass01Billboard" }, instancesData, 0.5f);
 }
 void DefaultScene::RemoveLastInstance(Graphics* graphics, const std::string& itemName, const std::initializer_list<std::string>& renderItemNames)
 {
 	for(const auto& renderItemName : renderItemNames)
 	{
-		auto renderItem = *graphics->GetNormalRenderItem(renderItemName);
-		renderItem->RemoveLastInstance();
+		auto renderItem = graphics->GetRenderItem(renderItemName);
+		(*renderItem)->RemoveLastInstance();
 	}
 
 	m_sceneBuilder.RemoveLastRenderItemInstance(itemName);

@@ -196,7 +196,7 @@ void Application::OnKeyboardKeyDown(void* sender, const DXInputHandler::Keyboard
 			XMFLOAT3 spawnPosition;
 			XMStoreFloat3(&spawnPosition, pCamera->GetPosition() + pCamera->GetLocalForward() * 1.0f);
 
-			auto scale = 1.0f;
+			auto scale = 2.0f;
 			instanceData =
 			{
 				{ spawnPosition.x, spawnPosition.z },
@@ -227,7 +227,14 @@ void Application::OnKeyboardKeyDown(void* sender, const DXInputHandler::Keyboard
 				));
 		}
 	}
-
+	else if(eventArgs.Key == DIK_P)
+	{
+		m_graphics.ToggleDebugMode();
+	}
+	else
+	{
+		m_graphics.SetDebugWindowMode(static_cast<Graphics::DebugWindowMode>(eventArgs.Key - 2));
+	}
 }
 
 LRESULT Application::MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -259,6 +266,17 @@ Application::Application() :
 	m_input.SubscribeToOnKeyDownEvents(DIK_C, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_V, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_B, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_P, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_1, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_2, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_3, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_4, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_5, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_6, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_7, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_8, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_9, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+
 
 	if(m_animationBuildMode)
 	{

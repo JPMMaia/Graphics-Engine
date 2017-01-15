@@ -23,6 +23,21 @@ namespace GraphicsEngine
 	class Graphics
 	{
 	public:
+		enum class DebugWindowMode
+		{
+			Hidden,
+			ShadowMap,
+			TerrainHeightMap,
+			TerrainWireframe,
+			TerrainNormalVectors,
+			TerrainTangentVectors,
+			TerrainNormalMapping,
+			TerrainPathAlpha,
+			TerrainSpecularMapping,
+			Count
+		};
+
+	public:
 		explicit Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeight, bool fullscreen);
 
 		void OnResize(uint32_t clientWidth, uint32_t clientHeight);
@@ -46,10 +61,14 @@ namespace GraphicsEngine
 		void SetFogState(bool state);
 		void SetFogDistanceParameters(float start, float range);
 		void SetFogColor(const DirectX::XMFLOAT4& color);
+		DebugWindowMode GetDebugWindowMode() const;
+		void SetDebugWindowMode(DebugWindowMode debugWindowMode);
+		void ToggleDebugMode();
 
 	private:
 		void BindSamplers() const;
 		void SetupTerrainMeshData();
+		void SetupDebugMode();
 
 		void UpdateCamera();
 		void UpdateInstancesDataFrustumCulling();
@@ -61,6 +80,8 @@ namespace GraphicsEngine
 		void UpdateMainPassData(const Common::Timer& timer);
 		void UpdateShadowPassData(const Common::Timer& timer) const;
 
+		void DrawInNormalMode() const;
+		void DrawInDebugMode() const;
 		void DrawRenderItems(RenderLayer renderLayer) const;
 		void DrawNonInstancedRenderItems(RenderLayer renderLayer) const;
 		void DrawTerrain() const;
@@ -94,5 +115,9 @@ namespace GraphicsEngine
 		DirectX::BoundingSphere m_sceneBounds;
 		uint32_t m_visibleInstances;
 		ShaderBufferTypes::PassData m_mainPassData;
+		DebugWindowMode m_debugWindowMode;
+		bool m_enableShadows;
+		bool m_drawTerrainOnly;
+		std::unordered_map<DebugWindowMode, std::string> m_debugPipelineStateNames;
 	};
 }

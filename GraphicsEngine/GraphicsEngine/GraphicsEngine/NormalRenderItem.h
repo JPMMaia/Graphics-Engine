@@ -22,7 +22,7 @@ namespace GraphicsEngine
 		void AddInstance(const ShaderBufferTypes::InstanceData& instanceData);
 		void SetInstance(size_t instanceID, const ShaderBufferTypes::InstanceData& instanceData);
 		const ShaderBufferTypes::InstanceData& GetInstance(size_t instanceID);
-		void RemoveLastInstance();
+		void RemoveLastInstance() override;
 		void InscreaseInstancesCapacity(size_t aditionalCapacity);
 
 		void InsertVisibleInstance(size_t instanceID);

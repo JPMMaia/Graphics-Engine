@@ -258,6 +258,7 @@ void PipelineStateManager::InitializeRasterizerStates(const D3DBase& d3dBase)
 	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("Default"), std::forward_as_tuple(device, RasterizerStateDescConstants::Default));
 	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("Wireframe"), std::forward_as_tuple(device, RasterizerStateDescConstants::Wireframe));
 	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("NoCulling"), std::forward_as_tuple(device, RasterizerStateDescConstants::NoCulling));
+	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("CullFront"), std::forward_as_tuple(device, RasterizerStateDescConstants::CullFront));
 	m_rasterizerStates.emplace(std::piecewise_construct, std::forward_as_tuple("Shadows"), std::forward_as_tuple(device, RasterizerStateDescConstants::Shadows));
 }
 void PipelineStateManager::InitializeBlendStates(const D3DBase& d3dBase)

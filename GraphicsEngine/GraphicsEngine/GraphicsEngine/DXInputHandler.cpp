@@ -121,7 +121,7 @@ void DXInputHandler::ProcessInput()
 
 		if (!(m_previousKeyboardState[key] & 0x80) && (m_currentKeyboardState[key] & 0x80))
 		{
-			event.second.Raise(this, KeyboardEventArgs(key));
+			event.second.Raise(this, KeyboardEventArgs(key, true));
 		}	
 	}
 }

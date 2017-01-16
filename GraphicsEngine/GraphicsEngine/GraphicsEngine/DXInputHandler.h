@@ -21,9 +21,11 @@ namespace GraphicsEngine
 		struct KeyboardEventArgs
 		{
 			uint8_t Key;
+			bool UserInput;
 
-			explicit KeyboardEventArgs(uint8_t key) :
-				Key(key)
+			explicit KeyboardEventArgs(uint8_t key, bool userInput) :
+				Key(key),
+				UserInput(userInput)
 			{
 			}
 		};
@@ -67,7 +69,7 @@ namespace GraphicsEngine
 		{
 			auto keyValue = static_cast<uint8_t>(key);
 			const auto& event = m_onKeyboardKeyDownEvents.at(keyValue);
-			event.Raise(this, KeyboardEventArgs(keyValue));
+			event.Raise(this, KeyboardEventArgs(keyValue, false));
 		}
 
 	private:

@@ -254,11 +254,14 @@ void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::Ke
 	}
 	else
 	{
-		m_animationManager.AddAnimation(std::make_unique<KeyAnimation>(
-			m_input,
-			eventArgs.Key,
-			m_timer.GetTotalMilliseconds()
-			), false);
+		if(eventArgs.UserInput)
+		{
+			m_animationManager.AddAnimation(std::make_unique<KeyAnimation>(
+				m_input,
+				eventArgs.Key,
+				m_timer.GetTotalMilliseconds()
+				), false);
+		}
 
 		m_graphics.SetDebugWindowMode(static_cast<Graphics::DebugWindowMode>(eventArgs.Key - 2));
 	}

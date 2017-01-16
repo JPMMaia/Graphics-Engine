@@ -6,12 +6,12 @@
 struct VertexOutput
 {
     float4 PositionH : SV_POSITION;
-    float TextureCoordinates : TEXCOORD0;
+    float BlendFactor : TEXCOORD0;
 };
 
 float4 main(VertexOutput input) : SV_TARGET
 {
-    float blendFactor = saturate(input.TextureCoordinates);
+    float blendFactor = saturate(input.BlendFactor);
     float4 color = lerp(SkyDomeColors[0], SkyDomeColors[1], blendFactor);
 
 #if defined(FOG)

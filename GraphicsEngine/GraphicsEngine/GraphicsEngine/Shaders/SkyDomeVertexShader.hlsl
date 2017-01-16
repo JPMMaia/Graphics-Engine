@@ -11,26 +11,19 @@ struct VertexInput
     float3 TangentU : TANGENT;
 };
 
-struct InstanceInput
-{
-    row_major float4x4 WorldMatrix : WORLD;
-    uint InstanceID : SV_InstanceID;
-};
-
 struct VertexOutput
 {
     float4 PositionH : SV_POSITION;
-    float TextureCoordinates : TEXCOORD0;
+    float BlendFactor : TEXCOORD0;
 };
 
-VertexOutput main(VertexInput vertexInput, InstanceInput instanceInput)
+VertexOutput main(VertexInput vertexInput)
 {
-
     VertexOutput output;
 
     float3 positionW = EyePositionW + vertexInput.PositionL;
     output.PositionH = mul(float4(positionW, 1.0f), ViewProjectionMatrix);
-    output.TextureCoordinates = (vertexInput.PositionL.y + 1.0f) / 2.0f;
+    output.BlendFactor = (vertexInput.PositionL.y + 1.0f) / 2.0f;
 
     return output;
 }

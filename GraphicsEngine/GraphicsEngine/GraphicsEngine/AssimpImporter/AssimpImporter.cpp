@@ -4,11 +4,12 @@
 #include "../D3DBase.h"
 #include "../IScene.h"
 #include "../TextureManager.h"
+#include "../VertexTypes.h"
+#include "../ImmutableMeshGeometry.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include "GraphicsEngine/VertexTypes.h"
 
 using namespace Common;
 using namespace DirectX;
@@ -56,8 +57,8 @@ void AssimpImporter::ConvertToMeshData(Graphics* graphics, const D3DBase& d3dBas
 
 void AssimpImporter::AddGeometry(const D3DBase& d3dBase, const std::string& name, IScene* scene, const std::wstring& filename, const aiScene* importedScene, AssimpImporter::ImportInfo& importInfo)
 {
-	auto geometry = std::make_unique<MeshGeometry>();
-	geometry->Name = name;
+	auto geometry = std::make_unique<ImmutableMeshGeometry>();
+	geometry->SetName(name);
 
 	// Count vertices and indices:
 	m_vertexCount = 0;
@@ -93,14 +94,16 @@ void AssimpImporter::AddGeometry(const D3DBase& d3dBase, const std::string& name
 				const auto& normals = mesh->mNormals[i];
 				vertex.Normal = XMFLOAT3(normals.x, normals.y, normals.z);
 				if (mesh->mTextureCoords[0] == nullptr)
+				{
 					OutputDebugString(std::wstring(L"Model " + Helpers::StringToWString(name) + L" loaded with no textures").c_str());
+				}
 				else
 				{
 					const auto& textureCoordinates = mesh->mTextureCoords[0][i];
 					vertex.TextureCoordinates = XMFLOAT2(textureCoordinates.x, textureCoordinates.y);
 				
 					const auto& tangentU = mesh->mTangents[i];
-					vertex.TangentU = XMFLOAT3(tangentU.x, tangentU.y, tangentU.z);
+					vertex.Tangent = XMFLOAT3(tangentU.x, tangentU.y, tangentU.z);
 				}
 				vertices.push_back(vertex);
 			}
@@ -119,11 +122,11 @@ void AssimpImporter::AddGeometry(const D3DBase& d3dBase, const std::string& name
 
 		// Create submesh:
 		SubmeshGeometry submesh;
-		submesh.IndexCount = static_cast<UINT>(indices.size());
+		submesh.IndexCount = static_cast<UINT>(indices.size()) - startIndexLocation;
 		submesh.StartIndexLocation = startIndexLocation;
 		submesh.BaseVertexLocation = baseVertexLocation;
 		submesh.Bounds = MeshGeometry::CreateBoundingBoxFromMesh(vertices);
-		geometry->Submeshes[mesh->mName.C_Str()] = std::move(submesh);
+		geometry->AddSubmesh(mesh->mName.C_Str(), std::move(submesh));
 
 		// Assign material to mesh:
 		aiString materialName;
@@ -137,10 +140,10 @@ void AssimpImporter::AddGeometry(const D3DBase& d3dBase, const std::string& name
 
 	// Create vertex and index buffer:
 	auto device = d3dBase.GetDevice();
-	geometry->Vertices = VertexBuffer(device, vertices);
-	geometry->Indices = IndexBuffer(device, indices);
+	geometry->CreateVertexBuffer(device, vertices, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	geometry->CreateIndexBuffer(device, indices, DXGI_FORMAT_R32_UINT);
 
-	scene->AddGeometry(std::move(geometry));
+	scene->AddImmutableGeometry(std::move(geometry));
 }
 void AssimpImporter::AddMaterials(const D3DBase& d3dBase, TextureManager& textureManager, IScene* scene, const aiScene* importedScene)
 {
@@ -158,12 +161,12 @@ void AssimpImporter::AddMaterials(const D3DBase& d3dBase, TextureManager& textur
 		// Set diffuse map:
 		aiString texturePath;
 		importedMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
-		if(texturePath.length != 0)
+		/*if(texturePath.length != 0)
 		{
 			auto texturePathStr = "Models/" + std::string(texturePath.C_Str());
 			textureManager.Create(d3dBase.GetDevice(), texturePathStr, Helpers::StringToWString(texturePathStr));
 			renderMaterial->DiffuseMap = &textureManager[texturePathStr];
-		}
+		}*/
 
 		// Set diffuse albedo:
 		aiColor4D diffuseColor;

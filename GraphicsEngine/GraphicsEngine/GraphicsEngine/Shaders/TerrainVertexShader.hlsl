@@ -8,7 +8,7 @@ struct VertexInput
     float3 PositionL : POSITION;
     float3 NormalL : NORMAL;
     float2 TextureCoordinates : TEXCOORD;
-    float3 TangentU : TANGENT;
+    float3 TangentL : TANGENT;
 };
 struct InstanceInput
 {

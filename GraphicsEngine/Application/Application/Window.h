@@ -31,7 +31,7 @@ namespace Win32Application
 		std::wstring m_applicationName = L"DirectX11Application";
 		std::wstring m_windowCaption = L"DirectX 11 Application";
 		bool m_fullscreen;
-		uint32_t m_clientWidth = 800;
-		uint32_t m_clientHeight = 600;
+		uint32_t m_clientWidth;
+		uint32_t m_clientHeight;
 	};
 }

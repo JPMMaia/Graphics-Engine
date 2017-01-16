@@ -5,6 +5,8 @@ using namespace Common;
 using namespace GraphicsEngine;
 using namespace std;
 
+const DomainShader DomainShader::s_null = DomainShader();
+
 DomainShader::DomainShader(ID3D11Device* d3dDevice, const std::wstring& filename)
 {
 	// Read data from domain shader file:

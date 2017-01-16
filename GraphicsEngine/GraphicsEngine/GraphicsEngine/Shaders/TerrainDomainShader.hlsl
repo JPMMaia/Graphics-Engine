@@ -15,8 +15,9 @@ struct HullOutput
 
 struct DomainOutput
 {
+    float3 PositionW : POSITION0;
     float4 PositionH : SV_POSITION;
-    float3 PositionW : POSITION;
+    float4 ShadowPositionH : POSITION1;
     float2 TextureCoordinates : TEXCOORD0;
     float2 TiledTextureCoordinates : TEXCOORD1;
 };
@@ -27,7 +28,7 @@ struct TesselationPatch
     float InsideTesselationFactor[NUM_INSIDE_TESSELATION_FACTOR] : SV_InsideTessFactor;
 };
 
-Texture2D HeightMap : register(t2);
+Texture2D HeightMap : register(t1);
 
 [domain("quad")]
 DomainOutput main(TesselationPatch input, float2 uv : SV_DomainLocation, const OutputPatch<HullOutput, NUM_CONTROL_POINTS> patch)
@@ -46,6 +47,9 @@ DomainOutput main(TesselationPatch input, float2 uv : SV_DomainLocation, const O
 
 	// Transform to homogeneous clip space:
     output.PositionH = mul(float4(output.PositionW, 1.0f), ViewProjectionMatrix);
+
+    // Transform position from world space to light-shadow texture space:
+    output.ShadowPositionH = mul(float4(output.PositionW, 1.0f), ShadowMatrix);
 
     return output;
 }

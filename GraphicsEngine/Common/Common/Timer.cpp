@@ -21,6 +21,11 @@ void Timer::Reset()
 	m_lag = 0.0;
 }
 
+void Timer::SetTotalMilliseconds(double totalMilliseconds)
+{
+	m_totalTicks = MillisecondsToTicks(totalMilliseconds);
+}
+
 double Timer::GetMillisecondsPerUpdate() const
 {
 	return m_millisecondsPerUpdate;
@@ -60,4 +65,8 @@ LARGE_INTEGER Timer::GetCurrentTick()
 double Timer::TicksToMilliseconds(uint64_t ticks) const
 {
 	return static_cast<double>((ticks * 1000)) / static_cast<double>(m_qpcFrequency.QuadPart);
+}
+uint64_t Timer::MillisecondsToTicks(double milliseconds) const
+{
+	return static_cast<uint64_t>(milliseconds * static_cast<double>(m_qpcFrequency.QuadPart) / 1000.0);
 }

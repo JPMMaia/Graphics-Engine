@@ -1,8 +1,10 @@
 #pragma once
 
 #include "D3DBase.h"
-#include "RenderItem.h"
-#include "GeometryGenerator2.h"
+#include "GeometryGenerator.h"
+#include "VertexTypes.h"
+
+#include <unordered_map>
 
 namespace GraphicsEngine
 {
@@ -19,9 +21,10 @@ namespace GraphicsEngine
 			float TerrainDepth;
 			uint32_t CellXCount;
 			uint32_t CellZCount;
-			std::wstring TiledDiffuseMapFilename;
-			std::wstring TiledNormalMapFilename;
+			std::vector<std::unordered_map<std::string, std::wstring>> TiledTexturesFilenames;
 			std::wstring HeightMapFilename;
+			std::wstring NormalMapFilename;
+			std::wstring TangentMapFilename;
 			uint32_t HeightMapWidth;
 			uint32_t HeightMapHeight;
 			float HeightMapFactor;
@@ -37,17 +40,25 @@ namespace GraphicsEngine
 		float GetTerrainHeight(float x, float z) const;
 		const Description& GetDescription() const;
 		DirectX::XMFLOAT2 GetTexelSize() const;
+		DirectX::XMFLOAT3 TextureSpaceToWorldSpace(const DirectX::XMFLOAT2& position) const;
+
+		void SetMeshData(std::vector<VertexTypes::PositionVertexType>&& vertices, std::vector<uint32_t>&& indices);
+		void GetMeshData(const std::vector<VertexTypes::PositionVertexType>*& vertices, const std::vector<uint32_t>*& indices) const;
 
 	private:
 		void CreateGeometry(const D3DBase& d3dBase, IScene& scene) const;
 		void CreateMaterial(const D3DBase& d3dBase, TextureManager& textureManager, IScene& scene);
-		void CreateRenderItem(const D3DBase& d3dBase, Graphics& graphics, IScene& scene);
+		void CreateRenderItem(const D3DBase& d3dBase, Graphics& graphics, IScene& scene) const;
 
-		static GeometryGenerator2::MeshData CreateMeshData(float width, float depth, uint32_t xCellCount, uint32_t zCellCount);
-		static void LoadRawHeightMap(const std::wstring& filename, uint32_t width, uint32_t height, float heightFactor, std::vector<float>& heightMap);
+		static GeometryGenerator::MeshData CreateMeshData(float width, float depth, uint32_t xCellCount, uint32_t zCellCount);
+		static void LoadRawHeightMap(const std::wstring& heightMapFilename, const std::wstring& normalMapFilename, const std::wstring& tangentMapFilename, uint32_t width, uint32_t height, float heightFactor, std::vector<float>& heightMap, std::vector<DirectX::XMFLOAT4>& normalMap, std::vector<DirectX::XMFLOAT4>& tangentMap);
 
 	public:
 		Description m_description;
 		std::vector<float> m_heightMap;
+		std::vector<DirectX::XMFLOAT4> m_normalMap;
+		std::vector<DirectX::XMFLOAT4> m_tangentMap;
+		std::vector<VertexTypes::PositionVertexType> m_vertices;
+		std::vector<uint32_t> m_indices;
 	};
 }

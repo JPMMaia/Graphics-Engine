@@ -25,6 +25,9 @@
     <ClCompile Include="Common\IncludeReplacer.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="Common\PerformanceTimer.cpp" />
+    <ClCompile Include="Common\Event.cpp" />
+    <ClCompile Include="Common\NotImplementedException.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\EngineException.h">
@@ -42,5 +45,10 @@
     <ClInclude Include="Common\IncludeReplacer.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="Common\MemoryPool.h" />
+    <ClInclude Include="Common\MemoryPoolElement.h" />
+    <ClInclude Include="Common\PerformanceTimer.h" />
+    <ClInclude Include="Common\Event.h" />
+    <ClInclude Include="Common\NotImplementedException.h" />
   </ItemGroup>
 </Project>

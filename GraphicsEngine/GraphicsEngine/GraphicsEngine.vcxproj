@@ -183,139 +183,251 @@
     <ClCompile Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\BC.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\BC4BC5.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\BC6HBC7.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\BCDirectCompute.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexCompress.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexCompressGPU.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexConvert.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexD3D11.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexDDS.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexFlipRotate.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexHDR.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexImage.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexMipmaps.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexMisc.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexNormalMaps.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexPMAlpha.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexResize.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexTGA.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexUtil.cpp" />
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexWIC.cpp" />
+    <ClCompile Include="GraphicsEngine\AnimationManager.cpp" />
     <ClCompile Include="GraphicsEngine\AssimpImporter\AssimpImporter.cpp" />
+    <ClInclude Include="GraphicsEngine\BaseAnimation.h" />
+    <ClCompile Include="GraphicsEngine\BaseAnimation.cpp" />
+    <ClCompile Include="GraphicsEngine\BillboardMeshGeometry.cpp" />
+    <ClCompile Include="GraphicsEngine\BillboardRenderItem.cpp" />
     <ClCompile Include="GraphicsEngine\BlendState.cpp" />
     <ClCompile Include="GraphicsEngine\BlendStateDescConstants.cpp" />
     <ClCompile Include="GraphicsEngine\Camera.cpp" />
+    <ClCompile Include="GraphicsEngine\CameraAnimation.cpp" />
     <ClCompile Include="GraphicsEngine\D3DBase.cpp" />
+    <ClCompile Include="GraphicsEngine\DepthStencilState.cpp" />
     <ClCompile Include="GraphicsEngine\DomainShader.cpp" />
     <ClCompile Include="GraphicsEngine\DXInputHandler.cpp" />
+    <ClCompile Include="GraphicsEngine\FogAnimation.cpp" />
     <ClCompile Include="GraphicsEngine\FrameResource.cpp" />
+    <ClCompile Include="GraphicsEngine\GeneralAnimation.cpp" />
     <ClCompile Include="GraphicsEngine\GeometryGenerator.cpp" />
-    <ClCompile Include="GraphicsEngine\GeometryGenerator2.cpp" />
+    <ClCompile Include="GraphicsEngine\GeometryShader.cpp" />
     <ClCompile Include="GraphicsEngine\Graphics.cpp" />
     <ClCompile Include="GraphicsEngine\HullShader.cpp" />
+    <ClCompile Include="GraphicsEngine\ImmutableMeshGeometry.cpp" />
     <ClCompile Include="GraphicsEngine\InputHandler.cpp" />
     <ClCompile Include="GraphicsEngine\IShader.cpp" />
+    <ClCompile Include="GraphicsEngine\JsonHelper.cpp" />
+    <ClCompile Include="GraphicsEngine\KeyAnimation.cpp" />
+    <ClCompile Include="GraphicsEngine\Light.cpp" />
+    <ClCompile Include="GraphicsEngine\LightManager.cpp" />
+    <ClCompile Include="GraphicsEngine\MeshGeometry.cpp" />
+    <ClCompile Include="GraphicsEngine\NormalRenderItem.cpp" />
+    <ClCompile Include="GraphicsEngine\OctreeCollider.cpp" />
     <ClCompile Include="GraphicsEngine\PipelineState.cpp" />
     <ClCompile Include="GraphicsEngine\PipelineStateManager.cpp" />
     <ClCompile Include="GraphicsEngine\PixelShader.cpp" />
     <ClCompile Include="GraphicsEngine\RasterizerState.cpp" />
+    <ClCompile Include="GraphicsEngine\Ray.cpp" />
     <ClCompile Include="GraphicsEngine\RenderItem.cpp" />
+    <ClCompile Include="GraphicsEngine\RenderTexture.cpp" />
     <ClCompile Include="GraphicsEngine\SamplerState.cpp" />
     <ClCompile Include="GraphicsEngine\Scenes\DefaultScene.cpp" />
+    <ClCompile Include="GraphicsEngine\Scenes\SceneBuilder.cpp" />
     <ClCompile Include="GraphicsEngine\SettingsManager.cpp" />
-    <ClCompile Include="GraphicsEngine\Shaders\PassData.hlsli">
+    <FxCompile Include="GraphicsEngine\Shaders\AlphaClippedShadowsPixelShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\DebugWindowPixelShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\DebugWindowVertexShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\PassData.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </FxCompile>
+    <ClCompile Include="GraphicsEngine\ShadowTexture.cpp" />
     <ClCompile Include="GraphicsEngine\Terrain.cpp" />
     <ClCompile Include="GraphicsEngine\Texture.cpp" />
+    <ClCompile Include="GraphicsEngine\TextureArray.cpp" />
     <ClCompile Include="GraphicsEngine\TextureManager.cpp" />
     <ClCompile Include="GraphicsEngine\VertexShader.cpp" />
-    <ClCompile Include="GraphicsEngine\X3DParser\ParserException.cpp" />
-    <ClCompile Include="GraphicsEngine\X3DParser\RapidXMLHelper.cpp" />
-    <ClCompile Include="GraphicsEngine\X3DParser\X3DParser.cpp" />
-    <ClCompile Include="GraphicsEngine\X3DParser\X3DShapeParser.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\DirectXTex\DDSTextureLoader\DDSTextureLoader.h" />
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\BC.h" />
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\BCDirectCompute.h" />
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\DDS.h" />
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\DirectXTex.h" />
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexP.h" />
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\Filters.h" />
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\scoped.h" />
+    <ClInclude Include="..\Libraries\nlohmann\json\json.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_iterators.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_print.hpp" />
     <ClInclude Include="..\Libraries\rapidxml\rapidxml_utils.hpp" />
+    <ClInclude Include="GraphicsEngine\AnimationManager.h" />
+    <ClInclude Include="GraphicsEngine\AnimationType.h" />
     <ClInclude Include="GraphicsEngine\AssimpImporter\AssimpImporter.h" />
+    <ClInclude Include="GraphicsEngine\BillboardMeshGeometry.h" />
+    <ClInclude Include="GraphicsEngine\BillboardRenderItem.h" />
     <ClInclude Include="GraphicsEngine\BlendState.h" />
     <ClInclude Include="GraphicsEngine\BlendStateDescConstants.h" />
     <ClInclude Include="GraphicsEngine\Buffer.h" />
     <ClInclude Include="GraphicsEngine\BufferTypes.h" />
     <ClInclude Include="GraphicsEngine\Camera.h" />
+    <ClInclude Include="GraphicsEngine\CameraAnimation.h" />
     <ClInclude Include="GraphicsEngine\D3DBase.h" />
+    <ClInclude Include="GraphicsEngine\DepthStencilState.h" />
+    <ClInclude Include="GraphicsEngine\DepthStencilStateDescConstants.h" />
     <ClInclude Include="GraphicsEngine\DomainShader.h" />
     <ClInclude Include="GraphicsEngine\DXInputHandler.h" />
+    <ClInclude Include="GraphicsEngine\FogAnimation.h" />
     <ClInclude Include="GraphicsEngine\FrameResource.h" />
+    <ClInclude Include="GraphicsEngine\GeneralAnimation.h" />
     <ClInclude Include="GraphicsEngine\GeometryGenerator.h" />
-    <ClInclude Include="GraphicsEngine\GeometryGenerator2.h" />
+    <ClInclude Include="GraphicsEngine\GeometryShader.h" />
     <ClInclude Include="GraphicsEngine\Graphics.h" />
     <ClInclude Include="GraphicsEngine\HullShader.h" />
+    <ClInclude Include="GraphicsEngine\ImmutableMeshGeometry.h" />
     <ClInclude Include="GraphicsEngine\InputHandler.h" />
     <ClInclude Include="GraphicsEngine\IScene.h" />
     <ClInclude Include="GraphicsEngine\IShader.h" />
+    <ClInclude Include="GraphicsEngine\JsonHelper.h" />
+    <ClInclude Include="GraphicsEngine\KeyAnimation.h" />
     <ClInclude Include="GraphicsEngine\Light.h" />
+    <ClInclude Include="GraphicsEngine\LightManager.h" />
     <ClInclude Include="GraphicsEngine\Material.h" />
     <ClInclude Include="GraphicsEngine\MeshGeometry.h" />
+    <ClInclude Include="GraphicsEngine\NormalRenderItem.h" />
+    <ClInclude Include="GraphicsEngine\Octree.h" />
+    <ClInclude Include="GraphicsEngine\OctreeBaseCollider.h" />
+    <ClInclude Include="GraphicsEngine\OctreeCollider.h" />
     <ClInclude Include="GraphicsEngine\PipelineState.h" />
     <ClInclude Include="GraphicsEngine\PipelineStateManager.h" />
     <ClInclude Include="GraphicsEngine\PixelShader.h" />
     <ClInclude Include="GraphicsEngine\RasterizerState.h" />
     <ClInclude Include="GraphicsEngine\RasterizerStateDescConstants.h" />
+    <ClInclude Include="GraphicsEngine\Ray.h" />
     <ClInclude Include="GraphicsEngine\RenderItem.h" />
     <ClInclude Include="GraphicsEngine\RenderLayer.h" />
+    <ClInclude Include="GraphicsEngine\RenderTexture.h" />
     <ClInclude Include="GraphicsEngine\SamplerState.h" />
     <ClInclude Include="GraphicsEngine\SamplerStateDescConstants.h" />
     <ClInclude Include="GraphicsEngine\Scenes\DefaultScene.h" />
+    <ClInclude Include="GraphicsEngine\Scenes\SceneBuilder.h" />
     <ClInclude Include="GraphicsEngine\SettingsManager.h" />
     <ClInclude Include="GraphicsEngine\ShaderBufferTypes.h" />
+    <ClInclude Include="GraphicsEngine\ShadowTexture.h" />
     <ClInclude Include="GraphicsEngine\SubmeshGeometry.h" />
     <ClInclude Include="GraphicsEngine\Terrain.h" />
     <ClInclude Include="GraphicsEngine\Texture.h" />
+    <ClInclude Include="GraphicsEngine\TextureArray.h" />
     <ClInclude Include="GraphicsEngine\TextureManager.h" />
     <ClInclude Include="GraphicsEngine\VertexShader.h" />
     <ClInclude Include="GraphicsEngine\VertexTypes.h" />
     <ClInclude Include="GraphicsEngine\VirtualKey.h" />
-    <ClInclude Include="GraphicsEngine\X3DParser\ParserException.h" />
-    <ClInclude Include="GraphicsEngine\X3DParser\RapidXMLHelper.h" />
-    <ClInclude Include="GraphicsEngine\X3DParser\X3DParser.h" />
-    <ClInclude Include="GraphicsEngine\X3DParser\X3DShapeParser.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Libraries\DirectXTex\DirectXTex\DirectXTex.inl" />
     <None Include="..\Libraries\rapidxml\manual.html" />
-    <None Include="GraphicsEngine\Shaders\CommonDefines.hlsli">
+    <FxCompile Include="GraphicsEngine\Shaders\CommonDefines.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </None>
-    <None Include="GraphicsEngine\Shaders\LightingUtils.hlsli">
+      <FileType>Document</FileType>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\LightingUtils.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </None>
-    <None Include="GraphicsEngine\Shaders\MaterialData.hlsli">
+      <FileType>Document</FileType>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\MaterialData.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </None>
-    <None Include="GraphicsEngine\Shaders\MathUtils.hlsli">
+      <FileType>Document</FileType>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\MathUtils.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </None>
-    <None Include="GraphicsEngine\Shaders\ObjectData.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\ObjectData.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </None>
-    <None Include="GraphicsEngine\Shaders\Samplers.hlsli">
+      <FileType>Document</FileType>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\Samplers.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </None>
+      <FileType>Document</FileType>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="GraphicsEngine\Shaders\BillboardGeometryShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\BillboardVertexShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="GraphicsEngine\Shaders\SkyDomePixelShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="GraphicsEngine\Shaders\SkyDomeVertexShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="GraphicsEngine\Shaders\StandardPixelShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -342,6 +454,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\TerrainGeometryShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="GraphicsEngine\Shaders\TerrainHullShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

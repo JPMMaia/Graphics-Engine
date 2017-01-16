@@ -35,7 +35,7 @@
     <ClCompile Include="OctreeTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CameraTest.cpp">
+    <ClCompile Include="SceneBuilderTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

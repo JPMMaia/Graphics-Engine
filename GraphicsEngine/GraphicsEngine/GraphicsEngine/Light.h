@@ -1,16 +1,52 @@
 #pragma once
 
-#include <DirectXMath.h>
+#include "ShaderBufferTypes.h"
+
+#include <DirectXCollision.h>
 
 namespace GraphicsEngine
 {
-	struct Light
+	__declspec(align(16))
+	class Light
 	{
-		DirectX::XMFLOAT3 Strength = { 0.5f, 0.5f, 0.5f };		// Light color
-		float FalloffStart = 1.0f;								// Point/Spot light only
-		DirectX::XMFLOAT3 Direction = { 0.0f, -1.0f, 0.0f };	// Directional/Spot light only
-		float FalloffEnd = 10.0f;								// Point/Spot light only
-		DirectX::XMFLOAT3 Position = { 0.0f, 0.0f, 0.0f };		// Point/Spot light only
-		float SpotPower = 64.0f;								// Spot light only
+	public:
+		enum class Type
+		{
+			Directional,
+			Point,
+			Spot
+		};
+
+	public:
+		static Light CreateDirectionalLight(const DirectX::XMFLOAT3& strength, const DirectX::XMFLOAT3& direction, bool castShadows);
+		static Light CreatePointLight(const DirectX::XMFLOAT3& strength, float falloffStart, float falloffEnd, const DirectX::XMFLOAT3& position);
+		static Light CreateSpotLight(const DirectX::XMFLOAT3& strength, float falloffStart, const DirectX::XMFLOAT3& direction, float falloffEnd, const DirectX::XMFLOAT3& position, float spotPower);
+
+	public:
+		void UpdateMatrices(const DirectX::BoundingSphere& sceneBounds);
+		
+		void RotateRollPitchYaw(float pitchRadians, float yawRadians, float rollRadians);
+
+		Type GetType() const;
+		const ShaderBufferTypes::LightData& GetLightData() const;
+		bool CastShadows() const;
+		const DirectX::XMMATRIX& GetViewMatrix() const;
+		const DirectX::XMMATRIX& GetProjectionMatrix() const;
+		const DirectX::XMMATRIX& GetShadowMatrix() const;
+		
+		void SetStrength(const DirectX::XMFLOAT3& strength);
+		void SetDirection(const DirectX::XMFLOAT3& direction);
+		void SetPosition(const DirectX::XMFLOAT3& position);
+
+	private:
+		Light() = default;
+
+	private:
+		Type m_type;
+		ShaderBufferTypes::LightData m_lightData;
+		bool m_castShadows = false;
+		DirectX::XMMATRIX m_viewMatrix;
+		DirectX::XMMATRIX m_projectionMatrix;
+		DirectX::XMMATRIX m_shadowMatrix;
 	};
 }

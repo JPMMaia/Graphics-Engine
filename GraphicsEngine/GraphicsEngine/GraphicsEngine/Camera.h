@@ -2,6 +2,7 @@
 
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
+#include "Ray.h"
 
 namespace GraphicsEngine
 {
@@ -19,22 +20,39 @@ namespace GraphicsEngine
 		void MoveForward(float scalar);
 
 		void XM_CALLCONV Rotate(DirectX::FXMVECTOR axis, float radians);
-		void RotateLocalX(float radiansX);
-		void RotateWorldY(float radiansY);
+		void RotateLocalX(float radians);
+		void RotateLocalY(float radians);
+		void RotateLocalZ(float radians);
+		void RotateWorldX(float radians);
+		void RotateWorldY(float radians);
+		void RotateWorldZ(float radians);
 
 		DirectX::BoundingFrustum BuildViewSpaceBoundingFrustum() const;
 
 		const DirectX::XMVECTOR& GetPosition() const;
 		const DirectX::XMMATRIX& GetViewMatrix() const;
 		const DirectX::XMMATRIX& GetProjectionMatrix() const;
+		DirectX::XMVECTOR GetLocalRight() const;
+		DirectX::XMVECTOR GetLocalUp() const;
+		DirectX::XMVECTOR GetLocalForward() const;
+		const DirectX::XMVECTOR& GetRotationQuaternion() const;
+
+		Ray CreateRay() const;
 
 		float GetNearZ() const;
+		void SetNearZ(float value);
+
 		float GetFarZ() const;
+		void SetFarZ(float value);
 
 		void SetPosition(float x, float y, float z);
+		void XM_CALLCONV SetPosition(DirectX::FXMVECTOR position);
+		void XM_CALLCONV SetRotationQuaternion(DirectX::FXMVECTOR rotationQuaternion);
 		void SetAspectRatio(float aspectRatio);
 
 		bool IsDirty() const;
+
+		std::wstring ToWString() const;
 
 	private:
 		void XM_CALLCONV InitializeProjectionMatrix(DirectX::FXMMATRIX orientationMatrix);

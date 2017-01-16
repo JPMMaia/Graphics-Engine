@@ -9,6 +9,9 @@ namespace GraphicsEngine
 	class VertexShader : public IShader
 	{
 	public:
+		static const VertexShader s_null;
+
+	public:
 		VertexShader() = default;
 		VertexShader(ID3D11Device* d3dDevice, const std::wstring& filename, const std::vector<D3D11_INPUT_ELEMENT_DESC>& vertexDesc);
 		VertexShader(ID3D11Device* d3dDevice, const std::wstring& filename, const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target, const std::vector<D3D11_INPUT_ELEMENT_DESC>& vertexDesc);

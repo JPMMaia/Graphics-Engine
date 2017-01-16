@@ -5,6 +5,8 @@ using namespace Common;
 using namespace GraphicsEngine;
 using namespace std;
 
+const VertexShader VertexShader::s_null = VertexShader();
+
 VertexShader::VertexShader(ID3D11Device* d3dDevice, const std::wstring& filename, const std::vector<D3D11_INPUT_ELEMENT_DESC>& vertexDesc)
 {
 	// Read data from vertex shader file:

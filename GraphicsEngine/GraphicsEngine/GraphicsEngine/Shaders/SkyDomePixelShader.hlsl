@@ -3,24 +3,22 @@
 #include "PassData.hlsli"
 #include "Samplers.hlsli"
 
-
 struct VertexOutput
 {
     float4 PositionH : SV_POSITION;
-    float3 PositionW : POSITION;
+    float BlendFactor : TEXCOORD0;
 };
 
 float4 main(VertexOutput input) : SV_TARGET
 {
-    float height;
-    float4 outputColor;
+    float blendFactor = saturate(input.BlendFactor);
+    float4 color = lerp(SkyDomeColors[0], SkyDomeColors[1], blendFactor);
 
-    height = input.PositionW.y;
+#if defined(FOG)
+    color = lerp(color, FogColor, FogColor.w);
+#endif
 
-    if (height < 0.0)
-        height = 0.0f;
+    color.a = 1.0f;
 
-    outputColor = lerp(SkyDomeColors[0], SkyDomeColors[1], height);
-    
-    return outputColor;
+    return color;
 }

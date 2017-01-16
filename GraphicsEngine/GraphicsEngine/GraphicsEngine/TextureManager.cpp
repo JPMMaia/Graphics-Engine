@@ -5,7 +5,7 @@ using namespace GraphicsEngine;
 
 void TextureManager::Reset()
 {
-	for (auto pair : m_textures)
+	for (auto& pair : m_textures)
 		pair.second.Reset();
 
 	m_textures.clear();

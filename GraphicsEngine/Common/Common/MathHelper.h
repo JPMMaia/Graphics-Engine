@@ -1,22 +1,19 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include <DirectXPackedVector.h>
 
 namespace GraphicsEngine
 {
 	namespace MathHelper
 	{
-		void CalculateTangentBinormal(const DirectX::XMFLOAT3& coord0, const DirectX::XMFLOAT3& coord1, const DirectX::XMFLOAT3& coord2, const DirectX::XMFLOAT2& texCoord0, const DirectX::XMFLOAT2 texCoord1, const DirectX::XMFLOAT2 texCoord2, DirectX::XMFLOAT3& tangent, DirectX::XMFLOAT3& binormal);
+		DirectX::XMFLOAT4X4 Identity4x4();
+		DirectX::PackedVector::XMHALF4 ConvertFloat4ToHalf4(const DirectX::XMFLOAT4& value);
 
-		static DirectX::XMFLOAT4X4 Identity4x4()
+		template<typename Type>
+		Type LinearInterpolate(const Type& value1, const Type& value2, float blendFactor)
 		{
-			static DirectX::XMFLOAT4X4 I(
-				1.0f, 0.0f, 0.0f, 0.0f,
-				0.0f, 1.0f, 0.0f, 0.0f,
-				0.0f, 0.0f, 1.0f, 0.0f,
-				0.0f, 0.0f, 0.0f, 1.0f);
-
-			return I;
+			return (1.0f - blendFactor) * value1 + blendFactor * value2;
 		}
 
 		const auto Infinity = FLT_MAX;

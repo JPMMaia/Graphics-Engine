@@ -1,9 +1,13 @@
 ﻿#include "stdafx.h"
 #include "Texture.h"
 
+#include <cwctype>
 #include <DirectXTex/DDSTextureLoader/DDSTextureLoader.h>
+#include <DirectXTex/DirectXTex/DirectXTex.h>
+#include <wincodec.h>
 
 using namespace Common;
+using namespace DirectX;
 using namespace GraphicsEngine;
 
 Texture::Texture(ID3D11Device* device, const std::string& name, const std::wstring& filename) :
@@ -38,8 +42,27 @@ ID3D11ShaderResourceView* const* Texture::GetAddressOf() const
 
 void Texture::CreateTextureFromFile(ID3D11Device* device, const std::wstring& filename)
 {
-	// Create shader resource view from a DDS Texture file:
-	ThrowIfFailed(
-		DirectX::CreateDDSTextureFromFile(device, filename.data(), nullptr, m_textureView.GetAddressOf())
-	);
+	auto fileExtension = Common::Helpers::GetFileExtension(filename);
+	std::transform(fileExtension.begin(), fileExtension.end(), fileExtension.begin(), std::towlower);
+
+	ScratchImage scratchImage;
+	TexMetadata metadata;
+	if (fileExtension == L"dds")
+	{
+		ThrowIfFailed(LoadFromDDSFile(filename.c_str(), DDS_FLAGS_NONE, &metadata, scratchImage));
+	}
+	else if (fileExtension == L"hdr")
+	{
+		ThrowIfFailed(LoadFromHDRFile(filename.c_str(), &metadata, scratchImage));
+	}
+	else if (fileExtension == L"tga")
+	{
+		ThrowIfFailed(LoadFromTGAFile(filename.c_str(), &metadata, scratchImage));
+	}
+	else
+	{
+		ThrowIfFailed(LoadFromWICFile(filename.c_str(), WIC_FLAGS_NONE, &metadata, scratchImage));
+	}
+	
+	ThrowIfFailed(CreateShaderResourceView(device, scratchImage.GetImages(), scratchImage.GetImageCount(), metadata, m_textureView.GetAddressOf()));
 }

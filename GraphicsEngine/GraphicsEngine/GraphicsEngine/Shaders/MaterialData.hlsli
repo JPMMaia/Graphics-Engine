@@ -5,3 +5,5 @@ cbuffer MaterialData : register(b1)
     float Roughness;
     float4x4 MaterialTransform;
 };
+
+

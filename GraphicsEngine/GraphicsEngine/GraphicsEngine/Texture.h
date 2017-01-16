@@ -3,6 +3,7 @@
 #include <d3d11_2.h>
 #include <string>
 #include <wrl/client.h>
+#include <DirectXTex/DirectXTex/DirectXTex.h>
 
 namespace GraphicsEngine
 {

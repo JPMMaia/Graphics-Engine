@@ -1,7 +1,8 @@
 #pragma once
 
+#include <array>
+
 #include "Common/MathHelper.h"
-#include "Light.h"
 
 namespace GraphicsEngine
 {
@@ -20,6 +21,16 @@ namespace GraphicsEngine
 			DirectX::XMFLOAT4X4 MaterialTransform = MathHelper::Identity4x4();
 		};
 
+		struct LightData
+		{
+			DirectX::XMFLOAT3 Strength = { 0.5f, 0.5f, 0.5f };		// Light color
+			float FalloffStart = 1.0f;								// Point/Spot light only
+			DirectX::XMFLOAT3 Direction = { 0.0f, -1.0f, 0.0f };	// Directional/Spot light only
+			float FalloffEnd = 10.0f;								// Point/Spot light only
+			DirectX::XMFLOAT3 Position = { 0.0f, 0.0f, 0.0f };		// Point/Spot light only
+			float SpotPower = 64.0f;								// Spot light only
+		};
+
 		struct PassData
 		{
 			DirectX::XMFLOAT4X4 ViewMatrix = MathHelper::Identity4x4();
@@ -28,6 +39,8 @@ namespace GraphicsEngine
 			DirectX::XMFLOAT4X4 InverseProjectionMatrix = MathHelper::Identity4x4();
 			DirectX::XMFLOAT4X4 ViewProjectionMatrix = MathHelper::Identity4x4();
 			DirectX::XMFLOAT4X4 InverseViewProjectionMatrix = MathHelper::Identity4x4();
+			DirectX::XMFLOAT4X4 ShadowMatrix = MathHelper::Identity4x4();
+			DirectX::XMFLOAT4X4 GrassTransformMatrix = MathHelper::Identity4x4();
 			DirectX::XMFLOAT3 EyePositionW;
 			float TerrainDisplacementScalarY;
 			DirectX::XMFLOAT2 RenderTargetSize;
@@ -51,7 +64,7 @@ namespace GraphicsEngine
 			DirectX::XMFLOAT4 AmbientLight = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 			static constexpr auto MaxNumLights = 16;
-			Light Lights[MaxNumLights];
+			std::array<LightData, MaxNumLights> Lights;
 		};
 	}
 }

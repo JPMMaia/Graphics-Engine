@@ -7,6 +7,9 @@ namespace GraphicsEngine
 	class HullShader : public IShader
 	{
 	public:
+		static const HullShader s_null;
+
+	public:
 		HullShader() = default;
 		HullShader(ID3D11Device* d3dDevice, const std::wstring& filename);
 		HullShader(ID3D11Device* d3dDevice, const std::wstring& filename, const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target);

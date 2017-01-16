@@ -56,6 +56,11 @@ float3 NormalSampleToBumpedNormalW(float3 normalSample, float3 normalW, float3 t
     // Transform from tangent space to world space:
     float3 bumpedNormalW = mul(normalT, tangentToWorldMatrix);
 
-    return bumpedNormalW;
+    return normalize(bumpedNormalW);
+}
 
+float4 AddFog(float4 color, float distanceToEye, float fogStart, float fogRange, float4 fogColor)
+{
+    float fogIntensity = saturate((distanceToEye - fogStart) / fogRange);
+    return lerp(color, fogColor, fogIntensity);
 }

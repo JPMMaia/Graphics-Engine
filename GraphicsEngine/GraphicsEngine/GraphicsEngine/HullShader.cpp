@@ -5,6 +5,8 @@ using namespace Common;
 using namespace GraphicsEngine;
 using namespace std;
 
+const HullShader HullShader::s_null = HullShader();
+
 HullShader::HullShader(ID3D11Device* d3dDevice, const std::wstring& filename)
 {
 	// Read data from domain shader file:

@@ -8,7 +8,7 @@ struct VertexInput
     float3 PositionL : POSITION;
     float3 NormalL : NORMAL;
     float2 TextureCoordinates : TEXCOORD;
-    float3 TangentU : TANGENT;
+    float3 TangentL : TANGENT;
 };
 struct InstanceInput
 {
@@ -18,9 +18,11 @@ struct InstanceInput
 
 struct VertexOutput
 {
+    float3 PositionW : POSITION0;
     float4 PositionH : SV_POSITION;
-    float3 PositionW : POSITION;
+    float4 ShadowPositionH : POSITION1;
     float3 NormalW : NORMAL;
+    float3 TangentW : TANGENT;
     float2 TextureCoordinates : TEXCOORD;
 };
 
@@ -32,11 +34,15 @@ VertexOutput main(VertexInput vertexInput, InstanceInput instanceInput)
     float4 positionW = mul(float4(vertexInput.PositionL, 1.0f), instanceInput.WorldMatrix);
     output.PositionW = positionW.xyz;
 
-    // Transform normal from local space to world space (assuming non-uniform scaling):
+    // Transform normal and tangent from local space to world space (assuming non-uniform scaling):
     output.NormalW = mul(vertexInput.NormalL, (float3x3) instanceInput.WorldMatrix);
+    output.TangentW = mul(vertexInput.TangentL, (float3x3) instanceInput.WorldMatrix);
 
     // Transform position to homogeneous clip space:
     output.PositionH = mul(positionW, ViewProjectionMatrix);
+
+    // Transform position from world space to light-shadow texture space:
+    output.ShadowPositionH = mul(positionW, ShadowMatrix);
 
     // Output texture coordinates:
     output.TextureCoordinates = mul(float4(vertexInput.TextureCoordinates, 0.0f, 1.0f), MaterialTransform).xy;

@@ -17,6 +17,8 @@ namespace Common
 		template <typename UpdateFunctionType, typename RenderFunctionType, typename ProcessInputFunctionType, typename ProcessFrameStatisticsFunctionType>
 		bool UpdateAndRender(UpdateFunctionType&& update, RenderFunctionType&& render, ProcessInputFunctionType&& processInput, ProcessFrameStatisticsFunctionType&& processFrameStatistics);
 
+		void SetTotalMilliseconds(double totalMilliseconds);
+
 		double GetMillisecondsPerUpdate() const;
 		double GetTotalMilliseconds() const;
 		double GetDeltaMilliseconds() const;
@@ -26,6 +28,7 @@ namespace Common
 
 	private:
 		double TicksToMilliseconds(uint64_t ticks) const;
+		uint64_t MillisecondsToTicks(double milliseconds) const;
 		static LARGE_INTEGER GetCurrentTick();
 
 		template<typename ProcessFrameStatisticsFunctionType>

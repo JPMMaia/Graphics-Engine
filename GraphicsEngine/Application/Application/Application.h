@@ -5,23 +5,28 @@
 #include "Common/Timer.h"
 #include "SoundEngine/SoundManager.h"
 #include "Window.h"
+#include <mutex>
+#include <random>
+#include "GraphicsEngine/AnimationManager.h"
 
 namespace Win32Application
 {
 	class Application
 	{
 	public:
-		static Application& GetInstance();
+		static Application* GetInstance();
+		static LRESULT CALLBACK MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+	public:
+		Application();
 
 		int Run();
 
-		static LRESULT CALLBACK MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-	protected:
-		Application();
+		void OnKeyboardKeyDown(const void* sender, const GraphicsEngine::DXInputHandler::KeyboardEventArgs& eventArgs);
 
 	private:
-		static Application s_instance;
+		static std::mutex s_mutex;
+		static std::unique_ptr<Application> s_instance;
 		Window m_window;
 
 		const double c_millisecondsPerUpdate = 10.0;
@@ -30,5 +35,13 @@ namespace Win32Application
 		GraphicsEngine::DXInputHandler m_input;
 		GraphicsEngine::Graphics m_graphics;
 		SoundEngine::SoundManager m_soundManager;
+
+		std::random_device m_randomDevice;
+		std::default_random_engine m_randomEngine;
+		std::uniform_real_distribution<float> m_randomAngles;
+		std::uniform_real_distribution<float> m_randomScales;
+		GraphicsEngine::AnimationManager m_animationManager;
+		bool m_animationBuildMode;
+		bool m_beginCameraAnimationFromLastSpot;
 	};
 }

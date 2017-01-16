@@ -1,22 +1,22 @@
 ﻿#include "stdafx.h"
 #include "RenderItem.h"
 #include "Graphics.h"
-#include "VertexTypes.h"
 
 using namespace GraphicsEngine;
 
-RenderItem::RenderItem(SIZE_T maxInstanceCount)
+std::string RenderItem::GetName() const
 {
-	InstancesData.reserve(maxInstanceCount);
+	return m_name;
 }
-
-void RenderItem::Render(ID3D11DeviceContext* deviceContext) const
+void RenderItem::SetName(const std::string& name)
 {
-	UINT stride = sizeof(VertexTypes::DefaultVertexType);
-	UINT offset = 0;
-	deviceContext->IASetVertexBuffers(0, 1, this->Mesh->Vertices.GetAddressOf(), &stride, &offset);
-	deviceContext->IASetIndexBuffer(this->Mesh->Indices.Get(), DXGI_FORMAT_R32_UINT, 0); // TODO change format
-	deviceContext->IASetPrimitiveTopology(this->PrimitiveType);
-
-	deviceContext->DrawIndexedInstanced(this->IndexCount, static_cast<UINT>(this->InstancesData.size()), this->StartIndexLocation, this->BaseVertexLocation, 0);
+	m_name = name;
+}
+Material* RenderItem::GetMaterial() const
+{
+	return m_material;
+}
+void RenderItem::SetMaterial(GraphicsEngine::Material* material)
+{
+	m_material = material;
 }

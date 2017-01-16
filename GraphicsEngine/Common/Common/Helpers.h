@@ -6,6 +6,8 @@
 #include <windows.h>
 #include "EngineException.h"
 
+#include <DirectXMath.h>
+
 namespace Common
 {
 	namespace Helpers

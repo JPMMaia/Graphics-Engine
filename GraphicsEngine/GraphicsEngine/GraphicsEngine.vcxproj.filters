@@ -7,18 +7,6 @@
     <ClCompile Include="GraphicsEngine\Camera.cpp">
       <Filter>GraphicsEngine\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsEngine\X3DParser\ParserException.cpp">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsEngine\X3DParser\RapidXMLHelper.cpp">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsEngine\X3DParser\X3DParser.cpp">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsEngine\X3DParser\X3DShapeParser.cpp">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsEngine\TextureManager.cpp">
       <Filter>GraphicsEngine\Textures</Filter>
     </ClCompile>
@@ -26,7 +14,7 @@
       <Filter>GraphicsEngine\Settings</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\RasterizerState.cpp">
-      <Filter>GraphicsEngine\Rasterizer</Filter>
+      <Filter>GraphicsEngine\States\Rasterizer</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\DXInputHandler.cpp">
       <Filter>GraphicsEngine\Input</Filter>
@@ -41,7 +29,7 @@
       <Filter>GraphicsEngine</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\PipelineState.cpp">
-      <Filter>GraphicsEngine\PipelineState</Filter>
+      <Filter>GraphicsEngine\States\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\DomainShader.cpp">
       <Filter>GraphicsEngine\Shaders</Filter>
@@ -56,13 +44,10 @@
       <Filter>GraphicsEngine\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\PipelineStateManager.cpp">
-      <Filter>GraphicsEngine\PipelineState</Filter>
+      <Filter>GraphicsEngine\States\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\IShader.cpp">
       <Filter>GraphicsEngine\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsEngine\GeometryGenerator.cpp">
-      <Filter>GraphicsEngine\Model</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\RenderItem.cpp">
       <Filter>GraphicsEngine\Resources</Filter>
@@ -74,29 +59,152 @@
       <Filter>GraphicsEngine\Resources</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="GraphicsEngine\GeometryGenerator2.cpp">
-      <Filter>GraphicsEngine\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsEngine\Shaders\PassData.hlsli">
-      <Filter>Shaders\Common</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsEngine\Texture.cpp">
       <Filter>GraphicsEngine\Textures</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\SamplerState.cpp">
-      <Filter>GraphicsEngine\Textures\SamplerStates</Filter>
+      <Filter>GraphicsEngine\States\SamplerStates</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\BlendState.cpp">
-      <Filter>GraphicsEngine\Textures\BlendStates</Filter>
+      <Filter>GraphicsEngine\States\BlendStates</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\BlendStateDescConstants.cpp">
-      <Filter>GraphicsEngine\Textures\BlendStates</Filter>
+      <Filter>GraphicsEngine\States\BlendStates</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\AssimpImporter\AssimpImporter.cpp">
       <Filter>GraphicsEngine\AssimpImporter</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\Terrain.cpp">
       <Filter>GraphicsEngine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\DepthStencilState.cpp">
+      <Filter>GraphicsEngine\DepthStencil</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\RenderTexture.cpp">
+      <Filter>GraphicsEngine\Shadows</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\ShadowTexture.cpp">
+      <Filter>GraphicsEngine\Shadows</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\LightManager.cpp">
+      <Filter>GraphicsEngine\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\Light.cpp">
+      <Filter>GraphicsEngine\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\GeometryShader.cpp">
+      <Filter>GraphicsEngine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\GeometryGenerator.cpp">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\OctreeCollider.cpp">
+      <Filter>GraphicsEngine\Octree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\BC.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\BC4BC5.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\BC6HBC7.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\BCDirectCompute.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexCompress.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexCompressGPU.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexConvert.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexD3D11.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexDDS.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexFlipRotate.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexHDR.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexImage.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexMipmaps.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexMisc.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexNormalMaps.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexPMAlpha.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexResize.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexTGA.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexUtil.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexWIC.cpp">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\TextureArray.cpp">
+      <Filter>GraphicsEngine\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\Ray.cpp">
+      <Filter>GraphicsEngine\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\Scenes\SceneBuilder.cpp">
+      <Filter>GraphicsEngine\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\AnimationManager.cpp">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\GeneralAnimation.cpp">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\CameraAnimation.cpp">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\FogAnimation.cpp">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\JsonHelper.cpp">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\BaseAnimation.cpp">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\BillboardMeshGeometry.cpp">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\ImmutableMeshGeometry.cpp">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\MeshGeometry.cpp">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\BillboardRenderItem.cpp">
+      <Filter>GraphicsEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\NormalRenderItem.cpp">
+      <Filter>GraphicsEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\KeyAnimation.cpp">
+      <Filter>GraphicsEngine\Animations</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -118,18 +226,6 @@
     <ClInclude Include="GraphicsEngine\Camera.h">
       <Filter>GraphicsEngine\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsEngine\X3DParser\ParserException.h">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsEngine\X3DParser\RapidXMLHelper.h">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsEngine\X3DParser\X3DParser.h">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsEngine\X3DParser\X3DShapeParser.h">
-      <Filter>GraphicsEngine\X3DParser</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsEngine\TextureManager.h">
       <Filter>GraphicsEngine\Textures</Filter>
     </ClInclude>
@@ -137,10 +233,10 @@
       <Filter>GraphicsEngine\Settings</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\RasterizerState.h">
-      <Filter>GraphicsEngine\Rasterizer</Filter>
+      <Filter>GraphicsEngine\States\Rasterizer</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\RasterizerStateDescConstants.h">
-      <Filter>GraphicsEngine\Rasterizer</Filter>
+      <Filter>GraphicsEngine\States\Rasterizer</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\Buffer.h">
       <Filter>GraphicsEngine\Buffers</Filter>
@@ -164,7 +260,7 @@
       <Filter>GraphicsEngine</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\PipelineState.h">
-      <Filter>GraphicsEngine\PipelineState</Filter>
+      <Filter>GraphicsEngine\States\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\DomainShader.h">
       <Filter>GraphicsEngine\Shaders</Filter>
@@ -179,7 +275,7 @@
       <Filter>GraphicsEngine\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\PipelineStateManager.h">
-      <Filter>GraphicsEngine\PipelineState</Filter>
+      <Filter>GraphicsEngine\States\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\IShader.h">
       <Filter>GraphicsEngine\Shaders</Filter>
@@ -192,9 +288,6 @@
     </ClInclude>
     <ClInclude Include="GraphicsEngine\Light.h">
       <Filter>GraphicsEngine\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsEngine\GeometryGenerator.h">
-      <Filter>GraphicsEngine\Model</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\MeshGeometry.h">
       <Filter>GraphicsEngine\Model</Filter>
@@ -218,9 +311,6 @@
       <Filter>GraphicsEngine\Resources</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="GraphicsEngine\GeometryGenerator2.h">
-      <Filter>GraphicsEngine\Model</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsEngine\Material.h">
       <Filter>GraphicsEngine\Light</Filter>
     </ClInclude>
@@ -228,22 +318,121 @@
       <Filter>GraphicsEngine\Textures</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\SamplerState.h">
-      <Filter>GraphicsEngine\Textures\SamplerStates</Filter>
+      <Filter>GraphicsEngine\States\SamplerStates</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\SamplerStateDescConstants.h">
-      <Filter>GraphicsEngine\Textures\SamplerStates</Filter>
+      <Filter>GraphicsEngine\States\SamplerStates</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\BlendState.h">
-      <Filter>GraphicsEngine\Textures\BlendStates</Filter>
+      <Filter>GraphicsEngine\States\BlendStates</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\BlendStateDescConstants.h">
-      <Filter>GraphicsEngine\Textures\BlendStates</Filter>
+      <Filter>GraphicsEngine\States\BlendStates</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\AssimpImporter\AssimpImporter.h">
       <Filter>GraphicsEngine\AssimpImporter</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\Terrain.h">
       <Filter>GraphicsEngine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\DepthStencilState.h">
+      <Filter>GraphicsEngine\DepthStencil</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\DepthStencilStateDescConstants.h">
+      <Filter>GraphicsEngine\DepthStencil</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\RenderTexture.h">
+      <Filter>GraphicsEngine\Shadows</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\ShadowTexture.h">
+      <Filter>GraphicsEngine\Shadows</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\LightManager.h">
+      <Filter>GraphicsEngine\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\GeometryShader.h">
+      <Filter>GraphicsEngine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\GeometryGenerator.h">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\Octree.h">
+      <Filter>GraphicsEngine\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\OctreeCollider.h">
+      <Filter>GraphicsEngine\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\OctreeBaseCollider.h">
+      <Filter>GraphicsEngine\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\BC.h">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\BCDirectCompute.h">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\DDS.h">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\DirectXTex.h">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\DirectXTexP.h">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\Filters.h">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\DirectXTex\DirectXTex\scoped.h">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\TextureArray.h">
+      <Filter>GraphicsEngine\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\Ray.h">
+      <Filter>GraphicsEngine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\Scenes\SceneBuilder.h">
+      <Filter>GraphicsEngine\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\nlohmann\json\json.hpp">
+      <Filter>Libraries\nlohmann\json</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\AnimationManager.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\GeneralAnimation.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\CameraAnimation.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\FogAnimation.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\AnimationType.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\JsonHelper.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\BillboardMeshGeometry.h">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\ImmutableMeshGeometry.h">
+      <Filter>GraphicsEngine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\BaseAnimation.h">
+      <Filter>GraphicsEngine\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\BillboardRenderItem.h">
+      <Filter>GraphicsEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\NormalRenderItem.h">
+      <Filter>GraphicsEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\KeyAnimation.h">
+      <Filter>GraphicsEngine\Animations</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -268,26 +457,17 @@
     <Filter Include="GraphicsEngine\Camera">
       <UniqueIdentifier>{4afc49ab-8f8a-41bd-9690-39a65fb6b298}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GraphicsEngine\X3DParser">
-      <UniqueIdentifier>{bf2d8f5f-c3aa-4655-9786-0e3b16201e43}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GraphicsEngine\Textures">
       <UniqueIdentifier>{bb2835cc-9f8c-4d84-9966-d121ad566905}</UniqueIdentifier>
     </Filter>
     <Filter Include="GraphicsEngine\Settings">
       <UniqueIdentifier>{ef3916db-fad9-458a-aae4-0785980a4b2d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GraphicsEngine\Rasterizer">
-      <UniqueIdentifier>{12fd9736-1dc7-4b8a-ae7f-1413d47452a9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GraphicsEngine\Buffers">
       <UniqueIdentifier>{1f080897-ef95-43f2-91ee-9d0f9e124d1b}</UniqueIdentifier>
     </Filter>
     <Filter Include="GraphicsEngine\Input">
       <UniqueIdentifier>{e984538a-169e-4d6f-b513-7b6dc4277724}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GraphicsEngine\PipelineState">
-      <UniqueIdentifier>{d7aca9a2-8f5a-4083-8144-6e28918a11cf}</UniqueIdentifier>
     </Filter>
     <Filter Include="GraphicsEngine\Shaders">
       <UniqueIdentifier>{b5ab1a1c-01e3-4f50-a0e1-26b31df3ac7f}</UniqueIdentifier>
@@ -310,12 +490,6 @@
     <Filter Include="Shaders\Common">
       <UniqueIdentifier>{86d2ac93-db29-4637-9845-c48bb2ea3aa9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GraphicsEngine\Textures\SamplerStates">
-      <UniqueIdentifier>{5445e76f-0de9-4f48-a2af-beff57c31095}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GraphicsEngine\Textures\BlendStates">
-      <UniqueIdentifier>{a99b425d-a397-4ad6-93e7-5e13510419ca}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GraphicsEngine\AssimpImporter">
       <UniqueIdentifier>{e559f998-cefb-4ccf-983a-f24545061a73}</UniqueIdentifier>
     </Filter>
@@ -325,28 +499,58 @@
     <Filter Include="Shaders\Terrain">
       <UniqueIdentifier>{fedc451a-6a2c-4459-9a44-39d17e50a937}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GraphicsEngine\DepthStencil">
+      <UniqueIdentifier>{a36f06fc-bd56-4487-875d-f77b408a9c09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\Shadows">
+      <UniqueIdentifier>{113ed2fc-d08f-4340-8d94-593f2b2ad248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Billboard">
+      <UniqueIdentifier>{89a90716-f51a-4af8-88b4-5c9d9d3e82e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\DebugWindow">
+      <UniqueIdentifier>{5ab216ca-d7a1-44f4-a778-034043882ba8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\States">
+      <UniqueIdentifier>{9437a46b-097d-43e9-b7f4-5db11e04413c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\States\Rasterizer">
+      <UniqueIdentifier>{12fd9736-1dc7-4b8a-ae7f-1413d47452a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\States\BlendStates">
+      <UniqueIdentifier>{a99b425d-a397-4ad6-93e7-5e13510419ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\States\SamplerStates">
+      <UniqueIdentifier>{5445e76f-0de9-4f48-a2af-beff57c31095}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\States\PipelineState">
+      <UniqueIdentifier>{d7aca9a2-8f5a-4083-8144-6e28918a11cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Shadows">
+      <UniqueIdentifier>{7c8de919-f2c5-4b94-b491-dbff3cbf1e87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\Octree">
+      <UniqueIdentifier>{9a255b78-f275-4c31-8430-07c77336d458}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\DirectXTex\DirectXTex">
+      <UniqueIdentifier>{fe6414c6-babe-4bb7-bbb2-e6b2dd0be0cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\nlohmann">
+      <UniqueIdentifier>{69404260-9e1d-4818-8ae4-b2992d46964a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\nlohmann\json">
+      <UniqueIdentifier>{8c7a540c-4b93-483f-862b-1d4723c45287}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\Animations">
+      <UniqueIdentifier>{83640344-d3bf-49a6-b339-ac2457e8798a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Libraries\rapidxml\manual.html">
       <Filter>Libraries\RapidXml</Filter>
     </None>
-    <None Include="GraphicsEngine\Shaders\LightingUtils.hlsli">
-      <Filter>Shaders\Common</Filter>
-    </None>
-    <None Include="GraphicsEngine\Shaders\ObjectData.hlsli">
-      <Filter>Shaders\Common</Filter>
-    </None>
-    <None Include="GraphicsEngine\Shaders\MaterialData.hlsli">
-      <Filter>Shaders\Common</Filter>
-    </None>
-    <None Include="GraphicsEngine\Shaders\Samplers.hlsli">
-      <Filter>Shaders\Common</Filter>
-    </None>
-    <None Include="GraphicsEngine\Shaders\CommonDefines.hlsli">
-      <Filter>Shaders\Common</Filter>
-    </None>
-    <None Include="GraphicsEngine\Shaders\MathUtils.hlsli">
-      <Filter>Shaders\Common</Filter>
+    <None Include="..\Libraries\DirectXTex\DirectXTex\DirectXTex.inl">
+      <Filter>Libraries\DirectXTex\DirectXTex</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -373,6 +577,45 @@
     </FxCompile>
     <FxCompile Include="GraphicsEngine\Shaders\SkyDomeVertexShader.hlsl">
       <Filter>Shaders\Skydome</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\BillboardGeometryShader.hlsl">
+      <Filter>Shaders\Billboard</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\BillboardVertexShader.hlsl">
+      <Filter>Shaders\Billboard</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\CommonDefines.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\LightingUtils.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\MaterialData.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\MathUtils.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\ObjectData.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\PassData.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\Samplers.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\DebugWindowPixelShader.hlsl">
+      <Filter>Shaders\DebugWindow</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\DebugWindowVertexShader.hlsl">
+      <Filter>Shaders\DebugWindow</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\AlphaClippedShadowsPixelShader.hlsl">
+      <Filter>Shaders\Shadows</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\TerrainGeometryShader.hlsl">
+      <Filter>Shaders\Terrain</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -2,8 +2,10 @@
 #include "EngineException.h"
 
 #include <comdef.h>
+#include <sstream>
 
 using namespace Common;
+using namespace DirectX;
 
 bool Helpers::FileExists(const std::wstring& filename)
 {

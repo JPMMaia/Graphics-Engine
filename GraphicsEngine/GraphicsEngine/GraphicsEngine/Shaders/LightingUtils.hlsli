@@ -48,7 +48,7 @@ float CalculateShadowFactor(Texture2D shadowMap, SamplerComparisonState samplerS
         percentLit += shadowMap.SampleCmpLevelZero(samplerState, shadowPositionH.xy + offsets[i], depth).r;
     }
 
-    return percentLit /= 9.0f;
+    return percentLit /= (float) numberOfOffsets;
 }
 
 /// <sumary>

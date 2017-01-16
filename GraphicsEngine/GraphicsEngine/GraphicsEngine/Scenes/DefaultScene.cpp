@@ -159,7 +159,7 @@ void DefaultScene::AddTreeInstances(Graphics* graphics, const std::vector<SceneB
 	auto scale = 0.3f;
 	auto transformationMatrix = XMMatrixScaling(scale, scale, scale) * XMMatrixRotationX(XM_PI / 2.0f);
 
-	AddNormalInstances(graphics, "Tree", { "Trunk", "Leaves" }, instancesData, transformationMatrix);
+	AddNormalInstances(graphics, "Tree", { "Trunk", "Leaves", "Bark" }, instancesData, transformationMatrix);
 }
 void DefaultScene::RemoveLastInstance(Graphics* graphics, const std::string& itemName, const std::initializer_list<std::string>& renderItemNames)
 {
@@ -272,6 +272,16 @@ void DefaultScene::InitializeTextures(const D3DBase& d3dBase, TextureManager& te
 	textureManager.Create(device, "GrassDiffuseMap", L"Textures/ground14d.jpg");
 	textureManager.Create(device, "GrassNormalMap", L"Textures/ground14n.jpg");
 	textureManager.Create(device, "GrassSpecularMap", L"Textures/ground14s.jpg");
+
+	textureManager.Create(device, "SampleLeavesDiffuseMap", L"Models/SampleLeaves_1.tga");
+	//textureManager.Create(device, "SampleLeavesNormalMap", L"Models/SampleLeaves_1_Normal.tga");
+	//textureManager.Create(device, "SampleLeavesSpecularMap", L"Models/SampleLeaves_1_Spec.tga");
+
+	textureManager.Create(device, "ConiferBarkDiffuseMap", L"Models/ConiferBark.tga");
+	//textureManager.Create(device, "ConiferBarkNormalMap", L"Models/ConiferBark_Normal.tga");
+
+	textureManager.Create(device, "PalmBarkDiffuseMap", L"Models/PalmBark.tga");
+	//textureManager.Create(device, "PalmBarkNormalMap", L"Models/PalmBark_Normal.tga");
 }
 void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 {
@@ -425,7 +435,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 
 	// AlanTree:
 	{
-		AssimpImporter importer;
+		/*AssimpImporter importer;
 		AssimpImporter::ImportInfo importInfo;
 		std::wstring filename(L"Models/AlanTree.fbx");
 		importer.Import(graphics, d3dBase, textureManager, this, filename, importInfo);
@@ -452,6 +462,61 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 			renderItem->SetMesh(importedGeometry, "LeavesMeshData");
 			renderItem->SetMaterial(m_materials.at(materialName).get());
 			graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::AlphaClipped });
+		}
+
+		// Add instances:
+		const auto& instancesData = m_sceneBuilder.GetRenderItemInstances("Tree");
+		AddTreeInstances(graphics, instancesData);*/
+	}
+
+	// Tree
+	{
+		AssimpImporter importer;
+		AssimpImporter::ImportInfo importInfo;
+		std::wstring filename(L"Models/Tree.fbx");
+		importer.Import(graphics, d3dBase, textureManager, this, filename, importInfo);
+
+		auto importedGeometry = m_immutableGeometries.at(Helpers::WStringToString(filename)).get();
+
+		// Trunk:
+		{
+			const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "Trunk"));
+			auto pMaterial = m_materials.at(materialName).get();
+			pMaterial->DiffuseMap = &textureManager["PalmBarkDiffuseMap"];
+
+			auto renderItem = std::make_unique<NormalRenderItem>();
+			renderItem->SetName("Trunk");
+			renderItem->SetMesh(importedGeometry, "Trunk");
+			renderItem->SetMaterial(pMaterial);
+			graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::Opaque });
+		}
+
+		// Leaves:
+		{
+			const auto& submesh = importedGeometry->GetSubmesh("Leaves");
+			const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "Leaves"));
+			auto pMaterial = m_materials.at(materialName).get();
+			pMaterial->DiffuseMap = &textureManager["SampleLeavesDiffuseMap"];
+
+			auto renderItem = std::make_unique<NormalRenderItem>();
+			renderItem->SetName("Leaves");
+			renderItem->SetMesh(importedGeometry, "Leaves");
+			renderItem->SetMaterial(pMaterial);
+			graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::AlphaClipped });
+		}
+
+		// Bark:
+		{
+			const auto& submesh = importedGeometry->GetSubmesh("Bark");
+			const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "Bark"));
+			auto pMaterial = m_materials.at(materialName).get();
+			pMaterial->DiffuseMap = &textureManager["ConiferBarkDiffuseMap"];
+
+			auto renderItem = std::make_unique<NormalRenderItem>();
+			renderItem->SetName("Bark");
+			renderItem->SetMesh(importedGeometry, "Bark");
+			renderItem->SetMaterial(pMaterial);
+			graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::Opaque });
 		}
 
 		// Add instances:

@@ -161,12 +161,12 @@ void AssimpImporter::AddMaterials(const D3DBase& d3dBase, TextureManager& textur
 		// Set diffuse map:
 		aiString texturePath;
 		importedMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
-		if(texturePath.length != 0)
+		/*if(texturePath.length != 0)
 		{
 			auto texturePathStr = "Models/" + std::string(texturePath.C_Str());
 			textureManager.Create(d3dBase.GetDevice(), texturePathStr, Helpers::StringToWString(texturePathStr));
 			renderMaterial->DiffuseMap = &textureManager[texturePathStr];
-		}
+		}*/
 
 		// Set diffuse albedo:
 		aiColor4D diffuseColor;

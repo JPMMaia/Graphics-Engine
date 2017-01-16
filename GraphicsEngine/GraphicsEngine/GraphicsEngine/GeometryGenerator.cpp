@@ -33,6 +33,11 @@ GeometryGenerator::MeshData GeometryGenerator::CreateRectangle(float originX, fl
 	return meshData;
 }
 
+GeometryGenerator::MeshData GeometryGenerator::CreateSphere(float radius, float beginTheta, float endTheta, float beginPhi, float endPhi)
+{
+	return MeshData();
+}
+
 void GeometryGenerator::CalculateNormalAndTangentVectors(MeshData& meshData, uint32_t verticesPerFace)
 {
 	const auto& vertices = meshData.Vertices;

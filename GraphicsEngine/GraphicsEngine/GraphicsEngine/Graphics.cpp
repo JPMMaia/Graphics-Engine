@@ -434,7 +434,7 @@ void Graphics::InitializeMainPassData()
 	m_mainPassData.FogRange = 100.0f;
 	m_mainPassData.MaxTesselationDistance = 100.0f;
 	m_mainPassData.MaxTesselationFactor = 6.0f;
-	m_mainPassData.MinTesselationDistance = 500.0f;
+	m_mainPassData.MinTesselationDistance = 1000.0f;
 	m_mainPassData.MinTesselationFactor = 0.0f;
 	m_mainPassData.SkyDomeColors[0] = { 0.9f, 0.9f, 0.97f, 1.0f };
 	m_mainPassData.SkyDomeColors[1] = { 0.17f, 0.30f, 0.51f, 1.0f };

@@ -254,14 +254,14 @@ void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::Ke
 	}
 	else
 	{
-		if(eventArgs.UserInput)
+		/*if(eventArgs.UserInput)
 		{
 			m_animationManager.AddAnimation(std::make_unique<KeyAnimation>(
 				m_input,
 				eventArgs.Key,
 				m_timer.GetTotalMilliseconds()
 				), false);
-		}
+		}*/
 
 		m_graphics.SetDebugWindowMode(static_cast<Graphics::DebugWindowMode>(eventArgs.Key - 2));
 	}
@@ -308,4 +308,7 @@ Application::Application() :
 	m_input.SubscribeToOnKeyDownEvents(DIK_9, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 
 	//m_timer.SetTotalMilliseconds(190000.0);
+	
+	m_soundManager.Create2DSoundFromWaveFile("MainSound", L"Sounds/Cloud Atlas 21 - Cloud Atlas Finale.wav");
+	m_soundManager.Play2DSound("MainSound");
 }

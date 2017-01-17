@@ -148,7 +148,7 @@ const std::vector<RenderItem*>& Graphics::GetRenderItems(RenderLayer renderLayer
 	return m_renderItemLayers[static_cast<size_t>(renderLayer)];
 }
 
-std::vector<std::unique_ptr<RenderItem>>::const_iterator Graphics::GetRenderItem(std::string name) const
+std::vector<std::unique_ptr<RenderItem>>::const_iterator Graphics::GetRenderItem(const std::string& name) const
 {
 	auto match = [&name](const std::unique_ptr<RenderItem>& renderItem)
 	{
@@ -157,7 +157,7 @@ std::vector<std::unique_ptr<RenderItem>>::const_iterator Graphics::GetRenderItem
 
 	return std::find_if(m_allRenderItems.begin(), m_allRenderItems.end(), match);
 }
-std::vector<NormalRenderItem*>::const_iterator Graphics::GetNormalRenderItem(std::string name) const
+std::vector<NormalRenderItem*>::const_iterator Graphics::GetNormalRenderItem(const std::string& name) const
 {
 	auto match = [&name](const NormalRenderItem* renderItem)
 	{
@@ -166,7 +166,7 @@ std::vector<NormalRenderItem*>::const_iterator Graphics::GetNormalRenderItem(std
 
 	return std::find_if(m_normalRenderItems.begin(), m_normalRenderItems.end(), match);
 }
-std::vector<BillboardRenderItem*>::const_iterator Graphics::GetBillboardRenderItem(std::string name) const
+std::vector<BillboardRenderItem*>::const_iterator Graphics::GetBillboardRenderItem(const std::string& name) const
 {
 	auto match = [&name](const BillboardRenderItem* renderItem)
 	{
@@ -433,7 +433,7 @@ void Graphics::InitializeMainPassData()
 	m_mainPassData.FogStart = 20.0f;
 	m_mainPassData.FogRange = 100.0f;
 	m_mainPassData.MaxTesselationDistance = 100.0f;
-	m_mainPassData.MaxTesselationFactor = 6.0f;
+	m_mainPassData.MaxTesselationFactor = 5.0f;
 	m_mainPassData.MinTesselationDistance = 1000.0f;
 	m_mainPassData.MinTesselationFactor = 0.0f;
 	m_mainPassData.SkyDomeColors[0] = { 0.9f, 0.9f, 0.97f, 1.0f };

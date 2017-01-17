@@ -54,9 +54,9 @@ namespace GraphicsEngine
 		void AddBillboardRenderItemInstance(BillboardRenderItem* renderItem, const BillboardMeshGeometry::VertexType& instanceData) const;
 		uint32_t GetVisibleInstances() const;
 		const std::vector<RenderItem*>& GetRenderItems(RenderLayer renderLayer) const;
-		std::vector<std::unique_ptr<RenderItem>>::const_iterator GetRenderItem(std::string name) const;
-		std::vector<NormalRenderItem*>::const_iterator GetNormalRenderItem(std::string name) const;
-		std::vector<BillboardRenderItem*>::const_iterator GetBillboardRenderItem(std::string name) const;
+		std::vector<std::unique_ptr<RenderItem>>::const_iterator GetRenderItem(const std::string& name) const;
+		std::vector<NormalRenderItem*>::const_iterator GetNormalRenderItem(const std::string& name) const;
+		std::vector<BillboardRenderItem*>::const_iterator GetBillboardRenderItem(const std::string& name) const;
 
 		void SetFogState(bool state);
 		void SetFogDistanceParameters(float start, float range);

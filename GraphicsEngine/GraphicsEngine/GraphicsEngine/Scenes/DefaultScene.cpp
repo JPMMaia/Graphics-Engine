@@ -88,7 +88,7 @@ const std::unordered_map<std::string, std::unique_ptr<Material>>& DefaultScene::
 	return m_materials;
 }
 
-void DefaultScene::AddNormalInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData, FXMMATRIX transformMatrix)
+void DefaultScene::AddNormalInstances(Graphics* graphics, const std::string& name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData, FXMMATRIX transformMatrix)
 {
 	std::vector<NormalRenderItem*> renderItems;
 	renderItems.reserve(renderItemNames.size());
@@ -124,7 +124,7 @@ void DefaultScene::AddNormalInstances(Graphics* graphics, std::string name, cons
 		}
 	}
 }
-void DefaultScene::AddBillboardInstances(Graphics* graphics, std::string name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData, float yOffset)
+void DefaultScene::AddBillboardInstances(Graphics* graphics, const std::string& name, const std::initializer_list<std::string>& renderItemNames, const std::vector<SceneBuilder::RenderItemInstanceData>& instancesData, float yOffset)
 {
 	std::vector<BillboardRenderItem*> renderItems;
 	renderItems.reserve(renderItemNames.size());
@@ -493,7 +493,6 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 
 		// Leaves:
 		{
-			const auto& submesh = importedGeometry->GetSubmesh("Leaves");
 			const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "Leaves"));
 			auto pMaterial = m_materials.at(materialName).get();
 			pMaterial->DiffuseMap = &textureManager["SampleLeavesDiffuseMap"];
@@ -507,7 +506,6 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 
 		// Bark:
 		{
-			const auto& submesh = importedGeometry->GetSubmesh("Bark");
 			const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "Bark"));
 			auto pMaterial = m_materials.at(materialName).get();
 			pMaterial->DiffuseMap = &textureManager["ConiferBarkDiffuseMap"];

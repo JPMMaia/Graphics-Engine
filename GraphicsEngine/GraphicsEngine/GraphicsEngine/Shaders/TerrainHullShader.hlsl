@@ -21,14 +21,23 @@ struct TesselationPatch
     float InsideTesselationFactor[2] : SV_InsideTessFactor;
 };
 
+int PowerOfTwo(int x)
+{
+    int result = 1;
+    for (int i = 0; i < x; ++i)
+        result *= 2;
+
+    return result;
+}
+
 float CalculateTesselationFactor(float3 positionW)
 {
 	// Calculate the distance from the vertex to the camera:
     float distanceToEye = distance(EyePositionW, positionW);
 
 	// Calculate the tesselation factor:
-    float tesselationDistanceScalar = saturate((MinTesselationDistance - distanceToEye) / (MinTesselationDistance - MaxTesselationDistance));
-    return pow(2, lerp(MinTesselationFactor, MaxTesselationFactor, tesselationDistanceScalar));
+    float blendFactor = saturate((MinTesselationDistance - distanceToEye) / (MinTesselationDistance - MaxTesselationDistance));   
+    return (float) PowerOfTwo((int) lerp(MinTesselationFactor, MaxTesselationFactor, blendFactor));
 }
 
 TesselationPatch CalculatePatchConstants(InputPatch<VertexOutput, NUM_CONTROL_POINTS> inputPatch, uint patchID : SV_PrimitiveID)

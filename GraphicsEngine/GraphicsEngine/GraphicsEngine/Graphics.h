@@ -23,7 +23,7 @@ namespace GraphicsEngine
 	class Graphics
 	{
 	public:
-		enum class DebugWindowMode
+		enum class DebugMode
 		{
 			Hidden,
 			ShadowMap,
@@ -61,8 +61,8 @@ namespace GraphicsEngine
 		void SetFogState(bool state);
 		void SetFogDistanceParameters(float start, float range);
 		void SetFogColor(const DirectX::XMFLOAT4& color);
-		DebugWindowMode GetDebugWindowMode() const;
-		void SetDebugWindowMode(DebugWindowMode debugWindowMode);
+		DebugMode GetDebugWindowMode() const;
+		void SetDebugWindowMode(DebugMode debugWindowMode);
 		void ToggleDebugMode();
 
 	private:
@@ -82,6 +82,9 @@ namespace GraphicsEngine
 
 		void DrawInNormalMode() const;
 		void DrawInDebugMode() const;
+		void DrawSceneIntoShadowMap(const ShadowTexture& shadowMap) const;
+		void DrawMainScene() const;
+		void DrawDebugWindow() const;
 		void DrawRenderItems(RenderLayer renderLayer) const;
 		void DrawNonInstancedRenderItems(RenderLayer renderLayer) const;
 		void DrawTerrain() const;
@@ -115,9 +118,9 @@ namespace GraphicsEngine
 		DirectX::BoundingSphere m_sceneBounds;
 		uint32_t m_visibleInstances;
 		ShaderBufferTypes::PassData m_mainPassData;
-		DebugWindowMode m_debugWindowMode;
+		DebugMode m_debugWindowMode;
 		bool m_enableShadows;
 		bool m_drawTerrainOnly;
-		std::unordered_map<DebugWindowMode, std::string> m_debugPipelineStateNames;
+		std::unordered_map<DebugMode, std::string> m_debugPipelineStateNames;
 	};
 }

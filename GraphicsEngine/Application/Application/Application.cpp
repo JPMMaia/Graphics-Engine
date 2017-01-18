@@ -263,7 +263,7 @@ void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::Ke
 				), false);
 		}*/
 
-		m_graphics.SetDebugWindowMode(static_cast<Graphics::DebugWindowMode>(eventArgs.Key - 2));
+		m_graphics.SetDebugWindowMode(static_cast<Graphics::DebugMode>(eventArgs.Key - 2));
 	}
 }
 

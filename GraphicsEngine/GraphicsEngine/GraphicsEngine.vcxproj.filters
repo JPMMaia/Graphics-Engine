@@ -80,12 +80,6 @@
     <ClCompile Include="GraphicsEngine\DepthStencilState.cpp">
       <Filter>GraphicsEngine\DepthStencil</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsEngine\RenderTexture.cpp">
-      <Filter>GraphicsEngine\Shadows</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsEngine\ShadowTexture.cpp">
-      <Filter>GraphicsEngine\Shadows</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsEngine\LightManager.cpp">
       <Filter>GraphicsEngine\Light</Filter>
     </ClCompile>
@@ -205,6 +199,18 @@
     </ClCompile>
     <ClCompile Include="GraphicsEngine\KeyAnimation.cpp">
       <Filter>GraphicsEngine\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\DynamicCubeMapRenderTexture.cpp">
+      <Filter>GraphicsEngine\CubeMapping</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\RenderTexture.cpp">
+      <Filter>GraphicsEngine\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\ShadowTexture.cpp">
+      <Filter>GraphicsEngine\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\CubeMappingCamera.cpp">
+      <Filter>GraphicsEngine\CubeMapping</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -341,12 +347,6 @@
     <ClInclude Include="GraphicsEngine\DepthStencilStateDescConstants.h">
       <Filter>GraphicsEngine\DepthStencil</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsEngine\RenderTexture.h">
-      <Filter>GraphicsEngine\Shadows</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsEngine\ShadowTexture.h">
-      <Filter>GraphicsEngine\Shadows</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsEngine\LightManager.h">
       <Filter>GraphicsEngine\Light</Filter>
     </ClInclude>
@@ -434,6 +434,18 @@
     <ClInclude Include="GraphicsEngine\KeyAnimation.h">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsEngine\DynamicCubeMapRenderTexture.h">
+      <Filter>GraphicsEngine\CubeMapping</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\RenderTexture.h">
+      <Filter>GraphicsEngine\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\ShadowTexture.h">
+      <Filter>GraphicsEngine\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\CubeMappingCamera.h">
+      <Filter>GraphicsEngine\CubeMapping</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -502,9 +514,6 @@
     <Filter Include="GraphicsEngine\DepthStencil">
       <UniqueIdentifier>{a36f06fc-bd56-4487-875d-f77b408a9c09}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GraphicsEngine\Shadows">
-      <UniqueIdentifier>{113ed2fc-d08f-4340-8d94-593f2b2ad248}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\Billboard">
       <UniqueIdentifier>{89a90716-f51a-4af8-88b4-5c9d9d3e82e2}</UniqueIdentifier>
     </Filter>
@@ -543,6 +552,9 @@
     </Filter>
     <Filter Include="GraphicsEngine\Animations">
       <UniqueIdentifier>{83640344-d3bf-49a6-b339-ac2457e8798a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsEngine\CubeMapping">
+      <UniqueIdentifier>{8442bbb8-25ae-4141-bdc2-bd4182fcd4cd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

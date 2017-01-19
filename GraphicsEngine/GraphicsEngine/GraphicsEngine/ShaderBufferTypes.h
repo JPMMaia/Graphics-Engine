@@ -41,7 +41,7 @@ namespace GraphicsEngine
 			DirectX::XMFLOAT4X4 InverseViewProjectionMatrix = MathHelper::Identity4x4();
 			DirectX::XMFLOAT4X4 ShadowMatrix = MathHelper::Identity4x4();
 			DirectX::XMFLOAT4X4 GrassTransformMatrix = MathHelper::Identity4x4();
-			DirectX::XMFLOAT4X4 SkyCloudsTransformMatrix = MathHelper::Identity4x4();
+			DirectX::XMFLOAT4X4 SkyCloudsPlaneTransformMatrix = MathHelper::Identity4x4();
 			DirectX::XMFLOAT3 EyePositionW;
 			float TerrainDisplacementScalarY;
 			DirectX::XMFLOAT2 RenderTargetSize;
@@ -53,14 +53,14 @@ namespace GraphicsEngine
 			DirectX::XMFLOAT4 FogColor = { 0.5f, 0.5f, 0.5f, 1.0f };
 			float FogStart = 5.0f;
 			float FogRange = 20.0f;
-			DirectX::XMFLOAT2 Padding1;
+			DirectX::XMFLOAT2 CloudsTranslation = { 0.0f, 0.0f }; 
 			float MaxTesselationDistance = 100.0f;
 			float MaxTesselationFactor = 5.0f;
 			float MinTesselationDistance = 1000.0f;
 			float MinTesselationFactor = 1.0f;
 			DirectX::XMFLOAT2 TexelSize;
 			float TiledTexelScale;
-			float Padding2;
+			float CloudsNoiseScale;
 			DirectX::XMFLOAT4 SkyDomeColors[2];
 			DirectX::XMFLOAT4 AmbientLight = { 0.0f, 0.0f, 0.0f, 1.0f };
 

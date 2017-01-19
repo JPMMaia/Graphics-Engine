@@ -18,6 +18,7 @@
 #include "NormalRenderItem.h"
 #include "BillboardRenderItem.h"
 #include "CubeMappingRenderItem.h"
+#include <random>
 
 namespace GraphicsEngine
 {

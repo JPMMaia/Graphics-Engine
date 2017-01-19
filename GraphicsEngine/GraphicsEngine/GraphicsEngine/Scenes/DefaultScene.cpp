@@ -285,6 +285,10 @@ void DefaultScene::InitializeTextures(const D3DBase& d3dBase, TextureManager& te
 
 	textureManager.Create(device, "PalmBarkDiffuseMap", L"Models/PalmBark.tga");
 	//textureManager.Create(device, "PalmBarkNormalMap", L"Models/PalmBark_Normal.tga");
+
+	textureManager.Create(device, "CloudsMap", L"Textures/cloud001.dds");
+	textureManager.Create(device, "CloudsNoiseMap", L"Textures/noise001.dds");
+	//textureManager.Create(device, "PalmBarkNormalMap", L"Models/PalmBark_Normal.tga");
 }
 void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 {
@@ -343,6 +347,14 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 	{
 		auto material = std::make_unique<Material>();
 		material->Name = "SkyDome";
+		AddMaterial(std::move(material));
+	}
+
+	{
+		auto material = std::make_unique<Material>();
+		material->Name = "SkyClouds";
+		material->DiffuseMap = &textureManager["CloudsMap"];
+		material->NormalMap = &textureManager["CloudsNoiseMap"];
 		AddMaterial(std::move(material));
 	}
 
@@ -460,7 +472,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 		auto renderItem = std::make_unique<NormalRenderItem>();
 		renderItem->SetName("SkyClouds");
 		renderItem->SetMesh(geometry, "Plane.001");
-		renderItem->SetMaterial(m_materials.at("SkyDome").get());
+		renderItem->SetMaterial(m_materials.at("SkyClouds").get());
 
 		graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::SkyClouds });
 	}

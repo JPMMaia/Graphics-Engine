@@ -307,6 +307,9 @@ void PipelineStateManager::InitializeBlendStates(const D3DBase& d3dBase)
 
 	m_blendStates.emplace(std::piecewise_construct, std::forward_as_tuple("Default"), std::forward_as_tuple(device, BlendStateDescConstants::Default(), defaultBlendFactor, defaultSampleMask));
 	m_blendStates.emplace(std::piecewise_construct, std::forward_as_tuple("Transparent"), std::forward_as_tuple(device, BlendStateDescConstants::Transparent(), defaultBlendFactor, defaultSampleMask));
+
+	auto additiveBlendFactor = std::array<FLOAT, 4>{ 0.0f, 0.0f, 0.0f, 0.0f };
+	m_blendStates.emplace(std::piecewise_construct, std::forward_as_tuple("AdditiveBlend"), std::forward_as_tuple(device, BlendStateDescConstants::AdditiveBlend(), additiveBlendFactor, defaultSampleMask));
 }
 void PipelineStateManager::InitializeDepthStencilStates(const D3DBase& d3dBase)
 {
@@ -460,7 +463,7 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		skyClouds.VertexShader = &m_vertexShaders.at("SkyClouds");
 		skyClouds.PixelShader = &m_pixelShaders.at("SkyClouds");
 		skyClouds.RasterizerState = &m_rasterizerStates.at("NoCulling");
-		skyClouds.BlendState = &m_blendStates.at("Default");
+		skyClouds.BlendState = &m_blendStates.at("AdditiveBlend");
 		skyClouds.DepthStencilState = &m_depthStencilStates.at("DepthDisabled");
 		m_pipelineStateObjects.emplace("SkyClouds", skyClouds);
 

@@ -43,7 +43,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	BindSamplers();
 	//SetupTerrainMeshData();
 
-	SetFogColor(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
+	SetFogColor(XMFLOAT4(0.5f, 0.5f, 0.5f, m_fog ? 1.0f : 0.0f));
 
 	m_initialized = true;
 }
@@ -527,7 +527,7 @@ void Graphics::UpdateMainPassData(const Common::Timer& timer)
 	const auto& grassTransformMatrix = m_scene.GetGrassTransformMatrix();
 	XMStoreFloat4x4(&m_mainPassData.GrassTransformMatrix, XMLoadFloat4x4(&grassTransformMatrix));
 
-	XMStoreFloat4x4(&m_mainPassData.SkyCloudsTransformMatrix, XMMatrixRotationX(-XM_PI / 2.0f));
+	XMStoreFloat4x4(&m_mainPassData.SkyCloudsPlaneTransformMatrix, XMMatrixRotationX(-XM_PI / 2.0f));
 
 	XMStoreFloat3(&m_mainPassData.EyePositionW, m_camera.GetPosition());
 	m_mainPassData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));
@@ -536,6 +536,14 @@ void Graphics::UpdateMainPassData(const Common::Timer& timer)
 	m_mainPassData.FarZ = m_camera.GetFarZ();
 	m_mainPassData.TotalTime = static_cast<float>(timer.GetTotalMilliseconds());
 	m_mainPassData.DeltaTime = static_cast<float>(timer.GetDeltaMilliseconds());
+
+	// Clouds:
+	{
+		auto cloudsTranslation = XMLoadFloat2(&m_mainPassData.CloudsTranslation);
+		auto amountToTranslate = static_cast<float>(0.00001f * timer.GetDeltaMilliseconds());
+		cloudsTranslation = cloudsTranslation + XMVectorSet(amountToTranslate, amountToTranslate, 0.0f, 0.0f);
+		XMStoreFloat2(&m_mainPassData.CloudsTranslation, cloudsTranslation);
+	}
 
 	const auto& terrain = m_scene.GetTerrain();
 	m_mainPassData.TexelSize = terrain.GetTexelSize();

@@ -8,5 +8,6 @@ namespace GraphicsEngine
 	{
 		D3D11_BLEND_DESC1 Default();
 		D3D11_BLEND_DESC1 Transparent();
+		D3D11_BLEND_DESC1 AdditiveBlend();
 	}
 }

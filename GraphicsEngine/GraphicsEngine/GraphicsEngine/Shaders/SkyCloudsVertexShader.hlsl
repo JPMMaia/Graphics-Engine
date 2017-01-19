@@ -14,16 +14,16 @@ struct VertexInput
 struct VertexOutput
 {
     float4 PositionH : SV_POSITION;
-    float BlendFactor : TEXCOORD0;
+    float2 TextureCoordinates : TEXCOORD0;
 };
 
 VertexOutput main(VertexInput vertexInput)
 {
     VertexOutput output;
 
-    float3 positionW = EyePositionW + mul(float4(vertexInput.PositionL, 1.0f), SkyCloudsTransformMatrix).xyz;
+    float3 positionW = EyePositionW + mul(float4(vertexInput.PositionL, 1.0f), SkyCloudsPlaneTransformMatrix).xyz;
     output.PositionH = mul(float4(positionW, 1.0f), ViewProjectionMatrix);
-    output.BlendFactor = (vertexInput.PositionL.y + 1.0f) / 2.0f;
+    output.TextureCoordinates = vertexInput.TextureCoordinates;
 
     return output;
 }

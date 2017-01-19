@@ -8,7 +8,7 @@ cbuffer PassData : register(b2)
 	float4x4 InverseViewProjectionMatrix;
     float4x4 ShadowMatrix;
     float4x4 GrassTransformMatrix;
-    float4x4 SkyCloudsTransformMatrix;
+    float4x4 SkyCloudsPlaneTransformMatrix;
 	float3 EyePositionW;
 	float TerrainDisplacementScalarY;
 	float2 RenderTargetSize;
@@ -20,14 +20,14 @@ cbuffer PassData : register(b2)
 	float4 FogColor;
 	float FogStart;
 	float FogRange;
-    float2 Padding1;
+    float2 CloudsTranslation;
     float MaxTesselationDistance;
     float MaxTesselationFactor;
     float MinTesselationDistance;
     float MinTesselationFactor;
     float2 TexelSize;
     float TiledTexelScale;
-    float Padding2;
+    float Padding;
     float4 SkyDomeColors[2];
 	float4 AmbientLight;
 	Light Lights[MAX_NUM_LIGHTS];

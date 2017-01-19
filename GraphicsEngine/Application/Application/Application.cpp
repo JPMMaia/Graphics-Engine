@@ -225,7 +225,7 @@ void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::Ke
 	}
 	else if (eventArgs.Key == DIK_C)
 	{
-		m_animationManager.AddAnimation(std::make_unique<CameraAnimation>(
+		/*m_animationManager.AddAnimation(std::make_unique<CameraAnimation>(
 			*pCamera,
 			m_animationManager.GetLastCameraFinalTime(),
 			static_cast<float>(m_timer.GetTotalMilliseconds() - m_animationManager.GetLastCameraFinalTime()),
@@ -233,11 +233,11 @@ void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::Ke
 			pCamera->GetPosition(),
 			m_animationManager.GetLastCameraRotationQuaternion(),
 			pCamera->GetRotationQuaternion()
-			));
+			));*/
 	}
 	else if (eventArgs.Key == DIK_F)
 	{
-		m_animationManager.AddAnimation(std::make_unique<FogAnimation>(
+		/*m_animationManager.AddAnimation(std::make_unique<FogAnimation>(
 			static_cast<float>(m_timer.GetTotalMilliseconds()),
 			10000.0f,
 			m_graphics,
@@ -247,7 +247,7 @@ void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::Ke
 			1000.0f,
 			XMVectorSet(0.5f, 0.5f, 0.5f, 1.0f),
 			XMVectorSet(0.5f, 0.5f, 0.5f, 0.0f)
-			), true);
+			), true);*/
 	}
 	else if (eventArgs.Key == DIK_P)
 	{
@@ -255,14 +255,14 @@ void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::Ke
 	}
 	else
 	{
-		if(eventArgs.UserInput)
+		/*if(eventArgs.UserInput)
 		{
 			m_animationManager.AddAnimation(std::make_unique<KeyAnimation>(
 				m_input,
 				eventArgs.Key,
 				m_timer.GetTotalMilliseconds()
 				), false);
-		}
+		}*/
 
 		m_graphics.SetDebugWindowMode(static_cast<Graphics::DebugMode>(eventArgs.Key - 2));
 	}
@@ -305,8 +305,6 @@ Application::Application() :
 	m_input.SubscribeToOnKeyDownEvents(DIK_7, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_8, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_9, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
-
-	m_timer.SetTotalMilliseconds(199000.0);
 
 	m_soundManager.Create2DSoundFromWaveFile("MainSound", L"Sounds/Cloud Atlas 21 - Cloud Atlas Finale.wav");
 	m_soundManager.Play2DSound("MainSound");

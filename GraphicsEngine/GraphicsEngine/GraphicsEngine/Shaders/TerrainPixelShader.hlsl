@@ -150,7 +150,7 @@ float4 main(DomainOutput input) : SV_TARGET
     
 #if defined(FOG)
 
-    shadowFactor *= 1.0f - fogIntensity;
+    shadowFactor *= 1.0f - FogColor.w;
 
 #endif
 

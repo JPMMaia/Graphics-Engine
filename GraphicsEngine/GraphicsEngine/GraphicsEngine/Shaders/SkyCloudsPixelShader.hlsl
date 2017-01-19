@@ -21,7 +21,7 @@ float4 main(VertexOutput input) : SV_TARGET
     float2 noiseValue = NoiseMap.Sample(SamplerAnisotropicWrap, textureCoordinates).xx;
 
     // Scale the noise value:
-    float scale = 0.1f + cos(0.00005f * TotalTime) * 0.5f;
+    float scale = 0.1f + cos(0.00005f * TotalTime) * 0.4f;
     noiseValue *= scale;
 
     // Apply noise to the translated texture coordinates:
@@ -35,7 +35,8 @@ float4 main(VertexOutput input) : SV_TARGET
     color *= brightness;
 
 #if defined(FOG)
-    color = lerp(color, FogColor, FogColor.w);
+    
+    color = lerp(color, float4(0.0f, 0.0f, 0.0f, 0.0f), FogColor.w);
 #endif
 
     return color;

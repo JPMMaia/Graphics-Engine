@@ -20,5 +20,7 @@ void GeneralAnimation::FixedUpdate(const Common::Timer& timer) const
 
 nlohmann::json GeneralAnimation::ToJson() const
 {
-	throw Common::NotImplementedException();
+	return{
+		{ "Name", "GeneralAnimation" }
+	};
 }

@@ -5,15 +5,12 @@
 
 using namespace GraphicsEngine;
 
-CubeMappingRenderItem::CubeMappingRenderItem(ID3D11Device* device, ImmutableMeshGeometry* mesh, const std::string& submeshName, const DirectX::XMFLOAT3& position) :
+CubeMappingRenderItem::CubeMappingRenderItem(ID3D11Device* device, ImmutableMeshGeometry* mesh, const std::string& submeshName) :
 	m_mesh(mesh),
 	m_submeshName(submeshName),
-	m_camera(position),
 	m_renderTexture(device, 256, 256, DXGI_FORMAT_R8G8B8A8_UNORM),
-	m_position(position),
 	m_instanceBuffer(device, sizeof(ShaderBufferTypes::InstanceData), sizeof(ShaderBufferTypes::InstanceData))
 {
-	XMStoreFloat4x4(&m_instanceData.WorldMatrix, DirectX::XMMatrixTranslation(position.x, position.y, position.z));
 }
 
 void CubeMappingRenderItem::Render(ID3D11DeviceContext* deviceContext) const
@@ -50,6 +47,13 @@ void CubeMappingRenderItem::RemoveLastInstance()
 {
 }
 
+void CubeMappingRenderItem::SetPosition(DirectX::FXMVECTOR position)
+{
+	m_position = position;
+	XMStoreFloat4x4(&m_instanceData.WorldMatrix, DirectX::XMMatrixTranslationFromVector(position));
+	m_camera.SetPosition(position);
+}
+
 const CubeMappingCamera& CubeMappingRenderItem::GetCamera() const
 {
 	return m_camera;
@@ -58,7 +62,7 @@ const CubeMapRenderTexture& CubeMappingRenderItem::GetRenderTexture() const
 {
 	return m_renderTexture;
 }
-const DirectX::XMFLOAT3& CubeMappingRenderItem::GetPosition() const
+DirectX::XMVECTOR CubeMappingRenderItem::GetPosition() const
 {
 	return m_position;
 }

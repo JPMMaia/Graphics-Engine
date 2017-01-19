@@ -111,6 +111,8 @@ void AnimationManager::LoadFromFile()
 			AddAnimation(std::make_unique<FogAnimation>(FogAnimation::FromJson(animationJson, m_graphics)), true);
 		else if (name == "KeyAnimation")
 			AddAnimation(std::make_unique<KeyAnimation>(KeyAnimation::FromJson(animationJson, m_inputHandler)), true);
+		else if (name == "GeneralAnimation")
+			continue;
 		else
 			throw NotImplementedException();
 	}

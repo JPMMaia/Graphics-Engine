@@ -4,6 +4,7 @@
 
 #include <functional>
 #include "GraphicsEngine/KeyAnimation.h"
+#include "GraphicsEngine/GeneralAnimation.h"
 
 using namespace Common;
 using namespace Win32Application;
@@ -254,14 +255,14 @@ void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::Ke
 	}
 	else
 	{
-		/*if(eventArgs.UserInput)
+		if(eventArgs.UserInput)
 		{
 			m_animationManager.AddAnimation(std::make_unique<KeyAnimation>(
 				m_input,
 				eventArgs.Key,
 				m_timer.GetTotalMilliseconds()
 				), false);
-		}*/
+		}
 
 		m_graphics.SetDebugWindowMode(static_cast<Graphics::DebugMode>(eventArgs.Key - 2));
 	}
@@ -305,8 +306,23 @@ Application::Application() :
 	m_input.SubscribeToOnKeyDownEvents(DIK_8, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_9, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 
-	m_timer.SetTotalMilliseconds(40000.0);
-	
+	m_timer.SetTotalMilliseconds(199000.0);
+
 	m_soundManager.Create2DSoundFromWaveFile("MainSound", L"Sounds/Cloud Atlas 21 - Cloud Atlas Finale.wav");
 	m_soundManager.Play2DSound("MainSound");
+
+
+	auto reflectionSphereAnimation1 = std::make_unique<GeneralAnimation>(142000.0f, 5000.0f,
+		[this](const Common::Timer& timer, float blendFactor)
+	{
+		static auto initialPosition = XMVectorSet(-217.0f, 73.0f, 221.0f, 1.0f);
+		static auto finalPosition = XMVectorSet(-213.0f, 56.0f, 187.0f, 1.0f);
+
+		auto pRenderItem = *m_graphics.GetCubeMappingRenderItem("ReflectionSphere");
+		auto position = MathHelper::LinearInterpolate(initialPosition, finalPosition, blendFactor);
+		pRenderItem->SetPosition(position);
+	}
+	);
+
+	m_animationManager.AddAnimation(std::move(reflectionSphereAnimation1), true);
 }

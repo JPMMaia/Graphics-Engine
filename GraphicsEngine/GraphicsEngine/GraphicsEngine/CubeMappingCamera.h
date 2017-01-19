@@ -6,7 +6,9 @@ namespace GraphicsEngine
 	{
 	public:
 		CubeMappingCamera() = default;
-		explicit CubeMappingCamera(const DirectX::XMFLOAT3& position);
+		explicit CubeMappingCamera(DirectX::FXMVECTOR position);
+
+		void SetPosition(DirectX::FXMVECTOR position);
 
 		DirectX::XMVECTOR GetPosition() const;
 		const DirectX::XMMATRIX& GetViewMatrix(size_t index) const;
@@ -21,5 +23,7 @@ namespace GraphicsEngine
 		DirectX::XMVECTOR m_position;
 		std::array<DirectX::XMMATRIX, 6> m_viewMatrices;
 		DirectX::XMMATRIX m_projectionMatrix;
+		float m_nearZ = 0.01f;
+		float m_farZ = 1024.0f;
 	};
 }

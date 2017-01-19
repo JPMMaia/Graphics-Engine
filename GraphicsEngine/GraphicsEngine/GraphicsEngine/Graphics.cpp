@@ -29,7 +29,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_sceneBounds(XMFLOAT3(0.0f, 256.0f, 0.0f), 512.0f),
 	m_visibleInstances(0),
 	m_debugWindowMode(DebugMode::Hidden),
-	m_enableShadows(false),
+	m_enableShadows(true),
 	m_drawTerrainOnly(false),
 	m_cubeMapSkipFramesCurrentCount(0)
 {
@@ -376,8 +376,8 @@ void Graphics::UpdateInstancesDataFrustumCulling()
 		const auto& instanceData = cubeMapRenderItem->GetInstanceData();
 
 		auto position = cubeMapRenderItem->GetPosition();
-		auto distance = XMVector3Length(XMLoadFloat3(&position) - m_camera.GetPosition());
-		if (XMVectorGetX(distance) > 15.0f)
+		auto distance = XMVector3Length(position - m_camera.GetPosition());
+		if (XMVectorGetX(distance) > 30.0f)
 		{
 			m_cubeMapSkipFramesCount = 120;
 			return;
@@ -398,7 +398,7 @@ void Graphics::UpdateInstancesDataFrustumCulling()
 		// If the camera frustum intersects the instance bounds:
 		if (localSpaceCameraFrustum.Contains(cubeMapRenderItem->GetSubmesh().Bounds) != ContainmentType::DISJOINT)
 		{
-			m_cubeMapSkipFramesCount = 4;
+			m_cubeMapSkipFramesCount = 1;
 		}
 		else
 		{
@@ -795,6 +795,15 @@ void Graphics::DrawInDebugMode() const
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
 
+	// Draw Skydome:
+	m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDomeFog");
+	DrawNonInstancedRenderItems(RenderLayer::SkyDome);
+
+	// Draw Sky Clouds:
+	m_pipelineStateManager.SetPipelineState(deviceContext, "SkyCloudsFog");
+	DrawNonInstancedRenderItems(RenderLayer::SkyClouds);
+
+	// Draw terrain in debug mode:
 	m_pipelineStateManager.SetPipelineState(deviceContext, m_debugPipelineStateNames.at(m_debugWindowMode));
 	DrawTerrain();
 }
@@ -867,7 +876,7 @@ void Graphics::DrawMainScene(bool drawCubeMapRenderItems) const
 		DrawNonInstancedRenderItems(RenderLayer::SkyDome);
 
 		// Draw Sky Clouds:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyCloudsFog");
+		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyClouds");
 		DrawNonInstancedRenderItems(RenderLayer::SkyClouds);
 
 		if (!m_drawTerrainOnly)

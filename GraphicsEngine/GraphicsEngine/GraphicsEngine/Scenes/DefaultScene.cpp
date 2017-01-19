@@ -496,10 +496,11 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 		importer.Import(graphics, d3dBase, textureManager, this, filename, importInfo);
 		auto geometry = m_immutableGeometries.at(Helpers::WStringToString(filename)).get();
 
-		XMFLOAT3 position(-217.0f, 72.0f, 221.0f);
-		auto renderItem = std::make_unique<CubeMappingRenderItem>(device, geometry, "Sphere", position);
+		XMVECTOR position = XMVectorSet(-217.0f, 73.0f, 221.0f, 1.0f);
+		auto renderItem = std::make_unique<CubeMappingRenderItem>(device, geometry, "Sphere");
 		renderItem->SetName("ReflectionSphere");
 		renderItem->SetMaterial(m_materials.at("Mirror").get());
+		renderItem->SetPosition(position);
 		
 		graphics->AddCubeMappingRenderItem(std::move(renderItem), { RenderLayer::OpaqueDynamicReflectors });
 	}

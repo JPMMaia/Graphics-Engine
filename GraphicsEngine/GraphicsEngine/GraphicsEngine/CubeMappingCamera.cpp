@@ -4,9 +4,15 @@
 using namespace DirectX;
 using namespace GraphicsEngine;
 
-CubeMappingCamera::CubeMappingCamera(const DirectX::XMFLOAT3& position) :
-	m_position(XMLoadFloat3(&position))
+CubeMappingCamera::CubeMappingCamera(DirectX::FXMVECTOR position) :
+	m_position(position)
 {
+	BuildMatrices();
+}
+
+void CubeMappingCamera::SetPosition(DirectX::FXMVECTOR position)
+{
+	m_position = position;
 	BuildMatrices();
 }
 
@@ -25,11 +31,11 @@ const DirectX::XMMATRIX& CubeMappingCamera::GetProjectionMatrix() const
 
 float CubeMappingCamera::GetNearZ() const
 {
-	return 0.01f;
+	return m_nearZ;
 }
 float CubeMappingCamera::GetFarZ() const
 {
-	return 1024.0f;
+	return m_farZ;
 }
 
 void CubeMappingCamera::BuildMatrices()

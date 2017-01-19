@@ -11,15 +11,17 @@ namespace GraphicsEngine
 	class CubeMappingRenderItem : public RenderItem
 	{
 	public:
-		explicit CubeMappingRenderItem(ID3D11Device* device, ImmutableMeshGeometry* mesh, const std::string& submeshName, const DirectX::XMFLOAT3& position);
+		explicit CubeMappingRenderItem(ID3D11Device* device, ImmutableMeshGeometry* mesh, const std::string& submeshName);
 
 		void Render(ID3D11DeviceContext* deviceContext) const override;
 		void RenderNonInstanced(ID3D11DeviceContext* deviceContext) const override;
 		void RemoveLastInstance() override;
 
+		void SetPosition(DirectX::FXMVECTOR position);
+
 		const CubeMappingCamera& GetCamera() const;
 		const CubeMapRenderTexture& GetRenderTexture() const;
-		const DirectX::XMFLOAT3& GetPosition() const;
+		DirectX::XMVECTOR  GetPosition() const;
 		const ShaderBufferTypes::InstanceData& GetInstanceData() const;
 		const SubmeshGeometry& GetSubmesh() const;
 
@@ -29,7 +31,7 @@ namespace GraphicsEngine
 		CubeMappingCamera m_camera;
 		CubeMapRenderTexture m_renderTexture;
 
-		DirectX::XMFLOAT3 m_position;
+		DirectX::XMVECTOR m_position;
 		ShaderBufferTypes::InstanceData m_instanceData;
 		InstanceBuffer m_instanceBuffer;
 	};

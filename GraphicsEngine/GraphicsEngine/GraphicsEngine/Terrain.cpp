@@ -163,15 +163,12 @@ void Terrain::CreateMaterial(const D3DBase& d3dBase, TextureManager& textureMana
 	// Load textures:
 	{
 		// Load tiled textures:
-		for(const auto& texturesFilenames : m_description.TiledTexturesFilenames)
+		for(const auto& textureNames : m_description.TiledTexturesNames)
 		{
 			TextureArray textureArray;
 
-			for(const auto& pair : texturesFilenames)
+			for(const auto& textureName : textureNames)
 			{
-				const auto& textureName = pair.first;
-				const auto& textureFilename = pair.second;
-				textureManager.Create(device, textureName, textureFilename);
 				textureArray.Add(textureManager[textureName].Get());
 			}
 

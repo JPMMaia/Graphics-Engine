@@ -148,6 +148,12 @@ float4 main(DomainOutput input) : SV_TARGET
     // Calculate the shadow factor:
     float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerShadows, input.ShadowPositionH);
     
+#if defined(FOG)
+
+    shadowFactor *= 1.0f - fogIntensity;
+
+#endif
+
 #if defined(DEBUG_NORMAL_MAPPING)
     float3 rockNormalSample = RockMaps[1].Sample(SamplerAnisotropicWrap, input.TiledTextureCoordinates).rgb;
     float3 rockBumpedNormalW = NormalSampleToBumpedNormalW(rockNormalSample, normalW, tangentW);

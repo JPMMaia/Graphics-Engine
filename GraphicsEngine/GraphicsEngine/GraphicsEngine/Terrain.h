@@ -4,7 +4,7 @@
 #include "GeometryGenerator.h"
 #include "VertexTypes.h"
 
-#include <unordered_map>
+#include <unordered_set>
 
 namespace GraphicsEngine
 {
@@ -21,7 +21,7 @@ namespace GraphicsEngine
 			float TerrainDepth;
 			uint32_t CellXCount;
 			uint32_t CellZCount;
-			std::vector<std::unordered_map<std::string, std::wstring>> TiledTexturesFilenames;
+			std::vector<std::unordered_set<std::string>> TiledTexturesNames;
 			std::wstring HeightMapFilename;
 			std::wstring NormalMapFilename;
 			std::wstring TangentMapFilename;

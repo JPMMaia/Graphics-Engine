@@ -10,10 +10,10 @@ using namespace Common;
 using namespace DirectX;
 using namespace GraphicsEngine;
 
-Texture::Texture(ID3D11Device* device, const std::string& name, const std::wstring& filename) :
+Texture::Texture(ID3D11Device* device, const std::string& name, const std::wstring& filename, bool forceSRGB) :
 	m_name(name)
 {
-	CreateTextureFromFile(device, filename);
+	CreateTextureFromFile(device, filename, forceSRGB);
 }
 Texture::Texture(ID3D11Device* device, const std::string& name, ID3D11Resource* texture, const D3D11_SHADER_RESOURCE_VIEW_DESC& srvDescription) :
 	m_name(name)
@@ -21,10 +21,10 @@ Texture::Texture(ID3D11Device* device, const std::string& name, ID3D11Resource* 
 	ThrowIfFailed(device->CreateShaderResourceView(texture, &srvDescription, m_textureView.GetAddressOf()));
 }
 
-void Texture::Initialize(ID3D11Device* device, const std::string& name, const std::wstring& filename)
+void Texture::Initialize(ID3D11Device* device, const std::string& name, const std::wstring& filename, bool forceSRGB)
 {
 	m_name = name;
-	CreateTextureFromFile(device, filename);
+	CreateTextureFromFile(device, filename, forceSRGB);
 }
 void Texture::Reset()
 {
@@ -40,7 +40,7 @@ ID3D11ShaderResourceView* const* Texture::GetAddressOf() const
 	return m_textureView.GetAddressOf();
 }
 
-void Texture::CreateTextureFromFile(ID3D11Device* device, const std::wstring& filename)
+void Texture::CreateTextureFromFile(ID3D11Device* device, const std::wstring& filename, bool forceSRGB)
 {
 	auto fileExtension = Common::Helpers::GetFileExtension(filename);
 	std::transform(fileExtension.begin(), fileExtension.end(), fileExtension.begin(), std::towlower);
@@ -63,6 +63,19 @@ void Texture::CreateTextureFromFile(ID3D11Device* device, const std::wstring& fi
 	{
 		ThrowIfFailed(LoadFromWICFile(filename.c_str(), WIC_FLAGS_NONE, &metadata, scratchImage));
 	}
-	
-	ThrowIfFailed(CreateShaderResourceView(device, scratchImage.GetImages(), scratchImage.GetImageCount(), metadata, m_textureView.GetAddressOf()));
+
+	ThrowIfFailed(
+		CreateShaderResourceViewEx(
+			device,
+			scratchImage.GetImages(),
+			scratchImage.GetImageCount(),
+			metadata,
+			D3D11_USAGE_DEFAULT,
+			D3D11_BIND_SHADER_RESOURCE,
+			0,
+			0,
+			forceSRGB,
+			m_textureView.GetAddressOf()
+		)
+	);
 }

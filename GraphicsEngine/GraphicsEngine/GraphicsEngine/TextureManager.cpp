@@ -22,14 +22,14 @@ bool TextureManager::Add(const std::string& name, Texture&& texture)
 
 	return true;
 }
-bool TextureManager::Create(ID3D11Device* d3dDevice, const std::string& name, const std::wstring& textureUrl)
+bool TextureManager::Create(ID3D11Device* d3dDevice, const std::string& name, const std::wstring& textureUrl, bool forceSRGB)
 {
 	// If it already exists, return false:
 	if (m_textures.find(name) != m_textures.end())
 		return false;
 
 	// Create a new texture:
-	m_textures.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple(d3dDevice, name, textureUrl));
+	m_textures.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple(d3dDevice, name, textureUrl, forceSRGB));
 
 	return true;
 }

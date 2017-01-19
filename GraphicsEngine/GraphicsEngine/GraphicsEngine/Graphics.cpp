@@ -23,18 +23,19 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_anisotropicWrapSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicWrap),
 	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp),
 	m_shadowsSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::Shadows),
-	m_fog(false),
+	m_fog(true),
 	m_shadowMap(m_d3dBase.GetDevice(), 2048, 2048),
 	m_renderTexture(m_d3dBase.GetDevice(), clientWidth, clientHeight, DXGI_FORMAT_R8G8B8A8_UNORM),
 	m_sceneBounds(XMFLOAT3(0.0f, 256.0f, 0.0f), 512.0f),
 	m_visibleInstances(0),
 	m_debugWindowMode(DebugMode::Hidden),
-	m_enableShadows(true),
+	m_enableShadows(false),
 	m_drawTerrainOnly(false),
 	m_cubeMapSkipFramesCurrentCount(0)
 {
 	//m_camera.SetPosition(220.0f - 512.0f, 27.0f, -(0.0f - 512.0f));
 	m_camera.SetPosition(-372.0f, 24.0f, 308.0f);
+	m_camera.SetPosition(-217.0f, 80.0f, 221.0f);
 	m_camera.Update();
 	m_camera.RotateWorldY(XM_PI);
 
@@ -816,6 +817,7 @@ void Graphics::DrawSceneIntoShadowMap(const ShadowTexture& shadowMap) const
 		// Draw opaque:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueShadow");
 		DrawRenderItems(RenderLayer::Opaque);
+		DrawRenderItems(RenderLayer::NormalMapping);
 		DrawRenderItems(RenderLayer::NormalSpecularMapping);
 		DrawRenderItems(RenderLayer::OpaqueDynamicReflectors);
 	}
@@ -833,6 +835,7 @@ void Graphics::DrawSceneIntoShadowMap(const ShadowTexture& shadowMap) const
 		// Draw alpha-clipped:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedShadow");
 		DrawRenderItems(RenderLayer::AlphaClipped);
+		DrawRenderItems(RenderLayer::NormalSpecularMappingTransparent);
 	}
 }
 void Graphics::DrawSceneIntoCubeMap(ID3D11DeviceContext* deviceContext, const CubeMapRenderTexture& cubeMap) const
@@ -874,6 +877,10 @@ void Graphics::DrawMainScene(bool drawCubeMapRenderItems) const
 			DrawRenderItems(RenderLayer::Opaque);
 
 			// Draw normal mapped:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "NormalMapping");
+			DrawRenderItems(RenderLayer::NormalMapping);
+
+			// Draw normal specular mapped:
 			m_pipelineStateManager.SetPipelineState(deviceContext, "NormalSpecularMapping");
 			DrawRenderItems(RenderLayer::NormalSpecularMapping);
 
@@ -899,6 +906,10 @@ void Graphics::DrawMainScene(bool drawCubeMapRenderItems) const
 			m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClipped");
 			DrawRenderItems(RenderLayer::AlphaClipped);
 
+			// Draw transparent normal specular mapping:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "NormalSpecularMappingTransparent");
+			DrawRenderItems(RenderLayer::NormalSpecularMappingTransparent);
+
 			// Draw billboards:
 			m_pipelineStateManager.SetPipelineState(deviceContext, "Billboard");
 			DrawNonInstancedRenderItems(RenderLayer::Grass);
@@ -921,6 +932,10 @@ void Graphics::DrawMainScene(bool drawCubeMapRenderItems) const
 			DrawRenderItems(RenderLayer::Opaque);
 
 			// Draw normal mapped:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "NormalMappingFog");
+			DrawRenderItems(RenderLayer::NormalMapping);
+
+			// Draw normal specular mapped:
 			m_pipelineStateManager.SetPipelineState(deviceContext, "NormalSpecularMappingFog");
 			DrawRenderItems(RenderLayer::NormalSpecularMapping);
 
@@ -945,6 +960,10 @@ void Graphics::DrawMainScene(bool drawCubeMapRenderItems) const
 			// Draw alpha-clipped:
 			m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedFog");
 			DrawRenderItems(RenderLayer::AlphaClipped);
+
+			// Draw transparent normal specular mapping:
+			m_pipelineStateManager.SetPipelineState(deviceContext, "NormalSpecularMappingTransparentFog");
+			DrawRenderItems(RenderLayer::NormalSpecularMappingTransparent);
 
 			// Draw billboards:
 			m_pipelineStateManager.SetPipelineState(deviceContext, "BillboardFog");

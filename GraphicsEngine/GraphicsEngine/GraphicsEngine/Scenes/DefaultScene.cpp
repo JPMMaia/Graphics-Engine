@@ -23,9 +23,9 @@ DefaultScene::DefaultScene(Graphics* graphics, const D3DBase& d3dBase, TextureMa
 	m_windDirection(1.0f),
 	m_sceneBuilder(L"Instances.json")
 {
+	InitializeTextures(d3dBase, textureManager);
 	InitializeTerrain(graphics, d3dBase, textureManager);
 	InitializeGeometry(d3dBase);
-	InitializeTextures(d3dBase, textureManager);
 	InitializeMaterials(textureManager);
 	InitializeRenderItems(graphics, d3dBase, textureManager);
 	InitializeLights(lightManager);
@@ -181,26 +181,26 @@ void DefaultScene::InitializeTerrain(Graphics* graphics, const D3DBase& d3dBase,
 	terrainDescription.CellXCount = 32;
 	terrainDescription.CellZCount = 32;
 
-	terrainDescription.TiledTexturesFilenames =
+	terrainDescription.TiledTexturesNames =
 	{
 		{
-			{ "RockDiffuseMap", L"Textures/rock01d.dds" },
-			{ "RockNormalMap", L"Textures/rock01n.png" },
-			{ "RockSpecularMap", L"Textures/rock01s.dds" },
+			{ "RockDiffuseMap" },
+			{ "RockNormalMap" },
+			{ "RockSpecularMap" },
 		},
 		{
-			{ "GrassDiffuseMap", L"Textures/ground14d.jpg" },
-			{ "GrassNormalMap", L"Textures/ground14n.jpg" },
-			{ "GrassSpecularMap", L"Textures/ground14s.jpg" },
+			{ "GrassDiffuseMap" },
+			{ "GrassNormalMap" },
+			{ "GrassSpecularMap" },
 		},
 		{
-			{ "PathDiffuseMap", L"Textures/ground06d.jpg" },
-			{ "PathNormalMap", L"Textures/ground06n.jpg" },
-			{ "PathSpecularMap", L"Textures/ground06s.jpg" },
-			{ "PathAlphaMap", L"Textures/ground06a.dds" },
+			{ "PathDiffuseMap" },
+			{ "PathNormalMap" },
+			{ "PathSpecularMap" },
+			{ "PathAlphaMap" },
 		},
 		{
-			{ "SnowNormalMap", L"Textures/snow01n.dds" },
+			{ "SnowNormalMap" },
 		},
 	};
 
@@ -265,30 +265,41 @@ void DefaultScene::InitializeTextures(const D3DBase& d3dBase, TextureManager& te
 {
 	auto device = d3dBase.GetDevice();
 
-	textureManager.Create(device, "Default", L"Textures/White.dds");
+	textureManager.Create(device, "Default", L"Textures/White.dds", true);
 
-	textureManager.Create(device, "BillboardGrass0001", L"Textures/BillboardGrass0001.dds");
-	textureManager.Create(device, "BillboardGrass0002", L"Textures/BillboardGrass0002.dds");
-	textureManager.Create(device, "BillboardBlueFlowers", L"Textures/BillboardBlueFlowers.dds");
-	textureManager.Create(device, "BillboardRedFlowers", L"Textures/BillboardRedFlowers.dds");
+	textureManager.Create(device, "BillboardGrass0001", L"Textures/BillboardGrass0001.dds", true);
+	textureManager.Create(device, "BillboardGrass0002", L"Textures/BillboardGrass0002.dds", true);
+	textureManager.Create(device, "BillboardBlueFlowers", L"Textures/BillboardBlueFlowers.dds", true);
+	textureManager.Create(device, "BillboardRedFlowers", L"Textures/BillboardRedFlowers.dds", true);
 
-	textureManager.Create(device, "GrassDiffuseMap", L"Textures/ground14d.jpg");
-	textureManager.Create(device, "GrassNormalMap", L"Textures/ground14n.jpg");
-	textureManager.Create(device, "GrassSpecularMap", L"Textures/ground14s.jpg");
+	textureManager.Create(device, "SampleLeavesDiffuseMap", L"Models/SampleLeaves_1.dds", true);
+	textureManager.Create(device, "SampleLeavesNormalMap", L"Models/SampleLeaves_1_Normal.dds", false);
+	textureManager.Create(device, "SampleLeavesSpecularMap", L"Models/SampleLeaves_1_Spec.dds", false);
 
-	textureManager.Create(device, "SampleLeavesDiffuseMap", L"Models/SampleLeaves_1.tga");
-	//textureManager.Create(device, "SampleLeavesNormalMap", L"Models/SampleLeaves_1_Normal.tga");
-	//textureManager.Create(device, "SampleLeavesSpecularMap", L"Models/SampleLeaves_1_Spec.tga");
+	textureManager.Create(device, "ConiferBarkDiffuseMap", L"Models/ConiferBark.dds", true);
+	textureManager.Create(device, "ConiferBarkNormalMap", L"Models/ConiferBark_Normal.dds", false);
 
-	textureManager.Create(device, "ConiferBarkDiffuseMap", L"Models/ConiferBark.tga");
-	//textureManager.Create(device, "ConiferBarkNormalMap", L"Models/ConiferBark_Normal.tga");
+	textureManager.Create(device, "PalmBarkDiffuseMap", L"Models/PalmBark.dds", true);
+	textureManager.Create(device, "PalmBarkNormalMap", L"Models/PalmBark_Normal.dds", false);
 
-	textureManager.Create(device, "PalmBarkDiffuseMap", L"Models/PalmBark.tga");
-	//textureManager.Create(device, "PalmBarkNormalMap", L"Models/PalmBark_Normal.tga");
+	textureManager.Create(device, "CloudsMap", L"Textures/cloud001.dds", false);
+	textureManager.Create(device, "CloudsNoiseMap", L"Textures/noise001.dds", false);
 
-	textureManager.Create(device, "CloudsMap", L"Textures/cloud001.dds");
-	textureManager.Create(device, "CloudsNoiseMap", L"Textures/noise001.dds");
-	//textureManager.Create(device, "PalmBarkNormalMap", L"Models/PalmBark_Normal.tga");
+
+	textureManager.Create(device, "RockDiffuseMap", L"Textures/rock01d.dds", true);
+	textureManager.Create(device, "RockNormalMap", L"Textures/rock01n.dds", false);
+	textureManager.Create(device, "RockSpecularMap", L"Textures/rock01s.dds", false);
+
+	textureManager.Create(device, "GrassDiffuseMap", L"Textures/ground14d.dds", true);
+	textureManager.Create(device, "GrassNormalMap", L"Textures/ground14n.dds", false);
+	textureManager.Create(device, "GrassSpecularMap", L"Textures/ground14s.dds", false);
+
+	textureManager.Create(device, "PathDiffuseMap", L"Textures/ground06d.dds", true);
+	textureManager.Create(device, "PathNormalMap", L"Textures/ground06n.dds", false);
+	textureManager.Create(device, "PathSpecularMap", L"Textures/ground06s.dds", false);
+	textureManager.Create(device, "PathAlphaMap", L"Textures/ground06a.dds", false);
+
+	textureManager.Create(device, "SnowNormalMap", L"Textures/snow01n.dds", false);
 }
 void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 {
@@ -485,7 +496,7 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 		importer.Import(graphics, d3dBase, textureManager, this, filename, importInfo);
 		auto geometry = m_immutableGeometries.at(Helpers::WStringToString(filename)).get();
 
-		XMFLOAT3 position(-372.0f, 24.0f, 308.0f);
+		XMFLOAT3 position(-217.0f, 72.0f, 221.0f);
 		auto renderItem = std::make_unique<CubeMappingRenderItem>(device, geometry, "Sphere", position);
 		renderItem->SetName("ReflectionSphere");
 		renderItem->SetMaterial(m_materials.at("Mirror").get());
@@ -543,12 +554,13 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 			const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "Trunk"));
 			auto pMaterial = m_materials.at(materialName).get();
 			pMaterial->DiffuseMap = &textureManager["PalmBarkDiffuseMap"];
+			pMaterial->NormalMap = &textureManager["PalmBarkNormalMap"];
 
 			auto renderItem = std::make_unique<NormalRenderItem>();
 			renderItem->SetName("Trunk");
 			renderItem->SetMesh(importedGeometry, "Trunk");
 			renderItem->SetMaterial(pMaterial);
-			graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::Opaque });
+			graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::NormalMapping });
 		}
 
 		// Leaves:
@@ -556,12 +568,14 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 			const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "Leaves"));
 			auto pMaterial = m_materials.at(materialName).get();
 			pMaterial->DiffuseMap = &textureManager["SampleLeavesDiffuseMap"];
+			pMaterial->NormalMap = &textureManager["SampleLeavesNormalMap"];
+			pMaterial->SpecularMap = &textureManager["SampleLeavesSpecularMap"];
 
 			auto renderItem = std::make_unique<NormalRenderItem>();
 			renderItem->SetName("Leaves");
 			renderItem->SetMesh(importedGeometry, "Leaves");
 			renderItem->SetMaterial(pMaterial);
-			graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::AlphaClipped });
+			graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::NormalSpecularMappingTransparent });
 		}
 
 		// Bark:
@@ -569,12 +583,13 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 			const auto& materialName = importInfo.MaterialByMesh.at(AssimpImporter::BuildMeshName(filename, "Bark"));
 			auto pMaterial = m_materials.at(materialName).get();
 			pMaterial->DiffuseMap = &textureManager["ConiferBarkDiffuseMap"];
+			pMaterial->NormalMap = &textureManager["ConiferBarkNormalMap"];
 
 			auto renderItem = std::make_unique<NormalRenderItem>();
 			renderItem->SetName("Bark");
 			renderItem->SetMesh(importedGeometry, "Bark");
 			renderItem->SetMaterial(pMaterial);
-			graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::Opaque });
+			graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::NormalMapping });
 		}
 
 		// Add instances:

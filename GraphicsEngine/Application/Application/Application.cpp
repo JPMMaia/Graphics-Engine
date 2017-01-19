@@ -139,8 +139,8 @@ int Application::Run()
 		std::wstringstream extraCaption;
 
 		extraCaption << L"FPS: " << std::to_wstring(timer.GetFramesPerSecond());
-		if (!m_animationBuildMode) extraCaption << L" | V: " << std::to_wstring(m_graphics.GetVisibleInstances());
-		if (m_animationBuildMode) extraCaption << L" | Begin From Last Spot: " << (m_beginCameraAnimationFromLastSpot ? L"Yes" : L"No");
+		extraCaption << L" | Total Time: " << timer.GetTotalMilliseconds();
+		//if (!m_animationBuildMode) extraCaption << L" | V: " << std::to_wstring(m_graphics.GetVisibleInstances());
 		extraCaption << L" | " << camera->ToWString();
 
 		m_window.SetWindowExtraCaption(extraCaption.str());
@@ -285,10 +285,8 @@ Application::Application() :
 	m_randomAngles(0.0f, 2.0 * XM_PI),
 	m_randomScales(0.5f, 1.0f),
 	m_animationManager(m_graphics, m_input, L"Animations.json"),
-	m_animationBuildMode(true)
+	m_animationBuildMode(false)
 {
-	m_soundManager.Create2DSoundFromWaveFile("TestSound", L"Sounds/Sound01.wav");
-
 	using namespace std::placeholders;
 	m_input.SubscribeToOnKeyDownEvents(DIK_SPACE, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_Z, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
@@ -307,7 +305,7 @@ Application::Application() :
 	m_input.SubscribeToOnKeyDownEvents(DIK_8, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_9, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 
-	//m_timer.SetTotalMilliseconds(190000.0);
+	m_timer.SetTotalMilliseconds(40000.0);
 	
 	m_soundManager.Create2DSoundFromWaveFile("MainSound", L"Sounds/Cloud Atlas 21 - Cloud Atlas Finale.wav");
 	m_soundManager.Play2DSound("MainSound");

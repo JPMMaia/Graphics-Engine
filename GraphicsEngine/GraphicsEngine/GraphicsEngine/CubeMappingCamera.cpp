@@ -4,44 +4,57 @@
 using namespace DirectX;
 using namespace GraphicsEngine;
 
-CubeMappingCamera::CubeMappingCamera(const DirectX::XMFLOAT3& position)
+CubeMappingCamera::CubeMappingCamera(const DirectX::XMFLOAT3& position) :
+	m_position(XMLoadFloat3(&position))
 {
-	BuildMatrices(position);
+	BuildMatrices();
 }
 
-const DirectX::XMFLOAT4X4& CubeMappingCamera::GetViewMatrix(size_t index) const
+DirectX::XMVECTOR CubeMappingCamera::GetPosition() const
+{
+	return m_position;
+}
+const DirectX::XMMATRIX& CubeMappingCamera::GetViewMatrix(size_t index) const
 {
 	return m_viewMatrices[index];
 }
-const DirectX::XMFLOAT4X4& CubeMappingCamera::GetProjectionMatrix() const
+const DirectX::XMMATRIX& CubeMappingCamera::GetProjectionMatrix() const
 {
 	return m_projectionMatrix;
 }
 
-void CubeMappingCamera::BuildMatrices(const DirectX::XMFLOAT3& position)
+float CubeMappingCamera::GetNearZ() const
 {
-	auto eyePosition = XMLoadFloat3(&position);
-	std::array<XMVECTOR, 6> eyesDirections = 
+	return 0.01f;
+}
+float CubeMappingCamera::GetFarZ() const
+{
+	return 1024.0f;
+}
+
+void CubeMappingCamera::BuildMatrices()
+{
+	std::array<XMFLOAT3, 6> eyesDirections =
 	{
-		XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f),
-		XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f),
-		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f),
-		XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f),
-		XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
-		XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f),
+		XMFLOAT3(1.0f, 0.0f, 0.0f),
+		XMFLOAT3(-1.0f, 0.0f, 0.0f),
+		XMFLOAT3(0.0f, 1.0f, 0.0f),
+		XMFLOAT3(0.0f, -1.0f, 0.0f),
+		XMFLOAT3(0.0f, 0.0f, 1.0f),
+		XMFLOAT3(0.0f, 0.0f, -1.0f),
 	};
-	std::array<XMVECTOR, 6> upDirections =
+	std::array<XMFLOAT3, 6> upDirections =
 	{
-		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f),
-		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f),
-		XMVectorSet(0.0f, 0.0f, 0.0f, -1.0f),
-		XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),
-		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f),
-		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f),
+		XMFLOAT3(0.0f, 1.0f, 0.0f),
+		XMFLOAT3(0.0f, 1.0f, 0.0f),
+		XMFLOAT3(0.0f, 0.0f, -1.0f),
+		XMFLOAT3(0.0f, 0.0f, 1.0f),
+		XMFLOAT3(0.0f, 1.0f, 0.0f),
+		XMFLOAT3(0.0f, 1.0f, 0.0f),
 	};
 
-	for(size_t i = 0; i < 6; ++i)
-		XMStoreFloat4x4(&m_viewMatrices[i], XMMatrixLookToLH(eyePosition, eyesDirections[i], upDirections[i]));
+	for (size_t i = 0; i < 6; ++i)
+		m_viewMatrices[i] = XMMatrixLookToLH(m_position, XMLoadFloat3(&eyesDirections[i]), XMLoadFloat3(&upDirections[i]));
 
-	XMStoreFloat4x4(&m_projectionMatrix, XMMatrixPerspectiveFovLH(XM_PI / 2.0f, 1.0f, 0.1f, 1000.0f));
+	m_projectionMatrix = XMMatrixPerspectiveFovLH(XM_PI / 2.0f, 1.0f, GetNearZ(), GetFarZ());
 }

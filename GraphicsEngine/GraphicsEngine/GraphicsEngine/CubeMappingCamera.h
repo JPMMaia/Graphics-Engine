@@ -6,16 +6,20 @@ namespace GraphicsEngine
 	{
 	public:
 		CubeMappingCamera() = default;
-		CubeMappingCamera(const DirectX::XMFLOAT3& position);
+		explicit CubeMappingCamera(const DirectX::XMFLOAT3& position);
 
-		const DirectX::XMFLOAT4X4& GetViewMatrix(size_t index) const;
-		const DirectX::XMFLOAT4X4& GetProjectionMatrix() const;
+		DirectX::XMVECTOR GetPosition() const;
+		const DirectX::XMMATRIX& GetViewMatrix(size_t index) const;
+		const DirectX::XMMATRIX& GetProjectionMatrix() const;
+		float GetNearZ() const;
+		float GetFarZ() const;
 
 	private:
-		void BuildMatrices(const DirectX::XMFLOAT3& position);
+		void BuildMatrices();
 
 	private:
-		std::array<DirectX::XMFLOAT4X4, 6> m_viewMatrices;
-		DirectX::XMFLOAT4X4 m_projectionMatrix;
+		DirectX::XMVECTOR m_position;
+		std::array<DirectX::XMMATRIX, 6> m_viewMatrices;
+		DirectX::XMMATRIX m_projectionMatrix;
 	};
 }

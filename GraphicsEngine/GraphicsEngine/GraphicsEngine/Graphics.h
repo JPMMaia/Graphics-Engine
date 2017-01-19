@@ -17,6 +17,7 @@
 #include "Octree.h"
 #include "NormalRenderItem.h"
 #include "BillboardRenderItem.h"
+#include "CubeMappingRenderItem.h"
 
 namespace GraphicsEngine
 {
@@ -43,7 +44,7 @@ namespace GraphicsEngine
 		void OnResize(uint32_t clientWidth, uint32_t clientHeight);
 		void FixedUpdate(const Common::Timer& timer);
 		void RenderUpdate(const Common::Timer& timer);
-		void Render(const Common::Timer& timer) const;
+		void Render(const Common::Timer& timer);
 
 		Camera* GetCamera();
 		DefaultScene* GetScene();
@@ -52,11 +53,13 @@ namespace GraphicsEngine
 		void AddNormalRenderItemInstance(NormalRenderItem* renderItem, const ShaderBufferTypes::InstanceData& instanceData) const;
 		void AddBillboardRenderItem(std::unique_ptr<BillboardRenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
 		void AddBillboardRenderItemInstance(BillboardRenderItem* renderItem, const BillboardMeshGeometry::VertexType& instanceData) const;
+		void AddCubeMappingRenderItem(std::unique_ptr<CubeMappingRenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers);
 		uint32_t GetVisibleInstances() const;
 		const std::vector<RenderItem*>& GetRenderItems(RenderLayer renderLayer) const;
 		std::vector<std::unique_ptr<RenderItem>>::const_iterator GetRenderItem(const std::string& name) const;
 		std::vector<NormalRenderItem*>::const_iterator GetNormalRenderItem(const std::string& name) const;
 		std::vector<BillboardRenderItem*>::const_iterator GetBillboardRenderItem(const std::string& name) const;
+		std::vector<CubeMappingRenderItem*>::const_iterator GetCubeMappingRenderItem(const std::string& name) const;
 
 		void SetFogState(bool state);
 		void SetFogDistanceParameters(float start, float range);
@@ -79,11 +82,15 @@ namespace GraphicsEngine
 		void InitializeMainPassData();
 		void UpdateMainPassData(const Common::Timer& timer);
 		void UpdateShadowPassData(const Common::Timer& timer) const;
+		void UpdateCubeMappingPassData(const Common::Timer& timer) const;
 
-		void DrawInNormalMode() const;
+		void SetPassData(ID3D11Buffer* const* ppPassDataBuffer) const;
+
+		void DrawInNormalMode();
 		void DrawInDebugMode() const;
 		void DrawSceneIntoShadowMap(const ShadowTexture& shadowMap) const;
-		void DrawMainScene() const;
+		void DrawSceneIntoCubeMap(ID3D11DeviceContext* deviceContext, const CubeMapRenderTexture& cubeMap) const;
+		void DrawMainScene(bool drawCubeMapRenderItems) const;
 		void DrawDebugWindow() const;
 		void DrawRenderItems(RenderLayer renderLayer) const;
 		void DrawNonInstancedRenderItems(RenderLayer renderLayer) const;
@@ -97,6 +104,7 @@ namespace GraphicsEngine
 		std::vector<std::unique_ptr<RenderItem>> m_allRenderItems;
 		std::vector<NormalRenderItem*> m_normalRenderItems;
 		std::vector<BillboardRenderItem*> m_billboardRenderItems;
+		std::vector<CubeMappingRenderItem*> m_cubeMappingRenderItems;
 		std::vector<RenderItem*> m_renderItemLayers[static_cast<SIZE_T>(RenderLayer::Count)];
 		TextureManager m_textureManager;
 		Camera m_camera;
@@ -122,5 +130,8 @@ namespace GraphicsEngine
 		bool m_enableShadows;
 		bool m_drawTerrainOnly;
 		std::unordered_map<DebugMode, std::string> m_debugPipelineStateNames;
+
+		uint32_t m_cubeMapSkipFramesCount;
+		uint32_t m_cubeMapSkipFramesCurrentCount;
 	};
 }

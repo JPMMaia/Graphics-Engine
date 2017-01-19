@@ -116,9 +116,19 @@ float4 ComputeSnowColor(float3 positionW, float2 tiledTextureCoordinates, float3
 
 float4 main(DomainOutput input) : SV_TARGET
 {
-
 #if defined(DEBUG_PATH_ALPHA)
     return float4(PathMaps[3].Sample(SamplerAnisotropicWrap, input.TextureCoordinates).rrr, 1.0f);
+#endif
+
+    // Calculate direction from point to camera:
+    float3 toEyeDirection = EyePositionW - input.PositionW;
+    float distanceToEye = length(toEyeDirection);
+    toEyeDirection /= distanceToEye;
+
+#if defined(FOG)
+    float fogIntensity = saturate((distanceToEye - FogStart) / FogRange);
+    if(fogIntensity - 0.99f > 0.0f)
+        return FogColor;
 #endif
 
     // Sample normal and tangent:
@@ -134,11 +144,6 @@ float4 main(DomainOutput input) : SV_TARGET
 #elif defined(DEBUG_TANGENT_VECTORS)
     return float4((tangentW + 1.0f) / 2.0f, 1.0f);
 #endif
-
-    // Calculate direction from point to camera:
-    float3 toEyeDirection = EyePositionW - input.PositionW;
-    float distanceToEye = length(toEyeDirection);
-    toEyeDirection /= distanceToEye;
 
     // Calculate the shadow factor:
     float shadowFactor = CalculateShadowFactor(ShadowMap, SamplerShadows, input.ShadowPositionH);
@@ -230,7 +235,7 @@ float4 main(DomainOutput input) : SV_TARGET
     color = lerp(color, pathColor, pathAlpha);
 
 #if defined(FOG)
-    color = AddFog(color, distanceToEye, FogStart, FogRange, FogColor);
+    color = lerp(color, FogColor, fogIntensity);
 #endif
 
     // Set alpha channel to 1:

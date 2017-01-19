@@ -11,6 +11,7 @@ namespace GraphicsEngine
 		SkyDome,
 		Grass,
 		NormalSpecularMapping,
+		OpaqueDynamicReflectors,
 		Debug,
 		Count
 	};

@@ -3,7 +3,7 @@
 using namespace Win32Application;
 
 Window::Window(WNDPROC mainWindowProc) :
-	m_fullscreen(true),
+	m_fullscreen(false),
 	m_clientWidth(1000),
 	m_clientHeight(600)
 {

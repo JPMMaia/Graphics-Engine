@@ -30,9 +30,11 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_visibleInstances(0),
 	m_debugWindowMode(DebugMode::Hidden),
 	m_enableShadows(true),
-	m_drawTerrainOnly(false)
+	m_drawTerrainOnly(false),
+	m_cubeMapSkipFramesCurrentCount(0)
 {
-	m_camera.SetPosition(220.0f - 512.0f, 27.0f, -(0.0f - 512.0f));
+	//m_camera.SetPosition(220.0f - 512.0f, 27.0f, -(0.0f - 512.0f));
+	m_camera.SetPosition(-372.0f, 24.0f, 308.0f);
 	m_camera.Update();
 	m_camera.RotateWorldY(XM_PI);
 
@@ -80,9 +82,12 @@ void Graphics::RenderUpdate(const Common::Timer& timer)
 	//auto elapsedTime = performanceTimer.ElapsedTime<float, std::milli>().count();
 	//auto string = L"ElapsedTime: " + std::to_wstring(elapsedTime) + L"\n";
 	//OutputDebugStringW(string.c_str());
+
+	if(m_cubeMapSkipFramesCurrentCount >= m_cubeMapSkipFramesCount)
+		UpdateCubeMappingPassData(timer);
 }
 
-void Graphics::Render(const Common::Timer& timer) const
+void Graphics::Render(const Common::Timer& timer)
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
 
@@ -139,6 +144,15 @@ void Graphics::AddBillboardRenderItemInstance(BillboardRenderItem* renderItem, c
 {
 	renderItem->AddInstance(m_d3dBase.GetDevice(), instanceData);
 }
+void Graphics::AddCubeMappingRenderItem(std::unique_ptr<CubeMappingRenderItem>&& renderItem, std::initializer_list<RenderLayer> renderLayers)
+{
+	for (auto renderLayer : renderLayers)
+		m_renderItemLayers[static_cast<SIZE_T>(renderLayer)].push_back(renderItem.get());
+
+	m_cubeMappingRenderItems.push_back(renderItem.get());
+	m_allRenderItems.push_back(std::move(renderItem));
+}
+
 uint32_t Graphics::GetVisibleInstances() const
 {
 	return m_visibleInstances;
@@ -175,6 +189,16 @@ std::vector<BillboardRenderItem*>::const_iterator Graphics::GetBillboardRenderIt
 
 	return std::find_if(m_billboardRenderItems.begin(), m_billboardRenderItems.end(), match);
 }
+std::vector<CubeMappingRenderItem*>::const_iterator Graphics::GetCubeMappingRenderItem(const std::string& name) const
+{
+	auto match = [&name](const CubeMappingRenderItem* renderItem)
+	{
+		return renderItem->GetName() == name;
+	};
+
+	return std::find_if(m_cubeMappingRenderItems.begin(), m_cubeMappingRenderItems.end(), match);
+}
+
 void Graphics::SetFogState(bool state)
 {
 	m_fog = state;
@@ -343,6 +367,42 @@ void Graphics::UpdateInstancesDataFrustumCulling()
 
 		// Unmap resource:
 		instancesBuffer.Unmap(deviceContext);
+	}
+
+	// Cube map:
+	{
+		auto cubeMapRenderItem = m_cubeMappingRenderItems[0];
+		const auto& instanceData = cubeMapRenderItem->GetInstanceData();
+
+		auto position = cubeMapRenderItem->GetPosition();
+		auto distance = XMVector3Length(XMLoadFloat3(&position) - m_camera.GetPosition());
+		if (XMVectorGetX(distance) > 15.0f)
+		{
+			m_cubeMapSkipFramesCount = 120;
+			return;
+		}
+
+		// Get the world matrix of the instance and calculate its inverse:
+		auto worldMatrix = XMLoadFloat4x4(&instanceData.WorldMatrix);
+		auto worldMatrixDeterminant = XMMatrixDeterminant(worldMatrix);
+		auto inverseWorldMatrix = XMMatrixInverse(&worldMatrixDeterminant, worldMatrix);
+
+		// Calculate the matrix which transforms from view space to the instance's local space:
+		auto viewToLocalMatrix = XMMatrixMultiply(inverseViewMatrix, inverseWorldMatrix);
+
+		// Transform camera frustum from view space to local space:
+		BoundingFrustum localSpaceCameraFrustum;
+		viewSpaceCameraFrustum.Transform(localSpaceCameraFrustum, viewToLocalMatrix);
+
+		// If the camera frustum intersects the instance bounds:
+		if (localSpaceCameraFrustum.Contains(cubeMapRenderItem->GetSubmesh().Bounds) != ContainmentType::DISJOINT)
+		{
+			m_cubeMapSkipFramesCount = 4;
+		}
+		else
+		{
+			m_cubeMapSkipFramesCount = 120;
+		}
 	}
 }
 void Graphics::UpdateInstancesDataOctreeCulling()
@@ -533,10 +593,54 @@ void Graphics::UpdateShadowPassData(const Common::Timer& timer) const
 
 	m_currentFrameResource->ShadowPassData.CopyData(m_d3dBase.GetDeviceContext(), &passData, sizeof(ShaderBufferTypes::PassData));
 }
+void Graphics::UpdateCubeMappingPassData(const Common::Timer& timer) const
+{
+	auto passData = m_mainPassData;
 
-void Graphics::DrawInNormalMode() const
+	const auto& camera = m_cubeMappingRenderItems[0]->GetCamera();
+	for (size_t i = 0; i < 6; ++i)
+	{
+		auto viewMatrix = camera.GetViewMatrix(i);
+		auto viewMatrixDeterminant = XMMatrixDeterminant(viewMatrix);
+		auto inverseViewMatrix = XMMatrixInverse(&viewMatrixDeterminant, viewMatrix);
+
+		auto projectionMatrix = camera.GetProjectionMatrix();
+		auto projectionMatrixDeterminant = XMMatrixDeterminant(projectionMatrix);
+		auto inverseProjectionMatrix = XMMatrixInverse(&projectionMatrixDeterminant, projectionMatrix);
+
+		auto viewProjectionMatrix = XMMatrixMultiply(viewMatrix, projectionMatrix);
+		auto viewProjectionMatrixDeterminant = XMMatrixDeterminant(viewProjectionMatrix);
+		auto inverseViewProjectionMatrix = XMMatrixInverse(&viewProjectionMatrixDeterminant, viewProjectionMatrix);
+
+		XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
+		XMStoreFloat4x4(&passData.InverseViewMatrix, XMMatrixTranspose(inverseViewMatrix));
+		XMStoreFloat4x4(&passData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
+		XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseProjectionMatrix));
+		XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
+		XMStoreFloat4x4(&passData.InverseProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
+
+		XMStoreFloat3(&passData.EyePositionW, camera.GetPosition());
+		passData.NearZ = camera.GetNearZ();
+		passData.FarZ = camera.GetFarZ();
+
+		m_currentFrameResource->CubeMapPassData[i].CopyData(m_d3dBase.GetDeviceContext(), &passData, sizeof(ShaderBufferTypes::PassData));
+	}
+}
+
+void Graphics::SetPassData(ID3D11Buffer* const* ppPassDataBuffer) const
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
+	deviceContext->VSSetConstantBuffers(2, 1, ppPassDataBuffer);
+	deviceContext->HSSetConstantBuffers(2, 1, ppPassDataBuffer);
+	deviceContext->DSSetConstantBuffers(2, 1, ppPassDataBuffer);
+	deviceContext->GSSetConstantBuffers(2, 1, ppPassDataBuffer);
+	deviceContext->PSSetConstantBuffers(2, 1, ppPassDataBuffer);
+}
+
+void Graphics::DrawInNormalMode()
+{
+	auto deviceContext = m_d3dBase.GetDeviceContext();
+	std::array<ID3D11ShaderResourceView*, 1> nullSRV = { nullptr };
 
 	// Create shadow map:
 	if (m_enableShadows)
@@ -544,22 +648,45 @@ void Graphics::DrawInNormalMode() const
 		DrawSceneIntoShadowMap(m_shadowMap);
 	}
 
+	// Draw scene into cube map:
+	if (m_cubeMapSkipFramesCurrentCount >= m_cubeMapSkipFramesCount)
+	{
+		m_cubeMapSkipFramesCurrentCount = 0;
+
+		// Unbind cube map shader resource view:
+		deviceContext->PSSetShaderResources(15, static_cast<UINT>(nullSRV.size()), nullSRV.data());
+
+		// Draw scene into cube map:
+		const auto& cubeMapRenderItem = m_cubeMappingRenderItems[0];
+		const auto& cubeMapRenderTexture = cubeMapRenderItem->GetRenderTexture();
+		DrawSceneIntoCubeMap(deviceContext, cubeMapRenderTexture);
+
+		// Set default render target and depth stencil:
+		m_d3dBase.SetDefaultRenderTargets();
+
+		// Set cube map as shader resource view:
+		std::array<ID3D11ShaderResourceView*, 1> cubeMap = { cubeMapRenderTexture.GetShaderResourceView() };
+		deviceContext->PSSetShaderResources(15, static_cast<UINT>(cubeMap.size()), cubeMap.data());
+	}
+	else
+	{
+		++m_cubeMapSkipFramesCurrentCount;
+	}
+
+	// Set default render target and depth stencil:
+	m_d3dBase.SetDefaultRenderTargets();
+
 	// Set main pass data:
-	deviceContext->VSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
-	deviceContext->HSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
-	deviceContext->DSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
-	deviceContext->GSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
-	deviceContext->PSSetConstantBuffers(2, 1, m_currentFrameResource->MainPassData.GetAddressOf());
+	SetPassData(m_currentFrameResource->MainPassData.GetAddressOf());
 
 	// Draw main scene:
-	DrawMainScene();
+	DrawMainScene(true);
 
 	// Draw debug window:
 	DrawDebugWindow();
 
-	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
-	deviceContext->PSSetShaderResources(3, 1, nullSRV);
-	deviceContext->PSSetShaderResources(0, 1, nullSRV);
+	deviceContext->PSSetShaderResources(3, static_cast<UINT>(nullSRV.size()), nullSRV.data());
+	deviceContext->PSSetShaderResources(0, static_cast<UINT>(nullSRV.size()), nullSRV.data());
 	m_shadowMap.ClearDepthStencilView(deviceContext);
 }
 
@@ -653,7 +780,6 @@ void Graphics::DrawTerrain() const
 		renderItem->RenderNonInstanced(deviceContext);
 	}
 }
-
 void Graphics::DrawInDebugMode() const
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
@@ -681,6 +807,7 @@ void Graphics::DrawSceneIntoShadowMap(const ShadowTexture& shadowMap) const
 		m_pipelineStateManager.SetPipelineState(deviceContext, "OpaqueShadow");
 		DrawRenderItems(RenderLayer::Opaque);
 		DrawRenderItems(RenderLayer::NormalSpecularMapping);
+		DrawRenderItems(RenderLayer::OpaqueDynamicReflectors);
 	}
 
 	// Draw terrain:
@@ -697,12 +824,22 @@ void Graphics::DrawSceneIntoShadowMap(const ShadowTexture& shadowMap) const
 		m_pipelineStateManager.SetPipelineState(deviceContext, "AlphaClippedShadow");
 		DrawRenderItems(RenderLayer::AlphaClipped);
 	}
-
-	// Set default render target and depth stencil:
-	m_d3dBase.SetDefaultRenderTargets();
 }
+void Graphics::DrawSceneIntoCubeMap(ID3D11DeviceContext* deviceContext, const CubeMapRenderTexture& cubeMap) const
+{
+	cubeMap.SetViewport(deviceContext);
+	for (size_t i = 0; i < 6; ++i)
+	{
+		cubeMap.ClearRenderTarget(deviceContext, static_cast<UINT>(i));
+		cubeMap.SetRenderTarget(deviceContext, static_cast<UINT>(i));
+		SetPassData(m_currentFrameResource->CubeMapPassData[i].GetAddressOf());
+		DrawMainScene(false);
+	}
+	m_d3dBase.SetViewport();
 
-void Graphics::DrawMainScene() const
+	deviceContext->GenerateMips(cubeMap.GetShaderResourceView());
+}
+void Graphics::DrawMainScene(bool drawCubeMapRenderItems) const
 {
 	auto deviceContext = m_d3dBase.GetDeviceContext();
 
@@ -725,6 +862,13 @@ void Graphics::DrawMainScene() const
 			// Draw normal mapped:
 			m_pipelineStateManager.SetPipelineState(deviceContext, "NormalSpecularMapping");
 			DrawRenderItems(RenderLayer::NormalSpecularMapping);
+
+			// Draw cube mapped:
+			if (drawCubeMapRenderItems)
+			{
+				m_pipelineStateManager.SetPipelineState(deviceContext, "StandardCubeMapping");
+				DrawRenderItems(RenderLayer::OpaqueDynamicReflectors);
+			}
 		}
 
 		// Draw terrain:
@@ -761,6 +905,13 @@ void Graphics::DrawMainScene() const
 			// Draw normal mapped:
 			m_pipelineStateManager.SetPipelineState(deviceContext, "NormalSpecularMappingFog");
 			DrawRenderItems(RenderLayer::NormalSpecularMapping);
+
+			// Draw cube mapped:
+			if (drawCubeMapRenderItems)
+			{
+				m_pipelineStateManager.SetPipelineState(deviceContext, "StandardCubeMappingFog");
+				DrawRenderItems(RenderLayer::OpaqueDynamicReflectors);
+			}
 		}
 
 		// Draw terrain:

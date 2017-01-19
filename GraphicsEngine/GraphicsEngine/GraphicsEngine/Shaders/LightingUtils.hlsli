@@ -63,7 +63,7 @@ float CalculateAttenuation(float distance, float falloffStart, float falloffEnd)
 /// Schlick gives an approximation to the Fresnel reflectance effect.
 /// R(0) + (1 - R(0)) * (1 - cos(angle))^5
 /// </sumary>
-float3 ShlickFresnel(float3 r0, float3 normal, float3 lightDirection)
+float3 SchlickFresnel(float3 r0, float3 normal, float3 lightDirection)
 {
     float cosIncidentAngle = saturate(dot(normal, lightDirection));
     float f0 = 1.0f - cosIncidentAngle;
@@ -88,8 +88,8 @@ float3 BlinnPhong(float3 lightStrength, float3 lightDirection, float3 normal, fl
     //               8
     float roughnessFactor = (m + 8.0f) * pow(max(dot(halfVector, normal), 0.0f), m) / 8.0f;
 
-    // Calculate the fresnel factor using the Shlick approximation:
-    float3 fresnelFactor = ShlickFresnel(material.FresnelR0, normal, lightDirection);
+    // Calculate the fresnel factor using the Schlick approximation:
+    float3 fresnelFactor = SchlickFresnel(material.FresnelR0, normal, lightDirection);
 
     // Calculate the specular albedo:
     float3 specularAlbedo = fresnelFactor * roughnessFactor;

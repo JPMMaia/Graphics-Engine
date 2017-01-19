@@ -22,5 +22,6 @@ namespace GraphicsEngine
 		std::vector<DynamicConstantBuffer> MaterialDataArray;
 		DynamicConstantBuffer MainPassData;
 		DynamicConstantBuffer ShadowPassData;
+		std::array<DynamicConstantBuffer, 6> CubeMapPassData;
 	};
 }

@@ -11,6 +11,7 @@
 #include <numeric>
 #include "GraphicsEngine/ImmutableMeshGeometry.h"
 #include "GraphicsEngine/NormalRenderItem.h"
+#include "GraphicsEngine/CubeMappingRenderItem.h"
 
 using namespace DirectX;
 using namespace Common;
@@ -264,6 +265,8 @@ void DefaultScene::InitializeTextures(const D3DBase& d3dBase, TextureManager& te
 {
 	auto device = d3dBase.GetDevice();
 
+	textureManager.Create(device, "Default", L"Textures/White.dds");
+
 	textureManager.Create(device, "BillboardGrass0001", L"Textures/BillboardGrass0001.dds");
 	textureManager.Create(device, "BillboardGrass0002", L"Textures/BillboardGrass0002.dds");
 	textureManager.Create(device, "BillboardBlueFlowers", L"Textures/BillboardBlueFlowers.dds");
@@ -342,10 +345,22 @@ void DefaultScene::InitializeMaterials(TextureManager& textureManager)
 		material->Name = "SkyDome";
 		AddMaterial(std::move(material));
 	}
+
+	{
+		auto material = std::make_unique<Material>();
+		material->Name = "Mirror";
+		material->DiffuseMap = &textureManager["Default"];
+		material->DiffuseAlbedo = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+		material->FresnelR0 = XMFLOAT3(0.98f, 0.97f, 0.95f);
+		material->Roughness = 0.1f;
+		material->MaterialTransform = MathHelper::Identity4x4();
+		AddMaterial(std::move(material));
+	}
 }
 
 void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dBase, TextureManager& textureManager)
 {
+	auto device = d3dBase.GetDevice();
 
 	// Debug:
 	{
@@ -431,6 +446,22 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 		renderItem->SetMaterial(m_materials.at("SkyDome").get());
 
 		graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::SkyDome });
+	}
+
+	// Cube map sphere:
+	{
+		AssimpImporter importer;
+		AssimpImporter::ImportInfo importInfo;
+		std::wstring filename(L"Models/Sphere.fbx");
+		importer.Import(graphics, d3dBase, textureManager, this, filename, importInfo);
+		auto geometry = m_immutableGeometries.at(Helpers::WStringToString(filename)).get();
+
+		XMFLOAT3 position(-372.0f, 24.0f, 308.0f);
+		auto renderItem = std::make_unique<CubeMappingRenderItem>(device, geometry, "Sphere", position);
+		renderItem->SetName("ReflectionSphere");
+		renderItem->SetMaterial(m_materials.at("Mirror").get());
+		
+		graphics->AddCubeMappingRenderItem(std::move(renderItem), { RenderLayer::OpaqueDynamicReflectors });
 	}
 
 	// AlanTree:

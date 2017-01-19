@@ -200,9 +200,6 @@
     <ClCompile Include="GraphicsEngine\KeyAnimation.cpp">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsEngine\DynamicCubeMapRenderTexture.cpp">
-      <Filter>GraphicsEngine\CubeMapping</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsEngine\RenderTexture.cpp">
       <Filter>GraphicsEngine\Textures</Filter>
     </ClCompile>
@@ -210,6 +207,12 @@
       <Filter>GraphicsEngine\Textures</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine\CubeMappingCamera.cpp">
+      <Filter>GraphicsEngine\CubeMapping</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\CubeMappingRenderItem.cpp">
+      <Filter>GraphicsEngine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine\CubeMapRenderTexture.cpp">
       <Filter>GraphicsEngine\CubeMapping</Filter>
     </ClCompile>
   </ItemGroup>
@@ -434,9 +437,6 @@
     <ClInclude Include="GraphicsEngine\KeyAnimation.h">
       <Filter>GraphicsEngine\Animations</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsEngine\DynamicCubeMapRenderTexture.h">
-      <Filter>GraphicsEngine\CubeMapping</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsEngine\RenderTexture.h">
       <Filter>GraphicsEngine\Textures</Filter>
     </ClInclude>
@@ -444,6 +444,12 @@
       <Filter>GraphicsEngine\Textures</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsEngine\CubeMappingCamera.h">
+      <Filter>GraphicsEngine\CubeMapping</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\CubeMappingRenderItem.h">
+      <Filter>GraphicsEngine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine\CubeMapRenderTexture.h">
       <Filter>GraphicsEngine\CubeMapping</Filter>
     </ClInclude>
   </ItemGroup>

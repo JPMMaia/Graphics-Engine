@@ -18,9 +18,21 @@ Texture2D DiffuseMap : register(t0);
 Texture2D NormalMap : register(t1);
 Texture2D SpecularMap : register(t2);
 Texture2D ShadowMap : register(t3);
+TextureCube CubeMap : register(t15);
 
 float4 main(VertexOutput input) : SV_TARGET
 {
+    // Calculate direction from point to camera:
+    float3 toEyeDirection = EyePositionW - input.PositionW;
+    float distanceToEye = length(toEyeDirection);
+    toEyeDirection /= distanceToEye;
+
+#if defined(FOG)
+    float fogIntensity = saturate((distanceToEye - FogStart) / FogRange);
+    if(fogIntensity - 0.99f > 0.0f)
+        return FogColor;
+#endif
+
     // Compute diffuse albedo by multiplying the sample from the texture and the diffuse albedo of the material:
     float4 diffuseAlbedo = DiffuseMap.Sample(SamplerAnisotropicWrap, input.TextureCoordinates) * DiffuseAlbedo;
 
@@ -55,11 +67,6 @@ float4 main(VertexOutput input) : SV_TARGET
 
 #endif
 
-    // Calculate direction from point to camera:
-    float3 toEyeDirection = EyePositionW - input.PositionW;
-    float distanceToEye = length(toEyeDirection);
-    toEyeDirection /= distanceToEye;
-
     // Calculate indirect lighting:
     float4 ambientIntensity = AmbientLight * diffuseAlbedo;
 
@@ -81,8 +88,18 @@ float4 main(VertexOutput input) : SV_TARGET
     // The final color results from the sum of the indirect and direct light:
     float4 color = ambientIntensity + lightIntensity;
 
+#if defined(CUBE_MAPPING)
+    // Add specular reflection:
+    {
+        float3 refectionDirection = reflect(-toEyeDirection, normalW);
+        float4 reflectionColor = CubeMap.Sample(SamplerAnisotropicWrap, refectionDirection);
+        float3 fresnelFactor = SchlickFresnel(FresnelR0, normalW, refectionDirection);
+        color.rgb += shininess * fresnelFactor * reflectionColor.rgb;
+    }
+#endif
+
 #if defined(FOG)
-    color = AddFog(color, distanceToEye, FogStart, FogRange, FogColor);
+    color = lerp(color, FogColor, fogIntensity);
 #endif
 
     // Common convention to take alpha from diffuse albedo:

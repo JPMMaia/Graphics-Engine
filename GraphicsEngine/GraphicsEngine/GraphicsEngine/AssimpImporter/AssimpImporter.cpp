@@ -95,7 +95,7 @@ void AssimpImporter::AddGeometry(const D3DBase& d3dBase, const std::string& name
 				vertex.Normal = XMFLOAT3(normals.x, normals.y, normals.z);
 				if (mesh->mTextureCoords[0] == nullptr)
 				{
-					OutputDebugString(std::wstring(L"Model " + Helpers::StringToWString(name) + L" loaded with no textures").c_str());
+					//OutputDebugString(std::wstring(L"Model " + Helpers::StringToWString(name) + L" loaded with no textures").c_str());
 				}
 				else
 				{

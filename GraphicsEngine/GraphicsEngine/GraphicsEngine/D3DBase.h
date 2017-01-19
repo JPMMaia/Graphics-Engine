@@ -29,6 +29,7 @@ namespace GraphicsEngine
 		uint32_t GetClientWidth() const;
 		uint32_t GetClientHeight() const;
 
+		void SetViewport() const;
 		void SetClearColor(const DirectX::XMFLOAT3 clearColor);
 		void SetDefaultRenderTargets() const;
 

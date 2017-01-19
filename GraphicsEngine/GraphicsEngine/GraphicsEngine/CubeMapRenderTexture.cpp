@@ -1,11 +1,11 @@
 ﻿#include "stdafx.h"
-#include "DynamicCubeMapRenderTexture.h"
+#include "CubeMapRenderTexture.h"
 #include "Common/Helpers.h" 
 
 using namespace Common;
 using namespace GraphicsEngine;
 
-DynamicCubeMapRenderTexture::DynamicCubeMapRenderTexture(ID3D11Device* d3dDevice, UINT width, UINT height, DXGI_FORMAT format)
+CubeMapRenderTexture::CubeMapRenderTexture(ID3D11Device* d3dDevice, UINT width, UINT height, DXGI_FORMAT format)
 {
 	// Create texture:
 	{
@@ -20,7 +20,7 @@ DynamicCubeMapRenderTexture::DynamicCubeMapRenderTexture(ID3D11Device* d3dDevice
 		description.Usage = D3D11_USAGE_DEFAULT;
 		description.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 		description.CPUAccessFlags = 0;
-		description.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+		description.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE | D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 		ThrowIfFailed(d3dDevice->CreateTexture2D(&description, nullptr, m_texture.GetAddressOf()));
 	}
@@ -56,7 +56,7 @@ DynamicCubeMapRenderTexture::DynamicCubeMapRenderTexture(ID3D11Device* d3dDevice
 		D3D11_TEXTURE2D_DESC description;
 		description.Width = width;
 		description.Height = height;
-		description.MipLevels = 0;
+		description.MipLevels = 1;
 		description.ArraySize = 1;
 		description.Format = DXGI_FORMAT_D32_FLOAT;
 		description.SampleDesc.Count = 1;
@@ -91,17 +91,22 @@ DynamicCubeMapRenderTexture::DynamicCubeMapRenderTexture(ID3D11Device* d3dDevice
 	}
 }
 
-void DynamicCubeMapRenderTexture::SetRenderTarget(ID3D11DeviceContext* deviceContext, UINT index) const
+void CubeMapRenderTexture::SetRenderTarget(ID3D11DeviceContext* deviceContext, UINT index) const
 {
 	deviceContext->OMSetRenderTargets(1, m_renderTargetViews[index].GetAddressOf(), m_depthStencilView.Get());
 }
-void DynamicCubeMapRenderTexture::ClearRenderTarget(ID3D11DeviceContext* deviceContext, UINT index) const
+void CubeMapRenderTexture::ClearRenderTarget(ID3D11DeviceContext* deviceContext, UINT index) const
 {
 	static std::array<float, 4> clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 	deviceContext->ClearRenderTargetView(m_renderTargetViews[index].Get(), clearColor.data());
-	deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+	deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
-ID3D11ShaderResourceView* DynamicCubeMapRenderTexture::GetShaderResourceView() const
+ID3D11ShaderResourceView* CubeMapRenderTexture::GetShaderResourceView() const
 {
 	return m_shaderResourceView.Get();
+}
+
+void CubeMapRenderTexture::SetViewport(ID3D11DeviceContext* deviceContext) const
+{
+	deviceContext->RSSetViewports(1, &m_viewport);
 }

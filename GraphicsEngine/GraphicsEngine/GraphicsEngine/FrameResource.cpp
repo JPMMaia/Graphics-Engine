@@ -27,6 +27,12 @@ FrameResource::FrameResource(ID3D11Device* device, const std::vector<NormalRende
 	constexpr auto passDataSize = sizeof(ShaderBufferTypes::PassData);
 	MainPassData.Initialize(device, passDataSize, passDataSize);
 	ShadowPassData.Initialize(device, passDataSize, passDataSize);
+
+	// Initialize cube map pass data buffers:
+	for(size_t i = 0; i < CubeMapPassData.size(); ++i)
+	{
+		CubeMapPassData[i].Initialize(device, passDataSize, passDataSize);
+	}
 }
 
 void FrameResource::RealocateInstanceBuffer(ID3D11Device* device, NormalRenderItem* renderItem)

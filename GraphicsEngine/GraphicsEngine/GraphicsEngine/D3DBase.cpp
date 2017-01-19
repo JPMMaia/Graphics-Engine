@@ -76,6 +76,11 @@ uint32_t D3DBase::GetClientHeight() const
 	return m_clientHeight;
 }
 
+void D3DBase::SetViewport() const
+{
+	m_immediateContext->RSSetViewports(1, &m_viewport);
+}
+
 void D3DBase::SetClearColor(const DirectX::XMFLOAT3 clearColor)
 {
 	m_clearColor[0] = clearColor.x;

@@ -78,6 +78,23 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 			nullptr, nullptr
 		};
 		m_pixelShaders["StandardFog"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"CUBE_MAPPING", "1",
+			nullptr, nullptr
+		};
+		m_pixelShaders["StandardCubeMapping"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"CUBE_MAPPING", "1",
+			"FOG", "1",
+			nullptr, nullptr
+		};
+		m_pixelShaders["StandardCubeMappingFog"] = PixelShader(device, shadersFolderPath + L"StandardPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 	}
 	
 	// Standard alpha-clipped shaders:
@@ -299,6 +316,14 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		opaqueShadowState.PixelShader = &PixelShader::s_null;
 		opaqueShadowState.RasterizerState = &m_rasterizerStates.at("Shadows");
 		m_pipelineStateObjects.emplace("OpaqueShadow", opaqueShadowState);
+
+		auto opaqueCubeMappingState = opaqueState;
+		opaqueCubeMappingState.PixelShader = &m_pixelShaders.at("StandardCubeMapping");
+		m_pipelineStateObjects.emplace("StandardCubeMapping", opaqueCubeMappingState);
+
+		auto opaqueCubeMappingFogState = opaqueState;
+		opaqueCubeMappingFogState.PixelShader = &m_pixelShaders.at("StandardCubeMappingFog");
+		m_pipelineStateObjects.emplace("StandardCubeMappingFog", opaqueCubeMappingFogState);
 	}
 
 	// Transparent:

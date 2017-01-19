@@ -23,7 +23,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_anisotropicWrapSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicWrap),
 	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp),
 	m_shadowsSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::Shadows),
-	m_fog(true),
+	m_fog(false),
 	m_shadowMap(m_d3dBase.GetDevice(), 2048, 2048),
 	m_renderTexture(m_d3dBase.GetDevice(), clientWidth, clientHeight, DXGI_FORMAT_R8G8B8A8_UNORM),
 	m_sceneBounds(XMFLOAT3(0.0f, 256.0f, 0.0f), 512.0f),
@@ -527,6 +527,8 @@ void Graphics::UpdateMainPassData(const Common::Timer& timer)
 	const auto& grassTransformMatrix = m_scene.GetGrassTransformMatrix();
 	XMStoreFloat4x4(&m_mainPassData.GrassTransformMatrix, XMLoadFloat4x4(&grassTransformMatrix));
 
+	XMStoreFloat4x4(&m_mainPassData.SkyCloudsTransformMatrix, XMMatrixRotationX(-XM_PI / 2.0f));
+
 	XMStoreFloat3(&m_mainPassData.EyePositionW, m_camera.GetPosition());
 	m_mainPassData.RenderTargetSize = XMFLOAT2(static_cast<float>(m_d3dBase.GetClientWidth()), static_cast<float>(m_d3dBase.GetClientHeight()));
 	m_mainPassData.InverseRenderTargetSize = XMFLOAT2(1.0f / static_cast<float>(m_d3dBase.GetClientWidth()), 1.0f / static_cast<float>(m_d3dBase.GetClientHeight()));
@@ -853,6 +855,10 @@ void Graphics::DrawMainScene(bool drawCubeMapRenderItems) const
 		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDome");
 		DrawNonInstancedRenderItems(RenderLayer::SkyDome);
 
+		// Draw Sky Clouds:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyCloudsFog");
+		DrawNonInstancedRenderItems(RenderLayer::SkyClouds);
+
 		if (!m_drawTerrainOnly)
 		{
 			// Draw opaque:
@@ -895,6 +901,10 @@ void Graphics::DrawMainScene(bool drawCubeMapRenderItems) const
 		// Draw Skydome:
 		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyDomeFog");
 		DrawNonInstancedRenderItems(RenderLayer::SkyDome);
+
+		// Draw Sky Clouds:
+		m_pipelineStateManager.SetPipelineState(deviceContext, "SkyCloudsFog");
+		DrawNonInstancedRenderItems(RenderLayer::SkyClouds);
 
 		if (!m_drawTerrainOnly)
 		{

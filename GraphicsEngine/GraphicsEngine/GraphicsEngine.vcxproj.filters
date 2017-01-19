@@ -635,5 +635,11 @@
     <FxCompile Include="GraphicsEngine\Shaders\TerrainGeometryShader.hlsl">
       <Filter>Shaders\Terrain</Filter>
     </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\SkyCloudsVertexShader.hlsl">
+      <Filter>Shaders\Skydome</Filter>
+    </FxCompile>
+    <FxCompile Include="GraphicsEngine\Shaders\SkyCloudsPixelShader.hlsl">
+      <Filter>Shaders\Skydome</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

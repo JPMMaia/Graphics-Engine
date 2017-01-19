@@ -41,6 +41,7 @@ namespace GraphicsEngine
 			DirectX::XMFLOAT4X4 InverseViewProjectionMatrix = MathHelper::Identity4x4();
 			DirectX::XMFLOAT4X4 ShadowMatrix = MathHelper::Identity4x4();
 			DirectX::XMFLOAT4X4 GrassTransformMatrix = MathHelper::Identity4x4();
+			DirectX::XMFLOAT4X4 SkyCloudsTransformMatrix = MathHelper::Identity4x4();
 			DirectX::XMFLOAT3 EyePositionW;
 			float TerrainDisplacementScalarY;
 			DirectX::XMFLOAT2 RenderTargetSize;

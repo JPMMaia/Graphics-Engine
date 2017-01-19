@@ -9,6 +9,7 @@ namespace GraphicsEngine
 		AlphaClipped,
 		Terrain,
 		SkyDome,
+		SkyClouds,
 		Grass,
 		NormalSpecularMapping,
 		OpaqueDynamicReflectors,

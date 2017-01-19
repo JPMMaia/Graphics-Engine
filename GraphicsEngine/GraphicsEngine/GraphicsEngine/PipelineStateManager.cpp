@@ -210,7 +210,7 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 		m_pixelShaders["TerrainDebugSpecularMapping"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 	}
 
-	// SkyDome shaders
+	// SkyDome shaders:
 	{
 		defines =
 		{
@@ -228,6 +228,26 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 			nullptr, nullptr
 		};
 		m_pixelShaders["SkyDomeFog"] = PixelShader(device, shadersFolderPath + L"SkyDomePixelShader.hlsl", defines.data(), "main", "ps_5_0");
+	}
+
+	// SkyClouds shaders:
+	{
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			nullptr, nullptr
+		};
+
+		m_vertexShaders["SkyClouds"] = VertexShader(device, shadersFolderPath + L"SkyCloudsVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
+		m_pixelShaders["SkyClouds"] = PixelShader(device, shadersFolderPath + L"SkyCloudsPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"FOG", "1",
+			nullptr, nullptr
+		};
+		m_pixelShaders["SkyCloudsFog"] = PixelShader(device, shadersFolderPath + L"SkyCloudsPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 	}
 
 	// Billboard shaders:
@@ -432,6 +452,21 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		auto skydomeFogState = skydomeState;
 		skydomeFogState.PixelShader = &m_pixelShaders.at("SkyDomeFog");
 		m_pipelineStateObjects.emplace("SkyDomeFog", skydomeFogState);
+	}
+
+	// SkyClouds:
+	{
+		PipelineState skyClouds;
+		skyClouds.VertexShader = &m_vertexShaders.at("SkyClouds");
+		skyClouds.PixelShader = &m_pixelShaders.at("SkyClouds");
+		skyClouds.RasterizerState = &m_rasterizerStates.at("NoCulling");
+		skyClouds.BlendState = &m_blendStates.at("Default");
+		skyClouds.DepthStencilState = &m_depthStencilStates.at("DepthDisabled");
+		m_pipelineStateObjects.emplace("SkyClouds", skyClouds);
+
+		auto skydomeFogState = skyClouds;
+		skydomeFogState.PixelShader = &m_pixelShaders.at("SkyCloudsFog");
+		m_pipelineStateObjects.emplace("SkyCloudsFog", skydomeFogState);
 	}
 
 	// Billboard:

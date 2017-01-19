@@ -448,6 +448,23 @@ void DefaultScene::InitializeRenderItems(Graphics* graphics, const D3DBase& d3dB
 		graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::SkyDome });
 	}
 
+	// Sky Clouds:
+	{
+		AssimpImporter importer;
+		AssimpImporter::ImportInfo importInfo;
+		std::wstring filename(L"Models/SkyClouds.fbx");
+		importer.Import(graphics, d3dBase, textureManager, this, filename, importInfo);
+
+		auto geometry = m_immutableGeometries.at(Helpers::WStringToString(filename)).get();
+
+		auto renderItem = std::make_unique<NormalRenderItem>();
+		renderItem->SetName("SkyClouds");
+		renderItem->SetMesh(geometry, "Plane.001");
+		renderItem->SetMaterial(m_materials.at("SkyDome").get());
+
+		graphics->AddNormalRenderItem(std::move(renderItem), { RenderLayer::SkyClouds });
+	}
+
 	// Cube map sphere:
 	{
 		AssimpImporter importer;

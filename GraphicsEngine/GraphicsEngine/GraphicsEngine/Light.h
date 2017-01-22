@@ -23,7 +23,7 @@ namespace GraphicsEngine
 		static Light CreateSpotLight(const DirectX::XMFLOAT3& strength, float falloffStart, const DirectX::XMFLOAT3& direction, float falloffEnd, const DirectX::XMFLOAT3& position, float spotPower);
 
 	public:
-		void UpdateMatrices(const DirectX::BoundingSphere& sceneBounds);
+		void UpdateMatrices(const DirectX::BoundingSphere& sceneBounds, DirectX::FXMVECTOR cameraPosition);
 		
 		void RotateRollPitchYaw(float pitchRadians, float yawRadians, float rollRadians);
 

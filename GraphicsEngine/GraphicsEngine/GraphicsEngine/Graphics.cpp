@@ -13,7 +13,7 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_initialized(false),
 	m_d3dBase(outputWindow, clientWidth, clientHeight, fullscreen),
 	m_pipelineStateManager(m_d3dBase),
-	m_camera(m_d3dBase.GetAspectRatio(), 0.25f * XM_PI, 0.01f, 10000.0f, XMMatrixIdentity()),
+	m_camera(m_d3dBase.GetAspectRatio(), 0.25f * XM_PI, 0.2f, 1500.0f, XMMatrixIdentity()),
 	m_lightManager(),
 	m_octree(32, BoundingBox(XMFLOAT3(0.0f, 256.0f, 0.0f), XMFLOAT3(1024.0f, 512.0f, 1024.0f)), XMFLOAT3(64.0f, 64.0f, 64.0f)),
 	m_scene(this, m_d3dBase, m_textureManager, m_lightManager),
@@ -24,9 +24,9 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_anisotropicClampSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::AnisotropicClamp),
 	m_shadowsSamplerState(m_d3dBase.GetDevice(), SamplerStateDescConstants::Shadows),
 	m_fog(true),
-	m_shadowMap(m_d3dBase.GetDevice(), 2048, 2048),
+	m_shadowMap(m_d3dBase.GetDevice(), 4096, 4096),
 	m_renderTexture(m_d3dBase.GetDevice(), clientWidth, clientHeight, DXGI_FORMAT_R8G8B8A8_UNORM),
-	m_sceneBounds(XMFLOAT3(0.0f, 256.0f, 0.0f), 512.0f),
+	m_sceneBounds(XMFLOAT3(0.0f, 256.0f, 0.0f), 725.0f),
 	m_visibleInstances(0),
 	m_debugWindowMode(DebugMode::Hidden),
 	m_enableShadows(true),
@@ -485,7 +485,7 @@ void Graphics::UpdateLights(const Common::Timer& timer) const
 	auto castShadowsLight = castShadowsLights[0];
 
 	// Update light matrices:
-	castShadowsLight->UpdateMatrices(m_sceneBounds);
+	castShadowsLight->UpdateMatrices(m_sceneBounds, m_camera.GetPosition());
 }
 
 void Graphics::InitializeMainPassData()

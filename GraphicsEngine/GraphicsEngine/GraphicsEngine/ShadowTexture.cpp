@@ -13,7 +13,7 @@ ShadowTexture::ShadowTexture(ID3D11Device* d3dDevice, UINT width, UINT height)
 		description.Height = height;
 		description.MipLevels = 1;
 		description.ArraySize = 1;
-		description.Format = DXGI_FORMAT_R24G8_TYPELESS;
+		description.Format = DXGI_FORMAT_R32_TYPELESS;
 		description.SampleDesc.Count = 1;
 		description.SampleDesc.Quality = 0;
 		description.Usage = D3D11_USAGE_DEFAULT;
@@ -27,7 +27,7 @@ ShadowTexture::ShadowTexture(ID3D11Device* d3dDevice, UINT width, UINT height)
 	// Create shader resource view:
 	{
 		D3D11_SHADER_RESOURCE_VIEW_DESC description;
-		description.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+		description.Format = DXGI_FORMAT_R32_FLOAT;
 		description.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		description.Texture2D.MipLevels = 1;
 		description.Texture2D.MostDetailedMip = 0;
@@ -38,7 +38,7 @@ ShadowTexture::ShadowTexture(ID3D11Device* d3dDevice, UINT width, UINT height)
 	// Create depth stencil view:
 	{
 		D3D11_DEPTH_STENCIL_VIEW_DESC description;
-		description.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		description.Format = DXGI_FORMAT_D32_FLOAT;
 		description.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		description.Flags = 0;
 		description.Texture2D.MipSlice = 0;

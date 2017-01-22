@@ -108,13 +108,13 @@ void D3DBase::InitializeDeviceResources()
 	Common::ThrowIfFailed(CreateDXGIFactory(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(factory.GetAddressOf())));
 
 	// Create a settings manager object which will select the adapter:
-	auto settingsManager = SettingsManager::Build(L"Settings.conf");
+	//auto settingsManager = SettingsManager::Build(L"Settings.conf");
 
 	// Use the factory to create an adapter for the primary graphics interface (video card):
 	ComPtr<IDXGIAdapter2> adapter;
 	{
 		ComPtr<IDXGIAdapter1> adapterTmp;
-		Common::ThrowIfFailed(factory->EnumAdapters1(settingsManager.GetAdapterIndex(), adapterTmp.GetAddressOf()));
+		Common::ThrowIfFailed(factory->EnumAdapters1(0, adapterTmp.GetAddressOf()));
 		adapterTmp.As(&adapter);
 	}
 
@@ -206,7 +206,7 @@ void D3DBase::InitializeDepthStencilResources()
 		depthStencilBufferDesc.Height = m_clientHeight;
 		depthStencilBufferDesc.MipLevels = 1;
 		depthStencilBufferDesc.ArraySize = 1;
-		depthStencilBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilBufferDesc.Format = DXGI_FORMAT_D32_FLOAT;
 		depthStencilBufferDesc.SampleDesc.Count = 1;
 		depthStencilBufferDesc.SampleDesc.Quality = 0;
 		depthStencilBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -221,7 +221,7 @@ void D3DBase::InitializeDepthStencilResources()
 	// Create depth stencil view:
 	{
 		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
-		depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
 		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		depthStencilViewDesc.Texture2D.MipSlice = 0;
 

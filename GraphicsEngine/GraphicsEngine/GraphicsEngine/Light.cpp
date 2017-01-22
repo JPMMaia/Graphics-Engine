@@ -37,15 +37,15 @@ Light Light::CreateSpotLight(const DirectX::XMFLOAT3& strength, float falloffSta
 	return light;
 }
 
-void Light::UpdateMatrices(const BoundingSphere& sceneBounds)
+void Light::UpdateMatrices(const BoundingSphere& sceneBounds, FXMVECTOR cameraPosition)
 {
 	// Calculate the light position based on the direction of the light and the scene bounds:
 	auto lightDirection = XMLoadFloat3(&m_lightData.Direction);
-	auto lightPosition = -2.0f * sceneBounds.Radius * lightDirection;
+	auto lightPosition = cameraPosition - 50.0f * lightDirection;
 	XMStoreFloat3(&m_lightData.Position, lightPosition);
 
 	// Calculate the light view matrix:
-	auto targetPosition = XMLoadFloat3(&sceneBounds.Center);
+	auto targetPosition = cameraPosition;
 	auto upDirection = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	m_viewMatrix = XMMatrixLookAtLH(lightPosition, targetPosition, upDirection);
 
@@ -54,12 +54,12 @@ void Light::UpdateMatrices(const BoundingSphere& sceneBounds)
 	XMStoreFloat3(&sceneCenterLightSpace, XMVector3TransformCoord(targetPosition, m_viewMatrix));
 
 	// Calculate the light orthographic projection matrix:
-	auto left = sceneCenterLightSpace.x - sceneBounds.Radius;
-	auto right = sceneCenterLightSpace.x + sceneBounds.Radius;
-	auto bottom = sceneCenterLightSpace.y - sceneBounds.Radius;
-	auto top = sceneCenterLightSpace.y + sceneBounds.Radius;
-	auto nearZ = sceneCenterLightSpace.z - sceneBounds.Radius;
-	auto farZ = sceneCenterLightSpace.z + sceneBounds.Radius;
+	auto left = -100.0f;
+	auto right = 100.0f;
+	auto bottom = -100.0f;
+	auto top = 100.0f;
+	auto nearZ = 1.0f;
+	auto farZ = 500.0f;
 	m_projectionMatrix = XMMatrixOrthographicOffCenterLH(left, right, bottom, top, nearZ, farZ);
 
 	// Transform from NDC space to texture space:

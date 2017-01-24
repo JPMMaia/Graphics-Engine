@@ -608,4 +608,6 @@ void DefaultScene::InitializeLights(LightManager& lightManager)
 	//lightManager.AddLight(std::make_unique<Light>(Light::CreateDirectionalLight({ 0.15f, 0.15f, 0.15f }, { 0.0f, -0.707f, -0.707f })));
 	//lightManager.AddLight(std::make_unique<Light>(Light::CreatePointLight({ 0.1f, 0.0f, 0.0f }, 2.0f, 20.0f, { 0.0f, 3.0f, 0.0f })));
 	//lightManager.AddLight(std::make_unique<Light>(Light::CreateSpotLight({ 0.0f, 0.0f, 0.9f }, 2.0f, { 0.0f,-1.0f, 0.0f }, 20.0f, { 0.0f, 3.0f, 0.0f }, 8.0f)));
+	//lightManager.AddLight(std::make_unique<Light>(Light::CreatePointLight({ 0.8f, 0.8f, 0.8f }, 50.0f, 100.0f, { -295.0f, 28.0f, 448.0f })));
+	//lightManager.AddLight(std::make_unique<Light>(Light::CreatePointLight({ 0.8f, 0.8f, 0.8f }, 100.0f, 500.0f, { 220.0f - 512.0f, 27.0f, -(0.0f - 512.0f) })));
 }

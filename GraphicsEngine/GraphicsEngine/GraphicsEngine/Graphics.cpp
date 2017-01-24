@@ -33,9 +33,9 @@ Graphics::Graphics(HWND outputWindow, uint32_t clientWidth, uint32_t clientHeigh
 	m_drawTerrainOnly(false),
 	m_cubeMapSkipFramesCurrentCount(0)
 {
-	//m_camera.SetPosition(220.0f - 512.0f, 27.0f, -(0.0f - 512.0f));
-	m_camera.SetPosition(-372.0f, 24.0f, 308.0f);
-	m_camera.SetPosition(-217.0f, 80.0f, 221.0f);
+	m_camera.SetPosition(220.0f - 512.0f, 27.0f, -(0.0f - 512.0f));
+	//m_camera.SetPosition(-372.0f, 24.0f, 308.0f);
+	//m_camera.SetPosition(-217.0f, 80.0f, 221.0f);
 	m_camera.Update();
 	m_camera.RotateWorldY(XM_PI);
 
@@ -94,7 +94,7 @@ void Graphics::Render(const Common::Timer& timer)
 
 	m_d3dBase.BeginScene();
 
-	if (m_debugWindowMode == DebugMode::Hidden || m_debugWindowMode == DebugMode::TerrainHeightMap || m_debugWindowMode == DebugMode::ShadowMap)
+	if (m_debugWindowMode == DebugMode::Hidden || m_debugWindowMode == DebugMode::TerrainHeightMap || m_debugWindowMode == DebugMode::ShadowMap || m_debugWindowMode == DebugMode::TerrainNoNormalMapping)
 		DrawInNormalMode();
 	else
 		DrawInDebugMode();
@@ -303,6 +303,8 @@ void Graphics::SetupDebugMode()
 	m_debugPipelineStateNames.emplace(DebugMode::TerrainSpecularMapping, "TerrainDebugSpecularMapping");
 	m_debugPipelineStateNames.emplace(DebugMode::TerrainWireframe, "TerrainDebugWireframe");
 	m_debugPipelineStateNames.emplace(DebugMode::TerrainHeightMap, "DebugWindowHeightMap");
+	//m_debugPipelineStateNames.emplace(DebugMode::TerrainNoNormalMapping, "TerrainNoNormalMappingFog");
+	m_debugPipelineStateNames.emplace(DebugMode::TerrainNoNormalMapping, "TerrainFog");
 	m_debugPipelineStateNames.emplace(DebugMode::ShadowMap, "DebugWindowSingleChannel");
 }
 void Graphics::UpdateCamera()
@@ -902,7 +904,10 @@ void Graphics::DrawMainScene(bool drawCubeMapRenderItems) const
 		}
 
 		// Draw terrain:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
+		if(m_debugWindowMode == DebugMode::TerrainNoNormalMapping)
+			m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainNoNormalMapping");
+		else
+			m_pipelineStateManager.SetPipelineState(deviceContext, "Terrain");
 		DrawTerrain();
 
 		if (!m_drawTerrainOnly)
@@ -957,7 +962,10 @@ void Graphics::DrawMainScene(bool drawCubeMapRenderItems) const
 		}
 
 		// Draw terrain:
-		m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainFog");
+		if (m_debugWindowMode == DebugMode::TerrainNoNormalMapping)
+			m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainNoNormalMappingFog");
+		else
+			m_pipelineStateManager.SetPipelineState(deviceContext, "TerrainFog");
 		DrawTerrain();
 
 		if (!m_drawTerrainOnly)

@@ -36,6 +36,7 @@ namespace GraphicsEngine
 			TerrainNormalMapping,
 			TerrainSpecularMapping,
 			TerrainPathAlpha,
+			TerrainNoNormalMapping,
 			Count
 		};
 

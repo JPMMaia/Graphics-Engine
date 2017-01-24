@@ -16,14 +16,14 @@ namespace GraphicsEngine
 		{
 			auto lightCount = std::distance(begin, end);
 
-			for (SIZE_T i = 0; begin != end && i < m_directionalLights.size(); ++i, ++begin)
-				*begin = m_directionalLights[i++]->GetLightData();
+			for (SIZE_T i = 0; begin != end && i < m_directionalLights.size(); ++i)
+				*begin++ = m_directionalLights[i]->GetLightData();
 
-			for (SIZE_T i = 0; begin != end && i < m_pointLights.size(); ++i, ++begin)
-				*begin = m_pointLights[i++]->GetLightData();
+			for (SIZE_T i = 0; begin != end && i < m_pointLights.size(); ++i)
+				*begin++ = m_pointLights[i]->GetLightData();
 
-			for (SIZE_T i = 0; begin != end && i < m_spotLights.size(); ++i, ++begin)
-				*begin = m_spotLights[i++]->GetLightData();
+			for (SIZE_T i = 0; begin != end && i < m_spotLights.size(); ++i)
+				*begin++ = m_spotLights[i]->GetLightData();
 		}
 
 		const DirectX::XMFLOAT4& GetAmbientLight() const;

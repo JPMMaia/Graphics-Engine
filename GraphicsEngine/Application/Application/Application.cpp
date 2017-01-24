@@ -201,7 +201,7 @@ void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::Ke
 			pScene->AddTreeInstances(&m_graphics, { instanceData });*/
 		}
 
-		{
+		/*{
 			SceneBuilder::RenderItemInstanceData instanceData;
 
 			XMFLOAT3 spawnPosition;
@@ -216,12 +216,12 @@ void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::Ke
 			};
 
 			pScene->AddBillboardInstances(&m_graphics, grassName, { grassName }, { instanceData }, 0.5f);;
-		}
+		}*/
 	}
 	else if (eventArgs.Key == DIK_Z)
 	{
 		//pScene->RemoveLastInstance(&m_graphics, "Tree", { "Trunk", "Leaves" });
-		pScene->RemoveLastInstance(&m_graphics, grassName, { grassName });
+		//pScene->RemoveLastInstance(&m_graphics, grassName, { grassName });
 	}
 	else if (eventArgs.Key == DIK_C)
 	{
@@ -251,7 +251,11 @@ void Application::OnKeyboardKeyDown(const void* sender, const DXInputHandler::Ke
 	}
 	else if (eventArgs.Key == DIK_P)
 	{
-		m_graphics.ToggleDebugMode();
+		//m_graphics.ToggleDebugMode();
+	}
+	else if(eventArgs.Key == DIK_O)
+	{
+		m_graphics.SetDebugWindowMode(Graphics::DebugMode::TerrainNoNormalMapping);
 	}
 	else
 	{
@@ -305,6 +309,7 @@ Application::Application() :
 	m_input.SubscribeToOnKeyDownEvents(DIK_7, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_8, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 	m_input.SubscribeToOnKeyDownEvents(DIK_9, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
+	m_input.SubscribeToOnKeyDownEvents(DIK_O, std::bind(&Application::OnKeyboardKeyDown, this, _1, _2));
 
 	m_soundManager.Create2DSoundFromWaveFile("MainSound", L"Sounds/Cloud Atlas 21 - Cloud Atlas Finale.wav");
 	m_soundManager.Play2DSound("MainSound");
@@ -323,4 +328,6 @@ Application::Application() :
 	);
 
 	m_animationManager.AddAnimation(std::move(reflectionSphereAnimation1), true);
+
+    
 }

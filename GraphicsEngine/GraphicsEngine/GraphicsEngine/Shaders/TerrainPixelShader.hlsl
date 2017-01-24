@@ -24,9 +24,13 @@ Texture2D SnowMaps[1] : register(t14);
 
 float4 ComputeColor(float4 diffuseAlbedo, Material material, Texture2D normalMap, float3 positionW, float2 tiledTextureCoordinates, float3 normalW, float3 tangentW, float3 toEyeDirection, float shadowFactor, float specularFactor)
 {
+#if defined(NORMAL_MAPPING)
     // Sample value from the tiled normal map and compute the bumped normal in world space:
     float3 normalSample = normalMap.Sample(SamplerAnisotropicWrap, tiledTextureCoordinates).rgb;
     float3 bumpedNormalW = NormalSampleToBumpedNormalW(normalSample, normalW, tangentW);
+#else
+    float3 bumpedNormalW = normalW;
+#endif
 
     // Compute contribution of light:
     float4 lightIntensity = ComputeLighting(Lights, material, positionW, bumpedNormalW, toEyeDirection, shadowFactor, specularFactor);

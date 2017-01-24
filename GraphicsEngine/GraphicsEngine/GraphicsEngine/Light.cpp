@@ -17,6 +17,7 @@ Light Light::CreateDirectionalLight(const DirectX::XMFLOAT3& strength, const Dir
 Light Light::CreatePointLight(const DirectX::XMFLOAT3& strength, float falloffStart, float falloffEnd, const DirectX::XMFLOAT3& position)
 {
 	Light light;
+	light.m_type = Type::Point;
 	light.m_lightData.Strength = strength;
 	light.m_lightData.FalloffStart = falloffStart;
 	light.m_lightData.FalloffEnd = falloffEnd;
@@ -27,6 +28,7 @@ Light Light::CreatePointLight(const DirectX::XMFLOAT3& strength, float falloffSt
 Light Light::CreateSpotLight(const DirectX::XMFLOAT3& strength, float falloffStart, const DirectX::XMFLOAT3& direction, float falloffEnd, const DirectX::XMFLOAT3& position, float spotPower)
 {
 	Light light;
+	light.m_type = Type::Spot;
 	light.m_lightData.Strength = strength;
 	light.m_lightData.FalloffStart = falloffStart;
 	light.m_lightData.Direction = direction;

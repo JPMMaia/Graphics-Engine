@@ -184,6 +184,7 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 		defines =
 		{
 			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"NORMAL_MAPPING", "1",
 			nullptr, nullptr
 		};
 		m_vertexShaders["Terrain"] = VertexShader(device, shadersFolderPath + L"TerrainVertexShader.hlsl", defines.data(), "main", "vs_5_0", m_inputLayouts["Default"]);
@@ -195,9 +196,25 @@ void PipelineStateManager::InitializeShadersAndInputLayout(const D3DBase& d3dBas
 		{
 			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
 			"FOG", "1",
+			"NORMAL_MAPPING", "1",
 			nullptr, nullptr
 		};
 		m_pixelShaders["TerrainFog"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			nullptr, nullptr
+		};
+		m_pixelShaders["TerrainNoNormalMapping"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", defines.data(), "main", "ps_5_0");
+
+		defines =
+		{
+			"MAX_NUM_LIGHTS", maxNumLights.c_str(),
+			"FOG", "1",
+			nullptr, nullptr
+		};
+		m_pixelShaders["TerrainNoNormalMappingFog"] = PixelShader(device, shadersFolderPath + L"TerrainPixelShader.hlsl", defines.data(), "main", "ps_5_0");
 
 		std::array<D3D11_SO_DECLARATION_ENTRY, 1> streamOutputLayout = 
 		{
@@ -475,6 +492,14 @@ void PipelineStateManager::InitializePipelineStateObjects()
 		terrainStreamOutputState.GeometryShader = &m_geometryShaders.at("Terrain");
 		terrainStreamOutputState.PixelShader = &PixelShader::s_null;
 		m_pipelineStateObjects.emplace("TerrainStreamOutput", terrainStreamOutputState);
+
+		auto terrainNoNormalMappingState = terrainState;
+		terrainNoNormalMappingState.PixelShader = &m_pixelShaders.at("TerrainNoNormalMapping");
+		m_pipelineStateObjects.emplace("TerrainNoNormalMapping", terrainNoNormalMappingState);
+
+		auto terrainNoNormalMappingFogState = terrainState;
+		terrainNoNormalMappingFogState.PixelShader = &m_pixelShaders.at("TerrainNoNormalMappingFog");
+		m_pipelineStateObjects.emplace("TerrainNoNormalMappingFog", terrainNoNormalMappingFogState);
 
 		auto debugTerrainState = terrainState;
 		debugTerrainState.PixelShader = &m_pixelShaders.at("TerrainDebugPathAlpha");

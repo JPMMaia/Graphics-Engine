@@ -73,8 +73,8 @@ namespace GraphicsEngine
 		}
 
 	private:
-		void ReadKeyboard();
-		void ReadMouse();
+		bool ReadKeyboard();
+		bool ReadMouse();
 		void ProcessInput();
 
 	private:

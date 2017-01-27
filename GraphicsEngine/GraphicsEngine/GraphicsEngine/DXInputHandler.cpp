@@ -29,7 +29,7 @@ DXInputHandler::DXInputHandler(HINSTANCE hInstance, HWND hWindow, uint32_t clien
 	ThrowIfFailed(m_keyboard->SetCooperativeLevel(hWindow, DISCL_FOREGROUND | DISCL_EXCLUSIVE));
 
 	// Now acquire the keyboard.
-	ThrowIfFailed(m_keyboard->Acquire());
+	m_keyboard->Acquire();
 
 	// Initialize the direct input interface for the mouse.
 	ThrowIfFailed(m_directInput->CreateDevice(GUID_SysMouse, &m_mouse, nullptr));
@@ -41,7 +41,7 @@ DXInputHandler::DXInputHandler(HINSTANCE hInstance, HWND hWindow, uint32_t clien
 	ThrowIfFailed(m_mouse->SetCooperativeLevel(hWindow, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE));
 
 	// Acquire the mouse.
-	ThrowIfFailed(m_mouse->Acquire());
+	m_mouse->Acquire();
 }
 DXInputHandler::~DXInputHandler()
 {
@@ -57,16 +57,18 @@ DXInputHandler::~DXInputHandler()
 void DXInputHandler::Update()
 {
 	// Read the current state of the keyboard:
-	ReadKeyboard();
+	if (!ReadKeyboard())
+		return;
 
 	// Read the current state of the mouse:
-	ReadMouse();
+	if (!ReadMouse())
+		return;
 
 	// Process the changes in the mouse and keyboard:
 	ProcessInput();
 }
 
-void DXInputHandler::ReadKeyboard()
+bool DXInputHandler::ReadKeyboard()
 {
 	m_previousKeyboardState.swap(m_currentKeyboardState);
 
@@ -81,12 +83,14 @@ void DXInputHandler::ReadKeyboard()
 		}
 		else
 		{
-			ThrowIfFailed(result);
+			return false;
 		}
 	}
+
+	return true;
 }
 
-void DXInputHandler::ReadMouse()
+bool DXInputHandler::ReadMouse()
 {
 	// Read the mouse device:
 	auto result = m_mouse->GetDeviceState(sizeof(DIMOUSESTATE2), &m_mouseState);
@@ -99,9 +103,11 @@ void DXInputHandler::ReadMouse()
 		}
 		else
 		{
-			ThrowIfFailed(result);
+			return false;
 		}
 	}
+
+	return true;
 }
 void DXInputHandler::ProcessInput()
 {

@@ -8,7 +8,7 @@ The following video demonstrastes the demo scene:
 
 ## Built With
 
-* assimp - Library used to import 3D models
+* [assimp](http://assimp.sourceforge.net/) - Library used to import 3D models
 * DirectX 11 - The graphics API used on the main project
 * DirectX 12 - The graphics API used for an alternate branch
 * DirectSound 8 - The audio API
@@ -24,5 +24,5 @@ The following video demonstrastes the demo scene:
 ## Acknowledgments
 
 * [Raster Tek](http://www.rastertek.com/) - For providing the tutorials that made me start this project as a hobby. Many features presented on the tutorials were implemented on this project.
-* The books *Introduction to 3D Game Programming with DirectX 11* and *Introduction to 3D Game Programming with DirectX 12* by Frank D. Luna helped greatly on the development of this project.
+* The books [Introduction to 3D Game Programming with DirectX 11](http://www.d3dcoder.net/d3d11.htm) and [Introduction to 3D Game Programming with DirectX 12](http://www.d3dcoder.net/d3d12.htm) by Frank D. Luna helped greatly on the development of this project.
 * Professor Michael Wimmer - For giving us classes with imprescindible content

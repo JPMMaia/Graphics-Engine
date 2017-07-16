@@ -6,6 +6,8 @@ The following video demonstrastes the demo scene:
 
 [![Real-Time Rendering Course Demo](https://img.youtube.com/vi/kVqQUtwgERY/0.jpg)](https://www.youtube.com/watch?v=kVqQUtwgERY "Real-Time Rendering Course Demo")
 
+The demo scene can be run by downloading the [Real-time Rendering Demo release](https://github.com/JPMMaia/Graphics-Engine/releases/tag/v1.0.0) and opening *Application.exe*.
+
 ## Built With
 
 * [assimp](http://assimp.sourceforge.net/) - Library used to import 3D models

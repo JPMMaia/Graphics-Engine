@@ -1,6 +1,6 @@
 # Graphics Engine
 
-This project started as a hobby but ended being used for building a demo scene for the course [Real-Time Rendering](https://www.cg.tuwien.ac.at/courses/Realtime/VU.html) @ TU Wien. Classified as the best project of the class in the 2016 Winter Semester and part of the [Hall of Fame](https://www.cg.tuwien.ac.at/courses/Realtime/HallOfFame/index.html) of the course.
+This project started as a hobby but ended being used for building a demo scene for the course [Real-Time Rendering](https://www.cg.tuwien.ac.at/courses/Realtime/VU.html) @ TU Wien. Classified as the best project of the class in the 2016 Winter Semester and part of the [Hall of Fame](https://www.cg.tuwien.ac.at/courses/Realtime/HallOfFame/index.html#Hall%20Of%20Fame%202016) of the course.
 
 The following video demonstrastes the demo scene:
 

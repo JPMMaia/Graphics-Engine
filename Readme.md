@@ -12,7 +12,7 @@ The demo scene can be run by downloading the [Real-time Rendering Demo release](
 
 * [assimp](http://assimp.sourceforge.net/) - Library used to import 3D models
 * DirectX 11 - The graphics API used on the main project
-* DirectX 12 - The graphics API used for an alternate branch
+* DirectX 12 - The graphics API used for an alternative branch aimed at porting the original code
 * DirectSound 8 - The audio API
 * [DirectXTex](https://github.com/Microsoft/DirectXTex) - Set of helper functions for DirectX
 * [nlohmann/json](https://github.com/nlohmann/json) - JSON for Modern C++
